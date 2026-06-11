@@ -1,0 +1,7 @@
+# SwiftFormat configuration for Iris
+# Run with: mise run format   (or: mise exec -- swiftformat .)
+
+--swiftversion 6.0
+
+# Paths to exclude from formatting
+--exclude Derived,Tuist/.build,**/.build

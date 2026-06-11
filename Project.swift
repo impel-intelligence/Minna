@@ -13,7 +13,17 @@ let project = Project(
                 "Iris/Sources",
                 "Iris/Resources",
             ],
-            dependencies: []
+            scripts: [
+                .pre(
+                    script: """
+                    export PATH="$HOME/.local/bin:$PATH"
+                    cd "$SRCROOT"
+                    mise exec -- swiftlint lint --quiet
+                    """,
+                    name: "SwiftLint",
+                    basedOnDependencyAnalysis: false
+                ),
+            ]
         ),
         .target(
             name: "IrisTests",
@@ -22,7 +32,7 @@ let project = Project(
             bundleId: "com.tryiris.iris.mac.tests",
             infoPlist: .default,
             buildableFolders: [
-                "Iris/Tests"
+                "Iris/Tests",
             ],
             dependencies: [.target(name: "Iris")]
         ),
