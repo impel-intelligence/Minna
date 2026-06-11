@@ -1,4 +1,4 @@
-name: Build Impel
+name: Build Iris
 
 on:
   workflow_dispatch:
@@ -14,11 +14,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        with:
-          submodules: recursive
-          token: ${{ secrets.ACTIONS_PA_TOKEN }}
-          
-      - name: Install mise & install tuist
+      - name: Install mise & Tools
         uses: jdx/mise-action@v4
         with:
           cache: true
+        
+      - name: Install Project Dependencies
+        run: tuist install
+
+      - name: Generate Xcode Workspace
+        run: tuist generate
+
+      - name: Run Build and Tests
+        run: tuist test

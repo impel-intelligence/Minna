@@ -1,0 +1,77 @@
+name: Create Iris Build (Internal)
+on: 
+  push:
+    tags:
+      - "*.*.*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Create Iris Binary
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Tools (mise)
+        uses: jdx/mise-action@v2
+        with:
+          cache: true
+          mise_toml: |
+              [tools]
+              tuist = "latest"
+      - name: Setup Tuist Version With Mise
+        run: mise use tuist
+      - name: Install Dependencies
+        run:  tuist install
+      - name: Tuist Generate
+        run: tuist generate
+  
+  notarize:
+    needs: build
+    name: Notarize Iris
+    runs-on: self-hosted
+
+    steps:
+    - name: Make Executable Scripts
+      run: |
+        chmod +x scripts/archive.sh scripts/notarize.sh scripts/sentry.sh scripts/update_sparkle.sh scripts/compress.sh scripts/generate_appcast scripts/create_dmg.sh
+    - name: Make tmp
+      run: | 
+        rm -rf tmp
+        mkdir tmp
+        mkdir tmp/compressed
+        mkdir tmp/archive
+        mkdir tmp/apps
+    - name: Export Xcode Archive
+      run: ./scripts/archive.sh
+    - name: Notarize App
+      run: ./scripts/notarize.sh
+    - name: Upload Sentry Information
+      run: ./scripts/sentry.sh ${{ secrets.SENTRY_AUTH_TOKEN }}
+  
+  create_artifacts:
+    needs: notarize
+    name: Create Artifacts (tar, dmg)
+    runs-on: self-hosted
+
+    steps:
+    - name: Create Tar
+      run: ./scripts/compress.sh ${{ github.ref_name }}
+    - name: Create DMG
+      run: ./scripts/create_dmg.sh ${{ github.ref_name }}
+
+  upload_artifacts:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: create_artifacts
+    name: Upload Artifacts to GitHub
+    runs-on: self-hosted
+
+    steps:
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        prerelease: true
+        generate_release_notes: true
+        files: |
+          tmp/apps/iris.tar.xz
+          tmp/apps/iris.dmg
