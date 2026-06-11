@@ -1,0 +1,37 @@
+name: Create Iris Build (External)
+on: 
+  release:
+    types: [published]
+  workflow_dispatch:
+
+
+jobs:
+  upload:
+    name: Upload Release Files
+    runs-on: self-hosted
+
+    steps:
+    - name: release-downloader
+      uses: robinraju/release-downloader@v1.10 
+      with:
+        tag: '${{ github.ref_name }}'
+        fileName: |
+          'iris.dmg'
+          'iris.tar.xz'
+        out-file-path: 'tmp'
+    - name: Restore Sparkle Updater Cache
+      id: cache-sparkle
+      uses: actions/cache@v4
+      with:
+        path: iris-sparkle-updater
+        key: updater-cache
+    - name: Checkout Iris Sparkle Updater
+      if: steps.cache-sparkle.outputs.cache-hit != 'true'
+      run: git clone --depth 1 https://github.com/impel-intelligence/iris-sparkle-updater/ # Depth 1 for a shallow clone
+    - name: Update Sparkle
+      run: ./scripts/update_sparkle.sh ${{ github.ref_name }} "${{ github.event.release.body }}"
+    - name: Deploy Sparkle Server
+      run: |
+        cd iris-sparkle-updater
+        flyctl deploy
+        cd ..
