@@ -14,10 +14,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        with:
-          submodules: recursive
-          token: ${{ secrets.ACTIONS_PA_TOKEN }}
-          
       - name: Install mise & install tuist
         uses: jdx/mise-action@v4
         with:
