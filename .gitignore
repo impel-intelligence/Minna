@@ -8,3 +8,4 @@
 # Ignore Tuist build artifacts and cached files
 /.build/
 /Derived/
+/.claude
