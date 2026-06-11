@@ -1,4 +1,5 @@
 import ProjectDescription
+import ProjectDescriptionHelpers
 
 let project = Project(
     name: "Iris",
@@ -8,21 +9,24 @@ let project = Project(
             destinations: .macOS,
             product: .app,
             bundleId: "com.tryiris.iris.mac",
-            infoPlist: .default,
+            infoPlist: irisInfoPlist,
             buildableFolders: [
                 "Iris/Sources",
                 "Iris/Resources",
             ],
             scripts: [
-                .pre(
+                .post(
                     script: """
                     export PATH="$HOME/.local/bin:$PATH"
                     cd "$SRCROOT"
-                    mise exec -- swiftlint lint --quiet
+                    mise exec -- swiftlint lint --quiet --config .swiftlint.yml
                     """,
                     name: "SwiftLint",
-                    basedOnDependencyAnalysis: false
+                    basedOnDependencyAnalysis: false,
                 ),
+            ],
+            dependencies: [
+//                .external(name: "sentry")
             ]
         ),
         .target(

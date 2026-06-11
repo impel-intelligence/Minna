@@ -4,4 +4,4 @@
 --swiftversion 6.0
 
 # Paths to exclude from formatting
---exclude Derived,Tuist/.build,**/.build
+--exclude Derived,Tuist/.build,**/.build 
