@@ -1,0 +1,4 @@
+[tools]
+tuist = "4.199.1"
+swiftlint = "latest"
+swiftformat = { version = "latest", no_app = true, rename_exe = "swiftformat" }

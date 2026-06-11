@@ -1,0 +1,10 @@
+.DS_Store
+
+# Ignore generated Xcode projects and workspaces
+*.xcodeproj/
+*.xcworkspace/
+*.xcuserstate
+
+# Ignore Tuist build artifacts and cached files
+/.build/
+/Derived/
