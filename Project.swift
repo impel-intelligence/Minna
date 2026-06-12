@@ -22,13 +22,18 @@ let project = Project(
                     mise exec -- swiftlint lint --quiet --config .swiftlint.yml
                     """,
                     name: "SwiftLint",
+                    inputPaths: [
+                        "mise.toml",
+                        ".swiftlint.yml"
+                    ],
                     basedOnDependencyAnalysis: false,
                 )
             ],
             dependencies: [
                 .external(name: "SFSymbols")
 //                .external(name: "sentry")
-            ]
+            ],
+            settings: irisSettings
         ),
         .target(
             name: "IrisTests",
