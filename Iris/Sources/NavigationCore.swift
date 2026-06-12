@@ -10,7 +10,8 @@ import SwiftData
 
 public struct NavigationCore: View {
     @Environment(\.modelContext) private var modelContext
-    
+    @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \.order) private var folders: [Folder]
+
     @AppStorage("knowledgeExpanded") var knowledgeExpanded: Bool = true
     @AppStorage("connectionsExpanded") var connectionsExpanded: Bool = true
 
@@ -29,7 +30,7 @@ public struct NavigationCore: View {
                 }
 
                 Section("Knowledge Base", isExpanded: $knowledgeExpanded) {
-                    KnowledgeBaseContent()
+                    KnowledgeBaseContent(folders: folders)
                 }
                 
                 Section("Connections", isExpanded: $connectionsExpanded) {
@@ -51,26 +52,15 @@ public struct NavigationCore: View {
     
     private func addItem() {
         withAnimation {
-            let newFolder = Folder(name: "Test Folder", icon: FolderIcon(symbol: .symbol("star.hexagon.fill")))
+            let newFolder = Folder(name: "Test Folder", icon: FolderIcon(symbol: .symbol("star.hexagon.fill")), order: folders.count)
             modelContext.insert(newFolder)
         }
     }
 }
 
-//struct ReOrderAbleDisclosureGroup<Data: RandomAccessCollection, Content: View>: View where Data.Element: Identifiable {
-//    var data: Data
-//    @ViewBuilder var content: (Data.Element) -> Content
-//
-//    var body: some View {
-//        ForEach(data) { folder in
-//            content(folder)
-//        }
-//    }
-//}
-
 struct KnowledgeBaseContent: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \.order) private var folders: [Folder]
+    var folders: [Folder]
 
     var body: some View {
         ForEach(folders) { folder in
@@ -142,7 +132,6 @@ struct FolderRow: View {
                             if let children = folder.children, let parent = folder.parent {
                                 for child in children {
                                     child.parent = parent
-                                    parent.children?.append(folder)
                                 }
                             }
                             
