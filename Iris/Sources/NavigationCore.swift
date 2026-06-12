@@ -10,7 +10,6 @@ import SwiftData
 
 public struct NavigationCore: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(filter: #Predicate<Folder> { $0.parent == nil }) private var folders: [Folder]
     
     @AppStorage("knowledgeExpanded") var knowledgeExpanded: Bool = true
     @AppStorage("connectionsExpanded") var connectionsExpanded: Bool = true
@@ -30,9 +29,7 @@ public struct NavigationCore: View {
                 }
 
                 Section("Knowledge Base", isExpanded: $knowledgeExpanded) {
-                    OutlineGroup(folders, children: \.displayChildren) { folder in
-                        sidebarFolderItem(folder: folder)
-                    }
+                    KnowledgeBaseContent()
                 }
                 
                 Section("Connections", isExpanded: $connectionsExpanded) {
@@ -52,10 +49,66 @@ public struct NavigationCore: View {
         }
     }
     
+    private func addItem() {
+        withAnimation {
+            let newFolder = Folder(name: "Test Folder", icon: FolderIcon(symbol: .symbol("star.hexagon.fill")))
+            modelContext.insert(newFolder)
+        }
+    }
+}
+
+//struct ReOrderAbleDisclosureGroup<Data: RandomAccessCollection, Content: View>: View where Data.Element: Identifiable {
+//    var data: Data
+//    @ViewBuilder var content: (Data.Element) -> Content
+//
+//    var body: some View {
+//        ForEach(data) { folder in
+//            content(folder)
+//        }
+//    }
+//}
+
+struct KnowledgeBaseContent: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \.order) private var folders: [Folder]
+
+    var body: some View {
+        ForEach(folders) { folder in
+            FolderRow(folder: folder)
+        }
+        .onMove { source, destination in
+            FolderRow.reorder(folders, from: source, to: destination)
+        }
+    }
+}
+
+struct FolderRow: View {
+    @Environment(\.modelContext) private var modelContext
+    let folder: Folder
+    
+    var body: some View {
+        if let children = folder.displayChildren {
+            DisclosureGroup {
+                ForEach(children) { child in
+                    FolderRow(folder: child)
+                }
+                .onMove { source, destination in
+                    if let displayChildren = folder.displayChildren {
+                        FolderRow.reorder(displayChildren, from: source, to: destination)
+                    }
+                }
+            } label: {
+                sidebarFolderItem(folder: folder)
+            }
+        } else {
+            sidebarFolderItem(folder: folder)
+        }
+    }
+    
     @ViewBuilder
     private func sidebarFolderItem(folder: Folder) -> some View {
         NavigationLink {
-            Text(folder.name)
+            FolderView()
         } label: {
             Label {
                 Text(folder.name)
@@ -72,7 +125,7 @@ public struct NavigationCore: View {
                 if !folder.protected {
                     Button("Add Child") {
                         withAnimation {
-                            let newFolder = Folder(name: "Subfolder", icon: FolderIcon(symbol: .symbol("star")))
+                            let newFolder = Folder(name: "Subfolder \(folder.children?.count ?? 0)", icon: FolderIcon(symbol: .symbol("star")))
                             
                             if folder.children == nil {
                                 folder.children = []
@@ -86,19 +139,29 @@ public struct NavigationCore: View {
                     }
                     Button("Delete") {
                         withAnimation {
+                            if let children = folder.children, let parent = folder.parent {
+                                for child in children {
+                                    child.parent = parent
+                                    parent.children?.append(folder)
+                                }
+                            }
+                            
                             modelContext.delete(folder)
                         }
                     }
                 }
             }
         }
-
     }
-
-    private func addItem() {
+    
+    static func reorder(_ items: [Folder], from source: IndexSet, to destination: Int) {
         withAnimation {
-            let newFolder = Folder(name: "Test Folder", icon: FolderIcon(symbol: .symbol("star.hexagon.fill")))
-            modelContext.insert(newFolder)
+            var mutableItems = items
+            mutableItems.move(fromOffsets: source, toOffset: destination)
+            
+            for (index, item) in mutableItems.enumerated() {
+                item.order = index
+            }
         }
     }
 }

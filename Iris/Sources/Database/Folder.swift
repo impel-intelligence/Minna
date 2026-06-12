@@ -27,6 +27,7 @@ final class Folder: Identifiable, Hashable {
     var name: String
     var icon: FolderIcon
     var protected: Bool = false
+    var order: Int = 0
     
     @Relationship(deleteRule: .nullify) var children: [Folder]?
     @Relationship(deleteRule: .nullify, inverse: \Folder.children) var parent: Folder?
@@ -40,14 +41,15 @@ final class Folder: Identifiable, Hashable {
     /// Attribution: Claude Opus 4.8
     var displayChildren: [Folder]? {
         guard let children, !children.isEmpty else { return nil }
-        return children
+        return children.sorted(by: { $0.order < $1.order })
     }
 
-    init(uuid: UUID = UUID(), name: String, icon: FolderIcon, children: [Folder]? = nil, protected: Bool = false) {
+    init(uuid: UUID = UUID(), name: String, icon: FolderIcon, children: [Folder]? = nil, protected: Bool = false, order: Int = 0) {
         self.uuid = uuid
         self.name = name
         self.icon = icon
         self.children = children
         self.protected = protected
+        self.order = order
     }
 }

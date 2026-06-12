@@ -7,16 +7,9 @@
 
 import SwiftUI
 
-struct FolderView: View, Navigable {
-    static let label: Label<Text, ModifiedContent<Image, AccessibilityAttachmentModifier>> = Label {
-        Text("Recents")
-    } icon: {
-        Image(.clock)
-            .accessibilityLabel("clock")
-    }
-
+struct FolderView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text("Folder")
     }
 }
 
