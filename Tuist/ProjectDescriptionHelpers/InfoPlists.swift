@@ -12,6 +12,16 @@ public let irisInfoPlist: InfoPlist = .dictionary([
     "CFBundleIdentifier": .string("$(PRODUCT_BUNDLE_IDENTIFIER)"),
     "CFBundleDisplayName": .string("Iris"),
     
+    // Exported Type Identifiers
+    "UTExportedTypeDeclarations": [
+        [
+            "UTTypeDescription": "Iris Folder",
+            "UTTypeIcons": [:],
+            "UTTypeIdentifier": "com.tryiris.iris.mac.folder",
+            "UTTypeTagSpecification": [:]
+        ]
+    ],
+    
     // Sparkle Values
 //    "SUFeedURL": .string("https://impel-sparkle-updater.fly.dev/appcast.xml"),
 //    "SUScheduledCheckInterval": .integer(21600),
