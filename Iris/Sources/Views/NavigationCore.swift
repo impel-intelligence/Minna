@@ -98,48 +98,34 @@ struct FolderRow: View {
     @ViewBuilder
     private func sidebarFolderItem(folder: Folder) -> some View {
         NavigationLink {
-            FolderView()
+            FolderView(folder: folder)
         } label: {
-            Label {
-                Text(folder.name)
-            } icon: {
-                switch folder.icon.symbol {
-                case .emoji(let emoji):
-                    Text(emoji)
-                case .symbol(let symbol):
-                    Image(systemName: symbol)
-                        .accessibilityLabel(symbol)
-                }
-            }
-            .contextMenu {
-                if !folder.protected {
-                    Button("Add Child") {
-                        withAnimation {
-                            let newFolder = Folder(name: "Subfolder \(folder.children?.count ?? 0)", icon: FolderIcon(symbol: .symbol("star")))
-                            
-                            if folder.children == nil {
-                                folder.children = []
+            folder.label()
+                .contextMenu {
+                    if !folder.protected {
+                        Button("Add Child") {
+                            withAnimation {
+                                let newFolder = Folder(name: "Subfolder \(folder.children.count)", icon: FolderIcon(symbol: .symbol("star")))
+                                
+                                folder.children.append(newFolder)
+                                newFolder.parent = folder
+                                
+                                modelContext.insert(newFolder)
                             }
-                            
-                            folder.children?.append(newFolder)
-                            newFolder.parent = folder
-                            
-                            modelContext.insert(newFolder)
                         }
-                    }
-                    Button("Delete") {
-                        withAnimation {
-                            if let children = folder.children, let parent = folder.parent {
-                                for child in children {
-                                    child.parent = parent
+                        Button("Delete") {
+                            withAnimation {
+                                if !folder.children.isEmpty, let parent = folder.parent {
+                                    for child in folder.children {
+                                        child.parent = parent
+                                    }
                                 }
+                                
+                                modelContext.delete(folder)
                             }
-                            
-                            modelContext.delete(folder)
                         }
                     }
                 }
-            }
         }
     }
     
@@ -157,5 +143,5 @@ struct FolderRow: View {
 
 #Preview {
     NavigationCore()
-        .modelContainer(for: Folder.self, inMemory: true)
+        .modelContainer(SampleDatabase.shared.modelContainer)
 }
