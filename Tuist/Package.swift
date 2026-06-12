@@ -19,5 +19,6 @@ let package = Package(
         // .package(url: "https://github.com/Alamofire/Alamofire", from: "5.0.0"),
         // You can read more about dependencies here: https://docs.tuist.io/documentation/tuist/dependencies
 //        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.17.1"),
+        .package(url: "https://github.com/ActuallyTaylor/SFSymbols", from: "7.0.0")
     ]
 )

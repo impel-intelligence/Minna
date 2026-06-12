@@ -12,7 +12,7 @@ let project = Project(
             infoPlist: irisInfoPlist,
             buildableFolders: [
                 "Iris/Sources",
-                "Iris/Resources",
+                "Iris/Resources"
             ],
             scripts: [
                 .post(
@@ -23,9 +23,10 @@ let project = Project(
                     """,
                     name: "SwiftLint",
                     basedOnDependencyAnalysis: false,
-                ),
+                )
             ],
             dependencies: [
+                .external(name: "SFSymbols")
 //                .external(name: "sentry")
             ]
         ),
@@ -36,9 +37,9 @@ let project = Project(
             bundleId: "com.tryiris.iris.mac.tests",
             infoPlist: .default,
             buildableFolders: [
-                "Iris/Tests",
+                "Iris/Tests"
             ],
             dependencies: [.target(name: "Iris")]
-        ),
+        )
     ]
 )

@@ -1,8 +1,20 @@
+disabled_rules:
+  - leading_whitespace
+  - trailing_whitespace
+  - identifier_name
+  - line_length
+  - private_over_fileprivate
 
 opt_in_rules:
   - empty_count
+  - accessibility_label_for_image
+  - accessibility_trait_for_button
+  - notification_center_detachment
+  - yoda_condition
 
 analyzer_rules:
+  - unused_declaration
+  - unused_import
   - explicit_self
 
 excluded:

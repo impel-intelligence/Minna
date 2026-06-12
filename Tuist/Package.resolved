@@ -1,13 +1,13 @@
 {
-  "originHash" : "af0b054b9dd79757843350928701b3c90715f3edd802a22c09abfc30aab0ea64",
+  "originHash" : "5f1d7e6d80af8cbaa4d2095e3a8358a65e1c14f1ff95fdf75cb48ba4216dd32b",
   "pins" : [
     {
-      "identity" : "sentry-cocoa",
+      "identity" : "sfsymbols",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/getsentry/sentry-cocoa",
+      "location" : "https://github.com/ActuallyTaylor/SFSymbols",
       "state" : {
-        "revision" : "2c420d31d0c31b525fa9e7c552ef0fc9d924befc",
-        "version" : "9.17.1"
+        "revision" : "b52a96089cae21a7174ad723d03fa7427392e6c7",
+        "version" : "7.0.0"
       }
     }
   ],

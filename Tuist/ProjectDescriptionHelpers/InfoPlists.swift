@@ -18,6 +18,5 @@ public let irisInfoPlist: InfoPlist = .dictionary([
 //    "SUPublicEDKey": .string("TVcja488EICE+Z8F7XcTLvVq7a8TBwobbwlV87pJE10="),
 
     // Other
-    "LSApplicationCategoryType": .string("public.app-category.utilities"),
+    "LSApplicationCategoryType": .string("public.app-category.utilities")
 ])
-
