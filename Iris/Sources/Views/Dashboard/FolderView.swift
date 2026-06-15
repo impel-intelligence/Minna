@@ -10,24 +10,63 @@ import SwiftData
 import SFSymbols
 import ViewStorage
 
-enum FolderViewMode: Int, ViewStorable {
+enum FolderViewMode: Int, CaseIterable, CustomStringConvertible, ViewStorable {
     case grid
     case list
+    
+    var description: String {
+        switch self {
+        case .grid:
+            return "Grid"
+        case .list:
+            return "List"
+        }
+    }
+}
+
+enum FolderViewSort: Int, CaseIterable, CustomStringConvertible, ViewStorable {
+    case mostRecent
+    case leastRecent
+    case az
+    case za
+    
+    var description: String {
+        switch self {
+        case .mostRecent:
+            return "Most Recent"
+        case .leastRecent:
+            return "Least Recent"
+        case .az:
+            return "A-Z"
+        case .za:
+            return "Z-A"
+        }
+    }
+
 }
 
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     
+    let folder: Folder
+
     // WARN: Do not edit this query, its actual value is set in the initializer
     @Query private var files: [File]
-    let folder: Folder
+    
+    // SwiftData does not support filtering by custom enums within a query. This in-memory filtering is required.
+    var filteredFiles: [File] {
+        files.filter { contentTypes.contains($0.type) }
+    }
+
     
     @ViewStorage("viewMode", path: \Self.folder.uuid.uuidString) var viewMode: FolderViewMode = .grid
+    @ViewStorage("contentTypes", path: \Self.folder.uuid.uuidString) var contentTypes: Set<ContentType> = Set(ContentType.allCases)
+    @ViewStorage("sortMode", path: \Self.folder.uuid.uuidString) var sortMode: FolderViewSort = .mostRecent
     
     init(folder: Folder) {
         self.folder = folder
         let id = folder.persistentModelID
-                
+
         // This is funky! For some reason there is now way to filter a query when it enters into the view. You have to do this weird `_` syntax that SwiftUI hacks seem to love.
         _files = Query(filter: #Predicate<File> { file in
             return file.folder.persistentModelID == id
@@ -44,14 +83,14 @@ struct FolderView: View {
             case .grid:
                 ScrollView {
                     LazyVGrid(columns: columns) {
-                        ForEach(files) { file in
+                        ForEach(filteredFiles) { file in
                             GridFileCard(file: file)
                         }
                     }
                 }
             case .list:
                 List {
-                    ForEach(files) { file in
+                    ForEach(filteredFiles) { file in
                         ListFileCard(file: file)
                             .listRowSeparator(.hidden)
                     }
@@ -62,22 +101,40 @@ struct FolderView: View {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button(.plus) {
                     withAnimation {
-                        let newFile = File(createdAt: .now, folder: folder, title: "Test File", shortDescription: "This is a small test document", color: ThemeColor.random, type: .localURL, url: URL(string: "https://google.com")!, bookmark: nil, source: "web", order: files.count)
+                        let newFile = File(createdAt: .now, folder: folder, title: "Test File", shortDescription: "This is a small test document", color: ThemeColor.random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "web", order: files.count)
                         modelContext.insert(newFile)
                     }
                 }
 
                 Menu("Filter & Sorting", systemImage: SFSymbol.line_3_horizontal_decrease.name) {
                     Picker(selection: $viewMode) {
-                        Text("Grid")
-                            .tag(FolderViewMode.grid)
-                        Text("List")
-                            .tag(FolderViewMode.list)
+                        ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
+                            Text(mode.description)
+                                .tag(mode)
+
+                        }
                     } label: {
                         EmptyView() // Quick hack to remove the section header that gets added for this entry.
                     }
                     .pickerStyle(.inline)
                     Divider()
+                    MultiPicker(selection: $contentTypes) {
+                        ForEach(ContentType.allCases, id: \.rawValue) { mode in
+                            Text(mode.description)
+                                .tag(mode)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                    Divider()
+                    Picker(selection: $sortMode) {
+                        ForEach(FolderViewSort.allCases, id: \.rawValue) { mode in
+                            Text(mode.description)
+                                .tag(mode)
+                        }
+                    } label: {
+                        EmptyView() // Quick hack to remove the section header that gets added for this entry.
+                    }
+                    .pickerStyle(.inline)
                 }
             }
         }

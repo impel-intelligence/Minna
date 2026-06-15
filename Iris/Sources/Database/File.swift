@@ -9,27 +9,65 @@ import Foundation
 import SwiftData
 import SFSymbols
 import SwiftUI
+import ViewStorage
 
-enum ContentType: Int, Codable {
-    case externalURL
-    case localURL
-    case image
-    case recording
+enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseIterable {
     case askIris
+    case recording
+
+    case pdf
+    case image
+    case video
+    case text
+    
+    case webpage
     
     var icon: SFSymbol {
         switch self {
-        case .externalURL:
-            .text_alignleft
-        case .localURL:
-            .text_alignleft
+        case .webpage:
+            return .text_alignleft
+        case .video:
+            return .video
         case .image:
-            .photo
+            return .photo
+        case .pdf:
+            return .doc_richtext
         case .recording:
-            .mic
+            return .mic
         case .askIris:
-            .sparkles
+            return .sparkles
+        case .text:
+            return .doc
         }
+    }
+    
+    var description: String {
+        switch self {
+        case .askIris:
+            return "Ask Iris"
+        case .recording:
+            return "Recordings"
+        case .pdf:
+            return "PDFs"
+        case .image:
+            return "Images"
+        case .video:
+            return "Videos"
+        case .text:
+            return "Text Files"
+        case .webpage:
+            return "Webpages"
+        }
+    }
+}
+
+extension ContentType: ViewStorable {
+    public static func read(from store: UserDefaults, forKey key: String) -> ContentType? {
+        (store.object(forKey: key) as? Int).flatMap({ ContentType(rawValue: $0) })
+    }
+
+    public func write(to store: UserDefaults, forKey key: String) {
+        store.set(rawValue, forKey: key)
     }
 }
 
@@ -47,7 +85,7 @@ final class File {
     var color: ThemeColor
     var url: URL
     var bookmark: Data?
-    var type: ContentType = ContentType.localURL
+    var type: ContentType = ContentType.webpage
     var source: String
     var order: Int
 

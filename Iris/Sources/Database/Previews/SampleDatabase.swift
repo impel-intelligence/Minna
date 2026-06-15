@@ -73,7 +73,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "iris://internal/notes/swift-concurrency")!,
             source: "Internal Notes",
-            type: .localURL
+            type: .webpage
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*18),
@@ -82,7 +82,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "https://developer.apple.com/documentation/swiftdata")!,
             source: "Apple Developer",
-            type: .externalURL
+            type: .webpage
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*24),
@@ -109,7 +109,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "iris://internal/specs/design-tokens")!,
             source: "Design System",
-            type: .localURL
+            type: .text
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*42),
@@ -118,7 +118,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "https://forums.swift.org/t/best-practices-for-actors/")!,
             source: "Swift Forums",
-            type: .externalURL
+            type: .pdf
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*48),
@@ -145,7 +145,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "iris://internal/research/thesis-outline")!,
             source: "Research Notes",
-            type: .localURL
+            type: .text
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*66),
@@ -154,7 +154,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "https://arxiv.org/abs/1706.03762")!,
             source: "arXiv",
-            type: .externalURL
+            type: .pdf
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*72),
@@ -176,12 +176,12 @@ class SampleDatabase {
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*84),
-            title: "Release Checklist",
-            shortDescription: "Internal QA and store submission steps.",
+            title: "Release",
+            shortDescription: "Internal QA and store submission discussion.",
             color: .random,
             url: URL(string: "iris://internal/process/release-checklist")!,
             source: "Ops Wiki",
-            type: .localURL
+            type: .video
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*90),
@@ -190,7 +190,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "https://developer.apple.com/design/human-interface-guidelines/")!,
             source: "Apple Developer",
-            type: .externalURL
+            type: .webpage
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*96),
@@ -217,7 +217,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "iris://internal/incidents/2026-05-27")!,
             source: "Ops Wiki",
-            type: .localURL
+            type: .webpage
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*114),
@@ -226,7 +226,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "https://webkit.org/blog/")!,
             source: "WebKit Blog",
-            type: .externalURL
+            type: .webpage
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*120),
@@ -253,7 +253,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "iris://internal/people/team-directory")!,
             source: "HR Portal",
-            type: .localURL
+            type: .webpage
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*138),
@@ -262,7 +262,7 @@ class SampleDatabase {
             color: .random,
             url: URL(string: "https://support.apple.com/guide/security/welcome/web")!,
             source: "Apple Support",
-            type: .externalURL
+            type: .webpage
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*144),

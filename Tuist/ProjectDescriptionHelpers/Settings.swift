@@ -7,7 +7,7 @@
 
 import ProjectDescription
 
-public let TARGET_MACOS_VERSION = "14.0"
+public let TARGET_MACOS_VERSION = "15.0"
 public let APP_STAGE = "alpha"
 public let CURRENT_PROJECT_VERSION = "0.1.0"
 public let MARKETING_VERSION = "\(CURRENT_PROJECT_VERSION)"
