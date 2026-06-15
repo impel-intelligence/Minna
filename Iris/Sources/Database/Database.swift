@@ -27,8 +27,6 @@ class Database {
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
             try populateStartupData()
-            print("Database Path: \(modelConfiguration.url)")
-
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }

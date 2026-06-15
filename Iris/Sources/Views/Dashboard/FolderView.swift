@@ -7,6 +7,13 @@
 
 import SwiftUI
 import SwiftData
+import SFSymbols
+import ViewStorage
+
+enum FolderViewMode: Int, ViewStorable {
+    case grid
+    case list
+}
 
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
@@ -14,6 +21,8 @@ struct FolderView: View {
     // WARN: Do not edit this query, its actual value is set in the initializer
     @Query private var files: [File]
     let folder: Folder
+    
+    @ViewStorage("viewMode", path: \Self.folder.uuid.uuidString) var viewMode: FolderViewMode = .grid
     
     init(folder: Folder) {
         self.folder = folder
@@ -26,23 +35,49 @@ struct FolderView: View {
     }
     
     let columns = [
-        GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 16)
+        GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 12)
     ]
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns) {
-                ForEach(files) { file in
-                    GridFileCard(file: file)
+        Group {
+            switch viewMode {
+            case .grid:
+                ScrollView {
+                    LazyVGrid(columns: columns) {
+                        ForEach(files) { file in
+                            GridFileCard(file: file)
+                        }
+                    }
+                }
+            case .list:
+                List {
+                    ForEach(files) { file in
+                        ListFileCard(file: file)
+                            .listRowSeparator(.hidden)
+                    }
                 }
             }
         }
-
         .toolbar {
-            Button(.plus) {
-                withAnimation {
-                    let newFile = File(createdAt: .now, folder: folder, title: "Test File", shortDescription: "This is a small test document", color: ThemeColor.random, type: .localURL, url: URL(string: "https://google.com")!, bookmark: nil, source: "web", order: files.count)
-                    modelContext.insert(newFile)
+            ToolbarItemGroup(placement: .primaryAction) {
+                Button(.plus) {
+                    withAnimation {
+                        let newFile = File(createdAt: .now, folder: folder, title: "Test File", shortDescription: "This is a small test document", color: ThemeColor.random, type: .localURL, url: URL(string: "https://google.com")!, bookmark: nil, source: "web", order: files.count)
+                        modelContext.insert(newFile)
+                    }
+                }
+
+                Menu("Filter & Sorting", systemImage: SFSymbol.line_3_horizontal_decrease.name) {
+                    Picker(selection: $viewMode) {
+                        Text("Grid")
+                            .tag(FolderViewMode.grid)
+                        Text("List")
+                            .tag(FolderViewMode.list)
+                    } label: {
+                        EmptyView() // Quick hack to remove the section header that gets added for this entry.
+                    }
+                    .pickerStyle(.inline)
+                    Divider()
                 }
             }
         }
@@ -61,3 +96,4 @@ struct FolderView: View {
     }
     .modelContainer(SampleDatabase.shared.modelContainer)
 }
+

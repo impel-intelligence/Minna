@@ -30,7 +30,8 @@ let project = Project(
                 )
             ],
             dependencies: [
-                .external(name: "SFSymbols")
+                .external(name: "SFSymbols"),
+                .external(name: "ViewStorage")
 //                .external(name: "sentry")
             ],
             settings: irisSettings

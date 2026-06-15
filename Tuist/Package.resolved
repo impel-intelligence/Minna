@@ -1,5 +1,5 @@
 {
-  "originHash" : "5f1d7e6d80af8cbaa4d2095e3a8358a65e1c14f1ff95fdf75cb48ba4216dd32b",
+  "originHash" : "b6f054d4ff3938e440c168d1c25ab55daa8da754d4815837286001904dd834f3",
   "pins" : [
     {
       "identity" : "sfsymbols",
@@ -8,6 +8,24 @@
       "state" : {
         "revision" : "b52a96089cae21a7174ad723d03fa7427392e6c7",
         "version" : "7.0.0"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "79e4b74a295b6eb74a8b585e3a39d29e70c1dbd1",
+        "version" : "603.0.2"
+      }
+    },
+    {
+      "identity" : "viewstorage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/impel-intelligence/ViewStorage",
+      "state" : {
+        "revision" : "c9365dddaaf0a23ad35692246019dcd1780dca30",
+        "version" : "1.0.1"
       }
     }
   ],
