@@ -42,7 +42,32 @@ enum FolderViewSort: Int, CaseIterable, CustomStringConvertible, ViewStorable {
             return "Z-A"
         }
     }
-
+    
+    var sortDescriptor: SortDescriptor<File> {
+        switch self {
+        case .mostRecent:
+            return SortDescriptor(\.createdAt, order: .forward)
+        case .leastRecent:
+            return SortDescriptor(\.createdAt, order: .reverse)
+        case .az:
+            return SortDescriptor(\.title, order: .forward)
+        case .za:
+            return SortDescriptor(\.title, order: .reverse)
+        }
+    }
+    
+    func sortFunction(lhs: File, rhs: File) -> Bool {
+        switch self {
+        case .mostRecent:
+            return lhs.createdAt.compare(rhs.createdAt) == .orderedDescending
+        case .leastRecent:
+            return lhs.createdAt.compare(rhs.createdAt) == .orderedAscending
+        case .az:
+            return lhs.title.localizedCompare(rhs.title) == .orderedAscending
+        case .za:
+            return lhs.title.localizedCompare(rhs.title) == .orderedDescending
+        }
+    }
 }
 
 struct FolderView: View {
@@ -53,12 +78,11 @@ struct FolderView: View {
     // WARN: Do not edit this query, its actual value is set in the initializer
     @Query private var files: [File]
     
-    // SwiftData does not support filtering by custom enums within a query. This in-memory filtering is required.
+    // SwiftData does not support filtering by custom enums within a query. This in-memory filtering is required. Swift Data also does not support dynamic sorts... So we are doing that in memory as well.
     var filteredFiles: [File] {
-        files.filter { contentTypes.contains($0.type) }
+        files.filter { contentTypes.contains($0.type) }.sorted(by: sortMode.sortFunction(lhs:rhs:))
     }
 
-    
     @ViewStorage("viewMode", path: \Self.folder.uuid.uuidString) var viewMode: FolderViewMode = .grid
     @ViewStorage("contentTypes", path: \Self.folder.uuid.uuidString) var contentTypes: Set<ContentType> = Set(ContentType.allCases)
     @ViewStorage("sortMode", path: \Self.folder.uuid.uuidString) var sortMode: FolderViewSort = .mostRecent
@@ -70,7 +94,7 @@ struct FolderView: View {
         // This is funky! For some reason there is now way to filter a query when it enters into the view. You have to do this weird `_` syntax that SwiftUI hacks seem to love.
         _files = Query(filter: #Predicate<File> { file in
             return file.folder.persistentModelID == id
-        }, sort: \.order)
+        })
     }
     
     let columns = [
@@ -101,7 +125,7 @@ struct FolderView: View {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button(.plus) {
                     withAnimation {
-                        let newFile = File(createdAt: .now, folder: folder, title: "Test File", shortDescription: "This is a small test document", color: ThemeColor.random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "web", order: files.count)
+                        let newFile = File(createdAt: .now, folder: folder, title: "Test File \(files.count)", shortDescription: "This is a small test document", color: ThemeColor.random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "web", order: files.count)
                         modelContext.insert(newFile)
                     }
                 }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "478121913d3e3802d9495becaa6cce03f2d291c698ed4aa7390536bf01da821f",
+  "originHash" : "98fbba70c3a6eeb621e949a3f541f07c439baaebde849c99467edbe84af66e26",
   "pins" : [
     {
       "identity" : "sfsymbols",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/ViewStorage",
       "state" : {
-        "revision" : "f1b975f62794b490621a71f535737b60ebb1f5c3",
-        "version" : "1.3.0"
+        "revision" : "192ff3521e0495b4e01cdff4be37fea1071d1ac3",
+        "version" : "1.4.0"
       }
     }
   ],

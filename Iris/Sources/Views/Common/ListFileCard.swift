@@ -16,6 +16,7 @@ struct ListFileCard: View {
                 Text(file.title)
                     .font(.title3)
                     .fontDesign(.serif)
+                Text(file.createdAt, style: .relative)
                 Spacer()
                 HStack(alignment: .center) {
                     Image(file.type.icon)
