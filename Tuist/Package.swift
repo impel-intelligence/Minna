@@ -21,5 +21,6 @@ let package = Package(
 //        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.17.1"),
         .package(url: "https://github.com/ActuallyTaylor/SFSymbols", from: "7.0.0"),
         .package(url: "https://github.com/impel-intelligence/ViewStorage", from: "1.4.0"),
+        .package(url: "https://github.com/impel-intelligence/IrisSearch", from: "0.1.0")
     ]
 )

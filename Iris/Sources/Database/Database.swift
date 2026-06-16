@@ -41,4 +41,3 @@ class Database {
         try context.save()
     }
 }
-

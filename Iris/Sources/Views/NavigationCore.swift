@@ -5,8 +5,8 @@
 //  Created by Taylor Lineman on 6/11/26.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 public struct NavigationCore: View {
     @Environment(\.modelContext) private var modelContext
@@ -32,10 +32,8 @@ public struct NavigationCore: View {
                 Section("Knowledge Base", isExpanded: $knowledgeExpanded) {
                     KnowledgeBaseContent(folders: folders)
                 }
-                
-                Section("Connections", isExpanded: $connectionsExpanded) {
-                    
-                }
+
+                Section("Connections", isExpanded: $connectionsExpanded) {}
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
             .toolbar {
@@ -43,13 +41,14 @@ public struct NavigationCore: View {
                     Button(action: addItem) {
                         Label("Add Item", systemImage: "plus")
                     }
+                    .accessibilityIdentifier("navigation.addItem")
                 }
             }
         } detail: {
             Text("Select an item")
         }
     }
-    
+
     private func addItem() {
         withAnimation {
             let newFolder = Folder(name: "Test Folder", icon: FolderIcon(symbol: .symbol("star.hexagon.fill")), order: folders.count)
@@ -75,7 +74,7 @@ struct KnowledgeBaseContent: View {
 struct FolderRow: View {
     @Environment(\.modelContext) private var modelContext
     let folder: Folder
-    
+
     var body: some View {
         if let children = folder.displayChildren {
             DisclosureGroup {
@@ -94,8 +93,7 @@ struct FolderRow: View {
             sidebarFolderItem(folder: folder)
         }
     }
-    
-    @ViewBuilder
+
     private func sidebarFolderItem(folder: Folder) -> some View {
         NavigationLink {
             FolderView(folder: folder)
@@ -106,10 +104,10 @@ struct FolderRow: View {
                         Button("Add Child") {
                             withAnimation {
                                 let newFolder = Folder(name: "Subfolder \(folder.children.count)", icon: FolderIcon(symbol: .symbol("star")))
-                                
+
                                 folder.children.append(newFolder)
                                 newFolder.parent = folder
-                                
+
                                 modelContext.insert(newFolder)
                             }
                         }
@@ -120,7 +118,7 @@ struct FolderRow: View {
                                         child.parent = parent
                                     }
                                 }
-                                
+
                                 modelContext.delete(folder)
                             }
                         }
@@ -128,12 +126,12 @@ struct FolderRow: View {
                 }
         }
     }
-    
+
     static func reorder(_ items: [Folder], from source: IndexSet, to destination: Int) {
         withAnimation {
             var mutableItems = items
             mutableItems.move(fromOffsets: source, toOffset: destination)
-            
+
             for (index, item) in mutableItems.enumerated() {
                 item.order = index
             }

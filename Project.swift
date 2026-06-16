@@ -31,8 +31,8 @@ let project = Project(
             ],
             dependencies: [
                 .external(name: "SFSymbols"),
-                .external(name: "ViewStorage")
-//                .external(name: "sentry")
+                .external(name: "ViewStorage"),
+                .external(name: "IrisSearch")
             ],
             settings: irisSettings
         ),
@@ -44,6 +44,17 @@ let project = Project(
             infoPlist: .default,
             buildableFolders: [
                 "Iris/Tests"
+            ],
+            dependencies: [.target(name: "Iris")]
+        ),
+        .target(
+            name: "IrisUITests",
+            destinations: .macOS,
+            product: .uiTests,
+            bundleId: "com.tryiris.iris.mac.uitests",
+            infoPlist: .default,
+            buildableFolders: [
+                "Iris/UITests"
             ],
             dependencies: [.target(name: "Iris")]
         )

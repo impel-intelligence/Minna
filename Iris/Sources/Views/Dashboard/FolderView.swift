@@ -177,4 +177,3 @@ struct FolderView: View {
     }
     .modelContainer(SampleDatabase.shared.modelContainer)
 }
-

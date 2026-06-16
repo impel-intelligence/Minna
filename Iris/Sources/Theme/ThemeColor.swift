@@ -15,7 +15,7 @@ enum ThemeColor: Int, Codable {
     case grape
     
     static var random: ThemeColor {
-        return ThemeColor(rawValue: Int.random(in: 0..<ThemeColor.grape.rawValue))!
+        return ThemeColor(rawValue: Int.random(in: 0...ThemeColor.grape.rawValue))!
     }
     
     var lightBackground: Color {

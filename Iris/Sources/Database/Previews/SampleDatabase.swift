@@ -28,11 +28,11 @@ class SampleDatabase {
             
         ], protected: true),
         Folder(name: "Coding", icon: FolderIcon(symbol: .symbol("ellipsis.curlybraces")), children: [
-            Folder(name: "Firmware", icon: FolderIcon(symbol: .symbol("car"))),
+            Folder(name: "Firmware", icon: FolderIcon(symbol: .symbol("car")))
         ]),
         Folder(name: "Research Papers", icon: FolderIcon(symbol: .symbol("graduationcap")), children: [
-            Folder(name: "Thesis", icon: FolderIcon(symbol: .symbol("pencil.line"))),
-        ]),
+            Folder(name: "Thesis", icon: FolderIcon(symbol: .symbol("pencil.line")))
+        ])
     ]
     
     public var sampleFiles: [File] = []
@@ -308,4 +308,3 @@ class SampleDatabase {
         }
     }
 }
-
