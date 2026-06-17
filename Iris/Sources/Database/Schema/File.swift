@@ -100,13 +100,13 @@ final class File {
     var uuid: UUID
     var createdAt: Date
     
-    @Relationship(deleteRule: .noAction, inverse: \Folder.files)
+    @Relationship(deleteRule: .cascade, inverse: \Folder.files)
     var folder: Folder
     
     var title: String
     var shortDescription: String
     var color: ThemeColor
-    var url: URL
+    @Attribute(.unique) var url: URL
     var bookmark: Data?
     var type: ContentType = ContentType.webpage
     var source: String

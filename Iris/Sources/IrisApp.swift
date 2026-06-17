@@ -15,6 +15,7 @@ struct IrisApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationCore()
+                .environment(AlertCenter.shared)
         }
         .commands {
             CommandGroup(replacing: .newItem) {

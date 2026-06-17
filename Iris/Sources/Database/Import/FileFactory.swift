@@ -36,7 +36,7 @@ struct FileFactory {
         }
         
         guard let file = try file(from: url, in: folder, resourceValues: fileAttributes) else { return [] }
-                
+        
         return [file]
     }
     

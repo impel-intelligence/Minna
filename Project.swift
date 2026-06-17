@@ -32,8 +32,7 @@ let project = Project(
             dependencies: [
                 .external(name: "SFSymbols"),
                 .external(name: "ViewStorage"),
-                .external(name: "IrisSearch"),
-                .external(name: "Digester")
+                .external(name: "IrisSearch")
             ],
             settings: irisSettings
         ),
@@ -58,6 +57,11 @@ let project = Project(
                 "Iris/UITests"
             ],
             dependencies: [.target(name: "Iris")]
-        )
+        ),
+        
+        // MARK: Features
+        
+        // MARK: Services
+
     ]
 )

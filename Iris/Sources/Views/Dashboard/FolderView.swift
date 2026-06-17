@@ -72,6 +72,7 @@ enum FolderViewSort: Int, CaseIterable, CustomStringConvertible, ViewStorable {
 
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(AlertCenter.self) private var alertCenter
     
     let folder: Folder
 
@@ -125,7 +126,23 @@ struct FolderView: View {
         }
         .standardFileImporter(presented: $standardFileImporterPresented, selectedFolder: folder, modelContext: modelContext)
         .toolbar {
+            ToolbarItem {
+                NotificationsViewButton()
+            }
+
             ToolbarItemGroup(placement: .primaryAction) {
+                Button("Send Notification") {
+                    let notification = UserNotification(title: "This is a test notification", message: "Tesyt test ", actions: [
+                        UserNotification.ActionOption(title: "Move", action: {
+                            print("Move")
+                        }),
+                        UserNotification.ActionOption(title: "Ignore", action: {
+                            print("Ignore")
+                        })
+                    ])
+                    
+                    alertCenter.post(notification)
+                }
                 Menu {
                     AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
                 } label: {
@@ -135,13 +152,13 @@ struct FolderView: View {
                         Image(.plus)
                     }
                 }
-
+                
                 Menu("Filter & Sorting", systemImage: SFSymbol.line_3_horizontal_decrease.name) {
                     Picker(selection: $viewMode) {
                         ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
                             Text(mode.description)
                                 .tag(mode)
-
+                            
                         }
                     } label: {
                         EmptyView() // Quick hack to remove the section header that gets added for this entry.
@@ -182,4 +199,5 @@ struct FolderView: View {
         FolderView(folder: folder)
     }
     .modelContainer(SampleDatabase.shared.modelContainer)
+    .environment(AlertCenter.shared)
 }
