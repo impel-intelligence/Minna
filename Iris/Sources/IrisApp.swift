@@ -19,7 +19,7 @@ struct IrisApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {
                 AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
-                    .standardFileImporter(presented: $standardFileImporterPresented)
+                    .standardFileImporter(presented: $standardFileImporterPresented, selectedFolder: nil, modelContext: Database.shared.modelContainer.mainContext)
             }
         }
         .modelContainer(Database.shared.modelContainer)

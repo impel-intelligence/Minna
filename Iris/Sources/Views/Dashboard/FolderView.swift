@@ -123,7 +123,7 @@ struct FolderView: View {
                 }
             }
         }
-        .standardFileImporter(presented: $standardFileImporterPresented)
+        .standardFileImporter(presented: $standardFileImporterPresented, selectedFolder: folder, modelContext: modelContext)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Menu {

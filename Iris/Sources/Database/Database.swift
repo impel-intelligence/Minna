@@ -6,28 +6,38 @@
 //
 
 import SwiftData
+import Foundation
 
 @MainActor
 class Database {
     static let shared = Database()
+    private static let unfilledFolderKey: String = "unfilled_folder_key"
         
     let modelContainer: ModelContainer
+    var unfilledFolderUUID: UUID
     
     var context: ModelContext {
         modelContainer.mainContext
     }
     
     private init(sampleData: Bool = false) {
+        if let uuidString = UserDefaults.standard.object(forKey: Database.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
+            unfilledFolderUUID = uuid
+        } else {
+            unfilledFolderUUID = UUID()
+            UserDefaults.standard.set(unfilledFolderUUID.uuidString, forKey: Database.unfilledFolderKey)
+        }
+
         let schema = Schema([
             File.self,
             Folder.self
         ])
+        
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
             try populateStartupData()
-//            print(modelConfiguration.url)
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
@@ -36,7 +46,7 @@ class Database {
     private func populateStartupData() throws {
         let descriptor = FetchDescriptor<Folder>()
         guard try context.fetch(descriptor).isEmpty else { return }
-        let unfilledFolder = Folder(name: "Unfilled", icon: FolderIcon(symbol: .symbol("tray.full")), protected: true)
+        let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol("tray.full")), protected: true)
         context.insert(unfilledFolder)
         try context.save()
     }

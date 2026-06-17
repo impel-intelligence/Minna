@@ -8,6 +8,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import Digester
+import SwiftData
 
 enum IrisFileDialog {
     static let main: String = "com.tryiris.file.dialog.main"
@@ -42,21 +43,52 @@ struct AddItemMenuButtons: View {
 }
 
 extension View {
-    func standardFileImporter(presented: Binding<Bool>) -> some View {
+    func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext) -> some View {
         self
             .fileDialogMessage("Pick a file to add to Iris.")
             .fileDialogCustomizationID(IrisFileDialog.main)
-            .fileImporter(isPresented: presented, allowedContentTypes: DigesterFactory.availableUniformTypes, allowsMultipleSelection: true) { result in
+            .fileImporter(isPresented: presented, allowedContentTypes: DigesterFactory.availableUniformTypes + [.directory, .folder], allowsMultipleSelection: true) { result in
+
                 do {
-                    let urls = try result.get()
+                    var folder: Folder
                     
-                    for url in urls {
+                    if let selectedFolder {
+                        folder = selectedFolder
+                    } else {
+                        // Capture the unfilled UUID so the predicate operates (it needs local state)
+                        let unfilledUUID = Database.shared.unfilledFolderUUID
+                        let descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == unfilledUUID })
+                        let folders = try modelContext.fetch(descriptor)
+                        guard let unfilledFolder = folders.first else { return }
+                        folder = unfilledFolder
+                    }
+
+                    let files = try result.get()
+                    
+                    for file in files {
+                        let gotAccess = file.startAccessingSecurityScopedResource()
+                        guard gotAccess else { return }
                         
-                        //                    DigesterFactory.digester(for: url)
+                        do {
+                            // URL may be a directory, so this can return many urls.
+                            let files = try FileFactory.files(from: file, in: folder)
+                            
+                            for file in files {
+                                modelContext.insert(file)
+                            }
+                            
+                            // DigesterFactory.digester(for: url)
+                            
+                        } catch {
+                            print("Failed to create file for \(file): \(error)")
+                        }
+                        
+                        file.stopAccessingSecurityScopedResource()
                     }
                 } catch {
-                    print("Failed ")
+                    print(error)
                 }
+                
             }
 
     }

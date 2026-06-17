@@ -301,7 +301,7 @@ class SampleDatabase {
             context.insert(folder)
             
             for (index, sampleFile) in sampleFileData.enumerated() {
-                let file = File(createdAt: sampleFile.createdAt, folder: folder, title: sampleFile.title, shortDescription: sampleFile.shortDescription, color: sampleFile.color, type: sampleFile.type, url: sampleFile.url, bookmark: nil, source: sampleFile.source, order: index)
+                let file = File(createdAt: sampleFile.createdAt, folder: folder, title: sampleFile.title, shortDescription: sampleFile.shortDescription, color: sampleFile.color, type: sampleFile.type, url: sampleFile.url, bookmark: nil, source: sampleFile.source)
                 sampleFiles.append(file)
                 context.insert(file)
             }

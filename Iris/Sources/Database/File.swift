@@ -10,6 +10,7 @@ import SwiftData
 import SFSymbols
 import SwiftUI
 import ViewStorage
+import UniformTypeIdentifiers
 
 enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseIterable {
     case askIris
@@ -19,6 +20,7 @@ enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseI
     case image
     case video
     case text
+    case audio
     
     case webpage
     
@@ -34,6 +36,8 @@ enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseI
             return .doc_richtext
         case .recording:
             return .mic
+        case .audio:
+            return .waveform
         case .askIris:
             return .sparkles
         case .text:
@@ -46,17 +50,36 @@ enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseI
         case .askIris:
             return "Ask Iris"
         case .recording:
-            return "Recordings"
+            return "Recording"
         case .pdf:
-            return "PDFs"
+            return "PDF"
         case .image:
-            return "Images"
+            return "Image"
         case .video:
-            return "Videos"
+            return "Video"
         case .text:
-            return "Text Files"
+            return "Text File"
         case .webpage:
-            return "Webpages"
+            return "Webpage"
+        case .audio:
+            return "Audio"
+        }
+    }
+    
+    init?(uniformType: UTType) {
+        switch uniformType {
+        case let type where type.conforms(to: .image):
+            self = .image
+        case let type where type.conforms(to: .audio):
+            self = .audio
+        case let type where type.conforms(to: .video):
+            self = .video
+        case let type where type.conforms(to: .text):
+            self = .text
+        case let type where type.conforms(to: .pdf):
+            self = .pdf
+        default:
+            return nil
         }
     }
 }
@@ -87,9 +110,9 @@ final class File {
     var bookmark: Data?
     var type: ContentType = ContentType.webpage
     var source: String
-    var order: Int
+//    var order: Int
 
-    init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String, order: Int) {
+    init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String/*, order: Int*/) {
         self.uuid = uuid
         self.createdAt = createdAt
         self.folder = folder
@@ -100,6 +123,6 @@ final class File {
         self.bookmark = bookmark
         self.url = url
         self.source = source
-        self.order = order
+//        self.order = order
     }
 }
