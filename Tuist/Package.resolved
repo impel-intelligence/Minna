@@ -1,5 +1,5 @@
 {
-  "originHash" : "3a3b71fbc4d5db4776ec5a60f135858d3349271de402c52eeb895eec908eef73",
+  "originHash" : "d986b23e4c3cf572d264b4e5aec042fd20fa04766028f75ba1d5ed92dcae9da0",
   "pins" : [
     {
       "identity" : "faissmobile",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/IrisSearch",
       "state" : {
-        "revision" : "6fc6bd081589ab2ac2fc0e4e52b36b3d0c9dffcb",
-        "version" : "0.1.0"
+        "revision" : "b16d4f0092de35d219bf4f379e19a1727b3e2a98",
+        "version" : "0.2.1"
       }
     },
     {

@@ -10,9 +10,17 @@ import SwiftData
 
 @main
 struct IrisApp: App {
+    @State var standardFileImporterPresented: Bool = false
+    
     var body: some Scene {
         WindowGroup {
             NavigationCore()
+        }
+        .commands {
+            CommandGroup(replacing: .newItem) {
+                AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
+                    .standardFileImporter(presented: $standardFileImporterPresented)
+            }
         }
         .modelContainer(Database.shared.modelContainer)
     }

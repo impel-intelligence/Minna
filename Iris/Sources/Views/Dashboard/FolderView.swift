@@ -87,6 +87,8 @@ struct FolderView: View {
     @ViewStorage("contentTypes", path: \Self.folder.uuid.uuidString) var contentTypes: Set<ContentType> = Set(ContentType.allCases)
     @ViewStorage("sortMode", path: \Self.folder.uuid.uuidString) var sortMode: FolderViewSort = .mostRecent
     
+    @State var standardFileImporterPresented: Bool = false
+    
     init(folder: Folder) {
         self.folder = folder
         let id = folder.persistentModelID
@@ -121,12 +123,16 @@ struct FolderView: View {
                 }
             }
         }
+        .standardFileImporter(presented: $standardFileImporterPresented)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button(.plus) {
-                    withAnimation {
-                        let newFile = File(createdAt: .now, folder: folder, title: "Test File \(files.count)", shortDescription: "This is a small test document", color: ThemeColor.random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "web", order: files.count)
-                        modelContext.insert(newFile)
+                Menu {
+                    AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
+                } label: {
+                    Label {
+                        Text("Add Content")
+                    } icon: {
+                        Image(.plus)
                     }
                 }
 

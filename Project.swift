@@ -32,7 +32,8 @@ let project = Project(
             dependencies: [
                 .external(name: "SFSymbols"),
                 .external(name: "ViewStorage"),
-                .external(name: "IrisSearch")
+                .external(name: "IrisSearch"),
+                .external(name: "Digester")
             ],
             settings: irisSettings
         ),
