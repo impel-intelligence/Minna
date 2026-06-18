@@ -32,6 +32,7 @@ struct ListFileCard: View {
             Text(file.shortDescription)
                 .font(.subheadline)
                 .fontDesign(.serif)
+                .lineLimit(2)
         }
         .padding(.vertical, 8)
         .padding(.horizontal)
