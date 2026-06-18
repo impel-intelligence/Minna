@@ -18,7 +18,11 @@ public let irisInfoPlist: InfoPlist = .dictionary([
             "UTTypeDescription": "Iris Folder",
             "UTTypeIcons": [:],
             "UTTypeIdentifier": "com.tryiris.iris.mac.folder",
-            "UTTypeTagSpecification": [:]
+            "UTTypeTagSpecification": [
+                "public.filename-extension": ["irisdb"],
+                "public.mime-type": ["com.tryiris.iris.mac.folder"]
+            ],
+            "UTTypeConformsTo": ["com.apple.package", "public.content"]
         ]
     ],
     

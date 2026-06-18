@@ -72,8 +72,10 @@ enum FolderViewSort: Int, CaseIterable, CustomStringConvertible, ViewStorable {
 
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(AlertCenter.self) private var alertCenter
-    
+    @Environment(\.irisContext) private var irisContext
+
+    @Environment(\.alertCenter) private var alertCenter
+
     let folder: Folder
 
     // WARN: Do not edit this query, its actual value is set in the initializer
@@ -124,7 +126,12 @@ struct FolderView: View {
                 }
             }
         }
-        .standardFileImporter(presented: $standardFileImporterPresented, selectedFolder: folder, modelContext: modelContext)
+        .standardFileImporter(
+            presented: $standardFileImporterPresented,
+            selectedFolder: folder,
+            modelContext: modelContext,
+            irisContext: irisContext
+        )
         .toolbar {
             ToolbarItem {
                 NotificationsViewButton()

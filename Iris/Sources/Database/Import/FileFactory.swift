@@ -44,7 +44,6 @@ struct FileFactory {
     // org.openxmlformats.presentationml.presentation
     private static func file(from url: URL, in folder: Folder, resourceValues: URLResourceValues) throws -> File? {
         guard let contentType = resourceValues.contentType else { return nil }
-//        print("File: \(contentType)")
         
         guard let contentType = ContentType(uniformType: contentType) else {
             print("Unsupported type: \(contentType)")

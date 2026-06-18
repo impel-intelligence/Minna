@@ -10,19 +10,24 @@ import SwiftUI
 import Digester
 
 extension View {
-    func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext) -> some View {
+    func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext) -> some View {
         self
             .fileDialogMessage("Pick a file to add to Iris.")
             .fileDialogCustomizationID(IrisFileDialog.main)
             .fileImporter(isPresented: presented, allowedContentTypes: DigesterFactory.availableUniformTypes + [.directory, .folder], allowsMultipleSelection: true) { result in
                 do {
+                    guard irisContext.isConnected() else {
+                        print("You must connect an IrisDB instance.")
+                        return
+                    }
+                    
                     var folder: Folder
                     
                     if let selectedFolder {
                         folder = selectedFolder
                     } else {
                         // Capture the unfilled UUID so the predicate operates (it needs local state)
-                        let unfilledUUID = Database.shared.unfilledFolderUUID
+                        let unfilledUUID = FrontendDatabase.shared.unfilledFolderUUID
                         var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == unfilledUUID })
                         descriptor.fetchLimit = 1
                         let folders = try modelContext.fetch(descriptor)
@@ -60,8 +65,7 @@ extension View {
                                 }
                                 
                                 modelContext.insert(file)
-                                
-                                SearchController.shared.insert(file)
+                                try irisContext.insert(file)
                             }
                         } catch {
                             print("Failed to create file for \(file): \(error)")

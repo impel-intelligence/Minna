@@ -7,25 +7,8 @@
 
 import SwiftUI
 
-@MainActor @Observable
-final class AlertCenter {
-    static let shared: AlertCenter = AlertCenter()
-    
-    private(set) var notifications: [UserNotification] = []
-    
-    private init() { }
-    
-    func post(_ notification: UserNotification) {
-        notifications.insert(notification, at: 0)
-    }
-
-    func dismiss(_ id: UserNotification.ID) {
-        notifications.removeAll { $0.id == id }
-    }
-}
-
 struct NotificationsViewButton: View {
-    @Environment(AlertCenter.self) private var alertCenter
+    @Environment(\.alertCenter) private var alertCenter
     @State var centerIsVisible: Bool = false
     
     var body: some View {
@@ -50,7 +33,7 @@ struct NotificationsViewButton: View {
 }
 
 struct NotificationsView: View {
-    @Environment(AlertCenter.self) private var alertCenter
+    @Environment(\.alertCenter) private var alertCenter
     @Binding var displayed: Bool
 
     private let maxHeight: CGFloat = 300

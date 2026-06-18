@@ -9,8 +9,9 @@ import SwiftData
 import Foundation
 
 @MainActor
-class Database {
-    static let shared = Database()
+class FrontendDatabase {
+    static let shared: FrontendDatabase = FrontendDatabase()
+
     private static let unfilledFolderKey: String = "unfilled_folder_key"
         
     let modelContainer: ModelContainer
@@ -20,12 +21,12 @@ class Database {
         modelContainer.mainContext
     }
     
-    private init() {
-        if let uuidString = UserDefaults.standard.object(forKey: Database.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
+    init() {
+        if let uuidString = UserDefaults.standard.object(forKey: FrontendDatabase.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
             unfilledFolderUUID = uuid
         } else {
             unfilledFolderUUID = UUID()
-            UserDefaults.standard.set(unfilledFolderUUID.uuidString, forKey: Database.unfilledFolderKey)
+            UserDefaults.standard.set(unfilledFolderUUID.uuidString, forKey: FrontendDatabase.unfilledFolderKey)
         }
 
         let schema = Schema([

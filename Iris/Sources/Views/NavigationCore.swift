@@ -10,6 +10,7 @@ import SwiftUI
 
 public struct NavigationCore: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.irisContext) private var irisContext
     
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \.order) private var folders: [Folder]
 

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+
 struct UserNotification: Identifiable {    
     struct ActionOption: Identifiable {
         let id: UUID = UUID()

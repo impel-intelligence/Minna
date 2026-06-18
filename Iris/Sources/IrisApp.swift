@@ -10,6 +10,12 @@ import SwiftData
 
 @main
 struct IrisApp: App {
+    @State var searchController: SearchController = SearchController()
+    
+    // MARK: Databases
+    @State var irisDBController: IrisDBController = IrisDBController()
+    @State var frontendDatabase: FrontendDatabase = FrontendDatabase()
+    
     @State var standardFileImporterPresented: Bool = false
         
     var body: some Scene {
@@ -20,9 +26,15 @@ struct IrisApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {
                 AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
-                    .standardFileImporter(presented: $standardFileImporterPresented, selectedFolder: nil, modelContext: Database.shared.modelContainer.mainContext)
+                    .standardFileImporter(
+                        presented: $standardFileImporterPresented,
+                        selectedFolder: nil,
+                        modelContext: frontendDatabase.modelContainer.mainContext,
+                        irisContext: irisDBController.mainContext
+                    )
             }
         }
-        .modelContainer(Database.shared.modelContainer)
+        .modelContainer(frontendDatabase.modelContainer)
+        .irisContext(irisDBController.mainContext)
     }
 }
