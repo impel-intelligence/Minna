@@ -7,6 +7,7 @@
 
 import SwiftData
 import Foundation
+import BlurbKit
 
 @MainActor
 class FrontendDatabase {
@@ -14,13 +15,15 @@ class FrontendDatabase {
 
     private static let unfilledFolderKey: String = "unfilled_folder_key"
         
+    // Swift Data Variables
     let modelContainer: ModelContainer
-    var unfilledFolderUUID: UUID
-    
     var context: ModelContext {
         modelContainer.mainContext
     }
     
+    var unfilledFolderUUID: UUID
+    private let descriptionUpdateQueue: WorkQueue = WorkQueue()
+
     init() {
         if let uuidString = UserDefaults.standard.object(forKey: FrontendDatabase.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
             unfilledFolderUUID = uuid
@@ -50,5 +53,31 @@ class FrontendDatabase {
         let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol("tray.full")), protected: true)
         context.insert(unfilledFolder)
         try context.save()
+    }
+    
+    func queueDescriptionUpdate(for file: File) {
+        Task {
+            await descriptionUpdateQueue.enqueue {
+                let url = try file.securityScopedURL()
+                guard let contentType = try url.resourceValues(forKeys: [.contentTypeKey]).contentType else {
+                    print("Failed to get content type for file \(file)")
+                    return
+                }
+                
+                let hasAccess = url.startAccessingSecurityScopedResource()
+                defer { url.stopAccessingSecurityScopedResource() }
+                
+                guard hasAccess else {
+                    print("Unable to obtain security scope")
+                    return
+                }
+                
+                let blurbProvider = try BlurbFactory.provider(for: contentType)
+                // Retrieve a file blurb using Apple's Intelligence models.
+                let blurb = try await blurbProvider.blurb(for: url)
+                file.shortDescription = blurb.description
+                file.modelContext?.insert(file)
+            }
+        }
     }
 }

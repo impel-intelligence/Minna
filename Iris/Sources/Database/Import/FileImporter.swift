@@ -66,6 +66,7 @@ extension View {
                                 
                                 modelContext.insert(file)
                                 try irisContext.insert(file)
+                                FrontendDatabase.shared.queueDescriptionUpdate(for: file)
                             }
                         } catch {
                             print("Failed to create file for \(file): \(error)")

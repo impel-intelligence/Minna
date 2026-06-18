@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import BlurbKit
 
 struct FileFactory {
     enum FileFactoryError: Error {
@@ -45,13 +46,14 @@ struct FileFactory {
     private static func file(from url: URL, in folder: Folder, resourceValues: URLResourceValues) throws -> File? {
         guard let contentType = resourceValues.contentType else { return nil }
         
-        guard let contentType = ContentType(uniformType: contentType) else {
+        guard let irisContentType = ContentType(uniformType: contentType) else {
             print("Unsupported type: \(contentType)")
             throw FileFactoryError.unsupportedType
         }
         
-        let bookmarkData = try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess], includingResourceValuesForKeys: [.contentTypeKey, .isDirectoryKey])
+        let bookmarkData = try File.generateBookmarkData(for: url)
+        let fileBlurb = try BlurbFactory.provider(for: contentType).blurb(for: url)
         
-        return File(createdAt: Date.now, folder: folder, title: "Hello", shortDescription: "Hello", color: .random, type: contentType, url: url, bookmark: bookmarkData, source: "FileSystem")
+        return File(createdAt: Date.now, folder: folder, title: fileBlurb.title, shortDescription: fileBlurb.description, color: .random, type: irisContentType, url: url, bookmark: bookmarkData, source: "FileSystem")
     }
 }

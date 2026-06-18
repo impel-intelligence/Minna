@@ -12,86 +12,9 @@ import SwiftUI
 import ViewStorage
 import UniformTypeIdentifiers
 
-enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseIterable {
-    case askIris
-    case recording
-
-    case pdf
-    case image
-    case video
-    case text
-    case audio
-    
-    case webpage
-    
-    var icon: SFSymbol {
-        switch self {
-        case .webpage:
-            return .text_alignleft
-        case .video:
-            return .video
-        case .image:
-            return .photo
-        case .pdf:
-            return .doc_richtext
-        case .recording:
-            return .mic
-        case .audio:
-            return .waveform
-        case .askIris:
-            return .sparkles
-        case .text:
-            return .doc
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case .askIris:
-            return "Ask Iris"
-        case .recording:
-            return "Recording"
-        case .pdf:
-            return "PDF"
-        case .image:
-            return "Image"
-        case .video:
-            return "Video"
-        case .text:
-            return "Text File"
-        case .webpage:
-            return "Webpage"
-        case .audio:
-            return "Audio"
-        }
-    }
-    
-    init?(uniformType: UTType) {
-        switch uniformType {
-        case let type where type.conforms(to: .image):
-            self = .image
-        case let type where type.conforms(to: .audio):
-            self = .audio
-        case let type where type.conforms(to: .video):
-            self = .video
-        case let type where type.conforms(to: .text):
-            self = .text
-        case let type where type.conforms(to: .pdf):
-            self = .pdf
-        default:
-            return nil
-        }
-    }
-}
-
-extension ContentType: ViewStorable {
-    public static func read(from store: UserDefaults, forKey key: String) -> ContentType? {
-        (store.object(forKey: key) as? Int).flatMap({ ContentType(rawValue: $0) })
-    }
-
-    public func write(to store: UserDefaults, forKey key: String) {
-        store.set(rawValue, forKey: key)
-    }
+enum SecurityScopeError: Error {
+    case noBookmarkData
+    case unableToCreateSecurityScope
 }
 
 @Model
@@ -110,9 +33,8 @@ final class File {
     var bookmark: Data?
     var type: ContentType = ContentType.webpage
     var source: String
-//    var order: Int
 
-    init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String/*, order: Int*/) {
+    init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String) {
         self.uuid = uuid
         self.createdAt = createdAt
         self.folder = folder
@@ -123,6 +45,36 @@ final class File {
         self.bookmark = bookmark
         self.url = url
         self.source = source
-//        self.order = order
+    }
+}
+
+extension File {
+    static func generateBookmarkData(for url: URL) throws -> Data {
+        return try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess], includingResourceValuesForKeys: [.contentTypeKey, .isDirectoryKey])
+    }
+    
+    /// Create a security scoped URL if a bookmark exists. If a bookmark does not exist, an error will be thrown.
+    /// - Returns: A Security Scoped URL.
+    @MainActor
+    func securityScopedURL() throws -> URL {
+        guard let bookmark = self.bookmark else { throw SecurityScopeError.noBookmarkData }
+        
+        var isStale: Bool = false
+
+        guard let url = try? URL(resolvingBookmarkData: bookmark, options: [.withSecurityScope], relativeTo: nil, bookmarkDataIsStale: &isStale) else { throw SecurityScopeError.unableToCreateSecurityScope }
+        
+        if isStale {
+            // Update the model with the new bookmark data
+            self.bookmark = try File.generateBookmarkData(for: url)
+            
+            // Save the updated model in the frontend database.
+            guard let modelContext = self.modelContext else {
+                print("Failed to get file model context \(uuid)")
+                return url
+            }
+            modelContext.insert(self)
+        }
+        
+        return url
     }
 }

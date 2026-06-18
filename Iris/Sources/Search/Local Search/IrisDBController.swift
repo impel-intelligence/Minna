@@ -42,19 +42,17 @@ final class IrisDBController {
     }
     
     func insert(_ file: File) {
-        var isStale: Bool = false
-        var fileURL: URL = file.url
-        
-        if let bookmark = file.bookmark, let url = try? URL(resolvingBookmarkData: bookmark, options: [.withSecurityScope], relativeTo: nil, bookmarkDataIsStale: &isStale) {
-            fileURL = url
-        }
-        
-        let document = WaitingDocument(id: file.uuid, url: fileURL)
-        
-        Task {
-            await insertWorkQueue.enqueue { [weak self] in
-                try await self?._insert(document: document)
+        do {
+            let scopedURL = try file.securityScopedURL()
+            let document = WaitingDocument(id: file.uuid, url: scopedURL)
+            
+            Task {
+                await insertWorkQueue.enqueue { [weak self] in
+                    try await self?._insert(document: document)
+                }
             }
+        } catch {
+            print("Failed to insert file into IrisSearch: \(file)")
         }
     }
     

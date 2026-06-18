@@ -1,6 +1,15 @@
 {
-  "originHash" : "256bf4fb5fb12a26e2595702b898bc41d3bc0fceba56fa1904dcda4d3f281a15",
+  "originHash" : "28e13ebcc2dd714c8da697268c828c2db5d50cf6f5cd1176d5f9d459e8bd4770",
   "pins" : [
+    {
+      "identity" : "blurbkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/impel-intelligence/BlurbKit",
+      "state" : {
+        "revision" : "e4e6e7b109dcc65c060b92adbbdb455cf70e6ea3",
+        "version" : "0.1.2"
+      }
+    },
     {
       "identity" : "faissmobile",
       "kind" : "remoteSourceControl",
