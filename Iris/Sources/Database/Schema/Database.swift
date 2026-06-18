@@ -20,7 +20,7 @@ class Database {
         modelContainer.mainContext
     }
     
-    private init(sampleData: Bool = false) {
+    private init() {
         if let uuidString = UserDefaults.standard.object(forKey: Database.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
             unfilledFolderUUID = uuid
         } else {

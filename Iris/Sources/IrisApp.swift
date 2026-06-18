@@ -11,7 +11,7 @@ import SwiftData
 @main
 struct IrisApp: App {
     @State var standardFileImporterPresented: Bool = false
-    
+        
     var body: some Scene {
         WindowGroup {
             NavigationCore()

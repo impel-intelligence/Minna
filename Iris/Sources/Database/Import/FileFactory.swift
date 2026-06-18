@@ -51,6 +51,8 @@ struct FileFactory {
             throw FileFactoryError.unsupportedType
         }
         
-        return File(createdAt: Date.now, folder: folder, title: "Hello", shortDescription: "Hello", color: .random, type: contentType, url: url, bookmark: nil, source: "FileSystem")
+        let bookmarkData = try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess], includingResourceValuesForKeys: [.contentTypeKey, .isDirectoryKey])
+        
+        return File(createdAt: Date.now, folder: folder, title: "Hello", shortDescription: "Hello", color: .random, type: contentType, url: url, bookmark: bookmarkData, source: "FileSystem")
     }
 }

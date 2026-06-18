@@ -60,6 +60,8 @@ extension View {
                                 }
                                 
                                 modelContext.insert(file)
+                                
+                                SearchController.shared.insert(file)
                             }
                         } catch {
                             print("Failed to create file for \(file): \(error)")
