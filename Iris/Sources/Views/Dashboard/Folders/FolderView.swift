@@ -9,71 +9,11 @@ import SwiftUI
 import SwiftData
 import SFSymbols
 import ViewStorage
-
-enum FolderViewMode: Int, CaseIterable, CustomStringConvertible, ViewStorable {
-    case grid
-    case list
-    
-    var description: String {
-        switch self {
-        case .grid:
-            return "Grid"
-        case .list:
-            return "List"
-        }
-    }
-}
-
-enum FolderViewSort: Int, CaseIterable, CustomStringConvertible, ViewStorable {
-    case mostRecent
-    case leastRecent
-    case az
-    case za
-    
-    var description: String {
-        switch self {
-        case .mostRecent:
-            return "Most Recent"
-        case .leastRecent:
-            return "Least Recent"
-        case .az:
-            return "A-Z"
-        case .za:
-            return "Z-A"
-        }
-    }
-    
-    var sortDescriptor: SortDescriptor<File> {
-        switch self {
-        case .mostRecent:
-            return SortDescriptor(\.createdAt, order: .forward)
-        case .leastRecent:
-            return SortDescriptor(\.createdAt, order: .reverse)
-        case .az:
-            return SortDescriptor(\.title, order: .forward)
-        case .za:
-            return SortDescriptor(\.title, order: .reverse)
-        }
-    }
-    
-    func sortFunction(lhs: File, rhs: File) -> Bool {
-        switch self {
-        case .mostRecent:
-            return lhs.createdAt.compare(rhs.createdAt) == .orderedDescending
-        case .leastRecent:
-            return lhs.createdAt.compare(rhs.createdAt) == .orderedAscending
-        case .az:
-            return lhs.title.localizedCompare(rhs.title) == .orderedAscending
-        case .za:
-            return lhs.title.localizedCompare(rhs.title) == .orderedDescending
-        }
-    }
-}
+import OrderedCollections
 
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
-
     @Environment(\.alertCenter) private var alertCenter
 
     let folder: Folder
@@ -91,6 +31,12 @@ struct FolderView: View {
     @ViewStorage("sortMode", path: \Self.folder.uuid.uuidString) var sortMode: FolderViewSort = .mostRecent
     
     @State var standardFileImporterPresented: Bool = false
+    @State var selectedFiles: OrderedSet<File> = []
+    @State var selectionAnchor: File? = nil
+    
+    let columns = [
+        GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 12)
+    ]
     
     init(folder: Folder) {
         self.folder = folder
@@ -102,10 +48,6 @@ struct FolderView: View {
         })
     }
     
-    let columns = [
-        GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 12)
-    ]
-    
     var body: some View {
         Group {
             switch viewMode {
@@ -114,14 +56,39 @@ struct FolderView: View {
                     LazyVGrid(columns: columns) {
                         ForEach(filteredFiles) { file in
                             GridFileCard(file: file)
+                                .onTapGesture {
+                                    tapGesture(for: file)
+                                }
+                                .contextMenu {
+                                    itemContextMenu(for: file)
+                                }
+                                .overlay {
+                                    if selectedFiles.contains(file) {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
+                                    }
+                                }
                         }
                     }
+                    .padding(.vertical, 8)
                 }
             case .list:
                 List {
                     ForEach(filteredFiles) { file in
                         ListFileCard(file: file)
                             .listRowSeparator(.hidden)
+                            .onTapGesture {
+                                tapGesture(for: file)
+                            }
+                            .contextMenu {
+                                itemContextMenu(for: file)
+                            }
+                            .overlay {
+                                if selectedFiles.contains(file) {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
+                                }
+                            }
                     }
                 }
             }
@@ -193,6 +160,44 @@ struct FolderView: View {
             }
         }
         .navigationTitle(folder.name)
+    }
+    
+    private func tapGesture(for file: File) {
+        // MARK: Selection Support (https://support.apple.com/guide/mac-help/select-items-mchlp1378/mac)
+        
+        // If we are not holding command, clear the previous selection
+        if !NSEvent.modifierFlags.contains(.command) {
+            selectedFiles.removeAll()
+        }
+        
+        // Select multiple items that are adjacent
+        if NSEvent.modifierFlags.contains(.shift), let selectionAnchor,
+           let currentIndex = filteredFiles.firstIndex(of: file),
+           let anchorIndex = filteredFiles.firstIndex(of: selectionAnchor) {
+            let range: ClosedRange<Int> = currentIndex < anchorIndex ? currentIndex...anchorIndex : anchorIndex...currentIndex
+
+            for file in filteredFiles[range] {
+                selectedFiles.append(file)
+            }
+        } else {
+            selectionAnchor = file
+            selectedFiles.toggle(file)
+        }
+    }
+    
+    @ViewBuilder
+    private func itemContextMenu(for file: File) -> some View {
+        Button {
+            
+        } label: {
+            Label("Rename", symbol: .pencil_line)
+        }
+        
+        Button(role: .destructive) {
+            modelContext.delete(file)
+        } label: {
+            Label("Delete", symbol: .trash)
+        }
 
     }
 }

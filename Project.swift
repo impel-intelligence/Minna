@@ -33,7 +33,8 @@ let project = Project(
                 .external(name: "SFSymbols"),
                 .external(name: "ViewStorage"),
                 .external(name: "IrisSearch"),
-                .external(name: "BlurbKit")
+                .external(name: "BlurbKit"),
+                .external(name: "OrderedCollections")
             ],
             settings: irisSettings
         ),
