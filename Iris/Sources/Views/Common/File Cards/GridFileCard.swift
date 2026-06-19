@@ -14,8 +14,10 @@ struct GridFileCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .center) {
                 Image(file.type.icon)
+                    .foregroundStyle(file.color.text)
                 Text(file.type.description)
                     .textCase(.uppercase)
+                    .foregroundStyle(file.color.text)
                 Spacer()
             }
             .font(.system(size: 12, weight: .regular, design: .default))
@@ -23,12 +25,13 @@ struct GridFileCard: View {
             Text(file.title)
                 .font(.title3)
                 .fontDesign(.serif)
-//                .fixedSize(horizontal: false, vertical: true)
                 .lineLimit(3)
                 .minimumScaleFactor(0.75)
+                .foregroundStyle(file.color.text)
             Text(file.shortDescription)
                 .font(.subheadline)
                 .fontDesign(.serif)
+                .foregroundStyle(file.color.text)
         }
         .padding(12)
         .frame(width: 150, height: 170, alignment: .top)

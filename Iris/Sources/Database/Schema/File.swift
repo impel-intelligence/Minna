@@ -23,7 +23,7 @@ final class File {
     var uuid: UUID
     var createdAt: Date
     
-    @Relationship(deleteRule: .cascade, inverse: \Folder.files)
+    @Relationship(deleteRule: .nullify, inverse: \Folder.files)
     var folder: Folder
     
     var title: String

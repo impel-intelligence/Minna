@@ -28,7 +28,8 @@ final class IrisDBController {
     private let textChunker: TextChunker = BasicTextChunker()
     
     private let insertWorkQueue: WorkQueue = WorkQueue()
-    
+    private let deleteWorkQueue: WorkQueue = WorkQueue()
+
     init() {
         do {
             let searchDirectory = Utilities.irisDBDirectory()
@@ -41,7 +42,7 @@ final class IrisDBController {
         mainContext = IrisContext(controllerResult: .success(self))
     }
     
-    func insert(_ file: File) {
+    public func insert(_ file: File) {
         do {
             let scopedURL = try file.securityScopedURL()
             let document = WaitingDocument(id: file.uuid, url: scopedURL)
@@ -70,6 +71,14 @@ final class IrisDBController {
         let embeddableContent = try await digester.digest(file: document.url)
         
         try await irisDB.createDocument(uuid: document.id, embeddableContent: embeddableContent)
+    }
+    
+    public func delete(_ file: File) {
+        Task {
+            await insertWorkQueue.enqueue { [weak self] in
+                try await self?.irisDB.deleteDocument(uuid: file.uuid)
+            }
+        }
     }
 }
 

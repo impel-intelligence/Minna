@@ -11,6 +11,29 @@ import SFSymbols
 import ViewStorage
 import OrderedCollections
 
+enum ArrowDirection {
+    case up
+    case down
+    case left
+    case right
+    
+    init?(from equivalent: KeyEquivalent) {
+        switch equivalent {
+        case .leftArrow:
+            self = .left
+        case .rightArrow:
+            self = .right
+        case .upArrow:
+            self = .up
+        case .downArrow:
+            self = .down
+        default:
+            return nil
+        }
+    }
+}
+
+// TODO: Investigate Focus States
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
@@ -33,7 +56,9 @@ struct FolderView: View {
     @State var standardFileImporterPresented: Bool = false
     @State var selectedFiles: OrderedSet<File> = []
     @State var selectionAnchor: File? = nil
-    
+
+    @FocusState private var isFocused: Bool
+
     let columns = [
         GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 12)
     ]
@@ -72,11 +97,13 @@ struct FolderView: View {
                     }
                     .padding(.vertical, 8)
                 }
+                .scrollContentBackground(.hidden)
             case .list:
                 List {
                     ForEach(filteredFiles) { file in
                         ListFileCard(file: file)
                             .listRowSeparator(.hidden)
+                            .focusable(true, interactions: .activate)
                             .onTapGesture {
                                 tapGesture(for: file)
                             }
@@ -91,6 +118,7 @@ struct FolderView: View {
                             }
                     }
                 }
+                .scrollContentBackground(.hidden)
             }
         }
         .standardFileImporter(
@@ -160,6 +188,38 @@ struct FolderView: View {
             }
         }
         .navigationTitle(folder.name)
+        .focusable()
+        .focused($isFocused)
+        .focusEffectDisabled()
+        .onAppear {
+            isFocused = true
+        }
+        .onKeyPress { keyPress in
+            if keyPress.characters == "a" && keyPress.modifiers == .command {
+                selectedFiles.append(contentsOf: filteredFiles)
+                return .handled
+            } else if keyPress.key == .escape {
+                selectedFiles.removeAll()
+                return .handled
+            } else if let direction = ArrowDirection(from: keyPress.key) {
+                // If we were able to construct an arrow direction, the user moved using the arrow keys.
+                return moveCursor(direction: direction, modifiers: keyPress.modifiers)
+            }
+            
+            
+            return .ignored
+        }
+    }
+    
+    private func moveCursor(direction: ArrowDirection, modifiers: EventModifiers) -> KeyPress.Result {
+        if selectedFiles.isEmpty, let firstFile = filteredFiles.first {
+            selectedFiles.append(firstFile)
+            return .handled
+        } else {
+            
+        }
+        
+        return .ignored
     }
     
     private func tapGesture(for file: File) {
@@ -190,15 +250,32 @@ struct FolderView: View {
         Button {
             
         } label: {
-            Label("Rename", symbol: .pencil_line)
+            Label(selectedFiles.isEmpty ? "Rename" : "Rename Selected", symbol: .pencil_line)
         }
         
         Button(role: .destructive) {
-            modelContext.delete(file)
+            withAnimation {
+                if selectedFiles.isEmpty {
+                    delete(file)
+                } else {
+                    for selectedFile in selectedFiles {
+                        delete(selectedFile)
+                    }
+                }
+            }
         } label: {
-            Label("Delete", symbol: .trash)
+            Label(selectedFiles.isEmpty ? "Delete" : "Delete Selected", symbol: .trash)
         }
+    }
+    
+    private func delete(_ file: File) {
+        modelContext.delete(file)
 
+        do {
+            try irisContext.delete(file)
+        } catch {
+            print("Failed to delete Iris Document \(error)")
+        }
     }
 }
 

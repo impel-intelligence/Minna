@@ -16,11 +16,14 @@ struct ListFileCard: View {
                 Text(file.title)
                     .font(.title3)
                     .fontDesign(.serif)
+                    .foregroundStyle(file.color.text)
                 Spacer()
                 HStack(alignment: .center) {
                     Image(file.type.icon)
+                        .foregroundStyle(file.color.text)
                     Text(file.type.description)
                         .textCase(.uppercase)
+                        .foregroundStyle(file.color.text)
                 }
                 .font(.system(size: 10, weight: .regular, design: .default))
                 .foregroundStyle(.secondary)
@@ -33,6 +36,7 @@ struct ListFileCard: View {
                 .font(.subheadline)
                 .fontDesign(.serif)
                 .lineLimit(2)
+                .foregroundStyle(file.color.text)
         }
         .padding(.vertical, 8)
         .padding(.horizontal)

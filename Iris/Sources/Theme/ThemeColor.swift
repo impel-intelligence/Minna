@@ -8,58 +8,43 @@
 import SwiftUI
 
 enum ThemeColor: Int, Codable {
-    case apricot
-    case berry
-    case blueberry
-    case melon
-    case grape
+    case champagne
+    case lavender
+    case azure
+    case mint
+    case rose
     
     static var random: ThemeColor {
-        return ThemeColor(rawValue: Int.random(in: 0...ThemeColor.grape.rawValue))!
+        return ThemeColor(rawValue: Int.random(in: 0...ThemeColor.rose.rawValue))!
     }
     
     var lightBackground: Color {
         switch self {
-        case .apricot:
-            return IrisAsset.Assets.Apricot.lightBackground.swiftUIColor
-        case .berry:
-            return IrisAsset.Assets.Berry.lightBackground.swiftUIColor
-        case .blueberry:
-            return IrisAsset.Assets.Blueberry.lightBackground.swiftUIColor
-        case .melon:
-            return IrisAsset.Assets.Melon.lightBackground.swiftUIColor
-        case .grape:
-            return IrisAsset.Assets.Grape.lightBackground.swiftUIColor
+        case .champagne:
+            return IrisAsset.Assets.Champagne.background.swiftUIColor
+        case .lavender:
+            return IrisAsset.Assets.Lavender.background.swiftUIColor
+        case .azure:
+            return IrisAsset.Assets.Azure.background.swiftUIColor
+        case .mint:
+            return IrisAsset.Assets.Mint.background.swiftUIColor
+        case .rose:
+            return IrisAsset.Assets.Rose.background.swiftUIColor
         }
     }
-    
-    var background: Color {
-        switch self {
-        case .apricot:
-            return IrisAsset.Assets.Apricot.background.swiftUIColor
-        case .berry:
-            return IrisAsset.Assets.Berry.background.swiftUIColor
-        case .blueberry:
-            return IrisAsset.Assets.Blueberry.background.swiftUIColor
-        case .melon:
-            return IrisAsset.Assets.Melon.background.swiftUIColor
-        case .grape:
-            return IrisAsset.Assets.Grape.background.swiftUIColor
-        }
-    }
-    
+
     var text: Color {
         switch self {
-        case .apricot:
-            return IrisAsset.Assets.Apricot.text.swiftUIColor
-        case .berry:
-            return IrisAsset.Assets.Berry.text.swiftUIColor
-        case .blueberry:
-            return IrisAsset.Assets.Blueberry.text.swiftUIColor
-        case .melon:
-            return IrisAsset.Assets.Melon.text.swiftUIColor
-        case .grape:
-            return IrisAsset.Assets.Grape.text.swiftUIColor
+        case .champagne:
+            return IrisAsset.Assets.Champagne.text.swiftUIColor
+        case .lavender:
+            return IrisAsset.Assets.Lavender.text.swiftUIColor
+        case .azure:
+            return IrisAsset.Assets.Azure.text.swiftUIColor
+        case .mint:
+            return IrisAsset.Assets.Mint.text.swiftUIColor
+        case .rose:
+            return IrisAsset.Assets.Rose.text.swiftUIColor
         }
     }
 }

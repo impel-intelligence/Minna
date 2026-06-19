@@ -33,10 +33,15 @@ public struct IrisContext {
             return false
         }
     }
-    
+        
     @MainActor
     func insert(_ file: File) throws {
         try controller.insert(file)
+    }
+    
+    @MainActor
+    func delete(_ file: File) throws {
+        try controller.delete(file)
     }
 }
 
