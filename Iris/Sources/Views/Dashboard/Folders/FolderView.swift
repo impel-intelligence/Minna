@@ -99,24 +99,29 @@ struct FolderView: View {
                 }
                 .scrollContentBackground(.hidden)
             case .list:
-                List {
-                    ForEach(filteredFiles) { file in
-                        ListFileCard(file: file)
-                            .listRowSeparator(.hidden)
-                            .focusable(true, interactions: .activate)
-                            .onTapGesture {
-                                tapGesture(for: file)
-                            }
-                            .contextMenu {
-                                itemContextMenu(for: file)
-                            }
-                            .overlay {
-                                if selectedFiles.contains(file) {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
+                ScrollView {
+                    VStack {
+                        ForEach(filteredFiles) { file in
+                            ListFileCard(file: file)
+                                .listRowSeparator(.hidden)
+                                .focusEffectDisabled()
+                                .focusable(true, interactions: .activate)
+                                .onTapGesture {
+                                    tapGesture(for: file)
                                 }
-                            }
+                                .contextMenu {
+                                    itemContextMenu(for: file)
+                                }
+                                .overlay {
+                                    if selectedFiles.contains(file) {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
+                                    }
+                                }
+                        }
                     }
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 10)
                 }
                 .scrollContentBackground(.hidden)
             }
@@ -253,6 +258,47 @@ struct FolderView: View {
             Label(selectedFiles.isEmpty ? "Rename" : "Rename Selected", symbol: .pencil_line)
         }
         
+        FolderMenu { newFolder in
+            withAnimation {
+                if selectedFiles.isEmpty {
+                    move(file: file, to: newFolder)
+                } else {
+                    for selectedFile in selectedFiles {
+                        move(file: selectedFile, to: newFolder)
+                    }
+                    selectedFiles.removeAll()
+                }
+            }
+        } label: {
+            Label(selectedFiles.isEmpty ? "Move" : "Move Selected", symbol: .folder)
+        }
+
+
+//        Menu {
+//            let folders: [Folder] = (try? modelContext.fetch(FetchDescriptor<Folder>(predicate: #Predicate<Folder> { $0.parent == nil }, sortBy: [SortDescriptor(\.order)]))) ?? []
+//            
+//            ForEach(folders) { moveToFolder in
+//                Button {
+//                    withAnimation {
+//                        if selectedFiles.isEmpty {
+//                            move(file: file, to: moveToFolder)
+//                        } else {
+//                            for selectedFile in selectedFiles {
+//                                move(file: selectedFile, to: moveToFolder)
+//                            }
+//                            selectedFiles.removeAll()
+//                        }
+//                    }
+//                } label: {
+//                    moveToFolder.label()
+//                }
+//            }
+//        } label: {
+//            Label(selectedFiles.isEmpty ? "Move" : "Move Selected", symbol: .folder)
+//        }
+
+        Divider()
+        
         Button(role: .destructive) {
             withAnimation {
                 if selectedFiles.isEmpty {
@@ -261,11 +307,17 @@ struct FolderView: View {
                     for selectedFile in selectedFiles {
                         delete(selectedFile)
                     }
+                    selectedFiles.removeAll()
                 }
             }
         } label: {
             Label(selectedFiles.isEmpty ? "Delete" : "Delete Selected", symbol: .trash)
         }
+        .foregroundStyle(.red)
+    }
+    
+    private func move(file: File, to newFolder: Folder) {
+        file.folder = newFolder
     }
     
     private func delete(_ file: File) {

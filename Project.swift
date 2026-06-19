@@ -33,6 +33,7 @@ let project = Project(
                 .external(name: "SFSymbols"),
                 .external(name: "ViewStorage"),
                 .external(name: "IrisSearch"),
+                .external(name: "Digester"),
                 .external(name: "BlurbKit"),
                 .external(name: "OrderedCollections")
             ],
