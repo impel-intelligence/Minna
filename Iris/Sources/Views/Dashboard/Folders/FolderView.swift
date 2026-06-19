@@ -39,6 +39,9 @@ struct FolderView: View {
     @Environment(\.irisContext) private var irisContext
     @Environment(\.alertCenter) private var alertCenter
 
+    static let cardWidth: CGFloat = 150
+    static let gridSpacing: CGFloat = 12
+    
     let folder: Folder
 
     // WARN: Do not edit this query, its actual value is set in the initializer
@@ -56,11 +59,13 @@ struct FolderView: View {
     @State var standardFileImporterPresented: Bool = false
     @State var selectedFiles: OrderedSet<File> = []
     @State var selectionAnchor: File? = nil
+    
+    @State var frame: CGRect = .zero
 
     @FocusState private var isFocused: Bool
 
     let columns = [
-        GridItem(.adaptive(minimum: 150, maximum: 150), spacing: 12)
+        GridItem(.adaptive(minimum: FolderView.cardWidth, maximum: FolderView.cardWidth), spacing: FolderView.gridSpacing)
     ]
     
     init(folder: Folder) {
@@ -89,6 +94,7 @@ struct FolderView: View {
                                 }
                                 .overlay {
                                     if selectedFiles.contains(file) {
+                                        // TODO: need figure out a better way to track the current anchor when moving around with keyboard.
                                         RoundedRectangle(cornerRadius: 12)
                                             .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
                                     }
@@ -103,8 +109,6 @@ struct FolderView: View {
                     VStack {
                         ForEach(filteredFiles) { file in
                             ListFileCard(file: file)
-                                .listRowSeparator(.hidden)
-                                .focusEffectDisabled()
                                 .focusable(true, interactions: .activate)
                                 .onTapGesture {
                                     tapGesture(for: file)
@@ -126,6 +130,7 @@ struct FolderView: View {
                 .scrollContentBackground(.hidden)
             }
         }
+        .frameReader { self.frame = $0 }
         .standardFileImporter(
             presented: $standardFileImporterPresented,
             selectedFolder: folder,
@@ -196,8 +201,15 @@ struct FolderView: View {
         .focusable()
         .focused($isFocused)
         .focusEffectDisabled()
-        .onAppear {
-            isFocused = true
+        .onChange(of: isFocused) { _, focused in
+            // When focus moves to this view, check to see if a mouse button was pressed. If that is the case, this view was opened by the mouse so we don't need to start focus tracking.
+            guard NSEvent.pressedMouseButtons == 0 else { return }
+
+            // If the focus was gained through the keyboard (e.g. tab from the navigation list), select the first item to allow for instant keyboard navigation.s
+            if focused, selectedFiles.isEmpty, let firstFile = filteredFiles.first {
+                selectedFiles.append(firstFile)
+                selectionAnchor = firstFile
+            }
         }
         .onKeyPress { keyPress in
             if keyPress.characters == "a" && keyPress.modifiers == .command {
@@ -219,9 +231,38 @@ struct FolderView: View {
     private func moveCursor(direction: ArrowDirection, modifiers: EventModifiers) -> KeyPress.Result {
         if selectedFiles.isEmpty, let firstFile = filteredFiles.first {
             selectedFiles.append(firstFile)
+            selectionAnchor = firstFile
             return .handled
-        } else {
-            
+        } else if let currentAnchor = selectionAnchor,
+                  let currentIndex = filteredFiles.firstIndex(of: currentAnchor) {
+            func moveSelection(by offset: Int) -> KeyPress.Result {
+                let nextIndex = currentIndex + offset
+                guard filteredFiles.indices.contains(nextIndex) else { return .ignored }
+                let nextFile = filteredFiles[nextIndex]
+
+                // If we are not holding command, clear the previous selection
+                if !(NSEvent.modifierFlags.contains(.command) || NSEvent.modifierFlags.contains(.shift)) {
+                    selectedFiles.removeAll()
+                }
+
+                selectionAnchor = nextFile
+                selectedFiles.append(nextFile)
+
+                return .ignored
+            }
+
+            let itemsInGrid = Int(frame.width / (FolderView.cardWidth + (FolderView.gridSpacing / 2)))
+
+            switch direction {
+            case .up:
+                return moveSelection(by: viewMode == .grid ? -itemsInGrid : 1)
+            case .down:
+                return moveSelection(by: viewMode == .grid ? itemsInGrid : -1)
+            case .left:
+                return moveSelection(by: -1)
+            case .right:
+                return moveSelection(by: 1)
+            }
         }
         
         return .ignored

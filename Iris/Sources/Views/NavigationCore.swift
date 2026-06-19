@@ -99,6 +99,7 @@ struct FolderRow: View {
     private func sidebarFolderItem(folder: Folder) -> some View {
         NavigationLink {
             FolderView(folder: folder)
+                .id(folder.uuid)
         } label: {
             folder.label()
                 .contextMenu {
