@@ -9,6 +9,7 @@ import SwiftData
 import SwiftUI
 
 public struct NavigationCore: View {
+    @Environment(\.undoManager) private var undoManager
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
     
@@ -48,6 +49,9 @@ public struct NavigationCore: View {
             }
         } detail: {
             Text("Select an item")
+        }
+        .onAppear {
+            modelContext.undoManager = undoManager
         }
     }
 

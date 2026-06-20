@@ -55,7 +55,6 @@ extension File {
     
     /// Create a security scoped URL if a bookmark exists. If a bookmark does not exist, an error will be thrown.
     /// - Returns: A Security Scoped URL.
-    @MainActor
     func securityScopedURL() throws -> URL {
         guard let bookmark = self.bookmark else { throw SecurityScopeError.noBookmarkData }
         

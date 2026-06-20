@@ -16,20 +16,14 @@ enum IrisDBControllerError: Error {
 
 @MainActor
 final class IrisDBController {
-    private struct WaitingDocument: Identifiable, Hashable, Sendable {
-        let id: UUID
-        let url: URL
-    }
-    
     @MainActor public private(set) var mainContext: IrisContext!
     
     private let irisDB: IrisDB
     private let textEmbedder: EmbeddingProvider
     private let textChunker: TextChunker = BasicTextChunker()
     
-    private let insertWorkQueue: WorkQueue = WorkQueue()
-    private let deleteWorkQueue: WorkQueue = WorkQueue()
-
+    private var backgroundWorker: BackgroundWorker? = nil
+    
     init() {
         do {
             let searchDirectory = Utilities.irisDBDirectory()
@@ -42,43 +36,26 @@ final class IrisDBController {
         mainContext = IrisContext(controllerResult: .success(self))
     }
     
+    public func setWorker(_ worker: BackgroundWorker) {
+        self.backgroundWorker = worker
+    }
+    
     public func insert(_ file: File) {
-        do {
-            let scopedURL = try file.securityScopedURL()
-            let document = WaitingDocument(id: file.uuid, url: scopedURL)
-            
-            Task {
-                await insertWorkQueue.enqueue { [weak self] in
-                    try await self?._insert(document: document)
-                }
-            }
-        } catch {
-            print("Failed to insert file into IrisSearch: \(file)")
-        }
+        let indexWriter: FileSearchIndexWriter = FileSearchIndexWriter(modelContainer: <#T##ModelContainer#>)
+
+        backgroundWorker?.enqueue(BlockBackgroundTask { @MainActor [weak self] in
+            try await self?._insert(file: file)
+        })
     }
-    
-    private func _insert(document: WaitingDocument) async throws {
-        let accessGranted = document.url.startAccessingSecurityScopedResource()
-        defer { document.url.stopAccessingSecurityScopedResource() }
         
-        guard accessGranted else { throw IrisDBControllerError.unableToObtainSecurityAccess }
-        
-        let fileAttributes = try document.url.resourceValues(forKeys: [.contentTypeKey])
-        
-        guard let contentType = fileAttributes.contentType else { throw IrisDBControllerError.unableToGetContentType }
-        
-        let digester = try DigesterFactory.digester(for: contentType)
-        let embeddableContent = try await digester.digest(file: document.url)
-        
-        try await irisDB.createDocument(uuid: document.id, embeddableContent: embeddableContent)
-    }
-    
     public func delete(_ file: File) {
-        Task {
-            await insertWorkQueue.enqueue { [weak self] in
-                try await self?.irisDB.deleteDocument(uuid: file.uuid)
-            }
-        }
+        backgroundWorker?.enqueue(BlockBackgroundTask { @MainActor [weak self] in
+            try await self?._delete(file: file)
+        })
+    }
+    
+    private func _delete(file: File) async throws {
+        try await self.irisDB.deleteDocument(uuid: file.uuid)
     }
 }
 

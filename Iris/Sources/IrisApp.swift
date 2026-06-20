@@ -10,18 +10,31 @@ import SwiftData
 
 @main
 struct IrisApp: App {
-    @State var searchController: SearchController = SearchController()
-    
     // MARK: Databases
-    @State var irisDBController: IrisDBController = IrisDBController()
-    @State var frontendDatabase: FrontendDatabase = FrontendDatabase()
+    @State var irisDBController: IrisDBController
+    @State var frontendDatabase: FrontendDatabase
+    
+    @State var searchController: SearchController
+    @State var backgroundWorker: BackgroundWorker
     
     @State var standardFileImporterPresented: Bool = false
+    
+    init() {
+        self.irisDBController = IrisDBController()
+        self.frontendDatabase = FrontendDatabase.shared
         
+        self.searchController = SearchController()
+        self.backgroundWorker = BackgroundWorker()
+        
+        irisDBController.setWorker(backgroundWorker)
+        frontendDatabase.setWorker(backgroundWorker)
+    }
+    
     var body: some Scene {
         WindowGroup {
             NavigationCore()
                 .environment(AlertCenter.shared)
+                .environment(backgroundWorker)
         }
         .commands {
             CommandGroup(replacing: .newItem) {

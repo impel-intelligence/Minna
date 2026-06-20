@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import SFSymbols
 import ViewStorage
-import OrderedCollections
+import Collections
 
 enum ArrowDirection {
     case up
@@ -61,6 +61,8 @@ struct FolderView: View {
     @State var selectionAnchor: File? = nil
     
     @State var frame: CGRect = .zero
+    
+    @State var showDeleteConfirmation: Bool = false
 
     @FocusState private var isFocused: Bool
 
@@ -82,52 +84,9 @@ struct FolderView: View {
         Group {
             switch viewMode {
             case .grid:
-                ScrollView {
-                    LazyVGrid(columns: columns) {
-                        ForEach(filteredFiles) { file in
-                            GridFileCard(file: file)
-                                .onTapGesture {
-                                    tapGesture(for: file)
-                                }
-                                .contextMenu {
-                                    itemContextMenu(for: file)
-                                }
-                                .overlay {
-                                    if selectedFiles.contains(file) {
-                                        // TODO: need figure out a better way to track the current anchor when moving around with keyboard.
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
-                                    }
-                                }
-                        }
-                    }
-                    .padding(.vertical, 8)
-                }
-                .scrollContentBackground(.hidden)
+                gridBody
             case .list:
-                ScrollView {
-                    VStack {
-                        ForEach(filteredFiles) { file in
-                            ListFileCard(file: file)
-                                .focusable(true, interactions: .activate)
-                                .onTapGesture {
-                                    tapGesture(for: file)
-                                }
-                                .contextMenu {
-                                    itemContextMenu(for: file)
-                                }
-                                .overlay {
-                                    if selectedFiles.contains(file) {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
-                                    }
-                                }
-                        }
-                    }
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 10)
-                }
-                .scrollContentBackground(.hidden)
+                listBody
             }
         }
         .frameReader { self.frame = $0 }
@@ -201,16 +160,16 @@ struct FolderView: View {
         .focusable()
         .focused($isFocused)
         .focusEffectDisabled()
-        .onChange(of: isFocused) { _, focused in
-            // When focus moves to this view, check to see if a mouse button was pressed. If that is the case, this view was opened by the mouse so we don't need to start focus tracking.
-            guard NSEvent.pressedMouseButtons == 0 else { return }
-
-            // If the focus was gained through the keyboard (e.g. tab from the navigation list), select the first item to allow for instant keyboard navigation.s
-            if focused, selectedFiles.isEmpty, let firstFile = filteredFiles.first {
-                selectedFiles.append(firstFile)
-                selectionAnchor = firstFile
-            }
-        }
+//        .onChange(of: isFocused) { _, focused in
+//            // When focus moves to this view, check to see if a mouse button was pressed. If that is the case, this view was opened by the mouse so we don't need to start focus tracking.
+//            guard NSEvent.pressedMouseButtons == 0 else { return }
+//
+//            // If the focus was gained through the keyboard (e.g. tab from the navigation list), select the first item to allow for instant keyboard navigation.s
+//            if focused, selectedFiles.isEmpty, let firstFile = filteredFiles.first {
+//                selectedFiles.append(firstFile)
+//                selectionAnchor = firstFile
+//            }
+//        }
         .onKeyPress { keyPress in
             if keyPress.characters == "a" && keyPress.modifiers == .command {
                 selectedFiles.append(contentsOf: filteredFiles)
@@ -222,11 +181,77 @@ struct FolderView: View {
                 // If we were able to construct an arrow direction, the user moved using the arrow keys.
                 return moveCursor(direction: direction, modifiers: keyPress.modifiers)
             }
-            
-            
+                        
             return .ignored
         }
+        .onDeleteCommand {
+            guard !selectedFiles.isEmpty else { return }
+            showDeleteConfirmation = true
+        }
+        .alert("Delete selected files?", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                for file in selectedFiles {
+                    delete(file)
+                }
+            }
+        } message: {
+            Text("This action is irreversible.")
+        }
     }
+    
+    var listBody: some View {
+        ScrollView {
+            VStack {
+                ForEach(filteredFiles) { file in
+                    ListFileCard(file: file)
+                        .focusable(true, interactions: .activate)
+                        .onTapGesture {
+                            tapGesture(for: file)
+                        }
+                        .contextMenu {
+                            itemContextMenu(for: file)
+                        }
+                        .overlay {
+                            if selectedFiles.contains(file) {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
+                            }
+                        }
+                }
+            }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 10)
+        }
+        .scrollContentBackground(.hidden)
+
+    }
+    
+    var gridBody: some View {
+        ScrollView {
+            LazyVGrid(columns: columns) {
+                ForEach(filteredFiles) { file in
+                    GridFileCard(file: file)
+                        .onTapGesture {
+                            tapGesture(for: file)
+                        }
+                        .contextMenu {
+                            itemContextMenu(for: file)
+                        }
+                        .overlay {
+                            if selectedFiles.contains(file) {
+                                // TODO: need figure out a better way to track the current anchor when moving around with keyboard.
+                                RoundedRectangle(cornerRadius: 12)
+                                    .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
+                            }
+                        }
+                }
+            }
+            .padding(.vertical, 8)
+        }
+        .scrollContentBackground(.hidden)
+    }
+    
     
     private func moveCursor(direction: ArrowDirection, modifiers: EventModifiers) -> KeyPress.Result {
         if selectedFiles.isEmpty, let firstFile = filteredFiles.first {

@@ -22,7 +22,9 @@ class FrontendDatabase {
     }
     
     var unfilledFolderUUID: UUID
-    private let descriptionUpdateQueue: WorkQueue = WorkQueue()
+
+    private var backgroundWorker: BackgroundWorker? = nil
+    private let fileDescriptionWriter: FileDescriptionWriter
 
     init() {
         if let uuidString = UserDefaults.standard.object(forKey: FrontendDatabase.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
@@ -37,14 +39,20 @@ class FrontendDatabase {
             Folder.self
         ])
         
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let modelConfiguration = ModelConfiguration(schema: schema)
         
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            fileDescriptionWriter = FileDescriptionWriter(modelContainer: modelContainer)
             try populateStartupData()
+            modelContainer.mainContext.undoManager = UndoManager()
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
+    }
+    
+    public func setWorker(_ worker: BackgroundWorker) {
+        self.backgroundWorker = worker
     }
     
     private func populateStartupData() throws {
@@ -56,28 +64,11 @@ class FrontendDatabase {
     }
     
     func queueDescriptionUpdate(for file: File) {
-        Task {
-            await descriptionUpdateQueue.enqueue {
-                let url = try file.securityScopedURL()
-                guard let contentType = try url.resourceValues(forKeys: [.contentTypeKey]).contentType else {
-                    print("Failed to get content type for file \(file)")
-                    return
-                }
-                
-                let hasAccess = url.startAccessingSecurityScopedResource()
-                defer { url.stopAccessingSecurityScopedResource() }
-                
-                guard hasAccess else {
-                    print("Unable to obtain security scope")
-                    return
-                }
-                
-                let blurbProvider = try BlurbFactory.provider(for: contentType)
-                // Retrieve a file blurb using Apple's Intelligence models.
-                let blurb = try await blurbProvider.blurb(for: url)
-                file.shortDescription = blurb.description
-                file.modelContext?.insert(file)
-            }
-        }
+        let persistentID = file.persistentModelID
+        let writer = fileDescriptionWriter
+        
+        backgroundWorker?.enqueue(BlockBackgroundTask { [writer, persistentID] in
+            try await writer.generateDescription(for: persistentID)
+        })
     }
 }

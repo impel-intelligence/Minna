@@ -35,7 +35,7 @@ let project = Project(
                 .external(name: "IrisSearch"),
                 .external(name: "Digester"),
                 .external(name: "BlurbKit"),
-                .external(name: "OrderedCollections")
+                .external(name: "Collections")
             ],
             settings: irisSettings
         ),
