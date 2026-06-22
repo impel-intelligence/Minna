@@ -8,15 +8,31 @@
 import SwiftUI
 
 struct ListFileCard: View {
-    let file: File
+    @State var file: File
+
+    @Binding var editingTitle: Bool
+    @Binding var editingDescription: Bool
     
+    @FocusState var focusedField: CardEditField?
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .center) {
-                Text(file.title)
-                    .font(.title3)
-                    .fontDesign(.serif)
-                    .foregroundStyle(file.color.text)
+                if editingTitle {
+                    TextField("Title", text: $file.title, axis: .vertical)
+                        .focused($focusedField, equals: .title)
+                        .font(.title3)
+                        .fontDesign(.serif)
+                        .foregroundStyle(file.color.text)
+                        .onSubmit {
+                            self.editingTitle = false
+                        }
+                } else {
+                    Text(file.title)
+                        .font(.title3)
+                        .fontDesign(.serif)
+                        .foregroundStyle(file.color.text)
+                }
                 Spacer()
                 HStack(alignment: .center) {
                     Image(file.type.icon)
@@ -32,11 +48,24 @@ struct ListFileCard: View {
                 .background(IrisAsset.Assets.pillBackground.swiftUIColor)
                 .clipShape(.rect(cornerRadius: 4))
             }
-            Text(file.shortDescription)
-                .font(.subheadline)
-                .fontDesign(.serif)
-                .lineLimit(2)
-                .foregroundStyle(file.color.text)
+            if editingDescription {
+                TextField("Description", text: $file.shortDescription, axis: .vertical)
+                    .focused($focusedField, equals: .description)
+                    .font(.subheadline)
+                    .fontDesign(.serif)
+                    .lineLimit(2)
+                    .foregroundStyle(file.color.text)
+                    .onSubmit {
+                        self.editingDescription = false
+                    }
+
+            } else {
+                Text(file.shortDescription)
+                    .font(.subheadline)
+                    .fontDesign(.serif)
+                    .lineLimit(2)
+                    .foregroundStyle(file.color.text)
+            }
         }
         .padding(.vertical, 8)
         .padding(.horizontal)
@@ -46,8 +75,11 @@ struct ListFileCard: View {
 }
 
 #Preview {
-    ListFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("text.align.left"))), title: "Hello World", shortDescription: "This is a quick description of this file and the content it contains.", color: .random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "google.com"))
-    ListFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("microphone"))), title: "Lecture 10/20/26", shortDescription: "Your teacher discussed the theory of relativity.", color: .random, type: .recording, url: URL(string: "https://google.com")!, bookmark: nil, source: "recording"))
-    ListFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("sparkles"))), title: "C Mutex Questions", shortDescription: "Provided a C mutex example from class and helped debug an assignment.", color: .random, type: .askIris, url: URL(string: "https://google.com")!, bookmark: nil, source: "ask iris"))
+    @Previewable @State var editingTitle: Bool = false
+    @Previewable @State var editingDescription: Bool = false
+
+    ListFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("text.align.left"))), title: "Hello World", shortDescription: "This is a quick description of this file and the content it contains.", color: .random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "google.com"), editingTitle: $editingTitle, editingDescription: $editingDescription)
+    ListFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("microphone"))), title: "Lecture 10/20/26", shortDescription: "Your teacher discussed the theory of relativity.", color: .random, type: .recording, url: URL(string: "https://google.com")!, bookmark: nil, source: "recording"), editingTitle: $editingTitle, editingDescription: $editingDescription)
+    ListFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("sparkles"))), title: "C Mutex Questions", shortDescription: "Provided a C mutex example from class and helped debug an assignment.", color: .random, type: .askIris, url: URL(string: "https://google.com")!, bookmark: nil, source: "ask iris"), editingTitle: $editingTitle, editingDescription: $editingDescription)
     
 }

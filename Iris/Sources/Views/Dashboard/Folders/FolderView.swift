@@ -61,9 +61,10 @@ struct FolderView: View {
     @State var standardFileImporterPresented: Bool = false
     @State var selectedFiles: OrderedSet<File> = []
     @State var selectionAnchor: File? = nil
-    
     @State var frame: CGRect = .zero
     
+    @State var editingFileText: Bool = false
+
     @State var showDeleteConfirmation: Bool = false
 
     @FocusState private var isFocused: Bool
@@ -173,6 +174,8 @@ struct FolderView: View {
 //            }
 //        }
         .onKeyPress { keyPress in
+            guard !self.editingFileText else { return .ignored }
+            
             if keyPress.characters == "a" && keyPress.modifiers == .command {
                 selectedFiles.append(contentsOf: filteredFiles)
                 return .handled
@@ -187,6 +190,7 @@ struct FolderView: View {
             return .ignored
         }
         .onDeleteCommand {
+            guard !self.editingFileText else { return }
             guard !selectedFiles.isEmpty else { return }
             showDeleteConfirmation = true
         }
@@ -197,8 +201,6 @@ struct FolderView: View {
                     delete(file)
                 }
             }
-        } message: {
-            Text("This action is irreversible.")
         }
     }
     
@@ -206,19 +208,9 @@ struct FolderView: View {
         ScrollView {
             VStack {
                 ForEach(filteredFiles) { file in
-                    ListFileCard(file: file)
-                        .focusable(true, interactions: .activate)
+                    OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
                         .onTapGesture {
                             tapGesture(for: file)
-                        }
-                        .contextMenu {
-                            itemContextMenu(for: file)
-                        }
-                        .overlay {
-                            if selectedFiles.contains(file) {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
-                            }
                         }
                 }
             }
@@ -233,19 +225,9 @@ struct FolderView: View {
         ScrollView {
             LazyVGrid(columns: columns) {
                 ForEach(filteredFiles) { file in
-                    GridFileCard(file: file)
+                    OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
                         .onTapGesture {
                             tapGesture(for: file)
-                        }
-                        .contextMenu {
-                            itemContextMenu(for: file)
-                        }
-                        .overlay {
-                            if selectedFiles.contains(file) {
-                                // TODO: need figure out a better way to track the current anchor when moving around with keyboard.
-                                RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(.blue.opacity(0.8), lineWidth: 3)
-                            }
                         }
                 }
             }
@@ -318,79 +300,6 @@ struct FolderView: View {
         }
     }
     
-    @ViewBuilder
-    private func itemContextMenu(for file: File) -> some View {
-        Button {
-            let filesToOpen = selectedFiles.isEmpty ? [file] : selectedFiles
-            
-            for file in filesToOpen {
-                open(file)
-            }
-        } label: {
-            Label(selectedFiles.count <= 1 ? "Open Original" : "Open Originals", symbol: .arrow_up_right)
-        }
-        
-
-        Button {
-            
-        } label: {
-            Label(selectedFiles.count <= 1 ? "Rename" : "Rename Selected", symbol: .pencil_line)
-        }
-        
-        Menu {
-            ForEach(ThemeColor.allCases) { theme in
-                Button {
-                    let filesToChange = selectedFiles.isEmpty ? [file] : selectedFiles
-
-                    for file in filesToChange {
-                        file.color = theme
-                    }
-                } label: {
-                    Label(theme.description, symbol: .circle_fill)
-                        .foregroundStyle(theme.background)
-                }
-            }
-        } label: {
-            Label("Change Color", symbol: .paintpalette)
-
-        }
-
-
-        FolderMenu { newFolder in
-            withAnimation {
-                let filesToMove = selectedFiles.isEmpty ? [file] : selectedFiles
-
-                for file in filesToMove {
-                    move(file: file, to: newFolder)
-                }
-            }
-        } label: {
-            Label(selectedFiles.count <= 1 ? "Move" : "Move Selected", symbol: .folder)
-        }
-
-        Divider()
-        
-        Button(role: .destructive) {
-            withAnimation {
-                if selectedFiles.isEmpty {
-                    delete(file)
-                } else {
-                    for selectedFile in selectedFiles {
-                        delete(selectedFile)
-                    }
-                    selectedFiles.removeAll()
-                }
-            }
-        } label: {
-            Label(selectedFiles.isEmpty ? "Delete" : "Delete Selected", symbol: .trash)
-        }
-        .foregroundStyle(.red)
-    }
-    
-    private func move(file: File, to newFolder: Folder) {
-        file.folder = newFolder
-    }
-    
     private func delete(_ file: File) {
         modelContext.delete(file)
 
@@ -398,26 +307,6 @@ struct FolderView: View {
             try irisContext.delete(file)
         } catch {
             print("Failed to delete Iris Document \(error)")
-        }
-    }
-    
-    private func open(_ file: File) {
-        // Check if we are a file URL and have bookmark data. Otherwise, try and open like a webpage.
-        guard file.url.isFileURL, file.bookmark != nil else {
-            openURL(file.url)
-            return
-        }
-        
-        do {
-            let url = try file.securityScopedURL()
-            guard url.startAccessingSecurityScopedResource() else { return }
-            
-            NSWorkspace.shared.open(url, configuration: NSWorkspace.OpenConfiguration()) { _, error in
-                url.stopAccessingSecurityScopedResource()
-                if let error { print("Failed to open original \(url): \(error)") }
-            }
-        } catch {
-            print("Failed to open url: \(error) - \(file.url)")
         }
     }
 }
