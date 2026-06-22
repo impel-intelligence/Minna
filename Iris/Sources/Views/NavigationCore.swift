@@ -79,7 +79,9 @@ struct KnowledgeBaseContent: View {
 
 struct FolderRow: View {
     @Environment(\.modelContext) private var modelContext
-    let folder: Folder
+    @State var folder: Folder
+    
+    @FocusState var focusState: Bool
 
     var body: some View {
         if let children = folder.displayChildren {
@@ -105,32 +107,56 @@ struct FolderRow: View {
             FolderView(folder: folder)
                 .id(folder.uuid)
         } label: {
-            folder.label()
-                .contextMenu {
-                    if !folder.protected {
-                        Button("Add Child") {
-                            withAnimation {
-                                let newFolder = Folder(name: "Subfolder \(folder.children.count)", icon: FolderIcon(symbol: .symbol("star")))
-
-                                folder.children.append(newFolder)
-                                newFolder.parent = folder
-
-                                modelContext.insert(newFolder)
-                            }
-                        }
-                        Button("Delete") {
-                            withAnimation {
-                                if !folder.children.isEmpty, let parent = folder.parent {
-                                    for child in folder.children {
-                                        child.parent = parent
-                                    }
-                                }
-
-                                modelContext.delete(folder)
-                            }
-                        }
-                    }
+            Label {
+                if folder.protected {
+                    Text(folder.name)
+                } else {
+                    TextField("Name", text: $folder.name)
+                        .focused($focusState, equals: true)
                 }
+            } icon: {
+                switch folder.icon.symbol {
+                case .emoji(let emoji):
+                    Text(emoji)
+                case .symbol(let symbol):
+                    Image(systemName: symbol)
+                        .accessibilityLabel(symbol)
+                }
+            }        }
+        .contextMenu {
+            if !folder.protected {
+                Button {
+                    withAnimation {
+                        let newFolder = Folder(name: "Subfolder \(folder.children.count)", icon: FolderIcon(symbol: .symbol("star")))
+                        
+                        folder.children.append(newFolder)
+                        newFolder.parent = folder
+                        
+                        modelContext.insert(newFolder)
+                    }
+                } label: {
+                    Label("Create Subfolder", symbol: .plus)
+                }
+                Button {
+                    focusState = true
+                } label: {
+                    Label("Rename", symbol: .pencil_line)
+                }
+
+                Button(role: .destructive) {
+                    withAnimation {
+                        if !folder.children.isEmpty, let parent = folder.parent {
+                            for child in folder.children {
+                                child.parent = parent
+                            }
+                        }
+                        
+                        modelContext.delete(folder)
+                    }
+                } label: {
+                    Label("Delete", symbol: .trash)
+                }
+            }
         }
     }
 
