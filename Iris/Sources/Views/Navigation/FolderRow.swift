@@ -38,11 +38,19 @@ struct FolderRow: View {
 
     private func sidebarFolderItem(folder: Folder) -> some View {
         Label {
-            if folder.protected {
-                Text(folder.name)
-            } else {
-                TextField("Name", text: $folder.name)
-                    .focused($focusState, equals: true)
+            HStack {
+                if folder.protected {
+                    Text(folder.name)
+                } else {
+                    TextField("Name", text: $folder.name)
+                        .focused($focusState, equals: true)
+                }
+                Spacer()
+                if !folder.files.isEmpty {
+                    Text(folder.files.count.description)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(.secondary)
+                }
             }
         } icon: {
             folder.icon.image()
