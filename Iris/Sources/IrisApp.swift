@@ -21,7 +21,7 @@ struct IrisApp: App {
     
     init() {
         self.frontendDatabase = FrontendDatabase.shared
-        self.irisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
+        self.irisDBController = IrisDBController()
 
         self.searchController = SearchController()
         self.backgroundWorker = BackgroundWorker()

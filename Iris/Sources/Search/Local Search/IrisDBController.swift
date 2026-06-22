@@ -24,9 +24,8 @@ final class IrisDBController {
     private let textChunker: TextChunker = BasicTextChunker()
     
     private var backgroundWorker: BackgroundWorker? = nil
-    private let indexWriter: FileSearchIndexWriter
     
-    init(modelContainer: ModelContainer) {
+    init() {
         do {
             let searchDirectory = Utilities.irisDBDirectory()
             textEmbedder = try NLEmbedder(language: .english)
@@ -35,7 +34,6 @@ final class IrisDBController {
             fatalError("Could not create SearchController: \(error)")
         }
         
-        indexWriter = FileSearchIndexWriter(modelContainer: modelContainer)
         mainContext = IrisContext(controllerResult: .success(self))
     }
     

@@ -31,6 +31,7 @@ actor FileDescriptionWriter {
         }
         
         let blurbProvider = try BlurbFactory.provider(for: contentType)
+        
         // Retrieve a file blurb using Apple's Intelligence models.
         let blurb = try await blurbProvider.blurb(for: url)
         
