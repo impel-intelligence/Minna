@@ -20,9 +20,9 @@ struct IrisApp: App {
     @State var standardFileImporterPresented: Bool = false
     
     init() {
-        self.irisDBController = IrisDBController()
         self.frontendDatabase = FrontendDatabase.shared
-        
+        self.irisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
+
         self.searchController = SearchController()
         self.backgroundWorker = BackgroundWorker()
         

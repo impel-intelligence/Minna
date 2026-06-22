@@ -71,6 +71,7 @@ extension File {
                 print("Failed to get file model context \(uuid)")
                 return url
             }
+            
             modelContext.insert(self)
         }
         

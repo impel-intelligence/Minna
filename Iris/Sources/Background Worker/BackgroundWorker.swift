@@ -73,7 +73,6 @@ final class BackgroundWorker {
         Task {
             await currentTask?.value
             
-            print("Finished \(runningItem?.id)")
             self.currentTask = nil
             self.runningItem = nil
             self.processLoop()

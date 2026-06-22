@@ -13,6 +13,8 @@ import BlurbKit
 actor FileDescriptionWriter {
     func generateDescription(for id: PersistentIdentifier) async throws {
         guard let file = self[id, as: File.self], !file.isDeleted else { return }
+        guard !file.isDeleted else { return }
+        
         let url = try file.securityScopedURL()
 
         guard let contentType = try url.resourceValues(forKeys: [.contentTypeKey]).contentType else {

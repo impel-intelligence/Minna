@@ -1,5 +1,5 @@
 {
-  "originHash" : "76e9c51e5bcad91b8e5f2bd134c922c3a18205928b3d811f59c553cfe4aac790",
+  "originHash" : "5591f9c1c4baa9bd885c4dc29752b16d6dd25b971c5f6dfbc7a082459953fb31",
   "pins" : [
     {
       "identity" : "blurbkit",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/IrisSearch",
       "state" : {
-        "revision" : "009a10834cf45737b9ae53cb1f3103cc53c14fbe",
-        "version" : "0.2.3"
+        "revision" : "44daaabf958e44f0b060eb0c48243d50f5cb5552",
+        "version" : "0.4.0"
       }
     },
     {

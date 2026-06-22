@@ -38,15 +38,17 @@ extension View {
                     // Track URLs inserted so we do not insert any duplicates.
                     var insertedURLs: Set<URL> = []
                     
-                    let files = try result.get()
+                    let selectedURLs = try result.get()
                     
-                    for file in files {
-                        let gotAccess = file.startAccessingSecurityScopedResource()
+                    var insertedFiles: [File] = []
+                    
+                    for url in selectedURLs {
+                        let gotAccess = url.startAccessingSecurityScopedResource()
                         guard gotAccess else { return }
                         
                         do {
                             // URL may be a directory, so this can return many urls.
-                            let files = try FileFactory.files(from: file, in: folder)
+                            let files = try FileFactory.files(from: url, in: folder)
                             
                             // Local copy of file urls for the search predicate.
                             let urls = files.compactMap({$0.url})
@@ -64,20 +66,25 @@ extension View {
                                     continue
                                 }
                                 
+                                insertedFiles.append(file)
                                 modelContext.insert(file)
-                                try irisContext.insert(file)
-                                FrontendDatabase.shared.queueDescriptionUpdate(for: file)
                             }
                         } catch {
-                            print("Failed to create file for \(file): \(error)")
+                            print("Failed to create file for \(url): \(error)")
                         }
                         
-                        file.stopAccessingSecurityScopedResource()
+                        url.stopAccessingSecurityScopedResource()
+                    }
+                    
+                    try modelContext.save()
+                    
+                    for file in insertedFiles {
+                        try irisContext.insert(file)
+                        FrontendDatabase.shared.queueDescriptionUpdate(for: file)
                     }
                 } catch {
                     print(error)
                 }
-                
             }
     }
 }
