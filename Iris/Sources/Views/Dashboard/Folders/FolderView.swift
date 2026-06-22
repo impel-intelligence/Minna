@@ -7,9 +7,9 @@
 
 import SwiftUI
 import SwiftData
-import SFSymbols
 import ViewStorage
 import Collections
+import SFSafeSymbols
 
 enum ArrowDirection {
     case up
@@ -123,11 +123,11 @@ struct FolderView: View {
                     Label {
                         Text("Add Content")
                     } icon: {
-                        Image(.plus)
+                        Image(systemSymbol: .plus)
                     }
                 }
                 
-                Menu("Filter & Sorting", systemImage: SFSymbol.line_3_horizontal_decrease.name) {
+                Menu("Filter & Sorting", systemImage: SFSymbol.line3HorizontalDecrease.rawValue) {
                     Picker(selection: $viewMode) {
                         ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
                             Text(mode.description)

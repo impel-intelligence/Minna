@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SFSafeSymbols
 
 extension Folder {
     @ViewBuilder
@@ -13,13 +14,46 @@ extension Folder {
         Label {
             Text(name)
         } icon: {
-            switch icon.symbol {
-            case .emoji(let emoji):
-                Text(emoji)
-            case .symbol(let symbol):
-                Image(systemName: symbol)
-                    .accessibilityLabel(symbol)
+            icon.image()
+        }
+    }
+}
+
+extension FolderIcon {
+    enum IconSize {
+        case regular
+        case large
+    }
+    
+    @ViewBuilder
+    func image(size: IconSize = .regular) -> some View {
+        switch self.symbol {
+        case .emoji(let emoji):
+            Text(emoji)
+                .font(size == .large ? .system(size: 40) : nil)
+        case .symbol(let name):
+            let symbol = SFSymbol(rawValue: name)
+            
+            if size == .large {
+                Image(systemSymbol: symbol)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 45, height: 45)
+            } else {
+                Image(systemSymbol: symbol)
             }
         }
     }
+}
+
+#Preview {
+    FolderIcon(symbol: .emoji("🥂"), color: .random).image(size: .regular)
+        .border(.red)
+    FolderIcon(symbol: .symbol(SFSymbol.star.rawValue), color: .random).image(size: .regular)
+        .border(.red)
+    Divider()
+    FolderIcon(symbol: .emoji("🥂"), color: .random).image(size: .large)
+        .border(.red)
+    FolderIcon(symbol: .symbol(SFSymbol.star.rawValue), color: .random).image(size: .large)
+        .border(.red)
 }

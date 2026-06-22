@@ -9,6 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import Digester
 import SwiftData
+import SFSafeSymbols
 
 enum IrisFileDialog {
     static let main: String = "com.tryiris.file.dialog.main"
@@ -23,19 +24,19 @@ struct AddItemMenuButtons: View {
             Button {
                 presentLocalFilePicker.toggle()
             } label: {
-                Label("Add a local file", symbol: .laptopcomputer)
+                Label("Add a local file", systemSymbol: .laptopcomputer)
             }
             .keyboardShortcut("N", modifiers: [.command])
             Button {
                 
             } label: {
-                Label("Add a file from the cloud", symbol: .custom("custom.cloud.badge.plus"))
+                Label("Add a file from the cloud", image: "cloud.badge.plus")
             }
             .keyboardShortcut("N", modifiers: [.shift, .command])
             Button {
                 
             } label: {
-                Label("Start a recording", symbol: .mic)
+                Label("Start a recording", systemSymbol: .microbe)
             }
             .keyboardShortcut("R", modifiers: [.shift, .command])
         }

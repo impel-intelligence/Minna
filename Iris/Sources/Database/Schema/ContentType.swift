@@ -7,7 +7,7 @@
 
 import ViewStorage
 import UniformTypeIdentifiers
-import SFSymbols
+import SFSafeSymbols
 
 enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseIterable {
     case askIris
@@ -24,21 +24,21 @@ enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseI
     var icon: SFSymbol {
         switch self {
         case .webpage:
-            return .text_alignleft
+            return .textAlignleft
         case .video:
             return .video
         case .image:
             return .photo
         case .pdf:
-            return .doc_richtext
+            return .richtextPage
         case .recording:
-            return .mic
+            return .microphone
         case .audio:
             return .waveform
         case .askIris:
             return .sparkles
         case .text:
-            return .doc
+            return .document
         }
     }
     

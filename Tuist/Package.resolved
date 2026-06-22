@@ -1,5 +1,5 @@
 {
-  "originHash" : "5591f9c1c4baa9bd885c4dc29752b16d6dd25b971c5f6dfbc7a082459953fb31",
+  "originHash" : "ccfc5a10c33c3cce1424d210fb35fb9469339fd04fa9139b4715a57dce57add2",
   "pins" : [
     {
       "identity" : "blurbkit",
@@ -38,11 +38,11 @@
       }
     },
     {
-      "identity" : "sfsymbols",
+      "identity" : "sfsafesymbols",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ActuallyTaylor/SFSymbols",
+      "location" : "https://github.com/SFSafeSymbols/SFSafeSymbols",
       "state" : {
-        "revision" : "b52a96089cae21a7174ad723d03fa7427392e6c7",
+        "revision" : "e01b3d4f861412f8dcee8d93c417d2c2b0cdfd77",
         "version" : "7.0.0"
       }
     },

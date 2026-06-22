@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftData
-import SFSymbols
 import SwiftUI
 import ViewStorage
 import UniformTypeIdentifiers

@@ -6,15 +6,15 @@
 //
 
 import SwiftUI
-import SFSymbols
+import SFSafeSymbols
 
 struct SearchStartupView: View, Navigable {
     static var label: Label<Text, ModifiedContent<Image, AccessibilityAttachmentModifier>> {
         Label {
             Text("Search")
         } icon: {
-            Image(.magnifyingglass)
-                .accessibilityLabel(SFSymbol.magnifyingglass.name)
+            Image(systemSymbol: .magnifyingglass)
+                .accessibilityHidden(true)
         }
     }
     

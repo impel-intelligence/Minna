@@ -18,7 +18,7 @@ struct NotificationsViewButton: View {
             Label {
                 Text("Notifications")
             } icon: {
-                Image(alertCenter.notifications.isEmpty ? .bell : .bell_badge)
+                Image(systemSymbol: alertCenter.notifications.isEmpty ? .bell : .bellBadge)
             }
         }
         .contentTransition(
@@ -77,7 +77,7 @@ struct NotificationsView: View {
                     Label {
                         Text("Dismiss")
                     } icon: {
-                        Image(.xmark)
+                        Image(systemSymbol: .xmark)
                     }
                 }
                 .controlSize(.small)

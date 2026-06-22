@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Collections
+import SFSafeSymbols
 
 enum CardEditField: Hashable {
     case title
@@ -68,7 +69,7 @@ struct OpaqueFileCard: View {
                 open(file)
             }
         } label: {
-            Label(selectedFiles.count <= 1 ? "Open Original" : "Open Originals", symbol: .arrow_up_right)
+            Label(selectedFiles.count <= 1 ? "Open Original" : "Open Originals", systemSymbol: .arrowUpRight)
         }
         
         
@@ -77,7 +78,7 @@ struct OpaqueFileCard: View {
             focusedField = .title
         } label: {
             // TODO: Support multi-rename, look at macOS multi-rename for inspo
-            Label(editingTitle ? "Stop Rename" : "Rename", symbol: .pencil_line)
+            Label(editingTitle ? "Stop Rename" : "Rename", systemSymbol: .pencilLine)
         }
         
         Button {
@@ -85,7 +86,7 @@ struct OpaqueFileCard: View {
             focusedField = .description
         } label: {
             // TODO: Support multi-rename, look at macOS multi-rename for inspo
-            Label(editingDescription ? "Stop Editing" : "Edit Description", symbol: .pencil_line)
+            Label(editingDescription ? "Stop Editing" : "Edit Description", systemSymbol: .pencilLine)
         }
 
         
@@ -98,12 +99,12 @@ struct OpaqueFileCard: View {
                         file.color = theme
                     }
                 } label: {
-                    Label(theme.description, symbol: .circle_fill)
+                    Label(theme.description, systemSymbol: .circleFill)
                         .foregroundStyle(theme.background)
                 }
             }
         } label: {
-            Label("Change Color", symbol: .paintpalette)
+            Label("Change Color", systemSymbol: .paintpalette)
             
         }
         
@@ -116,7 +117,7 @@ struct OpaqueFileCard: View {
                 }
             }
         } label: {
-            Label(selectedFiles.count <= 1 ? "Move" : "Move Selected", symbol: .folder)
+            Label(selectedFiles.count <= 1 ? "Move" : "Move Selected", systemSymbol: .folder)
         }
         
         Divider()
@@ -133,7 +134,7 @@ struct OpaqueFileCard: View {
                 }
             }
         } label: {
-            Label(selectedFiles.isEmpty ? "Delete" : "Delete Selected", symbol: .trash)
+            Label(selectedFiles.isEmpty ? "Delete" : "Delete Selected", systemSymbol: .trash)
         }
         .foregroundStyle(.red)
     }
@@ -175,7 +176,7 @@ struct OpaqueFileCard: View {
 
 #Preview {
     @Previewable @State var selectedFiles: OrderedSet<File> = []
-    @Previewable @State var file: File = File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("text.align.left"))), title: "This-is-a-long-name-with-no-spaces", shortDescription: "This is a quick description of this file and the content it contains. This is a quick description of this file and the content it contains. This is a quick description of this file and the content it contains.", color: .random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "google.com")
+    @Previewable @State var file: File = File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol(SFSymbol.textPage.rawValue), color: .mint)), title: "This-is-a-long-name-with-no-spaces", shortDescription: "This is a quick description of this file and the content it contains. This is a quick description of this file and the content it contains. This is a quick description of this file and the content it contains.", color: .random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "google.com")
     
     OpaqueFileCard(file: file, isEditingText: .constant(false), viewMode: .constant(.grid), selectedFiles: $selectedFiles)
         .modelContext(SampleDatabase.shared.context)

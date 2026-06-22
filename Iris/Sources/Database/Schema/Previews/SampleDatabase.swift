@@ -7,6 +7,7 @@
 
 import SwiftData
 import Foundation
+import SFSafeSymbols
 
 @MainActor
 class SampleDatabase {
@@ -24,14 +25,14 @@ class SampleDatabase {
     static let shared = SampleDatabase()
         
     public var sampleFolders: [Folder] = [
-        Folder(name: "Unfilled", icon: FolderIcon(symbol: .symbol("tray.full")), files: [
+        Folder(name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), files: [
             
         ], protected: true),
-        Folder(name: "Coding", icon: FolderIcon(symbol: .symbol("ellipsis.curlybraces")), children: [
-            Folder(name: "Firmware", icon: FolderIcon(symbol: .symbol("car")))
+        Folder(name: "Coding", icon: FolderIcon(symbol: .symbol(SFSymbol.ellipsisCurlybraces.rawValue), color: .azure), children: [
+            Folder(name: "Firmware", icon: FolderIcon(symbol: .symbol(SFSymbol.car.rawValue), color: .lavender))
         ]),
-        Folder(name: "Research Papers", icon: FolderIcon(symbol: .symbol("graduationcap")), children: [
-            Folder(name: "Thesis", icon: FolderIcon(symbol: .symbol("pencil.line")))
+        Folder(name: "Research Papers", icon: FolderIcon(symbol: .symbol(SFSymbol.graduationcap.rawValue), color: .mint), children: [
+            Folder(name: "Thesis", icon: FolderIcon(symbol: .symbol(SFSymbol.pencilLine.rawValue), color: .rose))
         ])
     ]
     
@@ -284,7 +285,8 @@ class SampleDatabase {
     private init(sampleData: Bool = false) {
         let schema = Schema([
             File.self,
-            Folder.self
+            Folder.self,
+            FolderIcon.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         

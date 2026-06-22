@@ -55,8 +55,4 @@ struct FolderMenu<MenuLabel>: View where MenuLabel: View {
             }
         }
     }
-    
-    @ViewBuilder
-    func actionButton() -> some View {
-    }
 }

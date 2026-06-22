@@ -8,6 +8,7 @@
 import SwiftData
 import Foundation
 import BlurbKit
+import SFSafeSymbols
 
 @MainActor
 class FrontendDatabase {
@@ -36,7 +37,8 @@ class FrontendDatabase {
 
         let schema = Schema([
             File.self,
-            Folder.self
+            Folder.self,
+            FolderIcon.self
         ])
         
         let modelConfiguration = ModelConfiguration(schema: schema)
@@ -58,7 +60,7 @@ class FrontendDatabase {
     private func populateStartupData() throws {
         let descriptor = FetchDescriptor<Folder>()
         guard try context.fetch(descriptor).isEmpty else { return }
-        let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol("tray.full")), protected: true)
+        let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), protected: true)
         context.insert(unfilledFolder)
         try context.save()
     }

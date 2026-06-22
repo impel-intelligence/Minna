@@ -14,24 +14,29 @@ extension UTType {
     static let irisFolder = UTType(exportedAs: "com.tryiris.iris.mac.folder")
 }
 
-struct FolderIcon: Codable {
-    enum Symbol: Codable {
+@Model
+final class FolderIcon {
+    enum Symbol: Codable, Hashable {
         case symbol(String) // TODO: Switch to SFSymbol once that supports codable
         case emoji(String)
         
         var text: String {
             switch self {
-            case .symbol(let string):
-                return string
+            case .symbol(let name):
+                return name
             case .emoji(let string):
                 return string
             }
         }
     }
     
-    let symbol: Symbol
-//    let emptySymbol: Symbol? = nil
-//    let color: String
+    var symbol: Symbol
+    var color: ThemeColor
+
+    init(symbol: Symbol, color: ThemeColor) {
+        self.symbol = symbol
+        self.color = color
+    }
 }
 
 @Model

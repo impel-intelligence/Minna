@@ -20,7 +20,7 @@ let package = Package(
         // You can read more about dependencies here: https://docs.tuist.io/documentation/tuist/dependencies
 //        .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.17.1"),
         // Taylor Repos
-        .package(url: "https://github.com/ActuallyTaylor/SFSymbols", from: "7.0.0"),
+//        .package(url: "https://github.com/ActuallyTaylor/SFSymbols", from: "7.0.0"),
         
         // Impel Repos
         .package(url: "https://github.com/impel-intelligence/ViewStorage", from: "1.4.0"),
@@ -28,6 +28,10 @@ let package = Package(
         .package(url: "https://github.com/impel-intelligence/BlurbKit", from: "0.1.2"),
         
         // Apple Repos
-        .package(url: "https://github.com/apple/swift-collections", from: "1.6.0")
+        .package(url: "https://github.com/apple/swift-collections", from: "1.6.0"),
+        
+        // Third Party
+        .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols", from: "7.0.0")
+
     ]
 )
