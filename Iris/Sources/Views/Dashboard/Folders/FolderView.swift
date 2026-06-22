@@ -321,37 +321,41 @@ struct FolderView: View {
     @ViewBuilder
     private func itemContextMenu(for file: File) -> some View {
         Button {
-            
-        } label: {
-            Label(selectedFiles.count < 1 ? "Rename" : "Rename Selected", symbol: .pencil_line)
-        }
-        
-        Button {
             let filesToOpen = selectedFiles.isEmpty ? [file] : selectedFiles
             
             for file in filesToOpen {
-                // Check if we are a file URL and have bookmark data. Otherwise, try and open like a webpage.
-                guard file.url.isFileURL, file.bookmark != nil else {
-                    openURL(file.url)
-                    continue
-                }
+                open(file)
+            }
+        } label: {
+            Label(selectedFiles.count <= 1 ? "Open Original" : "Open Originals", symbol: .arrow_up_right)
+        }
+        
 
-                do {
-                    let url = try file.securityScopedURL()
-                    guard url.startAccessingSecurityScopedResource() else { continue }
+        Button {
+            
+        } label: {
+            Label(selectedFiles.count <= 1 ? "Rename" : "Rename Selected", symbol: .pencil_line)
+        }
+        
+        Menu {
+            ForEach(ThemeColor.allCases) { theme in
+                Button {
+                    let filesToChange = selectedFiles.isEmpty ? [file] : selectedFiles
 
-                    NSWorkspace.shared.open(url, configuration: NSWorkspace.OpenConfiguration()) { _, error in
-                        url.stopAccessingSecurityScopedResource()
-                        if let error { print("Failed to open original \(url): \(error)") }
+                    for file in filesToChange {
+                        file.color = theme
                     }
-                } catch {
-                    print("Failed to open url: \(error) - \(file.url)")
+                } label: {
+                    Label(theme.description, symbol: .circle_fill)
+                        .foregroundStyle(theme.background)
                 }
             }
         } label: {
-            Label(selectedFiles.count < 1 ? "Open Original" : "Open Originals", symbol: .arrow_up_right)
+            Label("Change Color", symbol: .paintpalette)
+
         }
-        
+
+
         FolderMenu { newFolder in
             withAnimation {
                 let filesToMove = selectedFiles.isEmpty ? [file] : selectedFiles
@@ -361,32 +365,8 @@ struct FolderView: View {
                 }
             }
         } label: {
-            Label(selectedFiles.count < 1 ? "Move" : "Move Selected", symbol: .folder)
+            Label(selectedFiles.count <= 1 ? "Move" : "Move Selected", symbol: .folder)
         }
-
-
-//        Menu {
-//            let folders: [Folder] = (try? modelContext.fetch(FetchDescriptor<Folder>(predicate: #Predicate<Folder> { $0.parent == nil }, sortBy: [SortDescriptor(\.order)]))) ?? []
-//            
-//            ForEach(folders) { moveToFolder in
-//                Button {
-//                    withAnimation {
-//                        if selectedFiles.isEmpty {
-//                            move(file: file, to: moveToFolder)
-//                        } else {
-//                            for selectedFile in selectedFiles {
-//                                move(file: selectedFile, to: moveToFolder)
-//                            }
-//                            selectedFiles.removeAll()
-//                        }
-//                    }
-//                } label: {
-//                    moveToFolder.label()
-//                }
-//            }
-//        } label: {
-//            Label(selectedFiles.isEmpty ? "Move" : "Move Selected", symbol: .folder)
-//        }
 
         Divider()
         
@@ -418,6 +398,26 @@ struct FolderView: View {
             try irisContext.delete(file)
         } catch {
             print("Failed to delete Iris Document \(error)")
+        }
+    }
+    
+    private func open(_ file: File) {
+        // Check if we are a file URL and have bookmark data. Otherwise, try and open like a webpage.
+        guard file.url.isFileURL, file.bookmark != nil else {
+            openURL(file.url)
+            return
+        }
+        
+        do {
+            let url = try file.securityScopedURL()
+            guard url.startAccessingSecurityScopedResource() else { return }
+            
+            NSWorkspace.shared.open(url, configuration: NSWorkspace.OpenConfiguration()) { _, error in
+                url.stopAccessingSecurityScopedResource()
+                if let error { print("Failed to open original \(url): \(error)") }
+            }
+        } catch {
+            print("Failed to open url: \(error) - \(file.url)")
         }
     }
 }

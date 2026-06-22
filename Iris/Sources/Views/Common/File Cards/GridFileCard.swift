@@ -35,7 +35,7 @@ struct GridFileCard: View {
         }
         .padding(12)
         .frame(width: 150, height: 170, alignment: .top)
-        .background(file.color.lightBackground)
+        .background(file.color.background)
         .clipShape(.rect(cornerRadius: 12))
     }
 }

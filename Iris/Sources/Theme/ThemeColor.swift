@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-enum ThemeColor: Int, Codable {
+enum ThemeColor: Int, Codable, CaseIterable, CustomStringConvertible, Identifiable {
+    var id: Int { rawValue }
+    
     case champagne
     case lavender
     case azure
@@ -18,7 +20,22 @@ enum ThemeColor: Int, Codable {
         return ThemeColor(rawValue: Int.random(in: 0...ThemeColor.rose.rawValue))!
     }
     
-    var lightBackground: Color {
+    var description: String {
+        switch self {
+        case .champagne:
+            return "Champagne"
+        case .lavender:
+            return "Lavender"
+        case .azure:
+            return "Azure"
+        case .mint:
+            return "Mint"
+        case .rose:
+            return "Rose"
+        }
+    }
+    
+    var background: Color {
         switch self {
         case .champagne:
             return IrisAsset.Assets.Champagne.background.swiftUIColor

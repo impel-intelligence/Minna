@@ -40,7 +40,7 @@ struct ListFileCard: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal)
-        .background(file.color.lightBackground)
+        .background(file.color.background)
         .clipShape(.rect(cornerRadius: 12))
     }
 }
