@@ -38,6 +38,8 @@ struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
     @Environment(\.alertCenter) private var alertCenter
+    
+    @Environment(\.openURL) private var openURL
 
     static let cardWidth: CGFloat = 150
     static let gridSpacing: CGFloat = 12
@@ -321,22 +323,45 @@ struct FolderView: View {
         Button {
             
         } label: {
-            Label(selectedFiles.isEmpty ? "Rename" : "Rename Selected", symbol: .pencil_line)
+            Label(selectedFiles.count < 1 ? "Rename" : "Rename Selected", symbol: .pencil_line)
+        }
+        
+        Button {
+            let filesToOpen = selectedFiles.isEmpty ? [file] : selectedFiles
+            
+            for file in filesToOpen {
+                // Check if we are a file URL and have bookmark data. Otherwise, try and open like a webpage.
+                guard file.url.isFileURL, file.bookmark != nil else {
+                    openURL(file.url)
+                    continue
+                }
+
+                do {
+                    let url = try file.securityScopedURL()
+                    guard url.startAccessingSecurityScopedResource() else { continue }
+
+                    NSWorkspace.shared.open(url, configuration: NSWorkspace.OpenConfiguration()) { _, error in
+                        url.stopAccessingSecurityScopedResource()
+                        if let error { print("Failed to open original \(url): \(error)") }
+                    }
+                } catch {
+                    print("Failed to open url: \(error) - \(file.url)")
+                }
+            }
+        } label: {
+            Label(selectedFiles.count < 1 ? "Open Original" : "Open Originals", symbol: .arrow_up_right)
         }
         
         FolderMenu { newFolder in
             withAnimation {
-                if selectedFiles.isEmpty {
+                let filesToMove = selectedFiles.isEmpty ? [file] : selectedFiles
+
+                for file in filesToMove {
                     move(file: file, to: newFolder)
-                } else {
-                    for selectedFile in selectedFiles {
-                        move(file: selectedFile, to: newFolder)
-                    }
-                    selectedFiles.removeAll()
                 }
             }
         } label: {
-            Label(selectedFiles.isEmpty ? "Move" : "Move Selected", symbol: .folder)
+            Label(selectedFiles.count < 1 ? "Move" : "Move Selected", symbol: .folder)
         }
 
 
