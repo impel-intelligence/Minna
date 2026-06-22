@@ -10,7 +10,9 @@ import SFSafeSymbols
 
 struct FolderRow: View {
     @Environment(\.modelContext) private var modelContext
+
     @State var folder: Folder
+
     let addFolder: (Folder?) -> Void
     
     @FocusState var focusState: Bool
@@ -35,21 +37,17 @@ struct FolderRow: View {
     }
 
     private func sidebarFolderItem(folder: Folder) -> some View {
-        NavigationLink {
-            FolderView(folder: folder)
-                .id(folder.uuid)
-        } label: {
-            Label {
-                if folder.protected {
-                    Text(folder.name)
-                } else {
-                    TextField("Name", text: $folder.name)
-                        .focused($focusState, equals: true)
-                }
-            } icon: {
-                folder.icon.image()
+        Label {
+            if folder.protected {
+                Text(folder.name)
+            } else {
+                TextField("Name", text: $folder.name)
+                    .focused($focusState, equals: true)
             }
+        } icon: {
+            folder.icon.image()
         }
+        .tag(NavigationDestination.folder(folder))
         .contextMenu {
             if !folder.protected {
                 Button {

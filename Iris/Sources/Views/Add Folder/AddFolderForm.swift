@@ -42,17 +42,6 @@ struct AddFolderForm: View {
             
             TextField("Folder Name", text: $folder.name)
             
-            FolderMenu(folder: parentFolder) { folder in
-                parentFolder = folder
-            } label: {
-                if let parentFolder {
-                    parentFolder.label()
-                } else {
-                    Label("Parent Folder", systemImage: "folder.badge.plus")
-                }
-            }
-
-            
             ScrollView {
                 ForEach(SFSymbolCategory.categories) { category in
                     Section(category.name) {
@@ -71,6 +60,18 @@ struct AddFolderForm: View {
         .padding()
         .frame(width: 350)
         .toolbar {
+            ToolbarItem {
+                FolderMenu(folder: parentFolder) { folder in
+                    parentFolder = folder
+                } label: {
+                    if let parentFolder {
+                        parentFolder.label()
+                    } else {
+                        Label("Parent Folder", systemImage: "folder.badge.plus")
+                    }
+                }
+            }
+            
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel", role: .cancel) {
                     dismiss()

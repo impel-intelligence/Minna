@@ -9,6 +9,12 @@ import SwiftData
 import SwiftUI
 import SFSafeSymbols
 
+enum NavigationDestination: Hashable {
+    case search
+    case recents
+    case folder(Folder)
+}
+
 public struct NavigationCore: View {
     @Environment(\.undoManager) private var undoManager
     @Environment(\.modelContext) private var modelContext
@@ -19,24 +25,26 @@ public struct NavigationCore: View {
     @AppStorage("knowledgeExpanded") var knowledgeExpanded: Bool = true
     @AppStorage("connectionsExpanded") var connectionsExpanded: Bool = true
 
+    @State var selectedDestination: NavigationDestination? = .search
+    
     @State var addFolderRequest: AddFolderRequest? = nil
     
     public var body: some View {
         NavigationSplitView {
-            List {
-                NavigationLink {
-                    SearchStartupView()
-                } label: {
-                    SearchStartupView.label
-                }
-                NavigationLink {
-                    RecentsView()
-                } label: {
-                    RecentsView.label
-                }
+            List(selection: $selectedDestination) {
+                SearchStartupView.label
+                    .tag(NavigationDestination.search)
+
+                RecentsView.label
+                    .tag(NavigationDestination.recents)
 
                 Section("Knowledge Base", isExpanded: $knowledgeExpanded) {
-                    KnowledgeBaseContent(folders: folders, addFolder: addFolder(in:))
+                    ForEach(folders) { folder in
+                        FolderRow(folder: folder, addFolder: addFolder)
+                    }
+                    .onMove { source, destination in
+                        FolderRow.reorder(folders, from: source, to: destination)
+                    }
                 }
 
                 Section("Connections", isExpanded: $connectionsExpanded) {}
@@ -53,7 +61,15 @@ public struct NavigationCore: View {
                 }
             }
         } detail: {
-            Text("Select an item")
+            switch selectedDestination {
+            case .search, nil:
+                SearchStartupView()
+            case .recents:
+                RecentsView()
+            case .folder(let folder):
+                FolderView(folder: folder)
+                    .id(folder.uuid)
+            }
         }
         .onAppear {
             modelContext.undoManager = undoManager
@@ -75,4 +91,6 @@ public struct NavigationCore: View {
 #Preview {
     NavigationCore()
         .modelContainer(SampleDatabase.shared.modelContainer)
+        .environment(AlertCenter.shared)
+        .irisContext(IrisContext.notConnected)
 }

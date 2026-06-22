@@ -69,7 +69,7 @@ class FrontendDatabase {
         let persistentID = file.persistentModelID
         let writer = fileDescriptionWriter
         
-        backgroundWorker?.enqueue(BlockBackgroundTask { [writer, persistentID] in
+        backgroundWorker?.enqueue(BlockBackgroundTask(name: "Generate description for \(file.title)") { [writer, persistentID] in
             try await writer.generateDescription(for: persistentID)
         })
     }

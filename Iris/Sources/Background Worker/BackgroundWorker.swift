@@ -12,11 +12,14 @@ typealias BackgroundWorkItem = @Sendable () async throws -> Void
 
 protocol BackgroundTask: Sendable, Identifiable {
     var id: UUID { get }
+    
+    var name: String { get }
     var action: BackgroundWorkItem { get }
 }
 
 struct BlockBackgroundTask: BackgroundTask, Sendable {
     let id: UUID = UUID()
+    let name: String
     let action: BackgroundWorkItem
 }
 
@@ -33,7 +36,6 @@ final class BackgroundWorker {
     
     func enqueue(_ item: any BackgroundTask) {
         pending.append(item)
-        print("Added to pending \(item.id)")
         processLoop()
     }
     

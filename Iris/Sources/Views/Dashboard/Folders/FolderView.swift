@@ -100,23 +100,23 @@ struct FolderView: View {
             irisContext: irisContext
         )
         .toolbar {
-            ToolbarItem {
-                NotificationsViewButton()
-            }
+//            ToolbarItem {
+//                NotificationsViewButton()
+//                Button("Send Notification") {
+//                    let notification = UserNotification(title: "This is a test notification", message: "Tesyt test ", actions: [
+//                        UserNotification.ActionOption(title: "Move", action: {
+//                            print("Move")
+//                        }),
+//                        UserNotification.ActionOption(title: "Ignore", action: {
+//                            print("Ignore")
+//                        })
+//                    ])
+//                    
+//                    alertCenter.post(notification)
+//                }
+//            }
 
             ToolbarItemGroup(placement: .primaryAction) {
-                Button("Send Notification") {
-                    let notification = UserNotification(title: "This is a test notification", message: "Tesyt test ", actions: [
-                        UserNotification.ActionOption(title: "Move", action: {
-                            print("Move")
-                        }),
-                        UserNotification.ActionOption(title: "Ignore", action: {
-                            print("Ignore")
-                        })
-                    ])
-                    
-                    alertCenter.post(notification)
-                }
                 Menu {
                     AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
                 } label: {

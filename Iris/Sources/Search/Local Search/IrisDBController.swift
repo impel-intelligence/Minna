@@ -48,7 +48,7 @@ final class IrisDBController {
         let description = file.shortDescription
         let scopedURL = try file.securityScopedURL()
         
-        backgroundWorker?.enqueue(BlockBackgroundTask {
+        backgroundWorker?.enqueue(BlockBackgroundTask(name: "Index \(file.title)") {
             let accessGranted = scopedURL.startAccessingSecurityScopedResource()
             defer { scopedURL.stopAccessingSecurityScopedResource() }
             
@@ -69,7 +69,7 @@ final class IrisDBController {
         let uuid = file.uuid
         let irisDB = irisDB
         
-        backgroundWorker?.enqueue(BlockBackgroundTask { [irisDB, uuid] in
+        backgroundWorker?.enqueue(BlockBackgroundTask(name: "Delete Search Index for: \(file)") { [irisDB, uuid] in
             try await irisDB.deleteDocument(uuid: uuid)
         })
     }
