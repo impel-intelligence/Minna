@@ -14,7 +14,7 @@ enum IrisContextError: Error {
 /// A wrapper for IrisDBController that allows for easy insertion into SwiftUI's environment.
 public struct IrisContext {
     private let controllerResult: Result<IrisDBController, IrisContextError>
-    
+        
     init(controllerResult: Result<IrisDBController, IrisContextError>) {
         self.controllerResult = controllerResult
     }
@@ -35,6 +35,11 @@ public struct IrisContext {
     }
     
     @MainActor
+    var indexingProgress: IndexingProgress? {
+        try? controller.indexingProgress
+    }
+
+    @MainActor
     func search(query: String) async throws -> [UUID] {
         return try await controller.search(query: query)
     }
@@ -47,6 +52,14 @@ public struct IrisContext {
     @MainActor
     func delete(_ file: File) throws {
         try controller.delete(file)
+    }
+    
+    @MainActor
+    func reIndex(_ file: File) throws {
+        // If an existing index exists, delete it first
+        try? controller.delete(file)
+        // Re-index
+        try controller.insert(file)
     }
 }
 

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Sentry
 
 @main
 struct IrisApp: App {
@@ -20,9 +21,15 @@ struct IrisApp: App {
     
     init() {
         self.frontendDatabase = FrontendDatabase.shared
-        self.irisDBController = IrisDBController()
+        self.irisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
 
         self.searchController = SearchController()
+        
+        SentrySDK.start { options in
+            options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"
+            options.sendDefaultPii = false
+            options.enableUncaughtNSExceptionReporting = true
+        }
     }
     
     var body: some Scene {

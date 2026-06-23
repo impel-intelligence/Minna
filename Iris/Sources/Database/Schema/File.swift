@@ -32,8 +32,9 @@ final class File {
     var bookmark: Data?
     var type: ContentType = ContentType.webpage
     var source: String
+    var needsIndexing: Bool = true
 
-    init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String) {
+    init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String, needsIndexing: Bool = true) {
         self.uuid = uuid
         self.createdAt = createdAt
         self.folder = folder
@@ -44,6 +45,7 @@ final class File {
         self.bookmark = bookmark
         self.url = url
         self.source = source
+        self.needsIndexing = needsIndexing
     }
 }
 

@@ -31,7 +31,7 @@ public struct NavigationCore: View {
     
     public var body: some View {
         NavigationSplitView {
-            List(selection: $selectedDestination) {
+            List(selection: $selectedDestination) {                
                 SearchStartupView.label
                     .tag(NavigationDestination.search)
 
@@ -76,6 +76,21 @@ public struct NavigationCore: View {
         }
         .sheet(item: $addFolderRequest) { request in
             AddFolderForm(parentFolder: request.parent)
+        }
+        .task {
+            // Start indexing all files that did not complete indexing.
+            let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
+                file.needsIndexing
+            })
+            
+            guard let files = try? modelContext.fetch(descriptor) else { return }
+            for file in files {
+                do {
+                    try irisContext.reIndex(file)
+                } catch {
+                    print("Failed to re-index file \(file)")
+                }
+            }
         }
     }
 

@@ -33,7 +33,21 @@ struct SearchStartupView: View {
                 Text("Hey \(NSUserFirstName())!")
                     .font(.system(size: 36, design: .serif))
             }
-            SearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery)
+            
+            VStack(spacing: 0) {
+                SearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery)
+                
+                if let progress = irisContext.indexingProgress, progress.isIndexing {
+                    HStack {
+                        Text("Indexing...")
+                        ProgressView(value: progress.fractionCompleted)
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: 450)
+                }
+            }
+
             ScrollView(.horizontal) {
                 HStack {
                     ForEach(orderedSearch) { file in
@@ -136,5 +150,5 @@ struct SearchBar: View {
 #Preview {
     SearchStartupView()
         .navigationTitle("Ask Iris")
-        .irisContext(IrisDBController().mainContext)
+        .irisContext(IrisDBController(modelContainer: SampleDatabase.shared.modelContainer).mainContext)
 }

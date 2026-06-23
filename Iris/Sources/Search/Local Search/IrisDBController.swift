@@ -15,17 +15,31 @@ enum IrisDBControllerError: Error {
     case unableToGetContentType
 }
 
-@MainActor
+struct IndexingProgress {
+    var completed: Int
+    var total: Int
+    var fractionCompleted: Double { total == 0 ? 1 : Double(completed) / Double(total) }
+    var isIndexing: Bool { completed < total }
+    var isCompleted: Bool { completed == total }
+    
+    mutating func reset() {
+        completed = 0
+        total = 0
+    }
+}
+
+@MainActor @Observable
 final class IrisDBController {
     @MainActor public private(set) var mainContext: IrisContext!
     
-    private let irisDB: IrisDB
-    private let textEmbedder: EmbeddingProvider
-    private let textChunker: TextChunker = BasicTextChunker()
+    @ObservationIgnored private let irisDB: IrisDB
+    @ObservationIgnored private let textEmbedder: EmbeddingProvider
+    @ObservationIgnored private let textChunker: TextChunker = BasicTextChunker()
     
-    private(set) var runningIndices: Set<UUID> = []
+    var indexingProgress: IndexingProgress = IndexingProgress(completed: 0, total: 0)
+    let fileIndexedWriter: FileIndexedWriter
     
-    init() {
+    init(modelContainer: ModelContainer) {
         do {
             let searchDirectory = Utilities.irisDBDirectory()
             textEmbedder = try NLEmbedder(language: .english)
@@ -34,17 +48,19 @@ final class IrisDBController {
             fatalError("Could not create SearchController: \(error)")
         }
         
+        fileIndexedWriter = FileIndexedWriter(modelContainer: modelContainer)
         mainContext = IrisContext(controllerResult: .success(self))
     }
-    
+        
     public func insert(_ file: File) throws {
         let irisDB = irisDB
+        let persistentID = file.persistentModelID
         let uuid = file.uuid
         let title = file.title
         let description = file.shortDescription
         let scopedURL = try file.securityScopedURL()
         
-        runningIndices.insert(file.uuid)
+        indexingProgress.total += 1
         
         Task(name: "Index \(file.title)", priority: .userInitiated) {
             let accessGranted = scopedURL.startAccessingSecurityScopedResource()
@@ -60,8 +76,15 @@ final class IrisDBController {
             let embeddableContent = try await digester.digest(file: scopedURL)
             
             try await irisDB.createDocument(uuid: uuid, title: title, description: description, embeddableContent: embeddableContent)
+                        
+            try await fileIndexedWriter.markIndexed(for: persistentID)
             
-            self.runningIndices.remove(file.uuid)
+            indexingProgress.completed += 1
+                        
+            // Reset the indexing
+            if indexingProgress.isCompleted {
+                indexingProgress.reset()
+            }
         }
     }
         
@@ -71,13 +94,16 @@ final class IrisDBController {
         
         Task(name: "Delete Search Index for: \(file)", priority: .userInitiated) {
             try await irisDB.deleteDocument(uuid: uuid)
-            self.runningIndices.remove(file.uuid)
         }
+    }
+    
+    private func markFileIndexed(file: File) {
+        
     }
 }
 
 extension IrisDBController: Searchable {
-    func search(query: String) async throws -> [UUID] {
+    public func search(query: String) async throws -> [UUID] {
         let query = IrisQuery(text: query)
         let documents = try await irisDB.search(query: query, ranking: .relativeScoreFusion)
 

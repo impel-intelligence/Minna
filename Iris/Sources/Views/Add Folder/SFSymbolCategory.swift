@@ -127,6 +127,7 @@ struct SFSymbolCategory: Identifiable {
             .headphones,
             .tv,
             .camera,
+            .laserBurst,
         ]),
         SFSymbolCategory(name: "Objects & Tools", symbols: [
             .folder,
@@ -172,7 +173,6 @@ struct SFSymbolCategory: Identifiable {
             .lightbulb,
             .balloon,
             .partyPopper,
-            .laserBurst,
             .popcorn,
             .fireworks,
             .key,
