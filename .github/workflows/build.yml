@@ -8,7 +8,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  download:
+  build:
     name: Build Iris
     runs-on: macos-26
 
@@ -25,7 +25,7 @@ jobs:
           git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
 
       - name: Install Project Dependencies
-        run: tuist install
+        run: tuist install --verbose
 
       - name: Generate Xcode Workspace
         run: tuist generate
