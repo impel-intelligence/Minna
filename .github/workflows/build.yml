@@ -14,8 +14,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-        with:
-          token: ${{ secrets.ACTIONS_PAT }}
 
       - name: Install mise & Tools
         uses: jdx/mise-action@v4
