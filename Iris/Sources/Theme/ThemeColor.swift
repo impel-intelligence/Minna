@@ -10,9 +10,9 @@ import SwiftUI
 enum ThemeColor: Int, Codable, CaseIterable, CustomStringConvertible, Identifiable {
     var id: Int { rawValue }
     
+    case azure
     case champagne
     case lavender
-    case azure
     case mint
     case rose
     

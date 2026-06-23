@@ -10,7 +10,7 @@ import SwiftUI
 import Testing
 
 struct ThemeColorTests {
-    @Test(arguments: [ThemeColor.apricot, .berry, .blueberry, .melon, .grape])
+    @Test(arguments: ThemeColor.allCases)
     func codableRoundTrips(_ theme: ThemeColor) throws {
         let data = try JSONEncoder().encode(theme)
         let decoded = try JSONDecoder().decode(ThemeColor.self, from: data)
@@ -18,7 +18,7 @@ struct ThemeColorTests {
     }
 
     @Test func rawValuesAreStable() {
-        #expect(ThemeColor.apricot.rawValue == 0)
-        #expect(ThemeColor.grape.rawValue == 4)
+        #expect(ThemeColor.azure.rawValue == 0)
+        #expect(ThemeColor.rose.rawValue == 4)
     }
 }

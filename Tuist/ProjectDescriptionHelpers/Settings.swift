@@ -62,7 +62,11 @@ public let irisSettings: Settings = .settings(
         "RUNTIME_EXCEPTION_DEBUGGING_TOOL": .string("NO"),
         "RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION": .string("NO"),
         "RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION": .string("NO"),
-
+        
+        "COMPILATION_CACHE_ENABLE_CACHING": .string("YES"),
+        "COMPILATION_CACHE_REMOTE_SERVICE_PATH": .string("$HOME/.local/state/tuist/Impel-Intelligence_Iris.sock"),
+        "COMPILATION_CACHE_ENABLE_PLUGIN": .string("YES"),
+        "COMPILATION_CACHE_ENABLE_DIAGNOSTIC_REMARKS": .string("YES"),
     ],
     configurations: [
         .debug(name: "Debug", settings: [
