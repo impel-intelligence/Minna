@@ -159,7 +159,7 @@ struct FolderView: View {
                 }
             }
         }
-        .navigationTitle(folder.name)
+        .navigationTitle(folder.name, image: folder.icon.image())
         .focusable()
         .focused($isFocused)
         .focusEffectDisabled()

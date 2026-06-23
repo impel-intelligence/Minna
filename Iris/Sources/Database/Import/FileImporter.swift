@@ -76,8 +76,10 @@ extension View {
                         url.stopAccessingSecurityScopedResource()
                     }
                     
+                    // Make sure the database is fully saved so service tasks can access files.
                     try modelContext.save()
                     
+                    // Run service tasks. These are both async, they will dispatch their own tasks within.
                     for file in insertedFiles {
                         try irisContext.insert(file)
                         FrontendDatabase.shared.queueDescriptionUpdate(for: file)
