@@ -33,6 +33,11 @@ public struct IrisContext {
             return false
         }
     }
+    
+    @MainActor
+    func search(query: String) async throws -> [UUID] {
+        return try await controller.search(query: query)
+    }
         
     @MainActor
     func insert(_ file: File) throws {

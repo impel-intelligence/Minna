@@ -1,5 +1,5 @@
 {
-  "originHash" : "ccfc5a10c33c3cce1424d210fb35fb9469339fd04fa9139b4715a57dce57add2",
+  "originHash" : "0d44ce1d6d944a8be578bc4cc5f33586c6ea3b7aaa9867d758c4cd012f79ae01",
   "pins" : [
     {
       "identity" : "blurbkit",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift",
       "state" : {
-        "revision" : "9ed8c8457e00ff9c7aedb3bf213f20a2cfdf509e",
-        "version" : "7.11.0"
+        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
+        "version" : "7.11.1"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/IrisSearch",
       "state" : {
-        "revision" : "44daaabf958e44f0b060eb0c48243d50f5cb5552",
-        "version" : "0.4.0"
+        "revision" : "56d832e0e6f4eac3d6a1fa67fcbcbf628202d798",
+        "version" : "0.4.2"
       }
     },
     {

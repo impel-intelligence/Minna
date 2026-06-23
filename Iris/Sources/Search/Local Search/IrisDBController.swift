@@ -77,7 +77,10 @@ final class IrisDBController {
 }
 
 extension IrisDBController: Searchable {
-    func search(query: String) async throws {
-        
+    func search(query: String) async throws -> [UUID] {
+        let query = IrisQuery(text: query)
+        let documents = try await irisDB.search(query: query, ranking: .relativeScoreFusion)
+
+        return documents.map { $0.uuid }
     }
 }
