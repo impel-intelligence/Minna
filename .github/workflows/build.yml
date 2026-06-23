@@ -51,9 +51,6 @@ jobs:
       #       chmod +x scripts/pre_fetch_spm.sh
       #       ./scripts/pre_fetch_spm.sh
 
-      - name: Pre-resolve SPM dependencies
-        run: swift package resolve --package-path Tuist
-
       - name: Install Project Dependencies
         run: tuist install --verbose
 
