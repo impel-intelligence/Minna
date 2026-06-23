@@ -9,6 +9,7 @@ import SwiftData
 import Foundation
 import BlurbKit
 import SFSafeSymbols
+import Sentry
 
 @MainActor
 class FrontendDatabase {
@@ -48,6 +49,7 @@ class FrontendDatabase {
             try populateStartupData()
             modelContainer.mainContext.undoManager = UndoManager()
         } catch {
+            SentrySDK.capture(error: error)
             fatalError("Could not create ModelContainer: \(error)")
         }
     }

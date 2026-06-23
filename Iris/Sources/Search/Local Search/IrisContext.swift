@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Sentry
 
 enum IrisContextError: Error {
     case notConnected
@@ -30,6 +31,7 @@ public struct IrisContext {
             _ = try controller
             return true
         } catch {
+            SentrySDK.capture(message: "Failed to create IrisDBController.")
             return false
         }
     }

@@ -8,6 +8,7 @@
 import SwiftUI
 import Collections
 import SFSafeSymbols
+import Sentry
 
 enum CardEditField: Hashable {
     case title
@@ -157,6 +158,7 @@ struct OpaqueFileCard: View {
         do {
             try irisContext.delete(file)
         } catch {
+            SentrySDK.capture(error: error)
             print("Failed to delete Iris Document \(error)")
         }
     }
@@ -177,6 +179,7 @@ struct OpaqueFileCard: View {
                 if let error { print("Failed to open original \(url): \(error)") }
             }
         } catch {
+            SentrySDK.capture(error: error)
             print("Failed to open url: \(error) - \(file.url)")
         }
     }
