@@ -27,7 +27,6 @@ jobs:
         run: |
           git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
 
-
       - name: Cache SPM binary artifacts
         uses: actions/cache@v4
         with:
@@ -36,19 +35,16 @@ jobs:
           restore-keys: |
             spm-artifacts-${{ runner.os }}-
 
-      - name: Setup Tuist Cache
-        run: tuist setup cache
-
       - name: Pre-fetch SPM binary artifacts
         run: |
             chmod +x scripts/pre_fetch_spm.sh
             ./scripts/pre_fetch_spm.sh
 
       - name: Install Project Dependencies
-        run: tuist install --verbose
+        run: tuist install
 
       - name: Generate Xcode Workspace
-        run: tuist generate --no-open
+        run: tuist generate --no-open--no-binary-cache
 
       - name: Run Build and Tests
-        run: tuist test
+        run: tuist test --no-binary-cache
