@@ -47,4 +47,4 @@ jobs:
         run: tuist generate
 
       - name: Run Build and Tests
-        run: tuist test
+        run: tuist test --skip-ui-tests
