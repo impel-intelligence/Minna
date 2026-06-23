@@ -48,6 +48,10 @@ jobs:
       run: ./scripts/archive.sh
     - name: Notarize App
       run: ./scripts/notarize.sh
+      env:
+        APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+        APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+        APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
     - name: Upload Sentry Information
       run: ./scripts/sentry.sh ${{ secrets.SENTRY_AUTH_TOKEN }}
 
