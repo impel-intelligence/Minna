@@ -44,7 +44,7 @@ jobs:
         run: tuist install
 
       - name: Generate Xcode Workspace
-        run: tuist generate --no-open--no-binary-cache
+        run: tuist generate --no-open --no-binary-cache
 
       - name: Run Build and Tests
         run: tuist test --no-binary-cache
