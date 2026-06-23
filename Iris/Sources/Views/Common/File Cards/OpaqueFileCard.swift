@@ -72,7 +72,6 @@ struct OpaqueFileCard: View {
             Label(selectedFiles.count <= 1 ? "Open Original" : "Open Originals", systemSymbol: .arrowUpRight)
         }
         
-        
         Button {
             editingTitle.toggle()
             focusedField = .title
@@ -89,6 +88,15 @@ struct OpaqueFileCard: View {
             Label(editingDescription ? "Stop Editing" : "Edit Description", systemSymbol: .pencilLine)
         }
 
+        Button {
+            let filesToGenerate = selectedFiles.isEmpty ? [file] : selectedFiles
+            
+            for file in filesToGenerate {
+                FrontendDatabase.shared.queueDescriptionUpdate(for: file)
+            }
+        } label: {
+            Label(selectedFiles.count <= 1 ? "Generate Description" : "Generate Descriptions", systemSymbol: .sparkles)
+        }
         
         Menu {
             ForEach(ThemeColor.allCases) { theme in

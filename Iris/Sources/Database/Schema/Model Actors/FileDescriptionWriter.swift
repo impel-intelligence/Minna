@@ -35,8 +35,13 @@ actor FileDescriptionWriter {
         // Retrieve a file blurb using Apple's Intelligence models.
         let blurb = try await blurbProvider.blurb(for: url)
         
-        guard !file.isDeleted else { return }
-        file.shortDescription = blurb.description
+        // Refetch the file and make sure it has not been deleted. This fixes data races after the long wait.
+        var descriptor = FetchDescriptor<File>(predicate: #Predicate { $0.persistentModelID == id })
+        descriptor.fetchLimit = 1
+        guard let liveFile = try modelContext.fetch(descriptor).first else { return }
+
+        liveFile.shortDescription = blurb.description
+        liveFile.backgroundTasks.descriptionGenerated = true
 
         try modelContext.save()
     }

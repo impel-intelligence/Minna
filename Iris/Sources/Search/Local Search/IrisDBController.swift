@@ -16,15 +16,41 @@ enum IrisDBControllerError: Error {
 }
 
 struct IndexingProgress {
-    var completed: Int
-    var total: Int
-    var fractionCompleted: Double { total == 0 ? 1 : Double(completed) / Double(total) }
-    var isIndexing: Bool { completed < total }
-    var isCompleted: Bool { completed == total }
+    var completed: Set<UUID> = []
+    var inProgress: Set<UUID> = []
     
-    mutating func reset() {
-        completed = 0
-        total = 0
+    var total: Int { completed.count + inProgress.count }
+    
+    var fractionCompleted: Double { total == 0 ? 1 : Double(completed.count) / Double(total) }
+    var isIndexing: Bool { !inProgress.isEmpty }
+    
+    mutating func add(id: UUID) {
+        inProgress.insert(id)
+    }
+    
+    mutating func complete(id: UUID) {
+        // If this id does not exist in the inProgress array, it has been canceled and we don't want to set it to be true.
+        guard inProgress.contains(id) else { return }
+        
+        inProgress.remove(id)
+        completed.insert(id)
+        
+        // Reset the indexing
+        if inProgress.isEmpty {
+            completed.removeAll()
+            inProgress.removeAll()
+        }
+    }
+    
+    mutating func cancel(id: UUID) {
+        inProgress.remove(id)
+        completed.remove(id)
+        
+        // Reset the indexing
+        if inProgress.isEmpty {
+            completed.removeAll()
+            inProgress.removeAll()
+        }
     }
 }
 
@@ -36,7 +62,7 @@ final class IrisDBController {
     @ObservationIgnored private let textEmbedder: EmbeddingProvider
     @ObservationIgnored private let textChunker: TextChunker = BasicTextChunker()
     
-    var indexingProgress: IndexingProgress = IndexingProgress(completed: 0, total: 0)
+    var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter
     
     init(modelContainer: ModelContainer) {
@@ -60,7 +86,7 @@ final class IrisDBController {
         let description = file.shortDescription
         let scopedURL = try file.securityScopedURL()
         
-        indexingProgress.total += 1
+        indexingProgress.add(id: uuid)
         
         Task(name: "Index \(file.title)", priority: .userInitiated) {
             let accessGranted = scopedURL.startAccessingSecurityScopedResource()
@@ -79,12 +105,7 @@ final class IrisDBController {
                         
             try await fileIndexedWriter.markIndexed(for: persistentID)
             
-            indexingProgress.completed += 1
-                        
-            // Reset the indexing
-            if indexingProgress.isCompleted {
-                indexingProgress.reset()
-            }
+            indexingProgress.complete(id: uuid)
         }
     }
         
@@ -94,6 +115,7 @@ final class IrisDBController {
         
         Task(name: "Delete Search Index for: \(file)", priority: .userInitiated) {
             try await irisDB.deleteDocument(uuid: uuid)
+            indexingProgress.cancel(id: uuid)
         }
     }
     

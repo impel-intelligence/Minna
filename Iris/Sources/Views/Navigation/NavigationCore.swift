@@ -80,7 +80,7 @@ public struct NavigationCore: View {
         .task {
             // Start indexing all files that did not complete indexing.
             let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
-                file.needsIndexing
+                !file.backgroundTasks.searchIndexed
             })
             
             guard let files = try? modelContext.fetch(descriptor) else { return }
@@ -90,6 +90,17 @@ public struct NavigationCore: View {
                 } catch {
                     print("Failed to re-index file \(file)")
                 }
+            }
+        }
+        .task {
+            // Generate descriptions for files without descriptions.
+            let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
+                !file.backgroundTasks.descriptionGenerated
+            })
+            
+            guard let files = try? modelContext.fetch(descriptor) else { return }
+            for file in files {
+                FrontendDatabase.shared.queueDescriptionUpdate(for: file)
             }
         }
     }
