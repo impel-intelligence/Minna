@@ -1,11 +1,14 @@
 #!/bin/sh
+# This patches a bug in GitHub runners that results in binary artifact downloads never compleing. The following GitHub issues track this.
+#  - https://github.com/tuist/tuist/issues/9967
+#  - https://github.com/actions/runner-images/issues/13175
+#
+# Credit: Claude Opus 4.8 & Taylor Lineman
+
 set -uo pipefail
 CACHE="$HOME/Library/Caches/org.swift.swiftpm/artifacts"
 mkdir -p "$CACHE"
 
-# First pass: let SPM clone all source packages (fast/reliable), then
-# stop it the moment it reaches the binary-download phase that hangs.
-# Stream output live to the log while also capturing it for the grep.
 
 # Let SPM clone all source packages, and resolve the binary download links. When this process outputs "Downloading binary artifact" kill the process.
 swift package resolve --package-path Tuist > >(tee /tmp/spm.log) 2>&1 &

@@ -28,28 +28,21 @@ jobs:
           git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
 
 
-      # - name: Cache SPM binary artifacts
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ~/Library/Caches/org.swift.swiftpm/artifacts
-      #     key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
-      #     restore-keys: |
-      #       spm-artifacts-${{ runner.os }}-
+      - name: Cache SPM binary artifacts
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm/artifacts
+          key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
+          restore-keys: |
+            spm-artifacts-${{ runner.os }}-
 
       - name: Setup Tuist Cache
         run: tuist setup cache
-      # SwiftPM's parallel binary-artifact downloader deadlocks on the hosted
-      # macOS runners (actions/runner-images#13175): every `.xcframework.zip`
-      # download starts and none ever completes. Work around it by fetching the
-      # artifacts with curl and seeding SwiftPM's global artifact cache, so the
-      # resolve step finds them locally and never invokes its own downloader.
-      # Cache key = artifact URL with every non-alphanumeric char replaced by '_'.
-      #
-      # # #
-      # - name: Pre-fetch SPM binary artifacts
-      #   run: |
-      #       chmod +x scripts/pre_fetch_spm.sh
-      #       ./scripts/pre_fetch_spm.sh
+
+      - name: Pre-fetch SPM binary artifacts
+        run: |
+            chmod +x scripts/pre_fetch_spm.sh
+            ./scripts/pre_fetch_spm.sh
 
       - name: Install Project Dependencies
         run: tuist install --verbose
