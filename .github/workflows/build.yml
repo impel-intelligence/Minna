@@ -24,11 +24,14 @@ jobs:
         run: |
           git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
 
+      - name: Pre-resolve SPM dependencies
+        run: swift package resolve --package-path Tuist
+
       - name: Install Project Dependencies
         run: tuist install --verbose
 
       - name: Generate Xcode Workspace
-        run: tuist generate
+        run: tuist generate --no-open
 
       - name: Run Build and Tests
         run: tuist test
