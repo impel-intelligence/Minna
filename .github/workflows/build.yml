@@ -7,6 +7,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  TUIST_TOKEN:${{ secrets.TUIST_TOKEN }}
+
 jobs:
   build:
     name: Build Iris
@@ -24,39 +27,29 @@ jobs:
         run: |
           git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
 
+
+      # - name: Cache SPM binary artifacts
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ~/Library/Caches/org.swift.swiftpm/artifacts
+      #     key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
+      #     restore-keys: |
+      #       spm-artifacts-${{ runner.os }}-
+
+      - name: Setup Tuist Cache
+        run: tuist setup cache
       # SwiftPM's parallel binary-artifact downloader deadlocks on the hosted
       # macOS runners (actions/runner-images#13175): every `.xcframework.zip`
       # download starts and none ever completes. Work around it by fetching the
       # artifacts with curl and seeding SwiftPM's global artifact cache, so the
       # resolve step finds them locally and never invokes its own downloader.
       # Cache key = artifact URL with every non-alphanumeric char replaced by '_'.
-      - name: Pre-fetch SPM binary artifacts
-        run: |
-          set -uo pipefail
-          CACHE="$HOME/Library/Caches/org.swift.swiftpm/artifacts"
-          mkdir -p "$CACHE"
-
-          # First pass: let SPM clone all source packages (fast/reliable), then
-          # stop it the moment it reaches the binary-download phase that hangs.
-          swift package resolve --package-path Tuist > /tmp/spm.log 2>&1 &
-          SPM_PID=$!
-          for _ in $(seq 1 120); do
-            grep -q "Downloading binary artifact" /tmp/spm.log && break
-            kill -0 "$SPM_PID" 2>/dev/null || break
-            sleep 2
-          done
-          cat /tmp/spm.log
-          kill "$SPM_PID" 2>/dev/null || true
-          wait "$SPM_PID" 2>/dev/null || true
-
-          # Fetch every binary artifact URL from the resolved checkouts with curl
-          # (all are public release assets) into the SwiftPM cache.
-          grep -rhoE 'https://[^"]+\.xcframework\.zip' Tuist/.build/checkouts/*/Package.swift \
-            | sort -u | while read -r url; do
-              name="$(printf '%s' "$url" | sed 's/[^A-Za-z0-9]/_/g')"
-              echo "Caching $url"
-              curl -fSL --retry 5 --retry-all-errors -o "$CACHE/$name" "$url"
-            done
+      #
+      # # #
+      # - name: Pre-fetch SPM binary artifacts
+      #   run: |
+      #       chmod +x scripts/pre_fetch_spm.sh
+      #       ./scripts/pre_fetch_spm.sh
 
       - name: Pre-resolve SPM dependencies
         run: swift package resolve --package-path Tuist
