@@ -11,7 +11,7 @@ mkdir -p "$CACHE"
 
 
 # Let SPM clone all source packages, and resolve the binary download links. When this process outputs "Downloading binary artifact" kill the process.
-swift package resolve --package-path Tuist > >(tee /tmp/spm.log) 2>&1 &
+swift package resolve --package-path Tuist >> (tee /tmp/spm.log) 2>&1 &
 SPM_PID=$!
 for _ in $(seq 1 120); do
   grep -q "Downloading binary artifact" /tmp/spm.log && break
