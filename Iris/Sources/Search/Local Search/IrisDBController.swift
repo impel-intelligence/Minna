@@ -23,7 +23,7 @@ final class IrisDBController {
     private let textEmbedder: EmbeddingProvider
     private let textChunker: TextChunker = BasicTextChunker()
     
-    private var backgroundWorker: BackgroundWorker? = nil
+    private(set) var runningIndices: Set<UUID> = []
     
     init() {
         do {
@@ -37,10 +37,6 @@ final class IrisDBController {
         mainContext = IrisContext(controllerResult: .success(self))
     }
     
-    public func setWorker(_ worker: BackgroundWorker) {
-        self.backgroundWorker = worker
-    }
-    
     public func insert(_ file: File) throws {
         let irisDB = irisDB
         let uuid = file.uuid
@@ -48,7 +44,9 @@ final class IrisDBController {
         let description = file.shortDescription
         let scopedURL = try file.securityScopedURL()
         
-        backgroundWorker?.enqueue(BlockBackgroundTask(name: "Index \(file.title)") {
+        runningIndices.insert(file.uuid)
+        
+        Task(name: "Index \(file.title)", priority: .userInitiated) {
             let accessGranted = scopedURL.startAccessingSecurityScopedResource()
             defer { scopedURL.stopAccessingSecurityScopedResource() }
             
@@ -60,21 +58,21 @@ final class IrisDBController {
             
             let digester = try DigesterFactory.digester(for: contentType)
             let embeddableContent = try await digester.digest(file: scopedURL)
-                        
+            
             try await irisDB.createDocument(uuid: uuid, title: title, description: description, embeddableContent: embeddableContent)
-        })
+            
+            self.runningIndices.remove(file.uuid)
+        }
     }
         
     public func delete(_ file: File) {
         let uuid = file.uuid
         let irisDB = irisDB
         
-        backgroundWorker?.enqueue(BlockBackgroundTask(name: "Delete Search Index for: \(file)") { [irisDB, uuid] in
+        Task(name: "Delete Search Index for: \(file)", priority: .userInitiated) {
             try await irisDB.deleteDocument(uuid: uuid)
-        })
-    }
-    
-    private func _delete(file: File) async throws {
+            self.runningIndices.remove(file.uuid)
+        }
     }
 }
 

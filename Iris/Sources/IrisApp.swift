@@ -15,7 +15,6 @@ struct IrisApp: App {
     @State var frontendDatabase: FrontendDatabase
     
     @State var searchController: SearchController
-    @State var backgroundWorker: BackgroundWorker
     
     @State var standardFileImporterPresented: Bool = false
     
@@ -24,17 +23,12 @@ struct IrisApp: App {
         self.irisDBController = IrisDBController()
 
         self.searchController = SearchController()
-        self.backgroundWorker = BackgroundWorker()
-        
-        irisDBController.setWorker(backgroundWorker)
-        frontendDatabase.setWorker(backgroundWorker)
     }
     
     var body: some Scene {
         WindowGroup {
             NavigationCore()
                 .environment(AlertCenter.shared)
-                .environment(backgroundWorker)
         }
         .commands {
             CommandGroup(replacing: .newItem) {

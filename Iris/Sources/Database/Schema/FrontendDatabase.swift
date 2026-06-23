@@ -24,7 +24,6 @@ class FrontendDatabase {
     
     var unfilledFolderUUID: UUID
 
-    private var backgroundWorker: BackgroundWorker? = nil
     private let fileDescriptionWriter: FileDescriptionWriter
 
     init() {
@@ -52,11 +51,7 @@ class FrontendDatabase {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }
-    
-    public func setWorker(_ worker: BackgroundWorker) {
-        self.backgroundWorker = worker
-    }
-    
+
     private func populateStartupData() throws {
         let descriptor = FetchDescriptor<Folder>()
         guard try context.fetch(descriptor).isEmpty else { return }
@@ -69,8 +64,8 @@ class FrontendDatabase {
         let persistentID = file.persistentModelID
         let writer = fileDescriptionWriter
         
-        backgroundWorker?.enqueue(BlockBackgroundTask(name: "Generate description for \(file.title)") { [writer, persistentID] in
+        Task(name: "Generate description for \(file.title)", priority: .low) {
             try await writer.generateDescription(for: persistentID)
-        })
+        }
     }
 }
