@@ -38,7 +38,10 @@ public let irisSettings: Settings = .settings(
         
         // MARK: Sandboxing
         "ENABLE_APP_SANDBOX": .string("YES"),
-        "ENABLE_USER_SCRIPT_SANDBOXING": .string("YES"),
+        // Build-time script sandboxing only (not the app's runtime sandbox).
+        // Must be NO so the SwiftLint pre-build phase can read the source tree;
+        // otherwise it lints nothing and no warnings/TODOs surface in Xcode.
+        "ENABLE_USER_SCRIPT_SANDBOXING": .string("NO"),
         "ENABLE_USER_SELECTED_FILES": .string("readonly"),
         "ENABLE_INCOMING_NETWORK_CONNECTIONS": .string("NO"),
         "ENABLE_OUTGOING_NETWORK_CONNECTIONS": .string("YES"),
@@ -71,6 +74,18 @@ public let irisSettings: Settings = .settings(
             "GCC_OPTIMIZATION_LEVEL" : .string("3"),
             "LD_RUNPATH_SEARCH_PATHS": .string("$(inherited) @executable_path/../Frameworks")
         ])
+    ]
+)
+
+// Signing-only settings for test bundles. A test bundle is loaded into the
+// host app's process, so dyld requires its Team ID to match the host's.
+// Without this the test targets sign ad-hoc (Team ID "not set") and fail to
+// load into the Team-ID-signed Iris.app with a "different Team IDs" error.
+public let irisTestSettings: Settings = .settings(
+    base: [
+        "CODE_SIGN_IDENTITY": .string("Apple Development"),
+        "CODE_SIGN_STYLE": .string("Automatic"),
+        "DEVELOPMENT_TEAM": .string("VV548YNZL3"),
     ]
 )
 

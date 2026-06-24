@@ -46,7 +46,10 @@ jobs:
       - name: Generate Xcode Workspace
         run: tuist generate
 
-      - name: Run Build and Tests
+      - name: Build App
+        run: tuist xcodebuild build -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS'
+
+      - name: Run  Tests
         run: tuist test --skip-ui-tests
 
       # On a test-runner launch crash xcodebuild only reports "Early unexpected

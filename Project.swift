@@ -46,29 +46,31 @@ let project = Project(
             name: "IrisTests",
             destinations: .macOS,
             product: .unitTests,
-            bundleId: "com.tryiris.iris.mac.tests",
+            bundleId: "\(PRODUCT_BUNDLE_IDENTIFIER).tests",
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: .default,
             buildableFolders: [
                 "Iris/Tests"
             ],
-            dependencies: [.target(name: "Iris")]
+            dependencies: [.target(name: "Iris")],
+            settings: irisTestSettings
         ),
         .target(
             name: "IrisUITests",
             destinations: .macOS,
             product: .uiTests,
-            bundleId: "com.tryiris.iris.mac.uitests",
+            bundleId: "\(PRODUCT_BUNDLE_IDENTIFIER).uitests",
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: .default,
             buildableFolders: [
                 "Iris/UITests"
             ],
-            dependencies: [.target(name: "Iris")]
+            dependencies: [.target(name: "Iris")],
+            settings: irisTestSettings
         ),
-        
+
         // MARK: Features
-        
+
         // MARK: Services
 
     ]

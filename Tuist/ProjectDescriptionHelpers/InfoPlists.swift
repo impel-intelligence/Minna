@@ -17,12 +17,22 @@ public let irisInfoPlist: InfoPlist = .dictionary([
         [
             "UTTypeDescription": "Iris Folder",
             "UTTypeIcons": [:],
-            "UTTypeIdentifier": "com.tryiris.iris.mac.folder",
+            "UTTypeIdentifier": "\(PRODUCT_BUNDLE_IDENTIFIER).folder",
             "UTTypeTagSpecification": [
                 "public.filename-extension": ["irisdb"],
                 "public.mime-type": ["com.tryiris.iris.mac.folder"]
             ],
             "UTTypeConformsTo": ["com.apple.package", "public.content"]
+        ],
+        [
+            "UTTypeDescription": "Markdown",
+            "UTTypeIcons": [:],
+            "UTTypeIdentifier": "net.daringfireball.markdown",
+            "UTTypeTagSpecification": [
+                "public.filename-extension": ["md"],
+                "public.mime-type": ["text/markdown", "text/x-markdown"]
+            ],
+            "UTTypeConformsTo": ["public.text", "public.data"]
         ]
     ],
     
