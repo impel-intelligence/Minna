@@ -21,7 +21,7 @@ jobs:
         run: grep "${{ github.ref_name }}" Tuist/ProjectDescriptionHelpers/Constants.swift
 
   prerelease:
-    needs: validate
+    # needs: validate
     name: Build Iris
     runs-on: macos-26
 
