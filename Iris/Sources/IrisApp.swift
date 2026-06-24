@@ -40,7 +40,6 @@ struct CheckForUpdatesView: View {
     }
 }
 
-
 @main
 struct IrisApp: App {
     // MARK: Databases
@@ -59,7 +58,14 @@ struct IrisApp: App {
 
         self.searchController = SearchController()
         
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+        // Don't start the updater under XCTest. Hosted unit tests launch this
+        // app as their test host; a started updater kicks off Sparkle's
+        // first-launch permission flow, which blocks the main run loop on a
+        // headless CI runner before XCTest can establish its connection
+        // ("test runner hung before establishing connection"). The controller
+        // is still created so the "Check for Updates…" menu item stays valid.
+        let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        updaterController = SPUStandardUpdaterController(startingUpdater: !isRunningTests, updaterDelegate: nil, userDriverDelegate: nil)
         
         SentrySDK.start { options in
             options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"
