@@ -9,6 +9,7 @@ let project = Project(
             destinations: .macOS,
             product: .app,
             bundleId: "com.tryiris.iris.mac",
+            deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: irisInfoPlist,
             buildableFolders: [
                 "Iris/Sources",
@@ -45,6 +46,7 @@ let project = Project(
             destinations: .macOS,
             product: .unitTests,
             bundleId: "com.tryiris.iris.mac.tests",
+            deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: .default,
             buildableFolders: [
                 "Iris/Tests"
@@ -56,6 +58,7 @@ let project = Project(
             destinations: .macOS,
             product: .uiTests,
             bundleId: "com.tryiris.iris.mac.uitests",
+            deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: .default,
             buildableFolders: [
                 "Iris/UITests"

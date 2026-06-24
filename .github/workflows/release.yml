@@ -1,18 +1,17 @@
 name: Create Iris Build (External)
-on: 
+on:
   release:
     types: [published]
   workflow_dispatch:
 
-
 jobs:
   upload:
     name: Upload Release Files
-    runs-on: self-hosted
+    runs-on: macos-26
 
     steps:
     - name: release-downloader
-      uses: robinraju/release-downloader@v1.10 
+      uses: robinraju/release-downloader@v1.10
       with:
         tag: '${{ github.ref_name }}'
         fileName: |
@@ -21,7 +20,7 @@ jobs:
         out-file-path: 'tmp'
     - name: Restore Sparkle Updater Cache
       id: cache-sparkle
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: iris-sparkle-updater
         key: updater-cache

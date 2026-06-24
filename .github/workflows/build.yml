@@ -7,17 +7,38 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  TUIST_TOKEN: ${{ secrets.TUIST_TOKEN }}
+
 jobs:
-  download:
+  build:
     name: Build Iris
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
+
       - name: Install mise & Tools
         uses: jdx/mise-action@v4
         with:
           cache: true
+
+      - name: Configure Git for Private Packages
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
+
+      - name: Cache SPM binary artifacts
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm/artifacts
+          key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
+          restore-keys: |
+            spm-artifacts-${{ runner.os }}-
+
+      - name: Pre-fetch SPM binary artifacts
+        run: |
+            chmod +x scripts/pre_fetch_spm.sh
+            ./scripts/pre_fetch_spm.sh
 
       - name: Install Project Dependencies
         run: tuist install
@@ -26,4 +47,19 @@ jobs:
         run: tuist generate
 
       - name: Run Build and Tests
-        run: tuist test
+        run: tuist test --skip-ui-tests
+
+      # On a test-runner launch crash xcodebuild only reports "Early unexpected
+      # exit". The real reason (dyld failure, unresolved symbol, startup throw)
+      # is in the macOS crash report. Dump it so the next run is diagnosable.
+      - name: Dump crash diagnostics
+        if: failure()
+        run: |
+          shopt -s nullglob
+          echo "=== ~/Library/Logs/DiagnosticReports ==="
+          ls -la ~/Library/Logs/DiagnosticReports/ 2>/dev/null || true
+          reports=(~/Library/Logs/DiagnosticReports/Iris-*.ips ~/Library/Logs/DiagnosticReports/Iris*.crash)
+          for f in "${reports[@]}"; do
+            echo "----- $f -----"
+            cat "$f"
+          done

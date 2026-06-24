@@ -8,6 +8,7 @@
 import SwiftData
 import SwiftUI
 import Digester
+import Sentry
 
 extension View {
     func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext) -> some View {
@@ -70,6 +71,7 @@ extension View {
                                 modelContext.insert(file)
                             }
                         } catch {
+                            SentrySDK.capture(error: error)
                             print("Failed to create file for \(url): \(error)")
                         }
                         
@@ -85,6 +87,7 @@ extension View {
                         FrontendDatabase.shared.queueDescriptionUpdate(for: file)
                     }
                 } catch {
+                    SentrySDK.capture(error: error)
                     print(error)
                 }
             }

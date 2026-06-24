@@ -62,7 +62,6 @@ public let irisSettings: Settings = .settings(
         "RUNTIME_EXCEPTION_DEBUGGING_TOOL": .string("NO"),
         "RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION": .string("NO"),
         "RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION": .string("NO"),
-
     ],
     configurations: [
         .debug(name: "Debug", settings: [

@@ -8,6 +8,7 @@
 import SwiftData
 import SwiftUI
 import SFSafeSymbols
+import Sentry
 
 enum NavigationDestination: Hashable {
     case search
@@ -88,6 +89,7 @@ public struct NavigationCore: View {
                 do {
                     try irisContext.reIndex(file)
                 } catch {
+                    SentrySDK.capture(error: error)
                     print("Failed to re-index file \(file)")
                 }
             }

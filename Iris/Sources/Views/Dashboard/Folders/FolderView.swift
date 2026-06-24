@@ -10,6 +10,7 @@ import SwiftData
 import ViewStorage
 import Collections
 import SFSafeSymbols
+import Sentry
 
 enum ArrowDirection {
     case up
@@ -306,6 +307,7 @@ struct FolderView: View {
         do {
             try irisContext.delete(file)
         } catch {
+            SentrySDK.capture(error: error)
             print("Failed to delete Iris Document \(error)")
         }
     }

@@ -8,11 +8,7 @@
 import SwiftUI
 import SFSafeSymbols
 import SwiftData
-
-@Observable
-final class SearchViewModel {
-    
-}
+import Sentry
 
 struct SearchStartupView: View {
     @Environment(\.modelContext) var modelContext
@@ -85,6 +81,7 @@ struct SearchStartupView: View {
             } catch is CancellationError {
                 return
             } catch {
+                SentrySDK.capture(error: error)
                 print("Failed to search \(error)")
             }
 //            isLoading = false
