@@ -13,10 +13,38 @@ jobs:
     runs-on: macos-26
 
     steps:
+    - uses: actions/checkout@v7
+
+    # Generate Project to get Sparkle bin.
+    - name: Install mise & Tools
+      uses: jdx/mise-action@v4
+      with:
+        cache: true
+
     - name: Configure Git for Private Packages
       run: |
         git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
 
+    - name: Cache SPM binary artifacts
+      uses: actions/cache@v4
+      with:
+        path: ~/Library/Caches/org.swift.swiftpm/artifacts
+        key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
+        restore-keys: |
+          spm-artifacts-${{ runner.os }}-
+
+    - name: Pre-fetch SPM binary artifacts
+      run: |
+          chmod +x scripts/pre_fetch_spm.sh
+          ./scripts/pre_fetch_spm.sh
+
+    - name: Install Project Dependencies
+      run: tuist install
+
+    - name: Generate Xcode Workspace
+      run: tuist generate
+
+    # Download the last builds
     - name: release-downloader
       uses: robinraju/release-downloader@v1.10
       with:
@@ -38,4 +66,4 @@ jobs:
       run: git clone --depth 1 https://github.com/impel-intelligence/iris-sparkle-updater/ # Depth 1 for a shallow clone
 
     - name: Update Sparkle
-      run: ./scripts/update_sparkle.sh ${{ github.ref_name }} "${{ github.event.release.body }}"
+      run: ./scripts/update_sparkle.sh ${{ secrets.ACTIONS_PAT }}  ${{ github.ref_name }} "${{ github.event.release.body }}"

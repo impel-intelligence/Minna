@@ -27,7 +27,7 @@ public let irisInfoPlist: InfoPlist = .dictionary([
     ],
     
 //     Sparkle Values
-    "SUFeedURL": .string("https://impel-sparkle-updater.fly.dev/appcast.xml"),
+    "SUFeedURL": .string("https://impel-intelligence.github.io/iris-sparkle-updater/appcast.xml"),
     "SUScheduledCheckInterval": .integer(21600),
     "SUPublicEDKey": .string("ySLQ5G0aOgmtZN2I2NnrPTwJZ36xgXcI3ZpY8W2wuBo+Z8F7XcTLvVq7a8TBwobbwlV87pJE10="),
 

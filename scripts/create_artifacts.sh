@@ -4,9 +4,16 @@ set -eu # Fail on errors and unset variables
 # Builds tmp/apps/iris.dmg from the notarized tmp/apps/Iris.app using create-dmg.
 # Layout (window, icon size, positions) mirrors the old DropDMG configuration.
 
-APP_PATH="tmp/apps/Iris.app"
-DMG_PATH="tmp/apps/iris.dmg"
-TAR_PATH="tmp/apps/iris.tar.xz"
+TMP_PATH="tmp/apps"
+
+APP_NAME="Iris.app"
+APP_PATH="${TMP_PATH}/${APP_NAME}"
+
+DMG_NAME="iris.dmg"
+DMG_PATH="${TMP_PATH}/${DMG_NAME}"
+
+TAR_NAME="iris.tar.xz"
+TAR_PATH="${TMP_PATH}/${TAR_NAME}"
 
 STAGING_PATH="tmp/dmg"
 BACKGROUND="scripts/dmg/background.png"
@@ -44,6 +51,6 @@ rm -rf "$STAGING_PATH"
 echo "Created $DMG_PATH"
 
 # Create a tar for the sparkle updater.
-tar --no-xattrs -cJf "$TAR_PATH" "$APP_PATH"
+tar --no-xattrs -cJf "$TAR_PATH" -C "$TMP_PATH" "$APP_NAME"
 
 echo "Created $TAR_PATH"

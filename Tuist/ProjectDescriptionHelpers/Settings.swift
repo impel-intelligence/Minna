@@ -8,8 +8,7 @@
 import ProjectDescription
 
 public let TARGET_MACOS_VERSION = "26.0"
-public let APP_STAGE = "alpha"
-public let CURRENT_PROJECT_VERSION = "0.1.0"
+public let CURRENT_PROJECT_VERSION = "0.1.1"
 public let MARKETING_VERSION = "\(CURRENT_PROJECT_VERSION)"
 public let PRODUCT_BUNDLE_IDENTIFIER = "com.tryiris.iris.mac"
 
@@ -17,6 +16,11 @@ public let irisSettings: Settings = .settings(
     base: [
         "ASSETCATALOG_COMPILER_APPICON_NAME" : .string("AppIcon"),
         "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": .string("AccentColor"),
+
+        // MARK: Architectures
+        // Apple Silicon only: faiss / faiss_c xcframeworks ship no x86_64 macOS
+        // slice, so a universal (x86_64) archive fails to link. Pin to arm64.
+        "ARCHS": .string("arm64"),
 //        "CODE_SIGN_IDENTITY": .string("Apple Development"),
         "CODE_SIGN_STYLE": .string("Automatic"),
         "COMBINE_HIDPI_IMAGES": .string("YES"),
