@@ -1,10 +1,10 @@
 name: 'Build Iris'
 description: 'Build the Iris App using Tuist'
-# inputs:
-#   who-to-greet:  # id of input
-#     description: 'Who to greet'
-#     required: true
-#     default: 'World'
+inputs:
+  actions_pat:  # id of input
+    description: 'GitHub PAT for cloning private repos'
+    required: true
+
 # outputs:
 #   random-number:
 #     description: "Random number"
@@ -19,7 +19,7 @@ runs:
 
     - name: Configure Git for Private Packages
       run: |
-        git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
+        git config --global url."https://x-access-token:${{ inputs.actions_pat }}@github.com/".insteadOf "https://github.com/"
       shell: bash
 
     - name: Cache SPM binary artifacts

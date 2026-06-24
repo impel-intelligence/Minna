@@ -20,6 +20,8 @@ jobs:
 
       - id: build
         uses: ./.github/actions/build
+        with:
+          actions_pat: ${{ secrets.ACTIONS_PAT }}
 
       # On a test-runner launch crash xcodebuild only reports "Early unexpected
       # exit". The real reason (dyld failure, unresolved symbol, startup throw)
