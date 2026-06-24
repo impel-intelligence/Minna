@@ -10,14 +10,11 @@ TAR_PATH="$APP_EXPORT_DIRECTORY/iris.tar.xz"
 
 # Make sure all of the environment options we need exist.
 
-# - APPLE_API_KEY_ID    - the key's ID (shown in App Store Connect)
-: "${APPLE_API_KEY_ID:?set APPLE_API_KEY_ID (the App Store Connect key ID)}"
+: "${APPLE_API_KEY_ID:?Please set APPLE_API_KEY_ID (the App Store Connect key ID)}"
 
-# - APPLE_API_ISSUER_ID - the issuer UUID for the key
-: "${APPLE_API_ISSUER_ID:?set APPLE_API_ISSUER_ID (the issuer UUID)}"
+: "${APPLE_API_ISSUER_ID:?Please set APPLE_API_ISSUER_ID (the issuer UUID)}"
 
-# - APPLE_API_KEY_BASE64 - the .p8 private key, base64-encoded
-: "${APPLE_API_KEY_BASE64:?set APPLE_API_KEY_BASE64 (base64 of the .p8 key file)}"
+: "${APPLE_API_KEY_BASE64:?Please set APPLE_API_KEY_BASE64 (base64 of the .p8 key file)}"
 
 API_KEY_PATH="$(mktemp -t notary_key).p8"
 trap 'rm -f "$API_KEY_PATH"' EXIT

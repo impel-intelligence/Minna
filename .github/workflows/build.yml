@@ -48,3 +48,18 @@ jobs:
 
       - name: Run Build and Tests
         run: tuist test --skip-ui-tests
+
+      # On a test-runner launch crash xcodebuild only reports "Early unexpected
+      # exit". The real reason (dyld failure, unresolved symbol, startup throw)
+      # is in the macOS crash report. Dump it so the next run is diagnosable.
+      - name: Dump crash diagnostics
+        if: failure()
+        run: |
+          shopt -s nullglob
+          echo "=== ~/Library/Logs/DiagnosticReports ==="
+          ls -la ~/Library/Logs/DiagnosticReports/ 2>/dev/null || true
+          reports=(~/Library/Logs/DiagnosticReports/Iris-*.ips ~/Library/Logs/DiagnosticReports/Iris*.crash)
+          for f in "${reports[@]}"; do
+            echo "----- $f -----"
+            cat "$f"
+          done
