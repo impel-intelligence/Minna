@@ -6,11 +6,11 @@ set -eu # Fail on errors and unset variables
 
 APP_PATH="tmp/apps/Iris.app"
 DMG_PATH="tmp/apps/iris.dmg"
+TAR_PATH="tmp/apps/iris.tar.xz"
+
 STAGING_PATH="tmp/dmg"
 BACKGROUND="scripts/dmg/background.png"
 VOLUME_ICON="scripts/dmg/volume.icns"
-
-TAR_PATH="$APP_EXPORT_DIRECTORY/iris.tar.xz"
 
 if [ ! -d "$APP_PATH" ]; then
     echo "error: $APP_PATH not found (run notarize.sh first)"

@@ -27,6 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Building
       - name: Install mise & Tools
         uses: jdx/mise-action@v4
         with:
@@ -58,6 +59,7 @@ jobs:
       - name: Run Build and Tests
         run: tuist test --skip-ui-tests
 
+      # Notarization & Release
       - name: Make Executable Scripts
         run: |
           chmod +x scripts/release.sh scripts/sentry.sh scripts/create_artifacts.sh  scripts/update_sparkle.sh
@@ -69,53 +71,25 @@ jobs:
           mkdir tmp/archive
           mkdir tmp/apps
 
-  # notarize:
-  #   needs: build
-  #   name: Notarize Iris
-  #   runs-on: macos-26
+      - name: Release App
+        run: ./scripts/release.sh
+        env:
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+          APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
 
-  #   steps:
-  #   - name: Make Executable Scripts
-  #     run: |
-  #       chmod +x scripts/release.sh scripts/sentry.sh  scripts/update_sparkle.sh
-  #   - name: Make tmp
-  #     run: |
-  #       rm -rf tmp
-  #       mkdir tmp
-  #       mkdir tmp/compressed
-  #       mkdir tmp/archive
-  #       mkdir tmp/apps
-  #   - name: Release App
-  #     run: ./scripts/release.sh
-  #     env:
-  #       APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
-  #       APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
-  #       APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
+      - name: Upload Sentry Information
+        run: ./scripts/sentry.sh ${{ secrets.IRIS_SENTRY_AUTH_TOKEN }}
 
-  #   - name: Upload Sentry Information
-  #     run: ./scripts/sentry.sh ${{ secrets.IRIS_SENTRY_AUTH_TOKEN }}
+      - name: Create Artifacts
+        run: ./scripts/create_artifacts.sh
 
-  # create_artifacts:
-  #   needs: notarize
-  #   name: Create Artifacts (tar, dmg)
-  #   runs-on: macos-26
-
-  #   steps:
-  #   - name: Create Artifacts
-  #     run: ./scripts/create_artifacts.sh
-
-  # upload_artifacts:
-  #   if: startsWith(github.ref, 'refs/tags/')
-  #   needs: create_artifacts
-  #   name: Upload Artifacts to GitHub
-  #   runs-on: macos-26
-
-  #   steps:
-  #   - name: Release
-  #     uses: softprops/action-gh-release@v3
-  #     with:
-  #       prerelease: true
-  #       generate_release_notes: true
-  #       files: |
-  #         tmp/apps/iris.tar.xz
-  #         tmp/apps/iris.dmg
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v3
+        with:
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            tmp/apps/iris.tar.xz
+            tmp/apps/iris.dmg
