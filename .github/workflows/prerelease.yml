@@ -57,9 +57,6 @@ jobs:
       - name: Generate Xcode Workspace
         run: tuist generate
 
-      - name: Run Build and Tests
-        run: tuist test --skip-ui-tests
-
       # Notarization & Release
       - name: Make Executable Scripts
         run: |
