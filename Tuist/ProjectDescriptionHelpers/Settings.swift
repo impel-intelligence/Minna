@@ -7,11 +7,6 @@
 
 import ProjectDescription
 
-public let TARGET_MACOS_VERSION = "26.0"
-public let CURRENT_PROJECT_VERSION = "0.1.1"
-public let MARKETING_VERSION = "\(CURRENT_PROJECT_VERSION)"
-public let PRODUCT_BUNDLE_IDENTIFIER = "com.tryiris.iris.mac"
-
 public let irisSettings: Settings = .settings(
     base: [
         "ASSETCATALOG_COMPILER_APPICON_NAME" : .string("AppIcon"),
@@ -21,16 +16,16 @@ public let irisSettings: Settings = .settings(
         // Apple Silicon only: faiss / faiss_c xcframeworks ship no x86_64 macOS
         // slice, so a universal (x86_64) archive fails to link. Pin to arm64.
         "ARCHS": .string("arm64"),
-//        "CODE_SIGN_IDENTITY": .string("Apple Development"),
+        "CODE_SIGN_IDENTITY": .string("Apple Development"),
         "CODE_SIGN_STYLE": .string("Automatic"),
         "COMBINE_HIDPI_IMAGES": .string("YES"),
         "DEAD_CODE_STRIPPING": .string("YES"),
         "DEBUG_INFORMATION_FORMAT": .string("dwarf-with-dsym"),
-//        "DEVELOPMENT_TEAM": .string(""),
+        "DEVELOPMENT_TEAM": .string("VV548YNZL3"),
         "ENABLE_HARDENED_RUNTIME": .string("YES"),
         "ENABLE_PREVIEWS": .string("YES"),
         "MACOSX_DEPLOYMENT_TARGET": .string(TARGET_MACOS_VERSION),
-        "CURRENT_PROJECT_VERSION": .string(CURRENT_PROJECT_VERSION),
+        "CURRENT_PROJECT_VERSION": .string(BUILD_NUMBER),
         "MARKETING_VERSION": .string(MARKETING_VERSION),
         "PRODUCT_BUNDLE_IDENTIFIER": .string(PRODUCT_BUNDLE_IDENTIFIER),
         "TARGET_NAME": .string("Iris"),

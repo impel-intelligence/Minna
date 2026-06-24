@@ -16,7 +16,7 @@ let project = Project(
                 "Iris/Resources"
             ],
             scripts: [
-                .post(
+                .pre(
                     script: """
                     export PATH="$HOME/.local/bin:$PATH"
                     cd "$SRCROOT"
@@ -28,7 +28,8 @@ let project = Project(
                         ".swiftlint.yml"
                     ],
                     basedOnDependencyAnalysis: false,
-                )
+                ),
+                .pre(script: <#T##String#>, name: <#T##String#>)
             ],
             dependencies: [
                 .external(name: "SFSafeSymbols"),
