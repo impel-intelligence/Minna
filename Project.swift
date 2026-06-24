@@ -28,8 +28,7 @@ let project = Project(
                         ".swiftlint.yml"
                     ],
                     basedOnDependencyAnalysis: false,
-                ),
-                .pre(script: <#T##String#>, name: <#T##String#>)
+                )
             ],
             dependencies: [
                 .external(name: "SFSafeSymbols"),
