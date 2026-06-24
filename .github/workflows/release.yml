@@ -21,6 +21,9 @@ jobs:
       with:
         cache: true
 
+    - name: Install xcbeautify
+      run: brew install xcbeautify
+
     - name: Configure Git for Private Packages
       run: |
         git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
