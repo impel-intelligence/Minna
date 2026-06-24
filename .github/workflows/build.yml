@@ -46,11 +46,21 @@ jobs:
       - name: Generate Xcode Workspace
         run: tuist generate
 
+      # No signing certificate is imported on the runner (only the release
+      # workflows sign, via scripts/release.sh + Apple API keys). The project
+      # forces CODE_SIGN_STYLE=Automatic with a DEVELOPMENT_TEAM, which fails
+      # without a matching cert in the keychain. Override to ad-hoc signing
+      # (identity "-", manual style, no team): this needs no cert/team but
+      # still produces a validly signed, entitlement-bearing, debuggable app.
+      # A valid signature is required for the App Sandbox / Hardened Runtime
+      # app to launch and for XCTest to inject into it — CODE_SIGNING_ALLOWED=NO
+      # builds compile but hang the test runner ("hung before establishing
+      # connection") because the unsigned host app can't be launched/injected.
       - name: Build App
-        run: tuist xcodebuild build -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO
+        run: tuist xcodebuild build -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER=
 
       - name: Run  Tests
-        run: tuist xcodebuild test -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' -skip-testing:IrisUITests CODE_SIGNING_ALLOWED=NO
+        run: tuist xcodebuild test -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' -skip-testing:IrisUITests CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER=
 
       # On a test-runner launch crash xcodebuild only reports "Early unexpected
       # exit". The real reason (dyld failure, unresolved symbol, startup throw)
