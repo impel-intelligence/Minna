@@ -53,7 +53,7 @@ jobs:
       # exit". The real reason (dyld failure, unresolved symbol, startup throw)
       # is in the macOS crash report. Dump it so the next run is diagnosable.
       - name: Dump crash diagnostics
-        if: failure()
+        if: ${{ always() && needs.build.result == 'failure' }}
         run: |
           shopt -s nullglob
           echo "=== ~/Library/Logs/DiagnosticReports ==="
