@@ -33,7 +33,11 @@ xcodebuild archive \
     -destination generic/platform=macOS \
     -workspace Iris.xcworkspace \
     -scheme "Iris" \
-    -archivePath "$ARCHIVE_PATH" 2>&1 | xcbeautify
+    -archivePath "$ARCHIVE_PATH" 2>&1 \
+    -authenticationKeyID "$APPLE_API_KEY_ID" \
+    -authenticationKeyIssuerID "$APPLE_API_ISSUER_ID" \
+    -authenticationKeyPath "$API_KEY_PATH" | xcbeautify --renderer github-actions
+
 echo "::endgroup::"
 
 # 2. Export the signed Developer ID app from the archive.
@@ -42,7 +46,10 @@ echo "::group::Export Archive"
 xcodebuild -exportArchive \
     -archivePath "$ARCHIVE_PATH" \
     -exportPath "$APP_EXPORT_DIRECTORY" \
-    -exportOptionsPlist ExportOptions.plist 2>&1 | xcbeautify
+    -exportOptionsPlist ExportOptions.plist 2>&1 \
+    -authenticationKeyID "$APPLE_API_KEY_ID" \
+    -authenticationKeyIssuerID "$APPLE_API_ISSUER_ID" \
+    -authenticationKeyPath "$API_KEY_PATH" | xcbeautify --renderer github-actions
 echo "::endgroup::"
 
 # 3. notarytool excepts a zip/pkg/dmg so we wrap the .app in a zip. We use ditto to preseve the symlinks nad metadata.
