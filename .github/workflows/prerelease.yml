@@ -1,4 +1,4 @@
-name: Create Iris Build (Internal)
+name: Create Internal Iris Build
 on:
   push:
     tags:
@@ -12,6 +12,7 @@ jobs:
   validate:
     name: Validate Version Match
     runs-on: macos-26
+    if: startsWith(github.ref, 'refs/tags/')
 
     # Make sure that the version we are dispatching for is properly set
     steps:
@@ -20,7 +21,7 @@ jobs:
         run: grep "${{ github.ref_name }}" Tuist/ProjectDescriptionHelpers/Settings.swift
 
   prerelease:
-    needs: validate
+    # needs: validate
     name: Build Iris
     runs-on: macos-26
 

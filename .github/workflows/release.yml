@@ -1,4 +1,4 @@
-name: Create Iris Build (External)
+name: Update Sparkle w/ Latest Release
 on:
   release:
     types: [released]
