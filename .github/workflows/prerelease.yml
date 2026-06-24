@@ -79,16 +79,6 @@ jobs:
           APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
           APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
 
-      # xcpretty drops the real compiler/signing diagnostics on failure; the
-      # script tees the raw xcodebuild output to tmp/logs so it can be read here.
-      - name: Upload build logs
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: tmp/logs/*.log
-          if-no-files-found: ignore
-
       - name: Upload Sentry Information
         run: ./scripts/sentry.sh ${{ secrets.IRIS_SENTRY_AUTH_TOKEN }}
 
