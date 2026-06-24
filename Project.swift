@@ -8,7 +8,7 @@ let project = Project(
             name: "Iris",
             destinations: .macOS,
             product: .app,
-            bundleId: "com.tryiris.iris.mac",
+            bundleId: PRODUCT_BUNDLE_IDENTIFIER,
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: irisInfoPlist,
             buildableFolders: [
