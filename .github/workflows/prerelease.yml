@@ -19,44 +19,55 @@ jobs:
       - name: Validate Version Match
         run: grep "${{ github.ref_name }}" Tuist/ProjectDescriptionHelpers/Settings.swift
 
-  # prerelease:
-  #   needs: validate
-  #   name: Build Iris
-  #   runs-on: macos-26
+  prerelease:
+    needs: validate
+    name: Build Iris
+    runs-on: macos-26
 
-  #   steps:
-  #     - uses: actions/checkout@v7
+    steps:
+      - uses: actions/checkout@v7
 
-  #     - name: Install mise & Tools
-  #       uses: jdx/mise-action@v4
-  #       with:
-  #         cache: true
+      - name: Install mise & Tools
+        uses: jdx/mise-action@v4
+        with:
+          cache: true
 
-  #     - name: Configure Git for Private Packages
-  #       run: |
-  #         git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
+      - name: Configure Git for Private Packages
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
 
-  #     - name: Cache SPM binary artifacts
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/Library/Caches/org.swift.swiftpm/artifacts
-  #         key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
-  #         restore-keys: |
-  #           spm-artifacts-${{ runner.os }}-
+      - name: Cache SPM binary artifacts
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm/artifacts
+          key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
+          restore-keys: |
+            spm-artifacts-${{ runner.os }}-
 
-  #     - name: Pre-fetch SPM binary artifacts
-  #       run: |
-  #           chmod +x scripts/pre_fetch_spm.sh
-  #           ./scripts/pre_fetch_spm.sh
+      - name: Pre-fetch SPM binary artifacts
+        run: |
+            chmod +x scripts/pre_fetch_spm.sh
+            ./scripts/pre_fetch_spm.sh
 
-  #     - name: Install Project Dependencies
-  #       run: tuist install
+      - name: Install Project Dependencies
+        run: tuist install
 
-  #     - name: Generate Xcode Workspace
-  #       run: tuist generate
+      - name: Generate Xcode Workspace
+        run: tuist generate
 
-  #     - name: Run Build and Tests
-  #       run: tuist test --skip-ui-tests
+      - name: Run Build and Tests
+        run: tuist test --skip-ui-tests
+
+      - name: Make Executable Scripts
+        run: |
+          chmod +x scripts/release.sh scripts/sentry.sh scripts/create_artifacts.sh  scripts/update_sparkle.sh
+      - name: Make tmp
+        run: |
+          rm -rf tmp
+          mkdir tmp
+          mkdir tmp/compressed
+          mkdir tmp/archive
+          mkdir tmp/apps
 
   # notarize:
   #   needs: build
