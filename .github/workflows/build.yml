@@ -50,17 +50,27 @@ jobs:
       # workflows sign, via scripts/release.sh + Apple API keys). The project
       # forces CODE_SIGN_STYLE=Automatic with a DEVELOPMENT_TEAM, which fails
       # without a matching cert in the keychain. Override to ad-hoc signing
-      # (identity "-", manual style, no team): this needs no cert/team but
-      # still produces a validly signed, entitlement-bearing, debuggable app.
-      # A valid signature is required for the App Sandbox / Hardened Runtime
-      # app to launch and for XCTest to inject into it — CODE_SIGNING_ALLOWED=NO
-      # builds compile but hang the test runner ("hung before establishing
-      # connection") because the unsigned host app can't be launched/injected.
+      # (identity "-", manual style, no team): needs no cert/team but still
+      # produces a valid, entitlement-bearing, debuggable app the test runner
+      # can launch and inject into.
       - name: Build App
         run: tuist xcodebuild build -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER=
 
+      # The hosted unit tests launch Iris.app as their test host. If the app
+      # blocks at launch (e.g. an updater/permission modal) the runner reports
+      # "hung before establishing connection" with no crash log. The background
+      # sampler below dumps the host process's stack ~45s in — well before the
+      # ~6min connection timeout — so a future hang is diagnosable, not opaque.
       - name: Run  Tests
-        run: tuist xcodebuild test -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' -skip-testing:IrisUITests CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER=
+        run: |
+          (
+            for _ in $(seq 1 40); do
+              pid=$(pgrep -x Iris | head -1)
+              if [ -n "$pid" ]; then sleep 45; sample "$pid" 5 -mayDie > "$RUNNER_TEMP/iris_hang_sample.txt" 2>&1 || true; break; fi
+              sleep 5
+            done
+          ) &
+          tuist xcodebuild test -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' -skip-testing:IrisUITests CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER=
 
       # On a test-runner launch crash xcodebuild only reports "Early unexpected
       # exit". The real reason (dyld failure, unresolved symbol, startup throw)
@@ -76,3 +86,5 @@ jobs:
             echo "----- $f -----"
             cat "$f"
           done
+          echo "=== Hang sample (if the host app blocked at launch) ==="
+          cat "$RUNNER_TEMP/iris_hang_sample.txt" 2>/dev/null || echo "(no hang sample captured)"
