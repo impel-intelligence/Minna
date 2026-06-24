@@ -46,11 +46,15 @@ jobs:
       - name: Generate Xcode Workspace
         run: tuist generate
 
+      # No signing certificate is imported on the runner (only the release
+      # workflows sign, via scripts/release.sh + Apple API keys). The project
+      # forces CODE_SIGN_STYLE=Automatic with a DEVELOPMENT_TEAM, so disable
+      # signing here to verify compilation without a cert in the keychain.
       - name: Build App
-        run: tuist xcodebuild build -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS'
+        run: tuist xcodebuild build -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO
 
       - name: Run  Tests
-        run: tuist test --skip-ui-tests
+        run: tuist xcodebuild test -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' -skip-testing:IrisUITests CODE_SIGNING_ALLOWED=NO
 
       # On a test-runner launch crash xcodebuild only reports "Early unexpected
       # exit". The real reason (dyld failure, unresolved symbol, startup throw)
