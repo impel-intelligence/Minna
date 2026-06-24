@@ -50,7 +50,7 @@ jobs:
         run: tuist xcodebuild build -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO
 
       - name: Run  Tests
-        run: tuist test --skip-ui-tests
+        run: tuist xcodebuild test -workspace Iris.xcworkspace -scheme Iris -destination 'platform=macOS' -skip-testing:IrisUITests CODE_SIGNING_ALLOWED=NO
 
       # On a test-runner launch crash xcodebuild only reports "Early unexpected
       # exit". The real reason (dyld failure, unresolved symbol, startup throw)
