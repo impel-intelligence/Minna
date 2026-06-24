@@ -18,36 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install mise & Tools
-        uses: jdx/mise-action@v4
-        with:
-          cache: true
-
-      - name: Configure Git for Private Packages
-        run: |
-          git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
-
-      - name: Cache SPM binary artifacts
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Caches/org.swift.swiftpm/artifacts
-          key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
-          restore-keys: |
-            spm-artifacts-${{ runner.os }}-
-
-      - name: Pre-fetch SPM binary artifacts
-        run: |
-            chmod +x scripts/pre_fetch_spm.sh
-            ./scripts/pre_fetch_spm.sh
-
-      - name: Install Project Dependencies
-        run: tuist install
-
-      - name: Generate Xcode Workspace
-        run: tuist generate
-
-      - name: Run Build and Tests
-        run: tuist test --skip-ui-tests
+      - id: build
+        uses: ./.github/actions/build
 
       # On a test-runner launch crash xcodebuild only reports "Early unexpected
       # exit". The real reason (dyld failure, unresolved symbol, startup throw)
