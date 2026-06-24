@@ -5,8 +5,22 @@ on:
       - "*.*.*"
   workflow_dispatch:
 
+env:
+  TUIST_TOKEN: ${{ secrets.TUIST_TOKEN }}
+
 jobs:
-  build:
+  validate:
+    name: Validate Version Match
+    runs-on: macos-26
+
+    # Make sure that the version we are dispatching for is properly set
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Version Match
+        run: grep "${{ github.ref_name }}" Tuist/ProjectDescriptionHelpers/Settings.swift
+
+  prerelease:
+    needs: validate
     name: Build Iris
     runs-on: macos-26
 
@@ -22,11 +36,27 @@ jobs:
         run: |
           git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
 
+      - name: Cache SPM binary artifacts
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm/artifacts
+          key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
+          restore-keys: |
+            spm-artifacts-${{ runner.os }}-
+
+      - name: Pre-fetch SPM binary artifacts
+        run: |
+            chmod +x scripts/pre_fetch_spm.sh
+            ./scripts/pre_fetch_spm.sh
+
       - name: Install Project Dependencies
         run: tuist install
 
       - name: Generate Xcode Workspace
         run: tuist generate
+
+      - name: Run Build and Tests
+        run: tuist test --skip-ui-tests
 
   notarize:
     needs: build
@@ -36,7 +66,7 @@ jobs:
     steps:
     - name: Make Executable Scripts
       run: |
-        chmod +x scripts/archive.sh scripts/notarize.sh scripts/sentry.sh scripts/update_sparkle.sh scripts/compress.sh scripts/generate_appcast scripts/create_dmg.sh
+        chmod +x scripts/release.sh scripts/sentry.sh  scripts/update_sparkle.sh
     - name: Make tmp
       run: |
         rm -rf tmp
@@ -44,16 +74,15 @@ jobs:
         mkdir tmp/compressed
         mkdir tmp/archive
         mkdir tmp/apps
-    - name: Export Xcode Archive
-      run: ./scripts/archive.sh
-    - name: Notarize App
-      run: ./scripts/notarize.sh
+    - name: Release App
+      run: ./scripts/release.sh
       env:
         APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
         APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
         APPLE_API_KEY_BASE64: ${{ secrets.APPLE_API_KEY_BASE64 }}
+
     - name: Upload Sentry Information
-      run: ./scripts/sentry.sh ${{ secrets.SENTRY_AUTH_TOKEN }}
+      run: ./scripts/sentry.sh ${{ secrets.IRIS_SENTRY_AUTH_TOKEN }}
 
   create_artifacts:
     needs: notarize
@@ -61,10 +90,8 @@ jobs:
     runs-on: macos-26
 
     steps:
-    - name: Create Tar
-      run: ./scripts/compress.sh ${{ github.ref_name }}
-    - name: Create DMG
-      run: ./scripts/create_dmg.sh ${{ github.ref_name }}
+    - name: Create Artifacts
+      run: ./scripts/create_artifacts.sh
 
   upload_artifacts:
     if: startsWith(github.ref, 'refs/tags/')

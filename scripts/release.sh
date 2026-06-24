@@ -6,7 +6,6 @@ ARCHIVE_PATH="tmp/archive/iris"
 APP_EXPORT_DIRECTORY="tmp/apps"
 APP_PATH="$APP_EXPORT_DIRECTORY/Iris.app"
 ZIP_PATH="$APP_EXPORT_DIRECTORY/Iris.zip"
-TAR_PATH="$APP_EXPORT_DIRECTORY/iris.tar.xz"
 
 # Make sure all of the environment options we need exist.
 
@@ -50,6 +49,3 @@ xcrun stapler staple "$APP_PATH"
 
 # 5. Delete the zip since it was only used for uploading to notary tool.
 rm -f "$ZIP_PATH"
-
-# 6. Create a tar archive for the sparkle updater..
-tar --no-xattrs -cJf "$TAR_PATH" "$APP_PATH"

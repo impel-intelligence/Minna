@@ -33,5 +33,6 @@ let package = Package(
         // Third Party
         .package(url: "https://github.com/SFSafeSymbols/SFSafeSymbols", from: "7.0.0"),
         .package(url: "https://github.com/getsentry/sentry-cocoa", from: "9.18.0"),
+        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.9.3")
     ]
 )

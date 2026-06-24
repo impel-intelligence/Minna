@@ -1,0 +1,76 @@
+name: 'Build Iris'
+description: 'Build the Iris App using Tuist'
+# inputs:
+#   who-to-greet:  # id of input
+#     description: 'Who to greet'
+#     required: true
+#     default: 'World'
+# outputs:
+#   random-number:
+#     description: "Random number"
+#     value: ${{ steps.random-number-generator.outputs.random-number }}
+runs:
+  using: "composite"
+  steps:
+    # - name: Set Greeting
+    #   run: echo "Hello $INPUT_WHO_TO_GREET."
+    #   shell: bash
+    #   env:
+    #     INPUT_WHO_TO_GREET: ${{ inputs.who-to-greet }}
+
+    # - name: Random Number Generator
+    #   id: random-number-generator
+    #   run: echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+    #   shell: bash
+
+    # - name: Set GitHub Path
+    #   run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+    #   shell: bash
+    #   env:
+    #     GITHUB_ACTION_PATH: ${{ github.action_path }}
+
+    - name: Install mise & Tools
+      uses: jdx/mise-action@v4
+      with:
+        cache: true
+
+    - name: Configure Git for Private Packages
+      run: |
+        git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
+
+    - name: Cache SPM binary artifacts
+      uses: actions/cache@v4
+      with:
+        path: ~/Library/Caches/org.swift.swiftpm/artifacts
+        key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
+        restore-keys: |
+          spm-artifacts-${{ runner.os }}-
+
+    - name: Pre-fetch SPM binary artifacts
+      run: |
+          chmod +x scripts/pre_fetch_spm.sh
+          ./scripts/pre_fetch_spm.sh
+
+    - name: Install Project Dependencies
+      run: tuist install
+
+    - name: Generate Xcode Workspace
+      run: tuist generate
+
+    - name: Run Build and Tests
+      run: tuist test --skip-ui-tests
+
+    # On a test-runner launch crash xcodebuild only reports "Early unexpected
+    # exit". The real reason (dyld failure, unresolved symbol, startup throw)
+    # is in the macOS crash report. Dump it so the next run is diagnosable.
+    - name: Dump crash diagnostics
+      if: failure()
+      run: |
+        shopt -s nullglob
+        echo "=== ~/Library/Logs/DiagnosticReports ==="
+        ls -la ~/Library/Logs/DiagnosticReports/ 2>/dev/null || true
+        reports=(~/Library/Logs/DiagnosticReports/Iris-*.ips ~/Library/Logs/DiagnosticReports/Iris*.crash)
+        for f in "${reports[@]}"; do
+          echo "----- $f -----"
+          cat "$f"
+        done

@@ -26,10 +26,10 @@ public let irisInfoPlist: InfoPlist = .dictionary([
         ]
     ],
     
-    // Sparkle Values
-//    "SUFeedURL": .string("https://impel-sparkle-updater.fly.dev/appcast.xml"),
-//    "SUScheduledCheckInterval": .integer(21600),
-//    "SUPublicEDKey": .string("TVcja488EICE+Z8F7XcTLvVq7a8TBwobbwlV87pJE10="),
+//     Sparkle Values
+    "SUFeedURL": .string("https://impel-sparkle-updater.fly.dev/appcast.xml"),
+    "SUScheduledCheckInterval": .integer(21600),
+    "SUPublicEDKey": .string("ySLQ5G0aOgmtZN2I2NnrPTwJZ36xgXcI3ZpY8W2wuBo+Z8F7XcTLvVq7a8TBwobbwlV87pJE10="),
 
     // Other
     "LSApplicationCategoryType": .string("public.app-category.utilities")
