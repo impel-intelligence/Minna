@@ -18,10 +18,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Validate Version Match
-        run: grep "${{ github.ref_name }}" Tuist/ProjectDescriptionHelpers/Settings.swift
+        run: grep "${{ github.ref_name }}" Tuist/ProjectDescriptionHelpers/Constants.swift
 
   prerelease:
-    # needs: validate
+    needs: validate
     name: Build Iris
     runs-on: macos-26
 
@@ -91,3 +91,20 @@ jobs:
           files: |
             tmp/apps/iris.tar.xz
             tmp/apps/iris.dmg
+
+      # On a test-runner launch crash xcodebuild only reports "Early unexpected
+      # exit". The real reason (dyld failure, unresolved symbol, startup throw)
+      # is in the macOS crash report. Dump it so the next run is diagnosable.
+      - name: Dump crash diagnostics
+        if: failure()
+        run: |
+          shopt -s nullglob
+          echo "=== ~/Library/Logs/DiagnosticReports ==="
+          ls -la ~/Library/Logs/DiagnosticReports/ 2>/dev/null || true
+          reports=(~/Library/Logs/DiagnosticReports/Iris-*.ips ~/Library/Logs/DiagnosticReports/Iris*.crash)
+          for f in "${reports[@]}"; do
+            echo "----- $f -----"
+            cat "$f"
+          done
+          echo "=== Hang sample (if the host app blocked at launch) ==="
+          cat "$RUNNER_TEMP/iris_hang_sample.txt" 2>/dev/null || echo "(no hang sample captured)"
