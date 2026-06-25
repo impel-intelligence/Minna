@@ -9,7 +9,7 @@ import SwiftData
 import Foundation
 import BlurbKit
 import SFSafeSymbols
-import Sentry
+import SentrySwift
 
 @MainActor
 class FrontendDatabase {

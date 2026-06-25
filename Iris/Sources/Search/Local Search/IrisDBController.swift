@@ -9,7 +9,7 @@ import Foundation
 import IrisSearch
 import Digester
 import SwiftData
-import Sentry
+import SentrySwift
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
@@ -69,7 +69,7 @@ final class IrisDBController {
     init(modelContainer: ModelContainer) {
         do {
             let searchDirectory = Utilities.irisDBDirectory()
-            textEmbedder = try NLEmbedder(language: .english)
+            textEmbedder = try NLContextualEmbedder(language: .english)
             irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder, textChunker: textChunker)
         } catch {
             SentrySDK.capture(error: error)

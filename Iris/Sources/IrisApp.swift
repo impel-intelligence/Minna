@@ -7,38 +7,8 @@
 
 import SwiftUI
 import SwiftData
-import Sentry
+import SentrySwift
 import Sparkle
-
-// This view model class publishes when new updates can be checked by the user
-final class CheckForUpdatesViewModel: ObservableObject {
-    @Published var canCheckForUpdates = false
-    
-    init(updater: SPUUpdater) {
-        updater.publisher(for: \.canCheckForUpdates)
-            .assign(to: &$canCheckForUpdates)
-    }
-}
-
-// This is the view for the Check for Updates menu item
-// Note this intermediate view is necessary for the disabled state on the menu item to work properly before Monterey.
-// See https://stackoverflow.com/questions/68553092/menu-not-updating-swiftui-bug for more info
-struct CheckForUpdatesView: View {
-    @ObservedObject private var checkForUpdatesViewModel: CheckForUpdatesViewModel
-    private let updater: SPUUpdater
-    
-    init(updater: SPUUpdater) {
-        self.updater = updater
-        
-        // Create our view model for our CheckForUpdatesView
-        self.checkForUpdatesViewModel = CheckForUpdatesViewModel(updater: updater)
-    }
-    
-    var body: some View {
-        Button("Check for Updates…", action: updater.checkForUpdates)
-            .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
-    }
-}
 
 @main
 struct IrisApp: App {
@@ -57,13 +27,8 @@ struct IrisApp: App {
         self.irisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
 
         self.searchController = SearchController()
-        
-        // Don't start the updater under XCTest. Hosted unit tests launch this
-        // app as their test host; a started updater kicks off Sparkle's
-        // first-launch permission flow, which blocks the main run loop on a
-        // headless CI runner before XCTest can establish its connection
-        // ("test runner hung before establishing connection"). The controller
-        // is still created so the "Check for Updates…" menu item stays valid.
+
+        // Don't start the sparkle updater under XCTest. Unit tests on CI will fail since sparkle opens a popup asking when to update which hangs the process.
         let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
         updaterController = SPUStandardUpdaterController(startingUpdater: !isRunningTests, updaterDelegate: nil, userDriverDelegate: nil)
         
@@ -77,7 +42,6 @@ struct IrisApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationCore()
-                .environment(AlertCenter.shared)
         }
         .commands {
             CommandGroup(replacing: .newItem) {

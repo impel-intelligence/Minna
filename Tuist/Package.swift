@@ -24,7 +24,7 @@ let package = Package(
         
         // Impel Repos
         .package(url: "https://github.com/impel-intelligence/ViewStorage", from: "1.4.0"),
-        .package(url: "https://github.com/impel-intelligence/IrisSearch", from: "0.4.4"),
+        .package(url: "https://github.com/impel-intelligence/IrisSearch", from: "0.4.5"),
         .package(url: "https://github.com/impel-intelligence/BlurbKit", from: "0.1.2"),
         
         // Apple Repos

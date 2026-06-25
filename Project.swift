@@ -3,6 +3,9 @@ import ProjectDescriptionHelpers
 
 let project = Project(
     name: "Iris",
+    settings: .settings(
+        base: SettingsDictionary().automaticCodeSigning(devTeam: DEV_TEAM)
+    ),
     targets: [
         .target(
             name: "Iris",
@@ -37,7 +40,7 @@ let project = Project(
                 .external(name: "Digester"),
                 .external(name: "BlurbKit"),
                 .external(name: "Collections"),
-                .external(name: "Sentry"),
+                .external(name: "SentrySPM"),
                 .external(name: "Sparkle")
             ],
             settings: irisSettings

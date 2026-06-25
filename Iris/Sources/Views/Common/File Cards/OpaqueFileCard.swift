@@ -8,7 +8,7 @@
 import SwiftUI
 import Collections
 import SFSafeSymbols
-import Sentry
+import SentrySwift
 
 enum CardEditField: Hashable {
     case title
@@ -73,11 +73,11 @@ struct OpaqueFileCard: View {
             Label(selectedFiles.count <= 1 ? "Open Original" : "Open Originals", systemSymbol: .arrowUpRight)
         }
         
+        // TODO: Support multi-rename, look at macOS multi-rename for inspo
         Button {
             editingTitle.toggle()
             focusedField = .title
         } label: {
-            // TODO: Support multi-rename, look at macOS multi-rename for inspo
             Label(editingTitle ? "Stop Rename" : "Rename", systemSymbol: .pencilLine)
         }
         
@@ -85,7 +85,6 @@ struct OpaqueFileCard: View {
             editingDescription.toggle()
             focusedField = .description
         } label: {
-            // TODO: Support multi-rename, look at macOS multi-rename for inspo
             Label(editingDescription ? "Stop Editing" : "Edit Description", systemSymbol: .pencilLine)
         }
 

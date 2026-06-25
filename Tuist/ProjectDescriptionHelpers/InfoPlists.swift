@@ -1,5 +1,6 @@
 import ProjectDescription
 
+
 public let irisInfoPlist: InfoPlist = .dictionary([
     // CF Values
     "CFBundleName": .string("$(PRODUCT_NAME)"),
@@ -23,7 +24,11 @@ public let irisInfoPlist: InfoPlist = .dictionary([
                 "public.mime-type": ["com.tryiris.iris.mac.folder"]
             ],
             "UTTypeConformsTo": ["com.apple.package", "public.content"]
-        ],
+        ]
+    ],
+    
+    // Imported Type Identifiers
+    "UTImportedTypeDeclarations": [
         [
             "UTTypeDescription": "Markdown",
             "UTTypeIcons": [:],
@@ -39,7 +44,7 @@ public let irisInfoPlist: InfoPlist = .dictionary([
 //     Sparkle Values
     "SUFeedURL": .string("https://impel-intelligence.github.io/iris-sparkle-updater/appcast.xml"),
     "SUScheduledCheckInterval": .integer(21600),
-    "SUPublicEDKey": .string("ySLQ5G0aOgmtZN2I2NnrPTwJZ36xgXcI3ZpY8W2wuBo+Z8F7XcTLvVq7a8TBwobbwlV87pJE10="),
+    "SUPublicEDKey": .string("ySLQ5G0aOgmtZN2I2NnrPTwJZ36xgXcI3ZpY8W2wuBo="),
 
     // Other
     "LSApplicationCategoryType": .string("public.app-category.utilities"),

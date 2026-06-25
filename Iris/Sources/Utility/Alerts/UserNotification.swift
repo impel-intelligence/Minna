@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 struct UserNotification: Identifiable {    
     struct ActionOption: Identifiable {
         let id: UUID = UUID()
@@ -32,7 +31,6 @@ struct UserNotification: Identifiable {
 
     let actions: [ActionOption]
     
-
     init(title: String, message: String, creationDate: Date = .now, actions: [ActionOption]) {
         self.title = title
         self.message = message
