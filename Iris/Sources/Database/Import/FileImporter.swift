@@ -8,7 +8,7 @@
 import SwiftData
 import SwiftUI
 import Digester
-import Sentry
+import SentrySwift
 
 extension View {
     func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext) -> some View {

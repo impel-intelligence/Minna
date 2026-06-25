@@ -10,7 +10,7 @@ import SwiftData
 import ViewStorage
 import Collections
 import SFSafeSymbols
-import Sentry
+import SentrySwift
 
 enum ArrowDirection {
     case up

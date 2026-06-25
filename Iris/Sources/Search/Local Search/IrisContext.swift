@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Sentry
+import SentrySwift
 
 enum IrisContextError: Error {
     case notConnected

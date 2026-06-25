@@ -8,7 +8,7 @@
 import SwiftUI
 import Collections
 import SFSafeSymbols
-import Sentry
+import SentrySwift
 
 enum CardEditField: Hashable {
     case title

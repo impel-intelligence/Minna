@@ -9,7 +9,7 @@
 import SwiftUI
 import SFSafeSymbols
 import SwiftData
-import Sentry
+import SentrySwift
 
 struct SearchStartupView: View {
     @Environment(\.modelContext) var modelContext

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SwiftData
-import Sentry
+import SentrySwift
 import Sparkle
 
 @main
