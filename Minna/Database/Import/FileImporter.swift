@@ -1,6 +1,6 @@
 //
 //  FileImporter.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/17/26.
 //
@@ -9,17 +9,19 @@ import SwiftData
 import SwiftUI
 import Digester
 import SentrySwift
+import UniformTypeIdentifiers
 
 extension View {
     func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext) -> some View {
         self
-            .fileDialogMessage("Pick a file to add to Iris.")
-            .fileDialogCustomizationID(IrisFileDialog.main)
+            .fileDialogMessage("Pick a file to add to Minna.")
+            .fileDialogCustomizationID(MinnaFileDialog.main)
             .fileImporter(isPresented: presented, allowedContentTypes: DigesterFactory.availableUniformTypes + [.directory, .folder], allowsMultipleSelection: true) { result in
                 // TODO: Move this off of the main thread to improve import performance.
                 do {
                     guard irisContext.isConnected() else {
-                        print("You must connect an IrisDB instance.")
+                        print("You must connect an IrisDB instance on the view!")
+                        SentrySDK.capture(message: "IrisDB instance was not connected.")
                         return
                     }
                     

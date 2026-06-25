@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/11/26.
 //
@@ -14,11 +14,6 @@ import UniformTypeIdentifiers
 enum SecurityScopeError: Error {
     case noBookmarkData
     case unableToCreateSecurityScope
-}
-
-struct FileBackgroundInformation: Codable {
-    var searchIndexed: Bool = false
-    var descriptionGenerated: Bool = false
 }
 
 @Model
@@ -37,7 +32,11 @@ final class File {
     var bookmark: Data?
     var type: ContentType = ContentType.webpage
     var source: String
-    var backgroundTasks: FileBackgroundInformation = FileBackgroundInformation()
+
+    // Background task completion flags. Kept as direct stored properties (rather than a nested
+    // Codable struct) so they can be used in SwiftData fetch predicates.
+    var searchIndexed: Bool = false
+    var descriptionGenerated: Bool = false
 
     init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String) {
         self.uuid = uuid

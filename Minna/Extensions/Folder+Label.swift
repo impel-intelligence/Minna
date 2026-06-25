@@ -1,6 +1,6 @@
 //
 //  Folder+Label.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
 //
@@ -20,7 +20,7 @@ extension Folder {
 }
 
 extension FolderIcon {
-    enum IconSize {
+    nonisolated enum IconSize {
         case regular
         case large
     }

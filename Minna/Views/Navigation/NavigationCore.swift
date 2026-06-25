@@ -1,6 +1,6 @@
 //
 //  NavigationCore.swift
-//  iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/11/26.
 //
@@ -81,7 +81,7 @@ public struct NavigationCore: View {
         .task {
             // Start indexing all files that did not complete indexing.
             let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
-                !file.backgroundTasks.searchIndexed
+                !file.searchIndexed
             })
             
             guard let files = try? modelContext.fetch(descriptor) else { return }
@@ -97,7 +97,7 @@ public struct NavigationCore: View {
         .task {
             // Generate descriptions for files without descriptions.
             let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
-                !file.backgroundTasks.descriptionGenerated
+                !file.descriptionGenerated
             })
             
             guard let files = try? modelContext.fetch(descriptor) else { return }

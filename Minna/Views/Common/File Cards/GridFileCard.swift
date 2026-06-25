@@ -1,6 +1,6 @@
 //
 //  GridFileCard.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
 //
@@ -76,6 +76,6 @@ struct GridFileCard: View {
     
     GridFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol(SFSymbol.textAlignleft.rawValue), color: .rose)), title: "This-is-a-long-name-with-no-spaces", shortDescription: "This is a quick description of this file and the content it contains. This is a quick description of this file and the content it contains. This is a quick description of this file and the content it contains.", color: .random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "google.com"), editingTitle: $editingTitle, editingDescription: $editingDescription)
 //    GridFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("microphone"))), title: "Lecture 10/20/26", shortDescription: "Your teacher discussed the theory of relativity. Your teacher discussed the theory of relativity. Your teacher discussed the theory of relativity.", color: .random, type: .recording, url: URL(string: "https://google.com")!, bookmark: nil, source: "recording"), editingTitle: $editingTitle, editingDescription: $editingDescription)
-//    GridFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("sparkles"))), title: "C Mutex Questions", shortDescription: "Provided a C mutex example from class and helped debug an assignment. Provided a C mutex example from class and helped debug an assignment. Provided a C mutex example from class and helped debug an assignment.", color: .random, type: .askIris, url: URL(string: "https://google.com")!, bookmark: nil, source: "ask iris"), editingTitle: $editingTitle, editingDescription: $editingDescription)
+//    GridFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("sparkles"))), title: "C Mutex Questions", shortDescription: "Provided a C mutex example from class and helped debug an assignment. Provided a C mutex example from class and helped debug an assignment. Provided a C mutex example from class and helped debug an assignment.", color: .random, type: .askMinna, url: URL(string: "https://google.com")!, bookmark: nil, source: "ask minna"), editingTitle: $editingTitle, editingDescription: $editingDescription)
 
 }

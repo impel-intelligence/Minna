@@ -1,6 +1,6 @@
 //
 //  ContentType.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/18/26.
 //
@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 import SFSafeSymbols
 
 enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseIterable {
-    case askIris
+    case askMinna
     case recording
 
     case pdf
@@ -35,7 +35,7 @@ enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseI
             return .microphone
         case .audio:
             return .waveform
-        case .askIris:
+        case .askMinna:
             return .sparkles
         case .text:
             return .document
@@ -44,8 +44,8 @@ enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseI
     
     var description: String {
         switch self {
-        case .askIris:
-            return "Ask Iris"
+        case .askMinna:
+            return "Ask Minna"
         case .recording:
             return "Recording"
         case .pdf:

@@ -1,6 +1,6 @@
 //
 //  AddFolderRequest.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/22/26.
 //

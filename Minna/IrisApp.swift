@@ -1,6 +1,6 @@
 //
-//  IrisApp.swift
-//  iris
+//  MinnaApp.swift
+//  Minna
 //
 //  Created by Taylor Lineman on 6/11/26.
 //

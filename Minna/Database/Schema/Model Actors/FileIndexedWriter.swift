@@ -1,6 +1,6 @@
 //
 //  FileIndexWriter.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/20/26.
 //
@@ -17,7 +17,7 @@ actor FileIndexedWriter {
         descriptor.fetchLimit = 1
         guard let file = try modelContext.fetch(descriptor).first else { return }
 
-        file.backgroundTasks.searchIndexed = true
+        file.searchIndexed = true
 
         try modelContext.save()
     }

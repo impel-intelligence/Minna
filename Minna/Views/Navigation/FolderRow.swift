@@ -1,12 +1,13 @@
 //
 //  FolderRow.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/22/26.
 //
 
 import SwiftUI
 import SFSafeSymbols
+import SwiftData
 
 struct FolderRow: View {
     @Environment(\.modelContext) private var modelContext

@@ -1,6 +1,6 @@
 //
 //  Database.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
 //
@@ -46,8 +46,8 @@ class SampleDatabase {
             shortDescription: "A discussion about course requirements and syllabus details.",
             color: .random,
             url: URL(string: "https://example.com/images/api-architecture.png")!,
-            source: "ask iris",
-            type: .askIris
+            source: "ask minna",
+            type: .askMinna
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*1),

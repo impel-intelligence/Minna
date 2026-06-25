@@ -1,20 +1,32 @@
 //
 //  Sparkle.swift
-//  Iris
+//  Minna
 //
-//  Created by Taylor Lineman on 6/25/26.
+//  Created by Taylor Lineman on 6/24/26.
 //
 
 import SwiftUI
 import Sparkle
+import Combine
 
 // This view model class publishes when new updates can be checked by the user
+@MainActor
 final class CheckForUpdatesViewModel: ObservableObject {
     @Published var canCheckForUpdates = false
     
+    // SPUUpdater is main-actor isolated, so the key path to `canCheckForUpdates`
+    // can only be formed from a main-actor context — hence this class is @MainActor.
+    // We observe via KVO instead of the Combine publisher to keep the updater reads
+    // on the main actor.
+    private var observation: NSKeyValueObservation?
+    
     init(updater: SPUUpdater) {
-        updater.publisher(for: \.canCheckForUpdates)
-            .assign(to: &$canCheckForUpdates)
+        canCheckForUpdates = updater.canCheckForUpdates
+        observation = updater.observe(\.canCheckForUpdates, options: [.new]) { [weak self] updater, _ in
+            MainActor.assumeIsolated {
+                self?.canCheckForUpdates = updater.canCheckForUpdates
+            }
+        }
     }
 }
 
@@ -37,3 +49,4 @@ struct CheckForUpdatesView: View {
             .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
     }
 }
+

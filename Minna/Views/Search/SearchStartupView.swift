@@ -1,7 +1,7 @@
 
 //
 //  SearchStartupView.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
 //
@@ -10,6 +10,7 @@ import SwiftUI
 import SFSafeSymbols
 import SwiftData
 import SentrySwift
+import OrderedCollections
 
 struct SearchStartupView: View {
     @Environment(\.modelContext) var modelContext
@@ -55,7 +56,7 @@ struct SearchStartupView: View {
             }
             Spacer()
         }
-        .navigationTitle("Ask Iris", image: Image(systemSymbol: .sparkles2).accessibilityHidden(true))
+        .navigationTitle("Ask Minna", image: Image(systemSymbol: .sparkles2).accessibilityHidden(true))
         .onChange(of: searchQuery) { _, newValue in
             searchIrisIndex(query: newValue)
         }
@@ -149,6 +150,6 @@ struct SearchBar: View {
 
 #Preview {
     SearchStartupView()
-        .navigationTitle("Ask Iris")
+        .navigationTitle("Ask Minna")
         .irisContext(IrisDBController(modelContainer: SampleDatabase.shared.modelContainer).mainContext)
 }

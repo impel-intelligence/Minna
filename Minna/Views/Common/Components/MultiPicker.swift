@@ -1,6 +1,6 @@
 //
 //  MultiPicker.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/15/26.
 //

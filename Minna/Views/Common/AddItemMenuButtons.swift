@@ -1,6 +1,6 @@
 //
 //  AddItemMenu.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/16/26.
 //
@@ -11,8 +11,8 @@ import Digester
 import SwiftData
 import SFSafeSymbols
 
-enum IrisFileDialog {
-    static let main: String = "com.tryiris.file.dialog.main"
+enum MinnaFileDialog {
+    static let main: String = "com.tryminna.minna.dialog.main"
 }
 
 struct AddItemMenuButtons: View {

@@ -1,11 +1,12 @@
 //
 //  Utilities.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/17/26.
 //
 
 import Foundation
+import UniformTypeIdentifiers
 
 struct Utilities {
     enum ASError: Error {

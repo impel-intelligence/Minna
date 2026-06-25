@@ -1,11 +1,12 @@
 //
 //  RecentsView.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
 //
 
 import SwiftUI
+import SFSafeSymbols
 
 struct RecentsView: View, Navigable {
     static let label: Label<Text, ModifiedContent<Image, AccessibilityAttachmentModifier>> = Label {

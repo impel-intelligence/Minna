@@ -1,6 +1,6 @@
 //
 //  OpaqueFileCard.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/22/26.
 //
@@ -9,6 +9,8 @@ import SwiftUI
 import OrderedCollections
 import SFSafeSymbols
 import SentrySwift
+import SwiftData
+import SwiftData
 
 enum CardEditField: Hashable {
     case title

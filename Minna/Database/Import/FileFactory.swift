@@ -1,6 +1,6 @@
 //
 //  FileFactory.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/17/26.
 //
@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 import BlurbKit
+import UniformTypeIdentifiers
 
 struct FileFactory {
     enum FileFactoryError: Error {
@@ -46,7 +47,7 @@ struct FileFactory {
     private static func file(from url: URL, in folder: Folder, resourceValues: URLResourceValues) throws -> File? {
         guard let contentType = resourceValues.contentType else { return nil }
         
-        guard let irisContentType = ContentType(uniformType: contentType) else {
+        guard let fileContentType = ContentType(uniformType: contentType) else {
             print("Unsupported type: \(contentType)")
             throw FileFactoryError.unsupportedType
         }
@@ -54,6 +55,6 @@ struct FileFactory {
         let bookmarkData = try File.generateBookmarkData(for: url)
         let fileBlurb = try BlurbFactory.provider(for: contentType).blurb(for: url)
         
-        return File(createdAt: Date.now, folder: folder, title: fileBlurb.title, shortDescription: fileBlurb.description, color: .random, type: irisContentType, url: url, bookmark: bookmarkData, source: "FileSystem")
+        return File(createdAt: Date.now, folder: folder, title: fileBlurb.title, shortDescription: fileBlurb.description, color: .random, type: fileContentType, url: url, bookmark: bookmarkData, source: "FileSystem")
     }
 }

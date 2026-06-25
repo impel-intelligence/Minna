@@ -1,6 +1,6 @@
 //
 //  NavigationTitle.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/23/26.
 //

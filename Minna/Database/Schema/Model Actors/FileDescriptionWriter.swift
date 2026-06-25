@@ -1,6 +1,6 @@
 //
 //  FileDescriptionWriter.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/20/26.
 //
@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 import BlurbKit
+import UniformTypeIdentifiers
 
 @ModelActor
 actor FileDescriptionWriter {
@@ -41,7 +42,7 @@ actor FileDescriptionWriter {
         guard let liveFile = try modelContext.fetch(descriptor).first else { return }
 
         liveFile.shortDescription = blurb.description
-        liveFile.backgroundTasks.descriptionGenerated = true
+        liveFile.descriptionGenerated = true
 
         try modelContext.save()
     }

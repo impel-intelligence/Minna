@@ -1,6 +1,6 @@
 //
 //  AddFolderForm.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/22/26.
 //
@@ -8,6 +8,7 @@
 import SwiftUI
 import SFSafeSymbols
 import OrderedCollections
+import SwiftData
 
 struct AddFolderForm: View {
     @Environment(\.modelContext) var modelContext

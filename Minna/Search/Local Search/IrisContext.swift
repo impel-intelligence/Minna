@@ -1,6 +1,6 @@
 //
-//  IrisContext.swift
-//  Iris
+//  MinnaContext.swift
+//  Minna
 //
 //  Created by Taylor Lineman on 6/18/26.
 //

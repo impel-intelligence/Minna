@@ -1,6 +1,6 @@
 //
 //  Folder.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/11/26.
 //
@@ -11,7 +11,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 extension UTType {
-    static let irisFolder = UTType(exportedAs: "com.tryiris.iris.mac.folder")
+    static nonisolated let irisFolder = UTType(exportedAs: "com.irissearch.index")
 }
 
 @Model

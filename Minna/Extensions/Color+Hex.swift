@@ -1,6 +1,6 @@
 //
 //  Color+Hex.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
 //

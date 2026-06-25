@@ -1,6 +1,6 @@
 //
 //  Themes.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
 //
@@ -38,30 +38,30 @@ enum ThemeColor: Int, Codable, CaseIterable, CustomStringConvertible, Identifiab
     var background: Color {
         switch self {
         case .champagne:
-            return IrisAsset.Assets.Champagne.background.swiftUIColor
+            return Color.Champagne.background
         case .lavender:
-            return IrisAsset.Assets.Lavender.background.swiftUIColor
+            return Color.Lavender.background
         case .azure:
-            return IrisAsset.Assets.Azure.background.swiftUIColor
+            return Color.Azure.background
         case .mint:
-            return IrisAsset.Assets.Mint.background.swiftUIColor
+            return Color.Mint.background
         case .rose:
-            return IrisAsset.Assets.Rose.background.swiftUIColor
+            return Color.Rose.background
         }
     }
 
     var text: Color {
         switch self {
         case .champagne:
-            return IrisAsset.Assets.Champagne.text.swiftUIColor
+            return Color.Champagne.text
         case .lavender:
-            return IrisAsset.Assets.Lavender.text.swiftUIColor
+            return Color.Lavender.text
         case .azure:
-            return IrisAsset.Assets.Azure.text.swiftUIColor
+            return Color.Azure.text
         case .mint:
-            return IrisAsset.Assets.Mint.text.swiftUIColor
+            return Color.Mint.text
         case .rose:
-            return IrisAsset.Assets.Rose.text.swiftUIColor
+            return Color.Rose.text
         }
     }
 }

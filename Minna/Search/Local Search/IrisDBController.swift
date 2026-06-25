@@ -1,6 +1,6 @@
 //
-//  IrisDBController.swift
-//  Iris
+//  MinnaDBController.swift
+//  Minna
 //
 //  Created by Taylor Lineman on 6/18/26.
 //
@@ -10,6 +10,7 @@ import IrisSearch
 import Digester
 import SwiftData
 import SentrySwift
+import UniformTypeIdentifiers
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
