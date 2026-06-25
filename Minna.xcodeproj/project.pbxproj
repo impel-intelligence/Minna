@@ -50,7 +50,24 @@
 			);
 			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
 		};
+		DB0CF7272FEDE8950036306B /* Exceptions for "ci_scripts" folder in "Minna" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ci_post_clone.sh,
+			);
+			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		DB0CF7282FEDE8950036306B /* Exceptions for "ci_scripts" folder in "Compile Sources" phase from "Minna" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = DB0CF4CC2FEDCA6B0036306B /* Sources */;
+			membershipExceptions = (
+				ci_post_clone.sh,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DB0CF4D22FEDCA6B0036306B /* Minna */ = {
@@ -69,6 +86,15 @@
 		DB0CF4EC2FEDCA6D0036306B /* MinnaUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = MinnaUITests;
+			sourceTree = "<group>";
+		};
+		DB0CF7242FEDE88A0036306B /* ci_scripts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DB0CF7272FEDE8950036306B /* Exceptions for "ci_scripts" folder in "Minna" target */,
+				DB0CF7282FEDE8950036306B /* Exceptions for "ci_scripts" folder in "Compile Sources" phase from "Minna" target */,
+			);
+			path = ci_scripts;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -111,6 +137,7 @@
 		DB0CF4C72FEDCA6B0036306B = {
 			isa = PBXGroup;
 			children = (
+				DB0CF7242FEDE88A0036306B /* ci_scripts */,
 				DB0CF4D22FEDCA6B0036306B /* Minna */,
 				DB0CF4E22FEDCA6D0036306B /* MinnaTests */,
 				DB0CF4EC2FEDCA6D0036306B /* MinnaUITests */,
@@ -146,6 +173,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				DB0CF4D22FEDCA6B0036306B /* Minna */,
+				DB0CF7242FEDE88A0036306B /* ci_scripts */,
 			);
 			name = Minna;
 			packageProductDependencies = (
