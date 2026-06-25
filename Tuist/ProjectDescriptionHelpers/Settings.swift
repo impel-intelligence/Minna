@@ -7,26 +7,25 @@
 
 import ProjectDescription
 
-public let TARGET_MACOS_VERSION = "26.0"
-public let APP_STAGE = "alpha"
-public let CURRENT_PROJECT_VERSION = "0.1.0"
-public let MARKETING_VERSION = "\(CURRENT_PROJECT_VERSION)"
-public let PRODUCT_BUNDLE_IDENTIFIER = "com.tryiris.iris.mac"
-
 public let irisSettings: Settings = .settings(
     base: [
         "ASSETCATALOG_COMPILER_APPICON_NAME" : .string("AppIcon"),
         "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": .string("AccentColor"),
-//        "CODE_SIGN_IDENTITY": .string("Apple Development"),
+
+        // MARK: Architectures
+        // Apple Silicon only: faiss / faiss_c xcframeworks ship no x86_64 macOS
+        // slice, so a universal (x86_64) archive fails to link. Pin to arm64.
+        "ARCHS": .string("arm64"),
+        "CODE_SIGN_IDENTITY": .string("Apple Development"),
         "CODE_SIGN_STYLE": .string("Automatic"),
         "COMBINE_HIDPI_IMAGES": .string("YES"),
         "DEAD_CODE_STRIPPING": .string("YES"),
         "DEBUG_INFORMATION_FORMAT": .string("dwarf-with-dsym"),
-//        "DEVELOPMENT_TEAM": .string(""),
+        "DEVELOPMENT_TEAM": .string("VV548YNZL3"),
         "ENABLE_HARDENED_RUNTIME": .string("YES"),
         "ENABLE_PREVIEWS": .string("YES"),
         "MACOSX_DEPLOYMENT_TARGET": .string(TARGET_MACOS_VERSION),
-        "CURRENT_PROJECT_VERSION": .string(CURRENT_PROJECT_VERSION),
+        "CURRENT_PROJECT_VERSION": .string(BUILD_NUMBER),
         "MARKETING_VERSION": .string(MARKETING_VERSION),
         "PRODUCT_BUNDLE_IDENTIFIER": .string(PRODUCT_BUNDLE_IDENTIFIER),
         "TARGET_NAME": .string("Iris"),
@@ -39,7 +38,10 @@ public let irisSettings: Settings = .settings(
         
         // MARK: Sandboxing
         "ENABLE_APP_SANDBOX": .string("YES"),
-        "ENABLE_USER_SCRIPT_SANDBOXING": .string("YES"),
+        // Build-time script sandboxing only (not the app's runtime sandbox).
+        // Must be NO so the SwiftLint pre-build phase can read the source tree;
+        // otherwise it lints nothing and no warnings/TODOs surface in Xcode.
+        "ENABLE_USER_SCRIPT_SANDBOXING": .string("NO"),
         "ENABLE_USER_SELECTED_FILES": .string("readonly"),
         "ENABLE_INCOMING_NETWORK_CONNECTIONS": .string("NO"),
         "ENABLE_OUTGOING_NETWORK_CONNECTIONS": .string("YES"),
@@ -72,6 +74,18 @@ public let irisSettings: Settings = .settings(
             "GCC_OPTIMIZATION_LEVEL" : .string("3"),
             "LD_RUNPATH_SEARCH_PATHS": .string("$(inherited) @executable_path/../Frameworks")
         ])
+    ]
+)
+
+// Signing-only settings for test bundles. A test bundle is loaded into the
+// host app's process, so dyld requires its Team ID to match the host's.
+// Without this the test targets sign ad-hoc (Team ID "not set") and fail to
+// load into the Team-ID-signed Iris.app with a "different Team IDs" error.
+public let irisTestSettings: Settings = .settings(
+    base: [
+        "CODE_SIGN_IDENTITY": .string("Apple Development"),
+        "CODE_SIGN_STYLE": .string("Automatic"),
+        "DEVELOPMENT_TEAM": .string("VV548YNZL3"),
     ]
 )
 

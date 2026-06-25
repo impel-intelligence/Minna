@@ -1,8 +1,11 @@
-name: Create Iris Build (External)
+name: Update Sparkle w/ Latest Release
 on:
   release:
-    types: [published]
+    types: [released]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   upload:
@@ -10,6 +13,41 @@ jobs:
     runs-on: macos-26
 
     steps:
+    - uses: actions/checkout@v7
+
+    # Generate Project to get Sparkle bin.
+    - name: Install mise & Tools
+      uses: jdx/mise-action@v4
+      with:
+        cache: true
+
+    - name: Install xcbeautify
+      run: brew install xcbeautify
+
+    - name: Configure Git for Private Packages
+      run: |
+        git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
+
+    - name: Cache SPM binary artifacts
+      uses: actions/cache@v4
+      with:
+        path: ~/Library/Caches/org.swift.swiftpm/artifacts
+        key: spm-artifacts-${{ runner.os }}-${{ hashFiles('Tuist/Package.resolved') }}
+        restore-keys: |
+          spm-artifacts-${{ runner.os }}-
+
+    - name: Pre-fetch SPM binary artifacts
+      run: |
+          chmod +x scripts/pre_fetch_spm.sh
+          ./scripts/pre_fetch_spm.sh
+
+    - name: Install Project Dependencies
+      run: tuist install
+
+    - name: Generate Xcode Workspace
+      run: tuist generate
+
+    # Download the last builds
     - name: release-downloader
       uses: robinraju/release-downloader@v1.10
       with:
@@ -18,19 +56,17 @@ jobs:
           'iris.dmg'
           'iris.tar.xz'
         out-file-path: 'tmp'
+
     - name: Restore Sparkle Updater Cache
       id: cache-sparkle
       uses: actions/cache@v6
       with:
         path: iris-sparkle-updater
         key: updater-cache
+
     - name: Checkout Iris Sparkle Updater
       if: steps.cache-sparkle.outputs.cache-hit != 'true'
       run: git clone --depth 1 https://github.com/impel-intelligence/iris-sparkle-updater/ # Depth 1 for a shallow clone
+
     - name: Update Sparkle
-      run: ./scripts/update_sparkle.sh ${{ github.ref_name }} "${{ github.event.release.body }}"
-    - name: Deploy Sparkle Server
-      run: |
-        cd iris-sparkle-updater
-        flyctl deploy
-        cd ..
+      run: ./scripts/update_sparkle.sh ${{ secrets.ACTIONS_PAT }}  ${{ github.ref_name }} "${{ github.event.release.body }}"

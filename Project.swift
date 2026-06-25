@@ -8,7 +8,7 @@ let project = Project(
             name: "Iris",
             destinations: .macOS,
             product: .app,
-            bundleId: "com.tryiris.iris.mac",
+            bundleId: PRODUCT_BUNDLE_IDENTIFIER,
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: irisInfoPlist,
             buildableFolders: [
@@ -16,7 +16,7 @@ let project = Project(
                 "Iris/Resources"
             ],
             scripts: [
-                .post(
+                .pre(
                     script: """
                     export PATH="$HOME/.local/bin:$PATH"
                     cd "$SRCROOT"
@@ -37,7 +37,8 @@ let project = Project(
                 .external(name: "Digester"),
                 .external(name: "BlurbKit"),
                 .external(name: "Collections"),
-                .external(name: "Sentry")
+                .external(name: "Sentry"),
+                .external(name: "Sparkle")
             ],
             settings: irisSettings
         ),
@@ -45,29 +46,31 @@ let project = Project(
             name: "IrisTests",
             destinations: .macOS,
             product: .unitTests,
-            bundleId: "com.tryiris.iris.mac.tests",
+            bundleId: "\(PRODUCT_BUNDLE_IDENTIFIER).tests",
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: .default,
             buildableFolders: [
                 "Iris/Tests"
             ],
-            dependencies: [.target(name: "Iris")]
+            dependencies: [.target(name: "Iris")],
+            settings: irisTestSettings
         ),
         .target(
             name: "IrisUITests",
             destinations: .macOS,
             product: .uiTests,
-            bundleId: "com.tryiris.iris.mac.uitests",
+            bundleId: "\(PRODUCT_BUNDLE_IDENTIFIER).uitests",
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: .default,
             buildableFolders: [
                 "Iris/UITests"
             ],
-            dependencies: [.target(name: "Iris")]
+            dependencies: [.target(name: "Iris")],
+            settings: irisTestSettings
         ),
-        
+
         // MARK: Features
-        
+
         // MARK: Services
 
     ]

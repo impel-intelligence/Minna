@@ -16,6 +16,7 @@ extension View {
             .fileDialogMessage("Pick a file to add to Iris.")
             .fileDialogCustomizationID(IrisFileDialog.main)
             .fileImporter(isPresented: presented, allowedContentTypes: DigesterFactory.availableUniformTypes + [.directory, .folder], allowsMultipleSelection: true) { result in
+                // TODO: Move this off of the main thread to improve import performance.
                 do {
                     guard irisContext.isConnected() else {
                         print("You must connect an IrisDB instance.")

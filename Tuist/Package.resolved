@@ -1,5 +1,5 @@
 {
-  "originHash" : "25eedf4920c2833349b994b36b756284c17cdd6d24f9b20b3704389a77206f6c",
+  "originHash" : "ddb68bfa6720fa5bb8a32d7a3dcdad46f69962a2e59a58f86d988976294c5100",
   "pins" : [
     {
       "identity" : "blurbkit",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/IrisSearch",
       "state" : {
-        "revision" : "4e504aa91705fd52d7f389edebd485c32391dbc1",
-        "version" : "0.4.3"
+        "revision" : "5d90d70fa93f0ab37a507288166eda541b89c220",
+        "version" : "0.4.4"
       }
     },
     {
@@ -53,6 +53,15 @@
       "state" : {
         "revision" : "e01b3d4f861412f8dcee8d93c417d2c2b0cdfd77",
         "version" : "7.0.0"
+      }
+    },
+    {
+      "identity" : "sparkle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparkle-project/Sparkle",
+      "state" : {
+        "revision" : "d46d456107feacc80711b21847b82b07bd9fb46e",
+        "version" : "2.9.3"
       }
     },
     {
