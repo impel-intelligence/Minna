@@ -2,21 +2,21 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(
-    name: "Iris",
+    name: "Minna",
     settings: .settings(
         base: SettingsDictionary().automaticCodeSigning(devTeam: DEV_TEAM)
     ),
     targets: [
         .target(
-            name: "Iris",
+            name: "Minna",
             destinations: .macOS,
             product: .app,
             bundleId: PRODUCT_BUNDLE_IDENTIFIER,
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
-            infoPlist: irisInfoPlist,
+            infoPlist: minnaInfoPlist,
             buildableFolders: [
-                "Iris/Sources",
-                "Iris/Resources"
+                "Minna/Sources",
+                "Minna/Resources"
             ],
             scripts: [
                 .pre(
@@ -43,33 +43,33 @@ let project = Project(
                 .external(name: "SentrySPM"),
                 .external(name: "Sparkle")
             ],
-            settings: irisSettings
+            settings: minnaSettings
         ),
         .target(
-            name: "IrisTests",
+            name: "MinnaTests",
             destinations: .macOS,
             product: .unitTests,
             bundleId: "\(PRODUCT_BUNDLE_IDENTIFIER).tests",
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: .default,
             buildableFolders: [
-                "Iris/Tests"
+                "Minna/Tests"
             ],
             dependencies: [.target(name: "Iris")],
-            settings: irisTestSettings
+            settings: minnaTestSettings
         ),
         .target(
-            name: "IrisUITests",
+            name: "MinnaUITests",
             destinations: .macOS,
             product: .uiTests,
             bundleId: "\(PRODUCT_BUNDLE_IDENTIFIER).uitests",
             deploymentTargets: DeploymentTargets.multiplatform(macOS: TARGET_MACOS_VERSION),
             infoPlist: .default,
             buildableFolders: [
-                "Iris/UITests"
+                "Minna/UITests"
             ],
             dependencies: [.target(name: "Iris")],
-            settings: irisTestSettings
+            settings: minnaTestSettings
         ),
 
         // MARK: Features

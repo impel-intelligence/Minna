@@ -5,11 +5,11 @@ swiftformat = { version = "latest", no_app = true, rename_exe = "swiftformat" }
 
 [tasks.format]
 description = "Format Swift sources"
-run = "swiftformat Iris"
+run = "swiftformat Minna"
 
 [tasks.format-lint]
 description = "Check formatting without modifying files (CI)"
-run = "swiftformat Iris --lint"
+run = "swiftformat Minna --lint"
 
 [tasks.setup-hooks]
 description = "Enable the repo's git hooks (pre-commit formatting check)"
@@ -17,8 +17,8 @@ run = "git config core.hooksPath .githooks"
 
 [tasks.lint]
 description = "Lint Swift sources"
-run = "swiftlint lint Iris"
+run = "swiftlint lint Minna"
 
 [tasks.lint-fix]
 description = "Autocorrect lint violations"
-run = "swiftlint --fix Iris"
+run = "swiftlint --fix Minna"

@@ -146,10 +146,10 @@ extension SettingsDictionary {
     }
 }
 
-public let irisBaseSettings = SettingsDictionary()
+public let minnaBaseSettings = SettingsDictionary()
     .automaticCodeSigning(devTeam: DEV_TEAM)
     .codeSignIdentityAppleDevelopment()
-//    .appleGenericVersioningSystem()
+    .appleGenericVersioningSystem()
     .currentProjectVersion(BUILD_NUMBER)
     .marketingVersion(MARKETING_VERSION)
     .debugInformationFormat(.dwarfWithDsym)
@@ -161,8 +161,8 @@ public let irisBaseSettings = SettingsDictionary()
     .userScriptSandboxing(true)
     .appSandbox(sandboxed: true, incomingNetworkConnections: true, userSelectedFiles: .readOnly, downloadsFolder: .readOnly)
 
-public let irisSettings: Settings = .settings(
-    base: irisBaseSettings,
+public let minnaSettings: Settings = .settings(
+    base: minnaBaseSettings,
     configurations: [
         .debug(name: "Debug", settings: [
             "GCC_OPTIMIZATION_LEVEL" : .string("0"),
@@ -178,7 +178,7 @@ public let irisSettings: Settings = .settings(
 // Signing-only settings for test bundles. A test bundle is loaded into the
 // host app's process, so dyld requires its Team ID to match the host's.
 // Without this the test targets sign ad-hoc (Team ID "not set") and fail to
-// load into the Team-ID-signed Iris.app with a "different Team IDs" error.
-public let irisTestSettings: Settings = .settings(
+// load into the Team-ID-signed Minna.app with a "different Team IDs" error.
+public let minnaTestSettings: Settings = .settings(
     base: SettingsDictionary().automaticCodeSigning(devTeam: DEV_TEAM).codeSignIdentityAppleDevelopment()
 )

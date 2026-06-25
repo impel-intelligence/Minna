@@ -1,7 +1,7 @@
 import ProjectDescription
 
 
-public let irisInfoPlist: InfoPlist = .dictionary([
+public let minnaInfoPlist: InfoPlist = .dictionary([
     // CF Values
     "CFBundleName": .string("$(PRODUCT_NAME)"),
     "CFBundleDevelopmentRegion": .string("$(DEVELOPMENT_LANGUAGE)"),
@@ -9,19 +9,18 @@ public let irisInfoPlist: InfoPlist = .dictionary([
     "CFBundleInfoDictionaryVersion": .string("6.0"),
     "CFBundleExecutable": .string("$(EXECUTABLE_NAME)"),
     "CFBundleIdentifier": .string("$(PRODUCT_BUNDLE_IDENTIFIER)"),
-    "CFBundleDisplayName": .string("Iris"),
     "CFBundleVersion": .string(BUILD_NUMBER),
     "CFBundleShortVersionString": .string(MARKETING_VERSION),
     
     // Exported Type Identifiers
     "UTExportedTypeDeclarations": [
         [
-            "UTTypeDescription": "Iris Folder",
+            "UTTypeDescription": "Minna Folder",
             "UTTypeIcons": [:],
             "UTTypeIdentifier": "\(PRODUCT_BUNDLE_IDENTIFIER).folder",
             "UTTypeTagSpecification": [
-                "public.filename-extension": ["irisdb"],
-                "public.mime-type": ["com.tryiris.iris.mac.folder"]
+                "public.filename-extension": ["minnadb"],
+                "public.mime-type": ["\(PRODUCT_BUNDLE_IDENTIFIER).folder"]
             ],
             "UTTypeConformsTo": ["com.apple.package", "public.content"]
         ]
@@ -50,7 +49,7 @@ public let irisInfoPlist: InfoPlist = .dictionary([
     "LSApplicationCategoryType": .string("public.app-category.utilities"),
     
     // Usage Declarations
-    "NSDesktopFolderUsageDescription": .string("Iris needs to access your Desktop to import content."),
-    "NSDocumentsFolderUsageDescription": .string("Iris needs to access your Documents to import content."),
-    "NSDownloadsFolderUsageDescription": .string("Iris needs to access your Downloads to import content."),
+    "NSDesktopFolderUsageDescription": .string("Minna needs to access your Desktop to import content."),
+    "NSDocumentsFolderUsageDescription": .string("Minna needs to access your Documents to import content."),
+    "NSDownloadsFolderUsageDescription": .string("Minna needs to access your Downloads to import content."),
 ])

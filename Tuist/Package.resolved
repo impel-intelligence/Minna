@@ -1,5 +1,5 @@
 {
-  "originHash" : "ddb68bfa6720fa5bb8a32d7a3dcdad46f69962a2e59a58f86d988976294c5100",
+  "originHash" : "039ca01c17fa09f323145cc05118871381193cec758e19cce31b448315f68af3",
   "pins" : [
     {
       "identity" : "blurbkit",
@@ -8,15 +8,6 @@
       "state" : {
         "revision" : "e4e6e7b109dcc65c060b92adbbdb455cf70e6ea3",
         "version" : "0.1.2"
-      }
-    },
-    {
-      "identity" : "faissmobile",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/impel-intelligence/FaissMobile",
-      "state" : {
-        "revision" : "85206d043d299eab3be4e7f5bafc34ec27dce829",
-        "version" : "0.0.2"
       }
     },
     {
@@ -33,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/IrisSearch",
       "state" : {
-        "revision" : "5d90d70fa93f0ab37a507288166eda541b89c220",
-        "version" : "0.4.4"
+        "revision" : "fc4a0bf9d39a3a4a49710ea3199d0af4d5649e1d",
+        "version" : "0.5.0"
       }
     },
     {
@@ -87,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/SwiftFaiss",
       "state" : {
-        "revision" : "0527a271e005e86b71437129e7d2173bba8d7db4",
-        "version" : "0.3.2"
+        "revision" : "e1ee23998f7c8a2e52da0ef39dda6d0c47355fbd",
+        "version" : "0.4.1"
       }
     },
     {

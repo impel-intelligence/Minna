@@ -7,4 +7,4 @@
 
 import ProjectDescription
 
-//public let irisEntitlements: Entitlements = .file(path: <#T##Path#>)
+//public let minnaEntitlements: Entitlements = .file(path: <#T##Path#>)
