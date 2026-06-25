@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Collections
+import OrderedCollections
 import SFSafeSymbols
 import SentrySwift
 

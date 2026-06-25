@@ -1,11 +1,11 @@
 //
 //  ColorHexTests.swift
-//  Iris
+//  Minna
 //
 //  Created by Taylor Lineman on 6/16/26.
 //
 
-@testable import Iris
+@testable import Minna
 import SwiftUI
 import Testing
 

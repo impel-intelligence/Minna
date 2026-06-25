@@ -1,15 +1,15 @@
 //
-//  IrisLaunchTests.swift
-//  sweet
+//  MinnaUITestsLaunchTests.swift
+//  MinnaUITests
 //
-//  Created by Taylor Lineman on 6/24/26.
+//  Created by Taylor Lineman on 6/25/26.
 //
 
 import XCTest
 
-final class IrisLaunchTests: XCTestCase {
+final class MinnaUITestsLaunchTests: XCTestCase {
 
-    override static var runsForEachTargetApplicationUIConfiguration: Bool {
+    override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
     }
 

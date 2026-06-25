@@ -7,7 +7,7 @@
 
 import SFSafeSymbols
 import Foundation
-import Collections
+import OrderedCollections
 
 struct SFSymbolCategory: Identifiable {
     var id: String { name.key }

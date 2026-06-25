@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 import ViewStorage
-import Collections
+import OrderedCollections
 import SFSafeSymbols
 import SentrySwift
 

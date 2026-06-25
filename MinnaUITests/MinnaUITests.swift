@@ -1,13 +1,13 @@
 //
-//  IrisDashboardTests.swift
-//  UITests
+//  MinnaUITests.swift
+//  MinnaUITests
 //
-//  Created by Taylor Lineman on 6/24/26.
+//  Created by Taylor Lineman on 6/25/26.
 //
 
 import XCTest
 
-final class IrisDashboardTests: XCTestCase {
+final class MinnaUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

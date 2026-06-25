@@ -11,7 +11,7 @@ import SentrySwift
 import Sparkle
 
 @main
-struct IrisApp: App {
+struct MinnaApp: App {
     // MARK: Databases
     @State var irisDBController: IrisDBController
     @State var frontendDatabase: FrontendDatabase

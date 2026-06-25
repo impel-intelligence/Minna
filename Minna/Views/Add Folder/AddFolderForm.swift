@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SFSafeSymbols
-import Collections
+import OrderedCollections
 
 struct AddFolderForm: View {
     @Environment(\.modelContext) var modelContext
