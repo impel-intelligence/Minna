@@ -1,0 +1,105 @@
+{
+  "originHash" : "1ada1c2e23ebcc3310742e7208d316e23dab7279f938674acefdb3259baa002f",
+  "pins" : [
+    {
+      "identity" : "blurbkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/impel-intelligence/BlurbKit",
+      "state" : {
+        "revision" : "e4e6e7b109dcc65c060b92adbbdb455cf70e6ea3",
+        "version" : "0.1.2"
+      }
+    },
+    {
+      "identity" : "grdb.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRDB.swift",
+      "state" : {
+        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
+        "version" : "7.11.1"
+      }
+    },
+    {
+      "identity" : "irissearch",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/impel-intelligence/IrisSearch",
+      "state" : {
+        "revision" : "fc4a0bf9d39a3a4a49710ea3199d0af4d5649e1d",
+        "version" : "0.5.0"
+      }
+    },
+    {
+      "identity" : "sentry-cocoa",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getsentry/sentry-cocoa",
+      "state" : {
+        "revision" : "00a2fec32ea665b81e406419e078bb713238e23f",
+        "version" : "9.19.0"
+      }
+    },
+    {
+      "identity" : "sfsafesymbols",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SFSafeSymbols/SFSafeSymbols",
+      "state" : {
+        "revision" : "e01b3d4f861412f8dcee8d93c417d2c2b0cdfd77",
+        "version" : "7.0.0"
+      }
+    },
+    {
+      "identity" : "sparkle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sparkle-project/Sparkle",
+      "state" : {
+        "revision" : "d46d456107feacc80711b21847b82b07bd9fb46e",
+        "version" : "2.9.3"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
+        "version" : "1.6.0"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "79e4b74a295b6eb74a8b585e3a39d29e70c1dbd1",
+        "version" : "603.0.2"
+      }
+    },
+    {
+      "identity" : "swiftfaiss",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/impel-intelligence/SwiftFaiss",
+      "state" : {
+        "revision" : "e1ee23998f7c8a2e52da0ef39dda6d0c47355fbd",
+        "version" : "0.4.1"
+      }
+    },
+    {
+      "identity" : "swiftlintplugins",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SimplyDanny/SwiftLintPlugins",
+      "state" : {
+        "revision" : "ecb6907e0db6f79ed2c7a569df4e723a47615208",
+        "version" : "0.64.1"
+      }
+    },
+    {
+      "identity" : "viewstorage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/impel-intelligence/ViewStorage",
+      "state" : {
+        "revision" : "192ff3521e0495b4e01cdff4be37fea1071d1ac3",
+        "version" : "1.4.0"
+      }
+    }
+  ],
+  "version" : 3
+}

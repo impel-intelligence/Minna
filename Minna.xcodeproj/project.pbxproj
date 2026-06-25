@@ -1,0 +1,808 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5862FEDCB9E0036306B /* ViewStorage */; };
+		DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5882FEDCB9E0036306B /* ViewStorageClient */; };
+		DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF58B2FEDCBD70036306B /* Digester */; };
+		DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF58D2FEDCBD70036306B /* IrisCommon */; };
+		DB0CF5902FEDCBD70036306B /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF58F2FEDCBD70036306B /* IrisSearch */; };
+		DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5922FEDCBE80036306B /* BlurbKit */; };
+		DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5952FEDCBF80036306B /* OrderedCollections */; };
+		DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5982FEDCC040036306B /* SFSafeSymbols */; };
+		DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59B2FEDCC1A0036306B /* Sparkle */; };
+		DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59E2FEDCD1D0036306B /* SentrySPM */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DB0CF4E02FEDCA6D0036306B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB0CF4C82FEDCA6B0036306B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB0CF4CF2FEDCA6B0036306B;
+			remoteInfo = Minna;
+		};
+		DB0CF4EA2FEDCA6D0036306B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB0CF4C82FEDCA6B0036306B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB0CF4CF2FEDCA6B0036306B;
+			remoteInfo = Minna;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DB0CF4D02FEDCA6B0036306B /* Minna.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minna.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DB0CF5842FEDCADC0036306B /* Exceptions for "Minna" folder in "Minna" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		DB0CF4D22FEDCA6B0036306B /* Minna */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DB0CF5842FEDCADC0036306B /* Exceptions for "Minna" folder in "Minna" target */,
+			);
+			path = Minna;
+			sourceTree = "<group>";
+		};
+		DB0CF4E22FEDCA6D0036306B /* MinnaTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MinnaTests;
+			sourceTree = "<group>";
+		};
+		DB0CF4EC2FEDCA6D0036306B /* MinnaUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = MinnaUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DB0CF4CD2FEDCA6B0036306B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */,
+				DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */,
+				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
+				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
+				DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */,
+				DB0CF5902FEDCBD70036306B /* IrisSearch in Frameworks */,
+				DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */,
+				DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */,
+				DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */,
+				DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB0CF4DC2FEDCA6D0036306B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB0CF4E62FEDCA6D0036306B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DB0CF4C72FEDCA6B0036306B = {
+			isa = PBXGroup;
+			children = (
+				DB0CF4D22FEDCA6B0036306B /* Minna */,
+				DB0CF4E22FEDCA6D0036306B /* MinnaTests */,
+				DB0CF4EC2FEDCA6D0036306B /* MinnaUITests */,
+				DB0CF4D12FEDCA6B0036306B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DB0CF4D12FEDCA6B0036306B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DB0CF4D02FEDCA6B0036306B /* Minna.app */,
+				DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */,
+				DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DB0CF4CF2FEDCA6B0036306B /* Minna */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB0CF4F32FEDCA6D0036306B /* Build configuration list for PBXNativeTarget "Minna" */;
+			buildPhases = (
+				DB0CF4CC2FEDCA6B0036306B /* Sources */,
+				DB0CF4CD2FEDCA6B0036306B /* Frameworks */,
+				DB0CF4CE2FEDCA6B0036306B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DB0CF5A32FEDD09F0036306B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DB0CF4D22FEDCA6B0036306B /* Minna */,
+			);
+			name = Minna;
+			packageProductDependencies = (
+				DB0CF5862FEDCB9E0036306B /* ViewStorage */,
+				DB0CF5882FEDCB9E0036306B /* ViewStorageClient */,
+				DB0CF58B2FEDCBD70036306B /* Digester */,
+				DB0CF58D2FEDCBD70036306B /* IrisCommon */,
+				DB0CF58F2FEDCBD70036306B /* IrisSearch */,
+				DB0CF5922FEDCBE80036306B /* BlurbKit */,
+				DB0CF5952FEDCBF80036306B /* OrderedCollections */,
+				DB0CF5982FEDCC040036306B /* SFSafeSymbols */,
+				DB0CF59B2FEDCC1A0036306B /* Sparkle */,
+				DB0CF59E2FEDCD1D0036306B /* SentrySPM */,
+			);
+			productName = Minna;
+			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DB0CF4DE2FEDCA6D0036306B /* MinnaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB0CF4F62FEDCA6D0036306B /* Build configuration list for PBXNativeTarget "MinnaTests" */;
+			buildPhases = (
+				DB0CF4DB2FEDCA6D0036306B /* Sources */,
+				DB0CF4DC2FEDCA6D0036306B /* Frameworks */,
+				DB0CF4DD2FEDCA6D0036306B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DB0CF4E12FEDCA6D0036306B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DB0CF4E22FEDCA6D0036306B /* MinnaTests */,
+			);
+			name = MinnaTests;
+			packageProductDependencies = (
+			);
+			productName = MinnaTests;
+			productReference = DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DB0CF4E82FEDCA6D0036306B /* MinnaUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB0CF4F92FEDCA6D0036306B /* Build configuration list for PBXNativeTarget "MinnaUITests" */;
+			buildPhases = (
+				DB0CF4E52FEDCA6D0036306B /* Sources */,
+				DB0CF4E62FEDCA6D0036306B /* Frameworks */,
+				DB0CF4E72FEDCA6D0036306B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DB0CF4EB2FEDCA6D0036306B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DB0CF4EC2FEDCA6D0036306B /* MinnaUITests */,
+			);
+			name = MinnaUITests;
+			packageProductDependencies = (
+			);
+			productName = MinnaUITests;
+			productReference = DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DB0CF4C82FEDCA6B0036306B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					DB0CF4CF2FEDCA6B0036306B = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					DB0CF4DE2FEDCA6D0036306B = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = DB0CF4CF2FEDCA6B0036306B;
+					};
+					DB0CF4E82FEDCA6D0036306B = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = DB0CF4CF2FEDCA6B0036306B;
+					};
+				};
+			};
+			buildConfigurationList = DB0CF4CB2FEDCA6B0036306B /* Build configuration list for PBXProject "Minna" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DB0CF4C72FEDCA6B0036306B;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */,
+				DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */,
+				DB0CF5912FEDCBE80036306B /* XCRemoteSwiftPackageReference "BlurbKit" */,
+				DB0CF5942FEDCBF80036306B /* XCRemoteSwiftPackageReference "swift-collections" */,
+				DB0CF5972FEDCC040036306B /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
+				DB0CF59A2FEDCC1A0036306B /* XCRemoteSwiftPackageReference "Sparkle" */,
+				DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DB0CF4CF2FEDCA6B0036306B /* Minna */,
+				DB0CF4DE2FEDCA6D0036306B /* MinnaTests */,
+				DB0CF4E82FEDCA6D0036306B /* MinnaUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DB0CF4CE2FEDCA6B0036306B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB0CF4DD2FEDCA6D0036306B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB0CF4E72FEDCA6D0036306B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DB0CF4CC2FEDCA6B0036306B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB0CF4DB2FEDCA6D0036306B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB0CF4E52FEDCA6D0036306B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DB0CF4E12FEDCA6D0036306B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
+			targetProxy = DB0CF4E02FEDCA6D0036306B /* PBXContainerItemProxy */;
+		};
+		DB0CF4EB2FEDCA6D0036306B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
+			targetProxy = DB0CF4EA2FEDCA6D0036306B /* PBXContainerItemProxy */;
+		};
+		DB0CF5A32FEDD09F0036306B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = DB0CF5A22FEDD09F0036306B /* SwiftLintBuildToolPlugin */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		DB0CF4F12FEDCA6D0036306B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		DB0CF4F22FEDCA6D0036306B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		DB0CF4F42FEDCA6D0036306B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				AUTOMATION_APPLE_EVENTS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minna/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minna;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.5;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		DB0CF4F52FEDCA6D0036306B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				AUTOMATION_APPLE_EVENTS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PHOTO_LIBRARY = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minna/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minna;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.5;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		DB0CF4F72FEDCA6D0036306B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.MinnaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Minna.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Minna";
+			};
+			name = Debug;
+		};
+		DB0CF4F82FEDCA6D0036306B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.MinnaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Minna.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Minna";
+			};
+			name = Release;
+		};
+		DB0CF4FA2FEDCA6D0036306B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.MinnaUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Minna;
+			};
+			name = Debug;
+		};
+		DB0CF4FB2FEDCA6D0036306B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.MinnaUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = Minna;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DB0CF4CB2FEDCA6B0036306B /* Build configuration list for PBXProject "Minna" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB0CF4F12FEDCA6D0036306B /* Debug */,
+				DB0CF4F22FEDCA6D0036306B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DB0CF4F32FEDCA6D0036306B /* Build configuration list for PBXNativeTarget "Minna" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB0CF4F42FEDCA6D0036306B /* Debug */,
+				DB0CF4F52FEDCA6D0036306B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DB0CF4F62FEDCA6D0036306B /* Build configuration list for PBXNativeTarget "MinnaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB0CF4F72FEDCA6D0036306B /* Debug */,
+				DB0CF4F82FEDCA6D0036306B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DB0CF4F92FEDCA6D0036306B /* Build configuration list for PBXNativeTarget "MinnaUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB0CF4FA2FEDCA6D0036306B /* Debug */,
+				DB0CF4FB2FEDCA6D0036306B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/impel-intelligence/ViewStorage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
+		DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/impel-intelligence/IrisSearch";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.0;
+			};
+		};
+		DB0CF5912FEDCBE80036306B /* XCRemoteSwiftPackageReference "BlurbKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/impel-intelligence/BlurbKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.2;
+			};
+		};
+		DB0CF5942FEDCBF80036306B /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.0;
+			};
+		};
+		DB0CF5972FEDCC040036306B /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SFSafeSymbols/SFSafeSymbols";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+		DB0CF59A2FEDCC1A0036306B /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.3;
+			};
+		};
+		DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.19.0;
+			};
+			traits = (
+			);
+		};
+		DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.64.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DB0CF5862FEDCB9E0036306B /* ViewStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */;
+			productName = ViewStorage;
+		};
+		DB0CF5882FEDCB9E0036306B /* ViewStorageClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */;
+			productName = ViewStorageClient;
+		};
+		DB0CF58B2FEDCBD70036306B /* Digester */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */;
+			productName = Digester;
+		};
+		DB0CF58D2FEDCBD70036306B /* IrisCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */;
+			productName = IrisCommon;
+		};
+		DB0CF58F2FEDCBD70036306B /* IrisSearch */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */;
+			productName = IrisSearch;
+		};
+		DB0CF5922FEDCBE80036306B /* BlurbKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF5912FEDCBE80036306B /* XCRemoteSwiftPackageReference "BlurbKit" */;
+			productName = BlurbKit;
+		};
+		DB0CF5952FEDCBF80036306B /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF5942FEDCBF80036306B /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
+		DB0CF5982FEDCC040036306B /* SFSafeSymbols */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF5972FEDCC040036306B /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
+			productName = SFSafeSymbols;
+		};
+		DB0CF59B2FEDCC1A0036306B /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF59A2FEDCC1A0036306B /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+		DB0CF59E2FEDCD1D0036306B /* SentrySPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = SentrySPM;
+		};
+		DB0CF5A22FEDD09F0036306B /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = DB0CF4C82FEDCA6B0036306B /* Project object */;
+}
