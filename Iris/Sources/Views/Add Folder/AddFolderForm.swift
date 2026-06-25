@@ -67,7 +67,7 @@ struct AddFolderForm: View {
                     if let parentFolder {
                         parentFolder.label()
                     } else {
-                        Label("Parent Folder", systemImage: "folder.badge.plus")
+                        Label("Parent Folder", systemSymbol: .folderBadgePlus)
                     }
                 }
             }
@@ -111,16 +111,7 @@ struct AddFolderForm: View {
     }
 }
 
-
 #Preview {
     AddFolderForm(parentFolder: nil)
         .modelContext(SampleDatabase.shared.context)
 }
-//withAnimation {
-//    let newFolder = Folder(name: "Subfolder \(folder.children.count)", icon: FolderIcon(symbol: .symbol("star")))
-//    
-//    folder.children.append(newFolder)
-//    newFolder.parent = folder
-//    
-//    modelContext.insert(newFolder)
-//}

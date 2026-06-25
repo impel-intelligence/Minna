@@ -1,3 +1,4 @@
+
 //
 //  SearchStartupView.swift
 //  Iris
@@ -26,6 +27,7 @@ struct SearchStartupView: View {
                 Image("impel_logo")
                     .resizable()
                     .frame(width: 45, height: 45)
+                    .accessibilityHidden(true)
                 Text("Hey \(NSUserFirstName())!")
                     .font(.system(size: 36, design: .serif))
             }
@@ -53,7 +55,7 @@ struct SearchStartupView: View {
             }
             Spacer()
         }
-        .navigationTitle("Ask Iris", image: Image(systemSymbol: .sparkles2))
+        .navigationTitle("Ask Iris", image: Image(systemSymbol: .sparkles2).accessibilityHidden(true))
         .onChange(of: searchQuery) { _, newValue in
             searchIrisIndex(query: newValue)
         }
@@ -100,7 +102,7 @@ struct SearchStartupView: View {
         guard let files = try? modelContext.fetch(descriptor) else { return [] }
 
         // Pre-size an array for ordered results and place docs directly by rank
-        var orderedByRank = Array<File?>(repeating: nil, count: searchedUUIDs.count)
+        var orderedByRank = [File?](repeating: nil, count: searchedUUIDs.count)
 
         // O(n) loop over the retrieved documents, placing each document into the array at its rank position.
         for file in files {
@@ -132,6 +134,7 @@ struct SearchBar: View {
         HStack {
             Image(systemSymbol: .magnifyingglass)
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
             TextField(placeHolder, text: $searchQuery)
                 .textFieldStyle(.plain)
         }

@@ -127,7 +127,7 @@ struct SFSymbolCategory: Identifiable {
             .headphones,
             .tv,
             .camera,
-            .laserBurst,
+            .laserBurst
         ]),
         SFSymbolCategory(name: "Objects & Tools", symbols: [
             .folder,
@@ -230,8 +230,7 @@ struct SFSymbolCategory: Identifiable {
             .greaterthan,
             .greaterthanorequalto,
             .pi,
-            .numbersign,
-            
-        ]),
+            .numbersign
+        ])
     ]
 }

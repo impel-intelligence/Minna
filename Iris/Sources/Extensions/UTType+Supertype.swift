@@ -16,11 +16,10 @@ extension UTType {
         }
         
         var roots = Set<UTType>()
-        for supertype in self.supertypes {
-            // When we find a supertype without any root types, add it to the roots.
-            if supertype.supertypes.isEmpty {
-                roots.insert(supertype)
-            }
+        
+        // When we find a supertype without any root types, add it to the roots.
+        for supertype in self.supertypes where supertype.supertypes.isEmpty {
+            roots.insert(supertype)
         }
         return roots
     }

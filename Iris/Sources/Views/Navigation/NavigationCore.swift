@@ -28,7 +28,7 @@ public struct NavigationCore: View {
 
     @State var selectedDestination: NavigationDestination? = .search
     
-    @State var addFolderRequest: AddFolderRequest? = nil
+    @State var addFolderRequest: AddFolderRequest?
     
     public var body: some View {
         NavigationSplitView {
@@ -56,7 +56,7 @@ public struct NavigationCore: View {
                     Button {
                         addFolder(in: nil)
                     } label: {
-                        Label("Add Item", systemImage: "plus")
+                        Label("Add Item", systemSymbol: .plus)
                     }
                     .accessibilityIdentifier("navigation.addItem")
                 }
@@ -112,9 +112,6 @@ public struct NavigationCore: View {
         addFolderRequest = AddFolderRequest(parent: folder)
     }
 }
-
-
-
 
 #Preview {
     NavigationCore()

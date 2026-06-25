@@ -9,6 +9,7 @@ import SwiftData
 import Foundation
 import SFSafeSymbols
 
+// swiftlint:disable type_body_length
 @MainActor
 class SampleDatabase {
     /// A struct that holds data to be populated into files during sample population.
@@ -48,7 +49,6 @@ class SampleDatabase {
             source: "ask iris",
             type: .askIris
         ),
-
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*1),
             title: "Project Kickoff Recording",
@@ -310,3 +310,4 @@ class SampleDatabase {
         }
     }
 }
+// swiftlint:enable type_body_length

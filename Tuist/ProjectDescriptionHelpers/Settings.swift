@@ -9,7 +9,7 @@ import ProjectDescription
 
 public let irisSettings: Settings = .settings(
     base: [
-        "ASSETCATALOG_COMPILER_APPICON_NAME" : .string("AppIcon"),
+        "ASSETCATALOG_COMPILER_APPICON_NAME": .string("AppIcon"),
         "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": .string("AccentColor"),
 
         // MARK: Architectures
