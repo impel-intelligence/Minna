@@ -15,7 +15,7 @@ struct SFSymbolCategory: Identifiable {
     let name: LocalizedStringResource
     let symbols: OrderedSet<SFSymbol>
     
-    static var categories: [SFSymbolCategory] = [
+    static let categories: [SFSymbolCategory] = [
         SFSymbolCategory(name: "Humans", symbols: [
             .person,
             .personCropCircle,

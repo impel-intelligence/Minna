@@ -3,6 +3,9 @@ import ProjectDescriptionHelpers
 
 let project = Project(
     name: "Iris",
+    settings: .settings(
+        base: SettingsDictionary().automaticCodeSigning(devTeam: DEV_TEAM)
+    ),
     targets: [
         .target(
             name: "Iris",

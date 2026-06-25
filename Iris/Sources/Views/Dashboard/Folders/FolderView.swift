@@ -38,7 +38,6 @@ enum ArrowDirection {
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
-    @Environment(\.alertCenter) private var alertCenter
     
     @Environment(\.openURL) private var openURL
 
@@ -322,5 +321,4 @@ struct FolderView: View {
         FolderView(folder: folder)
     }
     .modelContainer(SampleDatabase.shared.modelContainer)
-    .environment(AlertCenter.shared)
 }

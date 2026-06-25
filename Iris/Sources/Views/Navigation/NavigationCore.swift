@@ -116,6 +116,5 @@ public struct NavigationCore: View {
 #Preview {
     NavigationCore()
         .modelContainer(SampleDatabase.shared.modelContainer)
-        .environment(AlertCenter.shared)
         .irisContext(IrisContext.notConnected)
 }
