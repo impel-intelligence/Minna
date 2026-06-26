@@ -66,7 +66,10 @@ final class IrisDBController {
     
     var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter
-    
+
+    /// An indexing queue to bound the total number of running import jobs. Stops task fanning on massive imports.
+    @ObservationIgnored private let indexingQueue: RateLimitedQueue = RateLimitedQueue(maxConcurrency: 3)
+
     init(modelContainer: ModelContainer) {
         do {
             let searchDirectory = Utilities.irisDBDirectory()
@@ -89,27 +92,41 @@ final class IrisDBController {
         let description = file.shortDescription
         let scopedURL = try file.securityScopedURL()
         
+        let fileIndexedWriter = fileIndexedWriter
+
         indexingProgress.add(id: uuid)
-        
-        Task(name: "Index \(file.title)", priority: .userInitiated) {
-            let accessGranted = scopedURL.startAccessingSecurityScopedResource()
-            defer { scopedURL.stopAccessingSecurityScopedResource() }
-            
-            guard accessGranted else { throw IrisDBControllerError.unableToObtainSecurityAccess }
-            
-            let fileAttributes = try scopedURL.resourceValues(forKeys: [.contentTypeKey])
-            
-            guard let contentType = fileAttributes.contentType else { throw IrisDBControllerError.unableToGetContentType }
-            
-            let digester = try DigesterFactory.digester(for: contentType)
-            let embeddableContent = try await digester.digest(file: scopedURL)
-            
-            try await irisDB.createDocument(uuid: uuid, title: title, description: description, embeddableContent: embeddableContent)
-                        
-            try await fileIndexedWriter.markIndexed(for: persistentID)
-            
-            indexingProgress.complete(id: uuid)
+
+        // Route through the queue so a bulk import can't spawn one unbounded
+        // task per file, each holding a full file's contents + embeddings in memory.
+        indexingQueue.enqueue { [weak self] in
+            do {
+                let accessGranted = scopedURL.startAccessingSecurityScopedResource()
+                defer { scopedURL.stopAccessingSecurityScopedResource() }
+
+                guard accessGranted else { throw IrisDBControllerError.unableToObtainSecurityAccess }
+
+                let fileAttributes = try scopedURL.resourceValues(forKeys: [.contentTypeKey])
+
+                guard let contentType = fileAttributes.contentType else { throw IrisDBControllerError.unableToGetContentType }
+
+                let digester = try DigesterFactory.digester(for: contentType)
+                let embeddableContent = try await digester.digest(file: scopedURL)
+
+                try await irisDB.createDocument(uuid: uuid, title: title, description: description, embeddableContent: embeddableContent)
+
+                try await fileIndexedWriter.markIndexed(for: persistentID)
+
+                await self?.completeIndexing(uuid: uuid)
+            } catch {
+                SentrySDK.capture(error: error)
+                // Clear progress even on failure so the indexing indicator never hangs.
+                await self?.completeIndexing(uuid: uuid)
+            }
         }
+    }
+
+    private func completeIndexing(uuid: UUID) {
+        indexingProgress.complete(id: uuid)
     }
         
     public func delete(_ file: File) {

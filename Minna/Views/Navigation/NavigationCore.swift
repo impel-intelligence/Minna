@@ -81,27 +81,20 @@ public struct NavigationCore: View {
         .task {
             // Start indexing all files that did not complete indexing.
             let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
-                !file.searchIndexed
+                !file.searchIndexed || !file.descriptionGenerated
             })
             
             guard let files = try? modelContext.fetch(descriptor) else { return }
-            for file in files {
+            for file in files where file.searchIndexed {
                 do {
                     try irisContext.reIndex(file)
                 } catch {
                     SentrySDK.capture(error: error)
-                    print("Failed to re-index file \(file)")
+                    print("Failed to re-index file \(file.title) \(error)")
                 }
             }
-        }
-        .task {
-            // Generate descriptions for files without descriptions.
-            let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
-                !file.descriptionGenerated
-            })
             
-            guard let files = try? modelContext.fetch(descriptor) else { return }
-            for file in files {
+            for file in files where file.descriptionGenerated {
                 FrontendDatabase.shared.queueDescriptionUpdate(for: file)
             }
         }

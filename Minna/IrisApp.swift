@@ -19,7 +19,7 @@ struct MinnaApp: App {
     @State var searchController: SearchController
     
     @State var standardFileImporterPresented: Bool = false
-    
+        
     private let updaterController: SPUStandardUpdaterController
 
     init() {

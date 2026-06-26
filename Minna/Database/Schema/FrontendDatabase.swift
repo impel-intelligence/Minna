@@ -27,6 +27,8 @@ class FrontendDatabase {
 
     private let fileDescriptionWriter: FileDescriptionWriter
 
+    private let indexingQueue: RateLimitedQueue = RateLimitedQueue()
+
     init() {
         if let uuidString = UserDefaults.standard.object(forKey: FrontendDatabase.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
             unfilledFolderUUID = uuid
@@ -65,9 +67,15 @@ class FrontendDatabase {
     func queueDescriptionUpdate(for file: File) {
         let persistentID = file.persistentModelID
         let writer = fileDescriptionWriter
-        
-        Task(name: "Generate description for \(file.title)", priority: .low) {
-            try await writer.generateDescription(for: persistentID)
+
+        // Route through the queue so bulk imports don't spawn one unbounded
+        // task per file (each running Apple Intelligence inference simultaneously).
+        indexingQueue.enqueue {
+            do {
+                try await writer.generateDescription(for: persistentID)
+            } catch {
+                SentrySDK.capture(error: error)
+            }
         }
     }
 }
