@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>SUFeedURL</key>
-	<string>https://impel-intelligence.github.io/iris-sparkle-updater/appcast.xml</string>
+	<string>https://impel-intelligence.github.io/minna-sparkle-updater/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>ySLQ5G0aOgmtZN2I2NnrPTwJZ36xgXcI3ZpY8W2wuBo=</string>
 	<key>UTExportedTypeDeclarations</key>
