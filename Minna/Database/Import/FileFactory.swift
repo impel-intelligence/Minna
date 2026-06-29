@@ -53,8 +53,8 @@ struct FileFactory {
         }
         
         let bookmarkData = try File.generateBookmarkData(for: url)
-        let fileBlurb = try BlurbFactory.provider(for: contentType).blurb(for: url)
+//        let fileBlurb = try BlurbFactory.provider(for: contentType).blurb(for: url)
         
-        return File(createdAt: Date.now, folder: folder, title: fileBlurb.title, shortDescription: fileBlurb.description, color: .random, type: fileContentType, url: url, bookmark: bookmarkData, source: "FileSystem")
+        return File(createdAt: Date.now, folder: folder, title: url.deletingPathExtension().lastPathComponent, shortDescription: "", color: .random, type: fileContentType, url: url, bookmark: bookmarkData, source: "FileSystem")
     }
 }

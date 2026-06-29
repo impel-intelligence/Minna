@@ -4,9 +4,70 @@
 //
 //  Created by Taylor Lineman on 6/12/26.
 //
-
 import SwiftUI
 import SFSafeSymbols
+
+struct IntelligencePlaceholder<Content: View>: View {
+    let gradientColors: [Color] = [
+        .clear, .yellow, .orange, .red, .purple, .blue, .green, .clear
+    ]
+
+    let content: Content
+    let cornerRadius: Double
+    let spacing: Double
+    let lineHeight: Double
+    
+    @State var spin: Double = 0.0
+    @State var offset: Double = -250
+    @State private var animate = false
+
+    init(cornerRadius: Double = 2, spacing: Double = 3, lineHeight: Double = 11, @ViewBuilder content: () -> Content) {
+        self.spacing = spacing
+        self.cornerRadius = cornerRadius
+        self.lineHeight = lineHeight
+        self.content = content()
+    }
+    
+    var body: some View {
+        ZStack {
+            Text("Generating Text...")
+                .foregroundStyle(LinearGradient(
+                    gradient: Gradient(colors: gradientColors),
+                    startPoint: .top,
+                    endPoint: .bottom
+                ))
+//            LinearGradient(
+//                gradient: Gradient(colors: gradientColors),
+//                startPoint: .top,
+//                endPoint: .bottom
+//            )
+//            .frame(width: 100, height: 100)
+             .rotationEffect(.degrees(spin), anchor: .center)
+////            .offset(y: offset)
+            .onAppear {
+                withAnimation(.linear(duration: 5).repeatForever(autoreverses: true)) {
+                    spin = 360.0
+                    offset = 250
+                }
+            }
+//            .brightness(-0.1)
+//            .opacity(0.8)
+//            .mask {
+//            }
+            
+        }
+    }
+
+//        VStack(alignment: .leading, spacing: spacing) {
+//            ForEach(subviews: content) { subView in
+//                subView
+//                    .overlay {
+//                    .clipShape(.rect(cornerRadius: cornerRadius))
+//                    .clipped()
+//            }
+//        }
+//    }
+}
 
 struct GridFileCard: View {
     @State var file: File
@@ -21,6 +82,7 @@ struct GridFileCard: View {
             HStack(alignment: .center) {
                 Image(systemSymbol: file.type.icon)
                     .foregroundStyle(file.color.text)
+                    .accessibilityHidden(true)
                 Text(file.type.description)
                     .textCase(.uppercase)
                     .foregroundStyle(file.color.text)
@@ -56,11 +118,15 @@ struct GridFileCard: View {
                     .onSubmit {
                         self.editingDescription = false
                     }
-            } else {
+            } else if file.descriptionGenerated {
                 Text(file.shortDescription)
                     .font(.subheadline)
                     .fontDesign(.serif)
                     .foregroundStyle(file.color.text)
+            } else {
+                IntelligencePlaceholder(cornerRadius: 1) {
+
+                }
             }
         }
         .padding(12)
@@ -73,8 +139,9 @@ struct GridFileCard: View {
 #Preview {
     @Previewable @State var editingTitle: Bool = false
     @Previewable @State var editingDescription: Bool = false
+    @Previewable @State var file: File = File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol(SFSymbol.textAlignleft.rawValue), color: .rose)), title: "This-is-a-long-name-with-no-spaces", shortDescription: "", color: .random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "google.com")
     
-    GridFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol(SFSymbol.textAlignleft.rawValue), color: .rose)), title: "This-is-a-long-name-with-no-spaces", shortDescription: "This is a quick description of this file and the content it contains. This is a quick description of this file and the content it contains. This is a quick description of this file and the content it contains.", color: .random, type: .webpage, url: URL(string: "https://google.com")!, bookmark: nil, source: "google.com"), editingTitle: $editingTitle, editingDescription: $editingDescription)
+    GridFileCard(file: file, editingTitle: $editingTitle, editingDescription: $editingDescription)
 //    GridFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("microphone"))), title: "Lecture 10/20/26", shortDescription: "Your teacher discussed the theory of relativity. Your teacher discussed the theory of relativity. Your teacher discussed the theory of relativity.", color: .random, type: .recording, url: URL(string: "https://google.com")!, bookmark: nil, source: "recording"), editingTitle: $editingTitle, editingDescription: $editingDescription)
 //    GridFileCard(file: File(createdAt: .now, folder: Folder(name: "", icon: .init(symbol: .symbol("sparkles"))), title: "C Mutex Questions", shortDescription: "Provided a C mutex example from class and helped debug an assignment. Provided a C mutex example from class and helped debug an assignment. Provided a C mutex example from class and helped debug an assignment.", color: .random, type: .askMinna, url: URL(string: "https://google.com")!, bookmark: nil, source: "ask minna"), editingTitle: $editingTitle, editingDescription: $editingDescription)
 
