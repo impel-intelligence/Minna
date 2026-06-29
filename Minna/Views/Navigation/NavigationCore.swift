@@ -64,7 +64,7 @@ public struct NavigationCore: View {
         } detail: {
             switch selectedDestination {
             case .search, nil:
-                SearchStartupView()
+                ChatView()
             case .recents:
                 RecentsView()
             case .folder(let folder):

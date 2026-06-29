@@ -1,5 +1,5 @@
 {
-  "originHash" : "99b97f531ae5ef57b1377ffa68f99d21a5b691852a4f90b672d1669dc5f6a064",
+  "originHash" : "2ae73e179afa8ea7b1c17cd487f8bf9b74b13b1b2cc8683adde9803a93945cfe",
   "pins" : [
     {
       "identity" : "anylanguagemodel",
@@ -11,39 +11,12 @@
       }
     },
     {
-      "identity" : "blurbkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/impel-intelligence/BlurbKit",
-      "state" : {
-        "revision" : "e4e6e7b109dcc65c060b92adbbdb455cf70e6ea3",
-        "version" : "0.1.2"
-      }
-    },
-    {
       "identity" : "eventsource",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mattt/EventSource",
       "state" : {
         "revision" : "a3a85a85214caf642abaa96ae664e4c772a59f6e",
         "version" : "1.4.1"
-      }
-    },
-    {
-      "identity" : "grdb.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/groue/GRDB.swift",
-      "state" : {
-        "revision" : "b83108d10f42680d78f23fe4d4d80fc88dab3212",
-        "version" : "7.11.1"
-      }
-    },
-    {
-      "identity" : "irissearch",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/impel-intelligence/IrisSearch",
-      "state" : {
-        "revision" : "fc4a0bf9d39a3a4a49710ea3199d0af4d5649e1d",
-        "version" : "0.5.0"
       }
     },
     {
@@ -80,33 +53,6 @@
       "state" : {
         "revision" : "e4d389e6bcc6771bb988d1a8a17695d8bfa97172",
         "version" : "1.0.0"
-      }
-    },
-    {
-      "identity" : "sentry-cocoa",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/getsentry/sentry-cocoa",
-      "state" : {
-        "revision" : "00a2fec32ea665b81e406419e078bb713238e23f",
-        "version" : "9.19.0"
-      }
-    },
-    {
-      "identity" : "sfsafesymbols",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SFSafeSymbols/SFSafeSymbols",
-      "state" : {
-        "revision" : "e01b3d4f861412f8dcee8d93c417d2c2b0cdfd77",
-        "version" : "7.0.0"
-      }
-    },
-    {
-      "identity" : "sparkle",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sparkle-project/Sparkle",
-      "state" : {
-        "revision" : "d46d456107feacc80711b21847b82b07bd9fb46e",
-        "version" : "2.9.3"
       }
     },
     {
@@ -184,7 +130,7 @@
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "location" : "https://github.com/swiftlang/swift-syntax",
       "state" : {
         "revision" : "0687f71944021d616d34d922343dcef086855920",
         "version" : "600.0.1"
@@ -206,33 +152,6 @@
       "state" : {
         "revision" : "58c4bc11963a140358d791f678a60a2745a23146",
         "version" : "1.2.1"
-      }
-    },
-    {
-      "identity" : "swiftfaiss",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/impel-intelligence/SwiftFaiss",
-      "state" : {
-        "revision" : "e1ee23998f7c8a2e52da0ef39dda6d0c47355fbd",
-        "version" : "0.4.1"
-      }
-    },
-    {
-      "identity" : "swiftlintplugins",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SimplyDanny/SwiftLintPlugins",
-      "state" : {
-        "revision" : "ecb6907e0db6f79ed2c7a569df4e723a47615208",
-        "version" : "0.64.1"
-      }
-    },
-    {
-      "identity" : "viewstorage",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/impel-intelligence/ViewStorage",
-      "state" : {
-        "revision" : "16b729283b3ce269f82fd80c327a23e992eb67e6",
-        "version" : "1.4.1"
       }
     },
     {

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SentrySwift
+import IrisSearch
 
 enum IrisContextError: Error {
     case notConnected
@@ -33,6 +34,13 @@ public struct IrisContext {
         } catch {
             SentrySDK.capture(message: "Failed to create IrisDBController.")
             return false
+        }
+    }
+    
+    @MainActor
+    var database: IrisDB {
+        get throws {
+            try controller.irisDB
         }
     }
     

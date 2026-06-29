@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB0C02E72FF2D3930036306B /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB0C02E62FF2D3930036306B /* MinnaChat */; };
 		DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5862FEDCB9E0036306B /* ViewStorage */; };
 		DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5882FEDCB9E0036306B /* ViewStorageClient */; };
 		DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF58B2FEDCBD70036306B /* Digester */; };
@@ -104,6 +105,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB0C02E72FF2D3930036306B /* MinnaChat in Frameworks */,
 				DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */,
 				DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */,
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
@@ -187,6 +189,7 @@
 				DB0CF5982FEDCC040036306B /* SFSafeSymbols */,
 				DB0CF59B2FEDCC1A0036306B /* Sparkle */,
 				DB0CF59E2FEDCD1D0036306B /* SentrySPM */,
+				DB0C02E62FF2D3930036306B /* MinnaChat */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -279,6 +282,7 @@
 				DB0CF59A2FEDCC1A0036306B /* XCRemoteSwiftPackageReference "Sparkle" */,
 				DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				DB0C02E52FF2D3930036306B /* XCLocalSwiftPackageReference "Packages/MinnaChat" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -709,6 +713,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		DB0C02E52FF2D3930036306B /* XCLocalSwiftPackageReference "Packages/MinnaChat" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/MinnaChat;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -779,6 +790,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DB0C02E62FF2D3930036306B /* MinnaChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MinnaChat;
+		};
 		DB0CF5862FEDCB9E0036306B /* ViewStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */;

@@ -60,7 +60,7 @@ struct IndexingProgress {
 final class IrisDBController {
     @MainActor public private(set) var mainContext: IrisContext!
     
-    @ObservationIgnored private let irisDB: IrisDB
+    @ObservationIgnored let irisDB: IrisDB
     @ObservationIgnored private let textEmbedder: EmbeddingProvider
     @ObservationIgnored private let textChunker: TextChunker = BasicTextChunker()
     

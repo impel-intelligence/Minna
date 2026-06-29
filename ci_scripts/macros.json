@@ -1,7 +1,12 @@
 [
-    {
-        "fingerprint" : "192ff3521e0495b4e01cdff4be37fea1071d1ac3",
-        "packageIdentity" : "viewstorage",
-        "targetName" : "ViewStorageMacros"
-    }
+  {
+    "fingerprint" : "16b729283b3ce269f82fd80c327a23e992eb67e6",
+    "packageIdentity" : "viewstorage",
+    "targetName" : "ViewStorageMacros"
+  },
+  {
+    "fingerprint" : "163f3855a53235b4ebeb69cf5e9f228215ae35b5",
+    "packageIdentity" : "anylanguagemodel",
+    "targetName" : "AnyLanguageModelMacros"
+  }
 ]

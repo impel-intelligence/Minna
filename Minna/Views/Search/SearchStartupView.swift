@@ -34,7 +34,7 @@ struct SearchStartupView: View {
             }
             
             VStack(spacing: 0) {
-                SearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery)
+                SearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery) { }
                 
                 if let progress = irisContext.indexingProgress, progress.isIndexing {
                     HStack {
@@ -124,27 +124,6 @@ extension SearchStartupView: Navigable {
             Image(systemSymbol: .magnifyingglass)
                 .accessibilityHidden(true)
         }
-    }
-}
-
-struct SearchBar: View {
-    var placeHolder: String
-    @Binding var searchQuery: String
-    
-    var body: some View {
-        HStack {
-            Image(systemSymbol: .magnifyingglass)
-                .foregroundStyle(.secondary)
-                .accessibilityHidden(true)
-            TextField(placeHolder, text: $searchQuery)
-                .textFieldStyle(.plain)
-        }
-        .font(.body)
-        .fontWeight(.medium)
-        .padding(.horizontal)
-        .padding(.vertical, 10)
-        .frame(maxWidth: 500)
-        .glassEffect(.regular, in: .rect(cornerRadius: 100))
     }
 }
 

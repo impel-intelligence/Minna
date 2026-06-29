@@ -1,7 +1,7 @@
 [
-    {
-        "fingerprint" : "ecb6907e0db6f79ed2c7a569df4e723a47615208",
-        "packageIdentity" : "swiftlintplugins",
-        "targetName" : "SwiftLintBuildToolPlugin"
-    }
+  {
+    "fingerprint" : "ecb6907e0db6f79ed2c7a569df4e723a47615208",
+    "packageIdentity" : "swiftlintplugins",
+    "targetName" : "SwiftLintBuildToolPlugin"
+  }
 ]
