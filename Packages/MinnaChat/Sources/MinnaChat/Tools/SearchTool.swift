@@ -33,19 +33,19 @@ struct SearchTool: Tool {
         
         var toolOutput: String = ""
         
-        for document in documents {
-            let documentString = document.pieces.map({$0.content}).compactMap { content in
-                switch content {
-                case .text(let content):
-                    return content
-                case .image(_, let caption):
-                    return caption
-                }
-            }
-            
-            toolOutput += "=== Document: \(document.title) ===\n\(documentString)\n === END Document ==="
-        }
-        
+//        for document in documents {
+//            let documentString = document.pieces.map({$0.content}).compactMap { content in
+//                switch content {
+//                case .text(let content):
+//                    return content
+//                case .image(_, let caption):
+//                    return caption
+//                }
+//            }
+//            
+//            toolOutput += "=== Document: \(document.title) ===\n\(documentString)\n === END Document ==="
+//        }
+//        
         return toolOutput
     }
 }
