@@ -8,6 +8,7 @@
 import SwiftData
 import Foundation
 import SFSafeSymbols
+import DatabaseSchema
 
 // swiftlint:disable type_body_length
 @MainActor
@@ -286,7 +287,9 @@ class SampleDatabase {
         let schema = Schema([
             File.self,
             Folder.self,
-            FolderIcon.self
+            FolderIcon.self,
+            Chat.self,
+            Message.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         

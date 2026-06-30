@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import DatabaseSchema
 
 struct FolderMenu<MenuLabel>: View where MenuLabel: View {
     @Query private var folders: [Folder]

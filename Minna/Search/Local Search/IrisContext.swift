@@ -8,6 +8,7 @@
 import SwiftUI
 import SentrySwift
 import IrisSearch
+import DatabaseSchema
 
 enum IrisContextError: Error {
     case notConnected

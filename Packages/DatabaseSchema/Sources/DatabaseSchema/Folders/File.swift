@@ -8,37 +8,36 @@
 import Foundation
 import SwiftData
 import SwiftUI
-import ViewStorage
 import UniformTypeIdentifiers
 
-enum SecurityScopeError: Error {
+public enum SecurityScopeError: Error {
     case noBookmarkData
     case unableToCreateSecurityScope
 }
 
 @Model
-final class File {
-    @Attribute(.unique) 
-    var uuid: UUID
-    var createdAt: Date
+public final class File {
+    @Attribute(.unique)
+    public var uuid: UUID
+    public var createdAt: Date
     
     @Relationship(deleteRule: .nullify, inverse: \Folder.files)
-    var folder: Folder
+    public var folder: Folder
     
-    var title: String
-    var shortDescription: String
-    var color: ThemeColor
-    @Attribute(.unique) var url: URL
-    var bookmark: Data?
-    var type: ContentType = ContentType.webpage
-    var source: String
+    public var title: String
+    public var shortDescription: String
+    public var color: ThemeColor
+    @Attribute(.unique) public var url: URL
+    public var bookmark: Data?
+    public var type: ContentType = ContentType.webpage
+    public var source: String
 
     // Background task completion flags. Kept as direct stored properties (rather than a nested
     // Codable struct) so they can be used in SwiftData fetch predicates.
-    var searchIndexed: Bool = false
-    var descriptionGenerated: Bool = false
+    public var searchIndexed: Bool = false
+    public var descriptionGenerated: Bool = false
 
-    init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String) {
+    public init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String) {
         self.uuid = uuid
         self.createdAt = createdAt
         self.folder = folder
@@ -53,13 +52,13 @@ final class File {
 }
 
 extension File {
-    static func generateBookmarkData(for url: URL) throws -> Data {
+    public static func generateBookmarkData(for url: URL) throws -> Data {
         return try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess], includingResourceValuesForKeys: [.contentTypeKey, .isDirectoryKey])
     }
     
     /// Create a security scoped URL if a bookmark exists. If a bookmark does not exist, an error will be thrown.
     /// - Returns: A Security Scoped URL.
-    func securityScopedURL() throws -> URL {
+    public func securityScopedURL() throws -> URL {
         guard let bookmark = self.bookmark else { throw SecurityScopeError.noBookmarkData }
         
         var isStale: Bool = false

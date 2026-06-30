@@ -18,6 +18,7 @@
 		DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5982FEDCC040036306B /* SFSafeSymbols */; };
 		DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59B2FEDCC1A0036306B /* Sparkle */; };
 		DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59E2FEDCD1D0036306B /* SentrySPM */; };
+		DB96954C2FF436F500CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB96954B2FF436F500CB037A /* DatabaseSchema */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,6 +114,7 @@
 				DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */,
 				DB0CF5902FEDCBD70036306B /* IrisSearch in Frameworks */,
 				DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */,
+				DB96954C2FF436F500CB037A /* DatabaseSchema in Frameworks */,
 				DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */,
 				DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */,
 				DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */,
@@ -190,6 +192,7 @@
 				DB0CF59B2FEDCC1A0036306B /* Sparkle */,
 				DB0CF59E2FEDCD1D0036306B /* SentrySPM */,
 				DB0C02E62FF2D3930036306B /* MinnaChat */,
+				DB96954B2FF436F500CB037A /* DatabaseSchema */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -283,6 +286,7 @@
 				DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				DB0C02E52FF2D3930036306B /* XCLocalSwiftPackageReference "Packages/MinnaChat" */,
+				DB96954A2FF436F500CB037A /* XCLocalSwiftPackageReference "Packages/DatabaseSchema" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -718,6 +722,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/MinnaChat;
 		};
+		DB96954A2FF436F500CB037A /* XCLocalSwiftPackageReference "Packages/DatabaseSchema" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/DatabaseSchema;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -848,6 +856,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		DB96954B2FF436F500CB037A /* DatabaseSchema */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DatabaseSchema;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

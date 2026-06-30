@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 import BlurbKit
+import DatabaseSchema
 
 @ModelActor
 actor FileIndexedWriter {

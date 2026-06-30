@@ -10,7 +10,7 @@ import OrderedCollections
 import SFSafeSymbols
 import SentrySwift
 import SwiftData
-import SwiftData
+import DatabaseSchema
 
 enum CardEditField: Hashable {
     case title

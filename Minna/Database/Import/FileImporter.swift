@@ -10,6 +10,7 @@ import SwiftUI
 import Digester
 import SentrySwift
 import UniformTypeIdentifiers
+import DatabaseSchema
 
 extension View {
     func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext) -> some View {

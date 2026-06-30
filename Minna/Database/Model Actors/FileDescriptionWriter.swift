@@ -9,6 +9,7 @@ import Foundation
 import SwiftData
 import BlurbKit
 import UniformTypeIdentifiers
+import DatabaseSchema
 
 @ModelActor
 actor FileDescriptionWriter {

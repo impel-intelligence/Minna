@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SFSafeSymbols
+import DatabaseSchema
 
 extension Folder {
     @ViewBuilder

@@ -10,6 +10,7 @@ import Foundation
 import BlurbKit
 import SFSafeSymbols
 import SentrySwift
+import DatabaseSchema
 
 @MainActor
 class FrontendDatabase {
@@ -40,7 +41,9 @@ class FrontendDatabase {
         let schema = Schema([
             File.self,
             Folder.self,
-            FolderIcon.self
+            FolderIcon.self,
+            Chat.self,
+            Message.self
         ])
         
         let modelConfiguration = ModelConfiguration(schema: schema)

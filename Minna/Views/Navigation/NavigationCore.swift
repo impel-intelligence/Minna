@@ -9,6 +9,7 @@ import SwiftData
 import SwiftUI
 import SFSafeSymbols
 import SentrySwift
+import DatabaseSchema
 
 enum NavigationDestination: Hashable {
     case search

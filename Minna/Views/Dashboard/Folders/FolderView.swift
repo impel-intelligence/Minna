@@ -11,6 +11,7 @@ import ViewStorage
 import OrderedCollections
 import SFSafeSymbols
 import SentrySwift
+import DatabaseSchema
 
 enum ArrowDirection {
     case up

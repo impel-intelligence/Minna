@@ -11,6 +11,7 @@ import SFSafeSymbols
 import SwiftData
 import SentrySwift
 import OrderedCollections
+import DatabaseSchema
 
 struct SearchStartupView: View {
     @Environment(\.modelContext) var modelContext

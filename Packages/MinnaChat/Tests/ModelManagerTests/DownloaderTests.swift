@@ -7,12 +7,15 @@
 
 import Testing
 @testable import ModelManager
+import Cocoa
 
 struct DownloaderTests {
 
     @Test func testModelDownload() async throws {
         let downloader = ModelDownloader()
-        try await downloader.downloadModel(id: "mlx-community/whisper-tiny")
+        for try await progress in await downloader.downloadModel(id: "mlx-community/whisper-tiny") {
+            print(progress)
+        }
     }
 
 }

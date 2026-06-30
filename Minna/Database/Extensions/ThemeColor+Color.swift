@@ -1,40 +1,14 @@
 //
-//  Themes.swift
+//  ThemeColor+Color.swift
 //  Minna
 //
-//  Created by Taylor Lineman on 6/12/26.
+//  Created by Taylor Lineman on 6/30/26.
 //
 
+import DatabaseSchema
 import SwiftUI
 
-enum ThemeColor: Int, Codable, CaseIterable, CustomStringConvertible, Identifiable {
-    var id: Int { rawValue }
-    
-    case azure
-    case champagne
-    case lavender
-    case mint
-    case rose
-    
-    static var random: ThemeColor {
-        return ThemeColor(rawValue: Int.random(in: 0...ThemeColor.rose.rawValue))!
-    }
-    
-    var description: String {
-        switch self {
-        case .champagne:
-            return "Champagne"
-        case .lavender:
-            return "Lavender"
-        case .azure:
-            return "Azure"
-        case .mint:
-            return "Mint"
-        case .rose:
-            return "Rose"
-        }
-    }
-    
+extension ThemeColor {
     var background: Color {
         switch self {
         case .champagne:
@@ -49,7 +23,7 @@ enum ThemeColor: Int, Codable, CaseIterable, CustomStringConvertible, Identifiab
             return Color.Rose.background
         }
     }
-
+    
     var text: Color {
         switch self {
         case .champagne:

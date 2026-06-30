@@ -14,12 +14,13 @@ let package = Package(
             name: "MinnaChat",
             targets: ["MinnaChat"]
         ),
-        .library(
-            name: "ModelManager",
-            targets: ["ModelManager"]
-        )
+//        .library(
+//            name: "ModelManager",
+//            targets: ["ModelManager"]
+//        )
     ],
     dependencies: [
+        .package(path: "../DatabaseSchema"),
         .package(
             url: "https://github.com/huggingface/swift-huggingface.git",
             from: "0.9.0",
@@ -38,19 +39,20 @@ let package = Package(
         .target(
             name: "MinnaChat",
             dependencies: [
-                "ModelManager",
+                "DatabaseSchema",
+//                "ModelManager",
                 .product(name: "AnyLanguageModel", package: "AnyLanguageModel"),
                 .product(name: "IrisSearch", package: "IrisSearch"),
                 .product(name: "HuggingFace", package: "swift-huggingface")
             ]
         ),
-        .target(
-            name: "ModelManager",
-            dependencies: [
-                .product(name: "HuggingFace", package: "swift-huggingface")
-            ]
-        ),
-        .testTarget(name: "ModelManagerTests", dependencies: ["ModelManager"])
+//        .target(
+//            name: "ModelManager",
+//            dependencies: [
+//                .product(name: "HuggingFace", package: "swift-huggingface")
+//            ]
+//        ),
+//        .testTarget(name: "ModelManagerTests", dependencies: ["ModelManager"])
 
     ],
     swiftLanguageModes: [.v6]

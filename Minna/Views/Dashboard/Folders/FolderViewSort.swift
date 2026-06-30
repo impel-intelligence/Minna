@@ -7,6 +7,7 @@
 
 import ViewStorage
 import Foundation
+import DatabaseSchema
 
 enum FolderViewSort: Int, CaseIterable, CustomStringConvertible, ViewStorable {
     case mostRecent

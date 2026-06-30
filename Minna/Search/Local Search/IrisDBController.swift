@@ -11,6 +11,7 @@ import Digester
 import SwiftData
 import SentrySwift
 import UniformTypeIdentifiers
+import DatabaseSchema
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
