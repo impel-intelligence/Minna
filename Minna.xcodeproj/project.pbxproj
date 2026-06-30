@@ -19,6 +19,8 @@
 		DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59B2FEDCC1A0036306B /* Sparkle */; };
 		DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59E2FEDCD1D0036306B /* SentrySPM */; };
 		DB96954C2FF436F500CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB96954B2FF436F500CB037A /* DatabaseSchema */; };
+		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
+		DB9695EA2FF4718400CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695E92FF4718400CB037A /* ModelManager */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,7 +114,9 @@
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
 				DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */,
+				DB9695EA2FF4718400CB037A /* ModelManager in Frameworks */,
 				DB0CF5902FEDCBD70036306B /* IrisSearch in Frameworks */,
+				DB9695562FF440F200CB037A /* Textual in Frameworks */,
 				DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */,
 				DB96954C2FF436F500CB037A /* DatabaseSchema in Frameworks */,
 				DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */,
@@ -145,6 +149,7 @@
 				DB0CF4D22FEDCA6B0036306B /* Minna */,
 				DB0CF4E22FEDCA6D0036306B /* MinnaTests */,
 				DB0CF4EC2FEDCA6D0036306B /* MinnaUITests */,
+				DB9695E82FF4718400CB037A /* Frameworks */,
 				DB0CF4D12FEDCA6B0036306B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -157,6 +162,13 @@
 				DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DB9695E82FF4718400CB037A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,6 +205,8 @@
 				DB0CF59E2FEDCD1D0036306B /* SentrySPM */,
 				DB0C02E62FF2D3930036306B /* MinnaChat */,
 				DB96954B2FF436F500CB037A /* DatabaseSchema */,
+				DB9695552FF440F200CB037A /* Textual */,
+				DB9695E92FF4718400CB037A /* ModelManager */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -287,6 +301,7 @@
 				DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				DB0C02E52FF2D3930036306B /* XCLocalSwiftPackageReference "Packages/MinnaChat" */,
 				DB96954A2FF436F500CB037A /* XCLocalSwiftPackageReference "Packages/DatabaseSchema" */,
+				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -795,6 +810,14 @@
 				minimumVersion = 0.64.1;
 			};
 		};
+		DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/textual";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.5.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -860,6 +883,16 @@
 		DB96954B2FF436F500CB037A /* DatabaseSchema */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DatabaseSchema;
+		};
+		DB9695552FF440F200CB037A /* Textual */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */;
+			productName = Textual;
+		};
+		DB9695E92FF4718400CB037A /* ModelManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB0C02E52FF2D3930036306B /* XCLocalSwiftPackageReference "Packages/MinnaChat" */;
+			productName = ModelManager;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

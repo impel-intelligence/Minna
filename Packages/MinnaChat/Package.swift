@@ -14,13 +14,14 @@ let package = Package(
             name: "MinnaChat",
             targets: ["MinnaChat"]
         ),
-//        .library(
-//            name: "ModelManager",
-//            targets: ["ModelManager"]
-//        )
+        .library(
+            name: "ModelManager",
+            targets: ["ModelManager"]
+        )
     ],
     dependencies: [
         .package(path: "../DatabaseSchema"),
+        .package(url: "https://github.com/impel-intelligence/IrisSearch", from: "0.5.0"),
         .package(
             url: "https://github.com/huggingface/swift-huggingface.git",
             from: "0.9.0",
@@ -31,7 +32,6 @@ let package = Package(
             from: "0.8.0",
             traits: ["MLX"]
         ),
-        .package(url: "https://github.com/impel-intelligence/IrisSearch", from: "0.5.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -46,13 +46,13 @@ let package = Package(
                 .product(name: "HuggingFace", package: "swift-huggingface")
             ]
         ),
-//        .target(
-//            name: "ModelManager",
-//            dependencies: [
-//                .product(name: "HuggingFace", package: "swift-huggingface")
-//            ]
-//        ),
-//        .testTarget(name: "ModelManagerTests", dependencies: ["ModelManager"])
+        .target(
+            name: "ModelManager",
+            dependencies: [
+                .product(name: "HuggingFace", package: "swift-huggingface")
+            ]
+        ),
+        .testTarget(name: "ModelManagerTests", dependencies: ["ModelManager"])
 
     ],
     swiftLanguageModes: [.v6]

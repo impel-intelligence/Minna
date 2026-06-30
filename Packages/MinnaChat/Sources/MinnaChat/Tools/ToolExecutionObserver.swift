@@ -4,6 +4,8 @@
 //
 //  Created by Taylor Lineman on 6/29/26.
 //
+//
+import AnyLanguageModel
 
 actor ToolExecutionObserver: ToolExecutionDelegate {
     func didGenerateToolCalls(_ toolCalls: [Transcript.ToolCall], in session: LanguageModelSession) async {

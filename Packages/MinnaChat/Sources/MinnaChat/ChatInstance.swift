@@ -10,8 +10,10 @@ import SwiftUI
 import AnyLanguageModel
 import IrisSearch
 import Hub
-import MLXLMCommon
-
+import SwiftData
+import DatabaseSchema
+import ModelManager
+import HuggingFace
 
 @Observable @MainActor
 public final class ChatInstance {
@@ -23,22 +25,28 @@ public final class ChatInstance {
 //    let hub = HubApi()
 //    public let downloader = ModelDownloadProgress()
 
+    let databaseContext: ModelContext
+    
     let modelID: String
+    let hubAPI: HubApi
     let model: MLXLanguageModel
     let session: LanguageModelSession
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
     
-    public var currentGeneration: String = ""
+    public var generatingMessage: DatabaseSchema.Message? = nil
     
-    public init(irisDB: IrisDB, modelID: String = "mlx-community/Qwen3.5-4B-4bit") {
+    public init(irisDB: IrisDB, databaseContext: ModelContext, modelID: String = "mlx-community/Qwen3.5-4B-4bit") {
         self.modelID = modelID
-        model = MLXLanguageModel(modelId: modelID)
+        self.databaseContext = databaseContext
+        self.hubAPI = HubApi(cache: HubCache.minnaCache)
+        
+        model = MLXLanguageModel(modelId: modelID, directory: HubCache.minnaCacheFolder)
         session = LanguageModelSession(model: model, tools: [])
         session.toolExecutionDelegate = toolObserver
         session.prewarm()
     }
     
-    public func sendMessage(_ message: String) async throws {
+    public func sendMessage(_ message: String, in chat: Chat) async throws {
         guard !session.isResponding else { return }
         
         // Check if the model is available. If it is not, throw an error
@@ -53,10 +61,15 @@ public final class ChatInstance {
         default: break
         }
         
+        generatingMessage = DatabaseSchema.Message(chat: chat, owner: .assistant, textContent: "")
+        
         for try await chunk in session.streamResponse(to: Prompt(message)) {
-            currentGeneration = chunk.content
-            print("received chunk \(chunk.content)")
+            generatingMessage?.textContent = chunk.content
         }
+        
+        guard let message = generatingMessage else { return }
+        generatingMessage = nil
+        databaseContext.insert(message)
     }
         
 //    /// Downloads the model weights with progress, then loads them into memory.

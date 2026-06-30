@@ -9,25 +9,21 @@ import SwiftUI
 import SwiftData
 import SentrySwift
 import Sparkle
+import ModelManager
 
 @main
 struct MinnaApp: App {
     // MARK: Databases
-    @State var irisDBController: IrisDBController
-    @State var frontendDatabase: FrontendDatabase
+    @State var irisDBController: IrisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
+    @State var frontendDatabase: FrontendDatabase = FrontendDatabase.shared
     
-    @State var searchController: SearchController
+    @State var modelDownloader: ModelDownloader = ModelDownloader()
     
     @State var standardFileImporterPresented: Bool = false
         
     private let updaterController: SPUStandardUpdaterController
 
     init() {
-        self.frontendDatabase = FrontendDatabase.shared
-        self.irisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
-
-        self.searchController = SearchController()
-
         // Don't start the sparkle updater under XCTest. Unit tests on CI will fail since sparkle opens a popup asking when to update which hangs the process.
         let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
         updaterController = SPUStandardUpdaterController(startingUpdater: !isRunningTests, updaterDelegate: nil, userDriverDelegate: nil)
@@ -42,6 +38,7 @@ struct MinnaApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationCore()
+                .environment(modelDownloader)
         }
         .commands {
             CommandGroup(replacing: .newItem) {
