@@ -40,7 +40,7 @@ public final class ChatInstance {
         self.databaseContext = databaseContext
         self.hubAPI = HubApi(cache: HubCache.minnaCache)
         
-        model = MLXLanguageModel(modelId: modelID, directory: HubCache.minnaCacheFolder)
+        model = MLXLanguageModel(modelId: modelID, directory: HubCache.minnaCacheFolder.appending(path: modelID))
         session = LanguageModelSession(model: model, tools: [])
         session.toolExecutionDelegate = toolObserver
         session.prewarm()

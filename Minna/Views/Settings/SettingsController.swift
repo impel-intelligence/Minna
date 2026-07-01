@@ -25,7 +25,7 @@ struct SettingsController: View {
         var symbol: SFSymbol {
             switch self {
             case .models:
-                return .gearshape
+                return .shippingbox
             }
         }
     }

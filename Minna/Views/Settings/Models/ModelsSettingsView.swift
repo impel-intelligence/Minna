@@ -19,6 +19,8 @@ struct ProviderWrapper: Identifiable {
     /// form should render (via `provider.fields`) and knows how to build itself
     /// from the collected input (via `provider.make(from:)`).
     let provider: any ModelProvider.Type
+    
+    let existingConfiguration: ConfiguredProvider?
 }
 
 struct ModelsSettingsView: View {
@@ -44,23 +46,42 @@ struct ModelsSettingsView: View {
             }
             
             Section("Configured Providers") {
-                ForEach(providers) { provider in
-                    if let classedProvider = ProviderFactory.make(id: provider.providerID) {
-                        HStack {
-                            Image(classedProvider.image)
-                                .resizable()
-                                .frame(width: 15, height: 15)
-                            Text(classedProvider.marketingName)
+                ForEach(providers) { configuration in
+                    if let classedProvider = ProviderFactory.make(id: configuration.providerID) {
+                        Button {
+                            providerWrapper = ProviderWrapper(provider: classedProvider, existingConfiguration: configuration)
+                        } label: {
+                            HStack {
+                                Image(classedProvider.image)
+                                    .resizable()
+                                    .frame(width: 15, height: 15)
+                                    .accessibilityLabel("\(classedProvider.marketingName) Logo")
+                                
+                                // If the user set a custom name for this provider, show the name of the provider as a subtitle.
+                                if configuration.name != classedProvider.marketingName {
+                                    VStack(alignment: .leading) {
+                                        Text(configuration.name)
+                                        Text(classedProvider.marketingName)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                } else {
+                                    Text(configuration.name)
+                                }
+                            }
                         }
+                        .contentShape(.rect)
+                        .buttonStyle(NavigationLinkButtonStyle())
+                        .accessibilityLabel("Edit \(configuration.name)")
                     } else {
-                        Text("Invalid Provider: \(provider.providerID)")
+                        Text("Invalid Provider: \(configuration.providerID)")
                     }
                 }
             }
             
             Section("Add a new provider") {
                 Button {
-                    providerWrapper = ProviderWrapper(provider: AnthropicProvider.self)
+                    providerWrapper = ProviderWrapper(provider: AnthropicProvider.self, existingConfiguration: nil)
                 } label: {
                     HStack {
                         Image(AnthropicProvider.image)
@@ -69,16 +90,15 @@ struct ModelsSettingsView: View {
                         Text(AnthropicProvider.marketingName)
                     }
                 }
-                .clipShape(.rect)
+                .contentShape(.rect)
                 .buttonStyle(NavigationLinkButtonStyle())
-                .accessibilityLabel("Add Claude (Anthropic) as a model provider.")
+                .accessibilityLabel("Add \(AnthropicProvider.marketingName) as a model provider.")
             }
-
         }
         .formStyle(.grouped)
         .navigationTitle("Models")
         .sheet(item: $providerWrapper) { wrapper in
-            AddProviderForm(wrapper: wrapper)
+            ProviderConfigurationForm(wrapper: wrapper)
         }
     }
 }

@@ -39,19 +39,10 @@ class FrontendDatabase {
             UserDefaults.standard.set(unfilledFolderUUID.uuidString, forKey: FrontendDatabase.unfilledFolderKey)
         }
 
-        let schema = Schema([
-            File.self,
-            Folder.self,
-            FolderIcon.self,
-            Chat.self,
-            Message.self,
-            ChatModel.self
-        ])
-        
-        let modelConfiguration = ModelConfiguration(schema: schema)
+        let modelConfiguration = ModelConfiguration(schema: Schema.minnaSchema)
         
         do {
-            modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            modelContainer = try ModelContainer(for: Schema.minnaSchema, configurations: [modelConfiguration])
             fileDescriptionWriter = FileDescriptionWriter(modelContainer: modelContainer)
             try populateStartupData()
             modelContainer.mainContext.undoManager = UndoManager()

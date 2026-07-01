@@ -321,18 +321,10 @@ class SampleDatabase {
     }
     
     private init(sampleData: Bool = false) {
-        let schema = Schema([
-            File.self,
-            Folder.self,
-            FolderIcon.self,
-            Chat.self,
-            Message.self,
-            ChatModel.self
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        let modelConfiguration = ModelConfiguration(schema: Schema.minnaSchema, isStoredInMemoryOnly: true)
         
         do {
-            modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            modelContainer = try ModelContainer(for: Schema.minnaSchema, configurations: [modelConfiguration])
             try populateSampleData()
         } catch {
             fatalError("Could not create ModelContainer: \(error)")

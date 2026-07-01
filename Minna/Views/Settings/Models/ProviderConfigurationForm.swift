@@ -1,5 +1,5 @@
 //
-//  AddProviderForm.swift
+//  ProviderConfigurationForm.swift
 //  Minna
 //
 //  Created by Taylor Lineman on 7/1/26.
@@ -11,7 +11,7 @@ import DatabaseSchema
 import SFSafeSymbols
 import ModelManager
 
-struct AddProviderForm: View {
+struct ProviderConfigurationForm: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.dismiss) var dismiss
 
@@ -23,31 +23,50 @@ struct AddProviderForm: View {
     @State private var values: [String: String] = [:]
     @State private var advancedExpanded: Bool = false
     @State private var errorMessage: String?
+    
+    @State private var configurationName: String = ""
+    
+    @FocusState private var focusedField: String?
 
     private var fields: [ProviderField] { wrapper.provider.fields }
     private var standardFields: [ProviderField] { fields.filter { !$0.isAdvanced } }
     private var advancedFields: [ProviderField] { fields.filter { $0.isAdvanced } }
+    
+    private var providerName: String {
+        ((wrapper.provider as? AssetProvider.Type)?.marketingName ?? wrapper.provider.id)
+    }
 
     var body: some View {
         Form {
-
             Section {
+                TextField("Configuration Name", text: $configurationName, prompt: Text(providerName))
+                    .focused($focusedField, equals: "name")
+                
                 ForEach(standardFields) { field in
                     fieldView(for: field)
                 }
             } header: {
-                // If this provider has conformance to AssetProvider grab the assets to display.
-                if let assetProvider = wrapper.provider as? AssetProvider.Type {
-                    HStack(spacing: 15) {
-                        Image(assetProvider.image)
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .accessibilityLabel(assetProvider.marketingName + " logo")
-                        Text(assetProvider.marketingName)
-                            .font(.title)
-                            .fontDesign(.serif)
+                VStack(alignment: .center) {
+                    // If this provider has conformance to AssetProvider grab the assets to display.
+                    if let assetProvider = wrapper.provider as? AssetProvider.Type {
+                        HStack(spacing: 15) {
+                            Image(assetProvider.image)
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .accessibilityLabel(assetProvider.marketingName + " logo")
+                            Text(assetProvider.marketingName)
+                                .font(.title)
+                                .fontDesign(.serif)
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: .infinity)
+                    HStack(spacing: 2) {
+                        Text("Configuration stored in Keychain")
+                        Image(systemSymbol: .lockFill)
+                            .accessibilityHidden(true)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
             }
 
@@ -65,11 +84,32 @@ struct AddProviderForm: View {
                     .font(.callout)
             }
         }
+        .onAppear {
+            if let config = wrapper.existingConfiguration {
+                self.configurationName = config.name
+                
+                for field in fields where values[field.key] == nil {
+                    values[field.key] = config.getConfigurationValue(for: field.key)
+                }
+            } else if configurationName.isEmpty {
+                configurationName = providerName
+            }
+        }
         .formStyle(.grouped)
-        .navigationTitle("Add \((wrapper.provider as? AssetProvider.Type)?.marketingName ?? wrapper.provider.id)")
+        .navigationTitle("Add \(providerName)")
         .background {
             if let assetProvider = wrapper.provider as? AssetProvider.Type {
                 assetProvider.background
+            }
+        }
+        .toolbar {
+            if let config = wrapper.existingConfiguration {
+                ToolbarItem(placement: .destructiveAction) {
+                    Button("Delete", role: .destructive) {
+                        modelContext.delete(config)
+                        dismiss()
+                    }
+                }
             }
         }
         .toolbar {
@@ -79,7 +119,7 @@ struct AddProviderForm: View {
                 }
             }
             ToolbarItem(placement: .primaryAction) {
-                Button("Add", role: .confirm) {
+                Button(wrapper.existingConfiguration == nil ? "Add" : "Update", role: .confirm) {
                     addProvider()
                 }
                 .buttonStyle(.borderedProminent)
@@ -102,8 +142,10 @@ struct AddProviderForm: View {
         switch field.kind {
         case .text:
             TextField(field.name, text: binding(for: field), prompt: Text(field.placeholder))
+                .focused($focusedField, equals: field.key)
         case .secure:
             SecureField(field.name, text: binding(for: field), prompt: Text(field.placeholder))
+                .focused($focusedField, equals: field.key)
         }
     }
 
@@ -121,7 +163,8 @@ struct AddProviderForm: View {
     /// success, surfacing any validation error inline.
     private func addProvider() {
         do {
-            let configuredProvider = ConfiguredProvider(providerID: wrapper.provider.id)
+            let uuid: UUID = wrapper.existingConfiguration?.id ?? UUID()
+            let configuredProvider = ConfiguredProvider(id: uuid, name: configurationName, providerID: wrapper.provider.id)
             
             for (key, value) in values {
                 configuredProvider.saveConfigurationValue(for: key, with: value)
@@ -139,6 +182,6 @@ struct AddProviderForm: View {
 
 #Preview {
     NavigationStack {
-        AddProviderForm(wrapper: ProviderWrapper(provider: AnthropicProvider.self))
+        ProviderConfigurationForm(wrapper: ProviderWrapper(provider: AnthropicProvider.self, existingConfiguration: nil))
     }
 }
