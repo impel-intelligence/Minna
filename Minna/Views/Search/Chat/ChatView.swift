@@ -24,12 +24,13 @@ struct ChatView: View {
     
     @Query(sort: \ConfiguredProvider.name) private var providers: [ConfiguredProvider]
     @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [:]
+    @State var selectedProvider: ConfiguredProvider?
     @State var selectedModel: Model?
     
     @State var chatInstance: ChatInstance?
     @State var chatMessage: String = ""
-    @State var downloadProgress: Progress?
-        
+
+    @State var presentModelPicker: Bool = false
 
     let chat: Chat = Chat()
 
@@ -57,13 +58,6 @@ struct ChatView: View {
             }
         }
         .task {
-            do {
-                chatInstance = ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext)
-            } catch {
-                print("Failed to get database \(error)")
-            }
-        }
-        .task {
             for configuration in providers {
                 do {
                     guard let provider = try ProviderFactory.makeInstance(configuration: configuration) else { continue }
@@ -73,6 +67,7 @@ struct ChatView: View {
                     // Set the selected model to the first available.
                     if selectedModel == nil, let first = models.first {
                         selectedModel = first
+                        selectedProvider = configuration
                     }
                     
                     providerDatabase[configuration] = models
@@ -81,13 +76,11 @@ struct ChatView: View {
                 }
             }
         }
-        .onChange(of: selectedModel) { _, newValue in
-            
+        .onChange(of: selectedModel) { _, _ in
+            initializeChatInstance()
         }
     }
-    
-    @State var presentModelPicker: Bool = false
-    
+        
     var chatBox: some View {
         HStack(alignment: .bottom) {
             Spacer()
@@ -106,7 +99,7 @@ struct ChatView: View {
                     }
                 }
                 .popover(isPresented: $presentModelPicker) {
-                    ModelSelector(selectedModel: $selectedModel)
+                    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
                 }
 
                 SearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage) {
@@ -117,15 +110,15 @@ struct ChatView: View {
                         let userMessage = Message(chat: chat, owner: .user, textContent: tmpMessage)
                         modelContext.insert(userMessage)
                         
-//                        do {
-////                            try await chatInstance?.sendMessage(userMessage.textContent, in: chat)
-//                        } catch {
-//                            if chatMessage.isEmpty {
-//                                chatMessage = tmpMessage
-//                                modelContext.delete(userMessage)
-//                            }
-//                            print("Failed to send chat: \(error)")
-//                        }
+                        do {
+                            try await chatInstance?.sendMessage(userMessage.textContent, in: chat)
+                        } catch {
+                            if chatMessage.isEmpty {
+                                chatMessage = tmpMessage
+                                modelContext.delete(userMessage)
+                            }
+                            print("Failed to send chat: \(error)")
+                        }
                     }
                 }
                 .disabled(selectedModel == nil)
@@ -134,10 +127,26 @@ struct ChatView: View {
         }
         .padding([.bottom], 20)
     }
+    
+    func initializeChatInstance() {
+        if let model = selectedModel, let config = selectedProvider {
+            do {
+                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config)
+            } catch {
+                print("Failed to get database \(error)")
+            }
+        } else {
+            chatInstance = nil
+        }
+    }
 }
 
 struct ModelSelector: View {
     @Environment(\.openModernSettings) var openSettings
+    
+    @Binding var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]>
+    @Binding var selectedModel: Model?
+    @Binding var selectedProvider: ConfiguredProvider?
 
     var body: some View {
         VStack {
@@ -146,7 +155,7 @@ struct ModelSelector: View {
                 ForEach(Array(providerDatabase.keys)) { provider in
                     Section(provider.name) {
                         ForEach(providerDatabase[provider] ?? []) { model in
-                            cellFor(model: model )
+                            cellFor(model: model, provider: provider)
                         }
                     }
                     .listRowSeparator(.hidden, edges: .all)
@@ -186,9 +195,10 @@ struct ModelSelector: View {
     }
     
     @ViewBuilder
-    func cellFor(model: Model) -> some View {
+    func cellFor(model: Model, provider: ConfiguredProvider) -> some View {
         Button {
             selectedModel = model
+            selectedProvider = provider
         } label: {
             HStack {
                 Image(systemSymbol: .checkmark)
@@ -201,7 +211,6 @@ struct ModelSelector: View {
             }
         }
         .buttonStyle(.plain)
-
     }
 }
 
@@ -222,8 +231,15 @@ struct ModelName: View {
 
 #Preview {
     @Previewable @State var selectedModel: Model?
+    @Previewable @State var selectedProvider: ConfiguredProvider?
+
+    @Previewable @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [
+        ConfiguredProvider(name: "Apple Intelligence", providerID: "apple"): [
+            Model(id: "foundation", displayName: "Apple Foundation", provider: AppleProvider.self)
+        ]
+    ]
     
-    ModelSelector(selectedModel: $selectedModel)
+    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
         .modelContext(SampleDatabase.shared.context)
 }
 

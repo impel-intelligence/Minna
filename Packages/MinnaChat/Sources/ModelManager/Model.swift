@@ -10,6 +10,12 @@ public struct Model: Hashable, Identifiable {
     public let displayName: String
     public let provider: any ModelProvider.Type
     
+    public init(id: String, displayName: String, provider: any ModelProvider.Type) {
+        self.id = id
+        self.displayName = displayName
+        self.provider = provider
+    }
+    
     public var hashValue: Int {
         return id.hashValue + displayName.hashValue + provider.id.hashValue
     }
