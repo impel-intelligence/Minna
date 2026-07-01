@@ -1,6 +1,8 @@
 // swift-tools-version: 6.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
+// Edited by Claude Opus 4.8 (Anthropic) on 2026-07-01: added AnyLanguageModel dependency to the ModelManager target.
+
 import PackageDescription
 
 let package = Package(
@@ -49,6 +51,7 @@ let package = Package(
         .target(
             name: "ModelManager",
             dependencies: [
+                .product(name: "AnyLanguageModel", package: "AnyLanguageModel"),
                 .product(name: "HuggingFace", package: "swift-huggingface")
             ]
         ),

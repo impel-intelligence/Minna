@@ -22,6 +22,7 @@
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
 		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
+		DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +118,7 @@
 				DB9695EF2FF4906900CB037A /* ModernSettings in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
 				DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */,
+				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
 				DB0CF5902FEDCBD70036306B /* IrisSearch in Frameworks */,
 				DB9695562FF440F200CB037A /* Textual in Frameworks */,
 				DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */,
@@ -222,6 +224,7 @@
 				DB9696A92FF492BF00CB037A /* DatabaseSchema */,
 				DB9696AB2FF492BF00CB037A /* MinnaChat */,
 				DB9696AD2FF492C000CB037A /* ModelManager */,
+				DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -316,6 +319,7 @@
 				DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
 				DB9695ED2FF4906800CB037A /* XCRemoteSwiftPackageReference "ModernSettings" */,
+				DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -829,6 +833,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 24.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -908,6 +920,11 @@
 		DB9696AD2FF492C000CB037A /* ModelManager */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ModelManager;
+		};
+		DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
