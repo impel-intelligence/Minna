@@ -19,3 +19,10 @@ extension AnthropicProvider: AssetProvider {
     static var image: ImageResource { .Providers.Claude.logo }
     static var background: Color { .Providers.Claude.background }
 }
+
+extension AppleProvider: AssetProvider {
+    static var marketingName: String { "Apple Intelligence" }
+    static var image: ImageResource { .Providers.Apple.logo }
+    static var background: Color { .primary }
+
+}

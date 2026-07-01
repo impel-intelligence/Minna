@@ -8,5 +8,10 @@
     "fingerprint" : "163f3855a53235b4ebeb69cf5e9f228215ae35b5",
     "packageIdentity" : "anylanguagemodel",
     "targetName" : "AnyLanguageModelMacros"
+  },
+  {
+    "fingerprint" : "1c05248bb0899e2a7a4962b84d319cf12f4e12aa",
+    "packageIdentity" : "mlx-swift-lm",
+    "targetName" : "MLXHuggingFaceMacros"
   }
 ]

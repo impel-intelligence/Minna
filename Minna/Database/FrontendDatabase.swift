@@ -54,7 +54,7 @@ class FrontendDatabase {
 
     private func populateStartupData() throws {
         try populateUnfilledFolder()
-        try populateDefaultModel()
+        try populateAppleProvider()
         
         try context.save()
     }
@@ -66,20 +66,20 @@ class FrontendDatabase {
         context.insert(unfilledFolder)
     }
     
-    private func populateDefaultModel() throws {
+    private func populateAppleProvider() throws {
         // Make sure we can even add the apple foundation model
         guard SystemLanguageModel.default.availability == .available else { return }
         
         // Check to see if we have already inserted it into the models.
-        var descriptor = FetchDescriptor<ChatModel>(predicate: #Predicate { model in
-            model.id == "apple-foundation"
+        var descriptor = FetchDescriptor<ConfiguredProvider>(predicate: #Predicate { provider in
+            provider.providerID == "apple"
         })
         descriptor.fetchLimit = 1
         guard try context.fetch(descriptor).isEmpty else { return }
         
         // Add the model
-        let appleFoundationModel = ChatModel(id: "apple-foundation", source: .apple, location: .device)
-        context.insert(appleFoundationModel)
+        let appleProvider = ConfiguredProvider(name: "Apple Foundation Models", providerID: "apple")
+        context.insert(appleProvider)
     }
     
     func queueDescriptionUpdate(for file: File) {

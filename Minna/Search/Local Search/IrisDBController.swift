@@ -150,6 +150,6 @@ extension IrisDBController: Searchable {
         let query = IrisQuery(text: query)
         let documents = try await irisDB.search(query: query, ranking: .relativeScoreFusion)
 
-        return documents.map { $0.uuid }
+        return documents.map { $0.document.uuid }
     }
 }

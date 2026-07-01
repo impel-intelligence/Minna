@@ -1,5 +1,5 @@
 {
-  "originHash" : "b454e485a8ea3f712e8b9797aa5e9451c639f2de2b02272e825187d2ccb2a092",
+  "originHash" : "95390a1b4f091e8eaa379bd0eea14db689d229a35b27f1e8a8c168ad7ee65829",
   "pins" : [
     {
       "identity" : "anylanguagemodel",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/IrisSearch",
       "state" : {
-        "revision" : "fc4a0bf9d39a3a4a49710ea3199d0af4d5649e1d",
-        "version" : "0.5.0"
+        "revision" : "88752cdaf655adecdca9a604af7efe0c59f37952",
+        "version" : "0.6.0"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ml-explore/mlx-swift",
       "state" : {
-        "revision" : "dc43e62d7055353c7f99fa071a4e71d29dfddc44",
-        "version" : "0.31.4"
+        "revision" : "eb889e01b7267bc6d9c01fde91bc517b09506c2d",
+        "version" : "0.31.5"
       }
     },
     {
@@ -96,8 +96,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ActuallyTaylor/ModernSettings",
       "state" : {
-        "revision" : "9039d71f698ef382c2e399a651d1c57cda45e15d",
-        "version" : "1.0.0"
+        "revision" : "85fb2e31157362b3dad8b543daa1cd15b4166887",
+        "version" : "1.1.0"
       }
     },
     {
@@ -143,6 +143,15 @@
       "state" : {
         "revision" : "87e50f483c54e6efd60e885f7f5aa946cee68023",
         "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "6a52f3251125d74daf04fcbd5e6f08a75d074382",
+        "version" : "1.8.2"
       }
     },
     {
@@ -393,8 +402,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SimplyDanny/SwiftLintPlugins",
       "state" : {
-        "revision" : "ecb6907e0db6f79ed2c7a569df4e723a47615208",
-        "version" : "0.64.1"
+        "revision" : "3292bab28e6e92000161348003fdef8edc4e582d",
+        "version" : "0.65.0"
       }
     },
     {

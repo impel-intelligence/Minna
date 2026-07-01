@@ -10,7 +10,7 @@ import SwiftData
 import SentrySwift
 import Sparkle
 import ModelManager
-import ModernSettings
+import ModernSettingsWindow
 
 @main
 struct MinnaApp: App {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 import SFSafeSymbols
-import ModernSettings
+import ModernSettingsWindow
 
 struct SettingsController: View {
     enum SettingsTab: Int, Identifiable, Hashable, CaseIterable, CustomStringConvertible {

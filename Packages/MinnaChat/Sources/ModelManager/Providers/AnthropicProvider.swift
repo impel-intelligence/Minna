@@ -8,12 +8,14 @@
 
 import Foundation
 import AnyLanguageModel
+import DatabaseSchema
 
 public struct AnthropicProvider: ModelProvider, Sendable {
     let baseURL: URL
     let apiKey: String
     
     public static let id: String = "claude"
+    public static let editable: Bool = true
 
     public static let fields: [ProviderField] = [
         ProviderField(
@@ -62,6 +64,18 @@ public struct AnthropicProvider: ModelProvider, Sendable {
         return AnthropicProvider(baseURL: baseURL, apiKey: apiKey)
     }
     
+    public static func make(from configuration: ConfiguredProvider) throws -> AnthropicProvider {
+        guard let apiKey = configuration.getConfigurationValue(for: "apiKey") else {
+            throw ProviderConfigurationError.missingField("API Key")
+        }
+        
+        guard let raw = configuration.getConfigurationValue(for: "baseURL"), let parsed = URL(string: raw) else {
+            throw ProviderConfigurationError.missingField("Base URL")
+        }
+        
+        return AnthropicProvider(baseURL: parsed, apiKey: apiKey)
+    }
+    
     public func getModel(id: String) -> any AnyLanguageModel.LanguageModel {
         return AnthropicLanguageModel(baseURL: baseURL, apiKey: apiKey, model: id)
     }
@@ -70,7 +84,7 @@ public struct AnthropicProvider: ModelProvider, Sendable {
     ///
     /// - Returns: The `id` of every model returned by the endpoint.
     /// - Authored by: Claude Opus 4.8 (Anthropic)
-    public func availableModels() async throws -> [String] {
+    public func availableModels() async throws -> [Model] {
         var request = URLRequest(url: baseURL.appendingPathComponent("v1/models"))
         request.httpMethod = "GET"
         request.setValue(AnthropicLanguageModel.defaultAPIVersion, forHTTPHeaderField: "anthropic-version")
@@ -87,7 +101,9 @@ public struct AnthropicProvider: ModelProvider, Sendable {
         }
 
         let modelList = try JSONDecoder().decode(AnthropicModelList.self, from: data)
-        return modelList.data.map(\.id)
+        return modelList.data.map { item in
+            Model(id: item.id, displayName: item.displayName ?? item.id, provider: AnthropicProvider.self)
+        }
     }
 }
 

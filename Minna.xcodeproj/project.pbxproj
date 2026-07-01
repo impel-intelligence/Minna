@@ -18,11 +18,11 @@
 		DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59B2FEDCC1A0036306B /* Sparkle */; };
 		DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59E2FEDCD1D0036306B /* SentrySPM */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
-		DB9695EF2FF4906900CB037A /* ModernSettings in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695EE2FF4906900CB037A /* ModernSettings */; };
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
 		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
 		DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */; };
+		DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,20 +62,12 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ci_post_clone.sh,
+				macros.json,
+				plugins.json,
 			);
 			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		DB0CF7282FEDE8950036306B /* Exceptions for "ci_scripts" folder in "Compile Sources" phase from "Minna" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = DB0CF4CC2FEDCA6B0036306B /* Sources */;
-			membershipExceptions = (
-				ci_post_clone.sh,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DB0CF4D22FEDCA6B0036306B /* Minna */ = {
@@ -100,7 +92,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				DB0CF7272FEDE8950036306B /* Exceptions for "ci_scripts" folder in "Minna" target */,
-				DB0CF7282FEDE8950036306B /* Exceptions for "ci_scripts" folder in "Compile Sources" phase from "Minna" target */,
 			);
 			path = ci_scripts;
 			sourceTree = "<group>";
@@ -114,8 +105,8 @@
 			files = (
 				DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */,
 				DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */,
+				DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */,
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
-				DB9695EF2FF4906900CB037A /* ModernSettings in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
 				DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */,
 				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
@@ -220,11 +211,11 @@
 				DB0CF59B2FEDCC1A0036306B /* Sparkle */,
 				DB0CF59E2FEDCD1D0036306B /* SentrySPM */,
 				DB9695552FF440F200CB037A /* Textual */,
-				DB9695EE2FF4906900CB037A /* ModernSettings */,
 				DB9696A92FF492BF00CB037A /* DatabaseSchema */,
 				DB9696AB2FF492BF00CB037A /* MinnaChat */,
 				DB9696AD2FF492C000CB037A /* ModelManager */,
 				DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */,
+				DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -318,8 +309,8 @@
 				DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
-				DB9695ED2FF4906800CB037A /* XCRemoteSwiftPackageReference "ModernSettings" */,
 				DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */,
+				DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -827,20 +818,20 @@
 				minimumVersion = 0.5.0;
 			};
 		};
-		DB9695ED2FF4906800CB037A /* XCRemoteSwiftPackageReference "ModernSettings" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ActuallyTaylor/ModernSettings";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 24.0.0;
+			};
+		};
+		DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ActuallyTaylor/ModernSettings";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -906,11 +897,6 @@
 			package = DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */;
 			productName = Textual;
 		};
-		DB9695EE2FF4906900CB037A /* ModernSettings */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DB9695ED2FF4906800CB037A /* XCRemoteSwiftPackageReference "ModernSettings" */;
-			productName = ModernSettings;
-		};
 		DB9696A92FF492BF00CB037A /* DatabaseSchema */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DatabaseSchema;
@@ -927,6 +913,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
+		};
+		DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */;
+			productName = ModernSettingsWindow;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

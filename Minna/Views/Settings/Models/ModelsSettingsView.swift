@@ -47,28 +47,13 @@ struct ModelsSettingsView: View {
             
             Section("Configured Providers") {
                 ForEach(providers) { configuration in
-                    if let classedProvider = ProviderFactory.make(id: configuration.providerID) {
+                    if let classedProvider = ProviderFactory.makeType(id: configuration.providerID) {
                         Button {
-                            providerWrapper = ProviderWrapper(provider: classedProvider, existingConfiguration: configuration)
-                        } label: {
-                            HStack {
-                                Image(classedProvider.image)
-                                    .resizable()
-                                    .frame(width: 15, height: 15)
-                                    .accessibilityLabel("\(classedProvider.marketingName) Logo")
-                                
-                                // If the user set a custom name for this provider, show the name of the provider as a subtitle.
-                                if configuration.name != classedProvider.marketingName {
-                                    VStack(alignment: .leading) {
-                                        Text(configuration.name)
-                                        Text(classedProvider.marketingName)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                } else {
-                                    Text(configuration.name)
-                                }
+                            if classedProvider.editable {
+                                providerWrapper = ProviderWrapper(provider: classedProvider, existingConfiguration: configuration)
                             }
+                        } label: {
+                            labelFor(provider: classedProvider, configuration: configuration)
                         }
                         .contentShape(.rect)
                         .buttonStyle(NavigationLinkButtonStyle())
@@ -99,6 +84,32 @@ struct ModelsSettingsView: View {
         .navigationTitle("Models")
         .sheet(item: $providerWrapper) { wrapper in
             ProviderConfigurationForm(wrapper: wrapper)
+        }
+    }
+    
+    @ViewBuilder
+    func labelFor(provider: any ModelProvider.Type, configuration: ConfiguredProvider) -> some View {
+        if let assetProvider = provider as? (any AssetProvider.Type) {
+            HStack {
+                Image(assetProvider.image)
+                    .resizable()
+                    .frame(width: 15, height: 15)
+                    .accessibilityLabel("\(assetProvider.marketingName) Logo")
+                
+                // If the user set a custom name for this provider, show the name of the provider as a subtitle.
+                if configuration.name != assetProvider.marketingName {
+                    VStack(alignment: .leading) {
+                        Text(configuration.name)
+                        Text(assetProvider.marketingName)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } else {
+                    Text(configuration.name)
+                }
+            }
+        } else {
+            Text(configuration.name)
         }
     }
 }

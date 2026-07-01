@@ -350,8 +350,9 @@ class SampleDatabase {
             context.insert(message)
         }
         
-        let appleFoundationModel = ChatModel(id: "apple-foundation", source: .apple, location: .device)
-        context.insert(appleFoundationModel)
+        // Add Apple Provider
+        let appleProvider = ConfiguredProvider(name: "Apple Foundation Models", providerID: "apple")
+        context.insert(appleProvider)
     }
 }
 // swiftlint:enable type_body_length

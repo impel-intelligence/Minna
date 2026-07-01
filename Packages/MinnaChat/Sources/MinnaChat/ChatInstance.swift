@@ -26,51 +26,39 @@ public final class ChatInstance {
 //    public let downloader = ModelDownloadProgress()
 
     let databaseContext: ModelContext
-    
-    let modelID: String
-    let hubAPI: HubApi
-    let model: MLXLanguageModel
-    let session: LanguageModelSession
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
     
     public var generatingMessage: DatabaseSchema.Message? = nil
     
-    public init(irisDB: IrisDB, databaseContext: ModelContext, modelID: String = "mlx-community/Qwen3.5-4B-4bit") {
-        self.modelID = modelID
+    public init(irisDB: IrisDB, databaseContext: ModelContext) {
         self.databaseContext = databaseContext
-        self.hubAPI = HubApi(cache: HubCache.minnaCache)
-        
-        model = MLXLanguageModel(modelId: modelID, directory: HubCache.minnaCacheFolder.appending(path: modelID))
-        session = LanguageModelSession(model: model, tools: [])
-        session.toolExecutionDelegate = toolObserver
-        session.prewarm()
     }
     
-    public func sendMessage(_ message: String, in chat: Chat) async throws {
-        guard !session.isResponding else { return }
-        
-        // Check if the model is available. If it is not, throw an error
-        switch model.availability {
-        case .unavailable(let unavailableReason):
-            switch unavailableReason {
-            case .notLoaded:
-                throw ChatError.modelNotLoaded
-            case .failedToLoad(let string):
-                throw ChatError.modelFailedToLoad(reason: string)
-            }
-        default: break
-        }
-        
-        generatingMessage = DatabaseSchema.Message(chat: chat, owner: .assistant, textContent: "")
-        
-        for try await chunk in session.streamResponse(to: Prompt(message)) {
-            generatingMessage?.textContent = chunk.content
-        }
-        
-        guard let message = generatingMessage else { return }
-        generatingMessage = nil
-        databaseContext.insert(message)
-    }
+//    public func sendMessage(_ message: String, in chat: Chat) async throws {
+//        guard !session.isResponding else { return }
+//        
+//        // Check if the model is available. If it is not, throw an error
+//        switch model.availability {
+//        case .unavailable(let unavailableReason):
+//            switch unavailableReason {
+//            case .notLoaded:
+//                throw ChatError.modelNotLoaded
+//            case .failedToLoad(let string):
+//                throw ChatError.modelFailedToLoad(reason: string)
+//            }
+//        default: break
+//        }
+//        
+//        generatingMessage = DatabaseSchema.Message(chat: chat, owner: .assistant, textContent: "")
+//        
+//        for try await chunk in session.streamResponse(to: Prompt(message)) {
+//            generatingMessage?.textContent = chunk.content
+//        }
+//        
+//        guard let message = generatingMessage else { return }
+//        generatingMessage = nil
+//        databaseContext.insert(message)
+//    }
         
 //    /// Downloads the model weights with progress, then loads them into memory.
 //    /// Safe to call repeatedly — already-cached files are skipped.
