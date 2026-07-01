@@ -34,10 +34,8 @@ struct ChatView: View {
                         switch message.owner {
                         case .assistant:
                             AssistantMessage(message: message, proxy: reader)
-                                .border(.green)
                         case .user:
                             UserMessage(message: message, proxy: reader)
-                                .border(.blue)
                         }
                     }
                     if let generatingMessage = chatInstance?.generatingMessage {
@@ -46,7 +44,6 @@ struct ChatView: View {
                 }
                 .padding()
             }
-            .border(.red)
             .defaultScrollAnchor(.bottom)
             .safeAreaInset(edge: .bottom) {
                 chatBox
@@ -55,11 +52,11 @@ struct ChatView: View {
         .task {
             do {
                 // We have to first download the model we need for chatting.
-                for try await progress in try modelDownloader.downloadModel(id: "mlx-community/Qwen3.5-4B-4bit") {
-                    self.downloadProgress = progress
-                }
-                
-                self.downloadProgress = nil
+//                for try await progress in try modelDownloader.downloadModel(id: "mlx-community/Qwen3.5-4B-4bit") {
+//                    self.downloadProgress = progress
+//                }
+//                
+//                self.downloadProgress = nil
 
                 chatInstance = ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext)
             } catch {
@@ -69,20 +66,14 @@ struct ChatView: View {
     }
     
     var chatBox: some View {
-        HStack {
+        HStack(alignment: .bottom) {
             Spacer()
-            if let downloadProgress {
-                ProgressView(value: downloadProgress.fractionCompleted) {
-                    Text("Downloading Chat Model:")
-                } currentValueLabel: {
-                    Text("\(downloadProgress.completedUnitCount) / \(downloadProgress.totalUnitCount)")
-                }
-                .frame(maxWidth: 500)
-            } else {
-                Image(.impelLogo)
-                    .resizable()
-                    .frame(width: 36, height: 36)
-                    .accessibilityLabel("Minna Logo")
+            Image(.impelLogo)
+                .resizable()
+                .frame(width: 36, height: 36)
+                .accessibilityLabel("Minna Logo")
+            VStack(alignment: .leading) {
+                
                 SearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage) {
                     Task {
                         let tmpMessage = chatMessage
@@ -114,10 +105,12 @@ struct AssistantMessage: View {
     let proxy: GeometryProxy
 
     var body: some View {
-        StructuredText(markdown: message.textContent)
-            .textual.textSelection(.enabled)
-            .textual.codeBlockStyle(MinnaCodeBlockStyle(theme: .azure))
-            .frame(width: proxy.size.width, alignment: .leading)
+        HStack {
+            StructuredText(markdown: message.textContent)
+                .textual.textSelection(.enabled)
+                .textual.codeBlockStyle(MinnaCodeBlockStyle(theme: .azure))
+            Spacer()
+        }
     }
 }
 

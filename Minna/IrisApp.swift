@@ -10,6 +10,7 @@ import SwiftData
 import SentrySwift
 import Sparkle
 import ModelManager
+import ModernSettings
 
 @main
 struct MinnaApp: App {
@@ -53,6 +54,11 @@ struct MinnaApp: App {
             CommandGroup(after: .appInfo) {
                 CheckForUpdatesView(updater: updaterController.updater)
             }
+        }
+        .modelContainer(frontendDatabase.modelContainer)
+        .irisContext(irisDBController.mainContext)
+        ModernSettings {
+            SettingsController()
         }
         .modelContainer(frontendDatabase.modelContainer)
         .irisContext(irisDBController.mainContext)

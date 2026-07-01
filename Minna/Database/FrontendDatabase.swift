@@ -11,6 +11,7 @@ import BlurbKit
 import SFSafeSymbols
 import SentrySwift
 import DatabaseSchema
+import FoundationModels
 
 @MainActor
 class FrontendDatabase {
@@ -43,7 +44,8 @@ class FrontendDatabase {
             Folder.self,
             FolderIcon.self,
             Chat.self,
-            Message.self
+            Message.self,
+            ChatModel.self
         ])
         
         let modelConfiguration = ModelConfiguration(schema: schema)
@@ -60,11 +62,33 @@ class FrontendDatabase {
     }
 
     private func populateStartupData() throws {
+        try populateUnfilledFolder()
+        try populateDefaultModel()
+        
+        try context.save()
+    }
+    
+    private func populateUnfilledFolder() throws {
         let descriptor = FetchDescriptor<Folder>()
         guard try context.fetch(descriptor).isEmpty else { return }
         let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), protected: true)
         context.insert(unfilledFolder)
-        try context.save()
+    }
+    
+    private func populateDefaultModel() throws {
+        // Make sure we can even add the apple foundation model
+        guard SystemLanguageModel.default.availability == .available else { return }
+        
+        // Check to see if we have already inserted it into the models.
+        var descriptor = FetchDescriptor<ChatModel>(predicate: #Predicate { model in
+            model.id == "apple-foundation"
+        })
+        descriptor.fetchLimit = 1
+        guard try context.fetch(descriptor).isEmpty else { return }
+        
+        // Add the model
+        let appleFoundationModel = ChatModel(id: "apple-foundation", source: .apple, location: .device)
+        context.insert(appleFoundationModel)
     }
     
     func queueDescriptionUpdate(for file: File) {

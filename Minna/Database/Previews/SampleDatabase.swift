@@ -326,7 +326,8 @@ class SampleDatabase {
             Folder.self,
             FolderIcon.self,
             Chat.self,
-            Message.self
+            Message.self,
+            ChatModel.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         
@@ -356,6 +357,9 @@ class SampleDatabase {
             message.chat = chat
             context.insert(message)
         }
+        
+        let appleFoundationModel = ChatModel(id: "apple-foundation", source: .apple, location: .device)
+        context.insert(appleFoundationModel)
     }
 }
 // swiftlint:enable type_body_length

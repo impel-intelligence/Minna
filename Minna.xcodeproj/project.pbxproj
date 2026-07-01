@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DB0C02E72FF2D3930036306B /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB0C02E62FF2D3930036306B /* MinnaChat */; };
 		DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5862FEDCB9E0036306B /* ViewStorage */; };
 		DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5882FEDCB9E0036306B /* ViewStorageClient */; };
 		DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF58B2FEDCBD70036306B /* Digester */; };
@@ -18,9 +17,11 @@
 		DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5982FEDCC040036306B /* SFSafeSymbols */; };
 		DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59B2FEDCC1A0036306B /* Sparkle */; };
 		DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59E2FEDCD1D0036306B /* SentrySPM */; };
-		DB96954C2FF436F500CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB96954B2FF436F500CB037A /* DatabaseSchema */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
-		DB9695EA2FF4718400CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695E92FF4718400CB037A /* ModelManager */; };
+		DB9695EF2FF4906900CB037A /* ModernSettings in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695EE2FF4906900CB037A /* ModernSettings */; };
+		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
+		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
+		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,8 @@
 		DB0CF4D02FEDCA6B0036306B /* Minna.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minna.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
+		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -108,19 +111,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB0C02E72FF2D3930036306B /* MinnaChat in Frameworks */,
 				DB0CF59C2FEDCC1A0036306B /* Sparkle in Frameworks */,
 				DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */,
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
+				DB9695EF2FF4906900CB037A /* ModernSettings in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
 				DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */,
-				DB9695EA2FF4718400CB037A /* ModelManager in Frameworks */,
 				DB0CF5902FEDCBD70036306B /* IrisSearch in Frameworks */,
 				DB9695562FF440F200CB037A /* Textual in Frameworks */,
+				DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */,
 				DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */,
-				DB96954C2FF436F500CB037A /* DatabaseSchema in Frameworks */,
 				DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */,
 				DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */,
+				DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */,
+				DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */,
 				DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -151,6 +155,7 @@
 				DB0CF4EC2FEDCA6D0036306B /* MinnaUITests */,
 				DB9695E82FF4718400CB037A /* Frameworks */,
 				DB0CF4D12FEDCA6B0036306B /* Products */,
+				DB9696A82FF4929600CB037A /* Packages */,
 			);
 			sourceTree = "<group>";
 		};
@@ -169,6 +174,15 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DB9696A82FF4929600CB037A /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				DB9696A62FF4929600CB037A /* DatabaseSchema */,
+				DB9696A72FF4929600CB037A /* MinnaChat */,
+			);
+			path = Packages;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -203,10 +217,11 @@
 				DB0CF5982FEDCC040036306B /* SFSafeSymbols */,
 				DB0CF59B2FEDCC1A0036306B /* Sparkle */,
 				DB0CF59E2FEDCD1D0036306B /* SentrySPM */,
-				DB0C02E62FF2D3930036306B /* MinnaChat */,
-				DB96954B2FF436F500CB037A /* DatabaseSchema */,
 				DB9695552FF440F200CB037A /* Textual */,
-				DB9695E92FF4718400CB037A /* ModelManager */,
+				DB9695EE2FF4906900CB037A /* ModernSettings */,
+				DB9696A92FF492BF00CB037A /* DatabaseSchema */,
+				DB9696AB2FF492BF00CB037A /* MinnaChat */,
+				DB9696AD2FF492C000CB037A /* ModelManager */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -299,9 +314,8 @@
 				DB0CF59A2FEDCC1A0036306B /* XCRemoteSwiftPackageReference "Sparkle" */,
 				DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
-				DB0C02E52FF2D3930036306B /* XCLocalSwiftPackageReference "Packages/MinnaChat" */,
-				DB96954A2FF436F500CB037A /* XCLocalSwiftPackageReference "Packages/DatabaseSchema" */,
 				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
+				DB9695ED2FF4906800CB037A /* XCRemoteSwiftPackageReference "ModernSettings" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -732,17 +746,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		DB0C02E52FF2D3930036306B /* XCLocalSwiftPackageReference "Packages/MinnaChat" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/MinnaChat;
-		};
-		DB96954A2FF436F500CB037A /* XCLocalSwiftPackageReference "Packages/DatabaseSchema" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/DatabaseSchema;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -818,13 +821,17 @@
 				minimumVersion = 0.5.0;
 			};
 		};
+		DB9695ED2FF4906800CB037A /* XCRemoteSwiftPackageReference "ModernSettings" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ActuallyTaylor/ModernSettings";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		DB0C02E62FF2D3930036306B /* MinnaChat */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MinnaChat;
-		};
 		DB0CF5862FEDCB9E0036306B /* ViewStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */;
@@ -880,18 +887,26 @@
 			package = DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
-		DB96954B2FF436F500CB037A /* DatabaseSchema */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DatabaseSchema;
-		};
 		DB9695552FF440F200CB037A /* Textual */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */;
 			productName = Textual;
 		};
-		DB9695E92FF4718400CB037A /* ModelManager */ = {
+		DB9695EE2FF4906900CB037A /* ModernSettings */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DB0C02E52FF2D3930036306B /* XCLocalSwiftPackageReference "Packages/MinnaChat" */;
+			package = DB9695ED2FF4906800CB037A /* XCRemoteSwiftPackageReference "ModernSettings" */;
+			productName = ModernSettings;
+		};
+		DB9696A92FF492BF00CB037A /* DatabaseSchema */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DatabaseSchema;
+		};
+		DB9696AB2FF492BF00CB037A /* MinnaChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MinnaChat;
+		};
+		DB9696AD2FF492C000CB037A /* ModelManager */ = {
+			isa = XCSwiftPackageProductDependency;
 			productName = ModelManager;
 		};
 /* End XCSwiftPackageProductDependency section */

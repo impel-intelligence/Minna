@@ -1,5 +1,5 @@
 {
-  "originHash" : "fccee06aceefb95c167ed0e74471f3d9e4f4383a24d79381ea9ee7dabd246d14",
+  "originHash" : "92628895ffec9b5b33a23f0118bd19238735a34171f229646ed711bfcee431a8",
   "pins" : [
     {
       "identity" : "anylanguagemodel",
@@ -80,6 +80,15 @@
       "state" : {
         "revision" : "25b00d4e22e61ec9c41efda47990cd2084ec87ff",
         "version" : "2.31.3"
+      }
+    },
+    {
+      "identity" : "modernsettings",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ActuallyTaylor/ModernSettings",
+      "state" : {
+        "revision" : "9039d71f698ef382c2e399a651d1c57cda45e15d",
+        "version" : "1.0.0"
       }
     },
     {
