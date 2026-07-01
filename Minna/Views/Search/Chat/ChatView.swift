@@ -13,6 +13,7 @@ import Textual
 import SFSafeSymbols
 import ModelManager
 import ModernSettingsWindow
+import OrderedCollections
 
 struct ChatView: View {
     @Environment(\.modelContext) var modelContext
@@ -21,12 +22,15 @@ struct ChatView: View {
     
     @Query(sort: \Message.createdAt) private var messages: [Message]
     
-    @State var selectedModel: ModelManager.Model?
+    @Query(sort: \ConfiguredProvider.name) private var providers: [ConfiguredProvider]
+    @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [:]
+    @State var selectedModel: Model?
     
     @State var chatInstance: ChatInstance?
     @State var chatMessage: String = ""
     @State var downloadProgress: Progress?
-    
+        
+
     let chat: Chat = Chat()
 
     var body: some View {
@@ -58,6 +62,27 @@ struct ChatView: View {
             } catch {
                 print("Failed to get database \(error)")
             }
+        }
+        .task {
+            for configuration in providers {
+                do {
+                    guard let provider = try ProviderFactory.makeInstance(configuration: configuration) else { continue }
+                    let models = try await provider.availableModels()
+                    
+                    // TODO: Remember the user's model selection
+                    // Set the selected model to the first available.
+                    if selectedModel == nil, let first = models.first {
+                        selectedModel = first
+                    }
+                    
+                    providerDatabase[configuration] = models
+                } catch {
+                    print("Failed to fetch available models for \(configuration.name): \(error)")
+                }
+            }
+        }
+        .onChange(of: selectedModel) { _, newValue in
+            
         }
     }
     
@@ -113,11 +138,6 @@ struct ChatView: View {
 
 struct ModelSelector: View {
     @Environment(\.openModernSettings) var openSettings
-    @Query(sort: \ConfiguredProvider.name) private var providers: [ConfiguredProvider]
-
-    @Binding var selectedModel: Model?
-    
-    @State var providerDatabase: [ConfiguredProvider: [Model]] = [:]
 
     var body: some View {
         VStack {
@@ -135,17 +155,6 @@ struct ModelSelector: View {
             .scrollContentBackground(.hidden)
         }
         .frame(width: 350, height: 450)
-        .task {
-            for configuration in providers {
-                do {
-                    guard let provider = try ProviderFactory.makeInstance(configuration: configuration) else { continue }
-                    let models = try await provider.availableModels()
-                    providerDatabase[configuration] = models
-                } catch {
-                    print("Failed to fetch available models for \(configuration.name): \(error)")
-                }
-            }
-        }
     }
     
     var header: some View {
