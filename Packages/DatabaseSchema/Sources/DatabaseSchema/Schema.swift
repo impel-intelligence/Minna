@@ -16,8 +16,6 @@ public extension Schema {
         
         // Chats
         Chat.self,
-        
-        // Models
         ChatModel.self,
         ConfiguredProvider.self
     ])

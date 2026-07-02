@@ -32,9 +32,9 @@ extension Transcript.Entry {
         case .prompt(let prompt):
             return prompt.segments.plainText
         case .toolCalls(let toolCalls):
-            return toolCalls.toolResult
+            return nil
         case .toolOutput(let toolOutput):
-            return toolOutput.toolName + ": " + toolOutput.toolResult
+            return toolOutput.toolName
         case .response(let response):
             return response.segments.plainText
         }

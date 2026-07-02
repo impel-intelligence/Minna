@@ -15,12 +15,10 @@ struct AssistantMessage: View {
     let proxy: GeometryProxy
 
     var body: some View {
-        ForEach(response.segments) { segment in
-            if case .text(let text) = segment {
+        VStack {
+            ForEach(response.segments) { segment in
                 HStack {
-                    StructuredText(markdown: text.content)
-                        .textual.textSelection(.enabled)
-                        .textual.codeBlockStyle(MinnaCodeBlockStyle(theme: .azure))
+                    SegmentView(segment: segment)
                     Spacer()
                 }
             }

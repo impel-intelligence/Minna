@@ -19,7 +19,7 @@ import AnyLanguageModel
 struct ChatView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
-    @Environment(ModelDownloader.self) var modelDownloader
+//    @Environment(ModelDownloader.self) var modelDownloader
         
     @Query(sort: \ConfiguredProvider.name) private var providers: [ConfiguredProvider]
     @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [:]
@@ -36,35 +36,31 @@ struct ChatView: View {
     var body: some View {
         GeometryReader { reader in
             ScrollView {
-                ForEach(chat.transcript) { entry in
-                    switch entry {
-                    case .instructions:
-                        EmptyView()
-                        //            MyInstructionsView(instructions)
-                    case .prompt(let prompt):
-                        EmptyView()
-                        UserMessage(prompt: prompt, proxy: reader)
-                        //            MyPromptView(prompt)
-                    case .toolCalls(let toolCalls):
-                        EmptyView()
-                        //            MyToolCallsView(toolCalls)
-                    case .toolOutput(let toolOutput):
-                        EmptyView()
-                        //            MyToolOutputView(toolOutput)
-                    case .response(let response):
-                        AssistantMessage(response: response, proxy: reader)
-                        //            MyResponseView(response)
-                    @unknown default:
-                        EmptyView()
+                VStack {
+                    ForEach(chat.transcript) { entry in
+                        switch entry {
+                        case .instructions:
+                            EmptyView()
+                        case .prompt(let prompt):
+                            UserMessage(prompt: prompt, proxy: reader)
+                        case .toolCalls(let toolCalls):
+                            ToolCallsView(toolCalls: toolCalls, theme: .azure)
+                        case .toolOutput(let toolOutput):
+                            ToolOutputView(output: toolOutput, theme: .azure)
+                        case .response(let response):
+                            AssistantMessage(response: response, proxy: reader)
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    
+                    if let streamingResponse = chatInstance?.streamingResponse {
+                        AssistantMessage(response: Transcript.Response.tempResponse(content: streamingResponse), proxy: reader)
                     }
                 }
-                
-                if let streamingResponse = chatInstance?.streamingResponse {
-                    AssistantMessage(response: Transcript.Response.tempResponse(content: streamingResponse), proxy: reader)
-                }
+                .padding(.horizontal)
             }
-            .padding()
-            .defaultScrollAnchor(.bottom)
+//            .defaultScrollAnchor(.bottom)
             .safeAreaInset(edge: .bottom) {
                 chatBox
             }
@@ -130,6 +126,16 @@ struct ChatView: View {
                     }
                 }
                 .disabled(selectedModel == nil || chatInstance == nil)
+                
+                if let progress = irisContext.indexingProgress, progress.isIndexing {
+                    HStack {
+                        Text("Indexing...")
+                        ProgressView(value: progress.fractionCompleted)
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: 450)
+                }
             }
             Spacer()
         }
@@ -150,21 +156,7 @@ struct ChatView: View {
 }
 
 #Preview {
-    @Previewable @State var selectedModel: Model?
-    @Previewable @State var selectedProvider: ConfiguredProvider?
-
-    @Previewable @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [
-        ConfiguredProvider(name: "Apple Intelligence", providerID: "apple"): [
-            Model(id: "foundation", displayName: "Apple Foundation", provider: AppleProvider.self)
-        ]
-    ]
-    
-    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
-        .modelContext(SampleDatabase.shared.context)
-}
-
-#Preview {
     ChatView()
         .modelContext(SampleDatabase.shared.context)
-        .environment(ModelDownloader())
+//        .environment(ModelDownloader())
 }

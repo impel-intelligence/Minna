@@ -8,11 +8,9 @@
 import SwiftUI
 import AnyLanguageModel
 import IrisSearch
-import Hub
 import SwiftData
 import DatabaseSchema
 import ModelManager
-import HuggingFace
 
 
 //extension Message {
@@ -82,7 +80,10 @@ public final class ChatInstance {
         self.provider = provider
         self.languageModel = provider.getModel(id: model.id)
         
-        self.session = LanguageModelSession(model: languageModel, tools: [], transcript: chat.transcript)
+        self.session = LanguageModelSession(model: languageModel, tools: [
+            SearchTool(database: irisDB),
+            GetDocumentTool(database: irisDB)
+        ], transcript: chat.transcript)
         session.toolExecutionDelegate = toolObserver
         session.prewarm()
     }
@@ -97,8 +98,9 @@ public final class ChatInstance {
         }
         
         // Start the stream response
-        let stream = session.streamResponse(to: Prompt(message))
+        let stream = session.streamResponse(to: Prompt(message), options: GenerationOptions(maximumResponseTokens: 4096))
         // Update transcript because the user message was just inserted
+//        try await session.respond(to: Prompt(message))
         chat.apply(session.transcript)
 
         // Update the streamingResponse as new text comes from the stream.

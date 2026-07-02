@@ -84,3 +84,16 @@ struct ModelSelector: View {
         .buttonStyle(.plain)
     }
 }
+
+#Preview {
+    @Previewable @State var selectedModel: Model?
+    @Previewable @State var selectedProvider: ConfiguredProvider?
+    
+    @Previewable @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [
+        ConfiguredProvider(name: "Apple Intelligence", providerID: "apple"): [
+            Model(id: "foundation", displayName: "Apple Foundation", provider: AppleProvider.self)
+        ]
+    ]
+    
+    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
+}

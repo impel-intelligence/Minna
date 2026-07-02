@@ -23,17 +23,13 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../DatabaseSchema"),
-        .package(url: "https://github.com/impel-intelligence/IrisSearch", from: "0.5.0"),
-        .package(
-            url: "https://github.com/huggingface/swift-huggingface.git",
-            from: "0.9.0",
-            traits: ["Xet"]
-        ),
-        .package(
-            url: "https://github.com/huggingface/AnyLanguageModel",
-            from: "0.8.0",
-            traits: ["MLX"]
-        ),
+        .package(url: "https://github.com/impel-intelligence/IrisSearch", from: "1.0.0"),
+        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "1.0.0")
+//        .package(
+//            url: "https://github.com/huggingface/AnyLanguageModel",
+//            from: "0.8.0",
+//            traits: ["MLX"]
+//        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -42,17 +38,16 @@ let package = Package(
             name: "MinnaChat",
             dependencies: [
                 "DatabaseSchema",
-//                "ModelManager",
+                "ModelManager",
                 .product(name: "AnyLanguageModel", package: "AnyLanguageModel"),
-                .product(name: "IrisSearch", package: "IrisSearch"),
-                .product(name: "HuggingFace", package: "swift-huggingface")
+                .product(name: "IrisSearch", package: "IrisSearch")
             ]
         ),
         .target(
             name: "ModelManager",
             dependencies: [
-                .product(name: "AnyLanguageModel", package: "AnyLanguageModel"),
-                .product(name: "HuggingFace", package: "swift-huggingface")
+                "DatabaseSchema",
+                .product(name: "AnyLanguageModel", package: "AnyLanguageModel")
             ]
         ),
         .testTarget(name: "ModelManagerTests", dependencies: ["ModelManager"])

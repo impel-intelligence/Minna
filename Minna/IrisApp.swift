@@ -18,7 +18,7 @@ struct MinnaApp: App {
     @State var irisDBController: IrisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
     @State var frontendDatabase: FrontendDatabase = FrontendDatabase.shared
     
-    @State var modelDownloader: ModelDownloader = ModelDownloader()
+//    @State var modelDownloader: ModelDownloader = ModelDownloader()
     
     @State var standardFileImporterPresented: Bool = false
         
@@ -39,7 +39,7 @@ struct MinnaApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationCore()
-                .environment(modelDownloader)
+//                .environment(modelDownloader)
         }
         .commands {
             CommandGroup(replacing: .newItem) {
