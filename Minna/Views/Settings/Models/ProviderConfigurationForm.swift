@@ -132,7 +132,7 @@ struct ProviderConfigurationForm: View {
     /// field's default value when the user hasn't typed anything yet.
     private func binding(for field: ProviderField) -> Binding<String> {
         Binding(
-            get: { values[field.key] ?? field.defaultValue },
+            get: { values[field.key] ?? field.defaultValue ?? "" },
             set: { values[field.key] = $0 }
         )
     }
@@ -168,6 +168,15 @@ struct ProviderConfigurationForm: View {
             
             for (key, value) in values {
                 configuredProvider.saveConfigurationValue(for: key, with: value)
+            }
+            
+            // Load all default values
+            for field in wrapper.provider.fields where values[field.key] == nil {
+                guard let defaultValue = field.defaultValue else {
+                    throw ProviderConfigurationError.missingField(field.key)
+                }
+                
+                configuredProvider.saveConfigurationValue(for: field.key, with: defaultValue)
             }
             
             modelContext.insert(configuredProvider)

@@ -36,7 +36,7 @@ public struct ProviderField: Identifiable, Hashable, Sendable {
     /// Whether the field should be tucked away under an "Advanced" section.
     public let isAdvanced: Bool
     /// The value used when the user leaves the field untouched.
-    public let defaultValue: String
+    public let defaultValue: String?
 
     public var id: String { key }
 
@@ -46,7 +46,7 @@ public struct ProviderField: Identifiable, Hashable, Sendable {
         kind: Kind = .text,
         placeholder: String = "",
         isAdvanced: Bool = false,
-        defaultValue: String = ""
+        defaultValue: String? = nil
     ) {
         self.key = key
         self.name = name

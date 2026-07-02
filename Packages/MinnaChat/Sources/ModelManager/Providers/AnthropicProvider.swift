@@ -69,8 +69,12 @@ public struct AnthropicProvider: ModelProvider, Sendable {
             throw ProviderConfigurationError.missingField("API Key")
         }
         
-        guard let raw = configuration.getConfigurationValue(for: "baseURL"), let parsed = URL(string: raw) else {
+        guard let raw = configuration.getConfigurationValue(for: "baseURL") else {
             throw ProviderConfigurationError.missingField("Base URL")
+        }
+        
+        guard let parsed = URL(string: raw) else {
+            throw ProviderConfigurationError.invalidValue(field: "Base URL", value: raw)
         }
         
         return AnthropicProvider(baseURL: parsed, apiKey: apiKey)
