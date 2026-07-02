@@ -86,7 +86,7 @@ public struct NavigationCore: View {
             })
             
             guard let files = try? modelContext.fetch(descriptor) else { return }
-            for file in files where file.searchIndexed {
+            for file in files where !file.searchIndexed {
                 do {
                     try irisContext.reIndex(file)
                 } catch {
@@ -95,7 +95,7 @@ public struct NavigationCore: View {
                 }
             }
             
-            for file in files where file.descriptionGenerated {
+            for file in files where !file.descriptionGenerated {
                 FrontendDatabase.shared.queueDescriptionUpdate(for: file)
             }
         }
