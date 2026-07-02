@@ -14,14 +14,13 @@ import SFSafeSymbols
 import ModelManager
 import ModernSettingsWindow
 import OrderedCollections
+import AnyLanguageModel
 
 struct ChatView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
     @Environment(ModelDownloader.self) var modelDownloader
-    
-    @Query(sort: \Message.createdAt) private var messages: [Message]
-    
+        
     @Query(sort: \ConfiguredProvider.name) private var providers: [ConfiguredProvider]
     @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [:]
     @State var selectedProvider: ConfiguredProvider?
@@ -32,26 +31,39 @@ struct ChatView: View {
 
     @State var presentModelPicker: Bool = false
 
-    let chat: Chat = Chat()
+    @State var chat: Chat = Chat()
 
     var body: some View {
         GeometryReader { reader in
             ScrollView {
-                VStack {
-                    ForEach(messages) { message in
-                        switch message.owner {
-                        case .assistant:
-                            AssistantMessage(message: message, proxy: reader)
-                        case .user:
-                            UserMessage(message: message, proxy: reader)
-                        }
-                    }
-                    if let generatingMessage = chatInstance?.generatingMessage {
-                        AssistantMessage(message: generatingMessage, proxy: reader)
+                ForEach(chat.transcript) { entry in
+                    switch entry {
+                    case .instructions:
+                        EmptyView()
+                        //            MyInstructionsView(instructions)
+                    case .prompt(let prompt):
+                        EmptyView()
+                        UserMessage(prompt: prompt, proxy: reader)
+                        //            MyPromptView(prompt)
+                    case .toolCalls(let toolCalls):
+                        EmptyView()
+                        //            MyToolCallsView(toolCalls)
+                    case .toolOutput(let toolOutput):
+                        EmptyView()
+                        //            MyToolOutputView(toolOutput)
+                    case .response(let response):
+                        AssistantMessage(response: response, proxy: reader)
+                        //            MyResponseView(response)
+                    @unknown default:
+                        EmptyView()
                     }
                 }
-                .padding()
+                
+                if let streamingResponse = chatInstance?.streamingResponse {
+                    AssistantMessage(response: Transcript.Response.tempResponse(content: streamingResponse), proxy: reader)
+                }
             }
+            .padding()
             .defaultScrollAnchor(.bottom)
             .safeAreaInset(edge: .bottom) {
                 chatBox
@@ -80,7 +92,7 @@ struct ChatView: View {
             initializeChatInstance()
         }
     }
-        
+
     var chatBox: some View {
         HStack(alignment: .bottom) {
             Spacer()
@@ -107,21 +119,17 @@ struct ChatView: View {
                         let tmpMessage = chatMessage
                         chatMessage = ""
                         
-                        let userMessage = Message(chat: chat, owner: .user, textContent: tmpMessage)
-                        modelContext.insert(userMessage)
-                        
                         do {
-                            try await chatInstance?.sendMessage(userMessage.textContent, in: chat)
+                            try await chatInstance?.sendMessage(tmpMessage)
                         } catch {
                             if chatMessage.isEmpty {
                                 chatMessage = tmpMessage
-                                modelContext.delete(userMessage)
                             }
                             print("Failed to send chat: \(error)")
                         }
                     }
                 }
-                .disabled(selectedModel == nil)
+                .disabled(selectedModel == nil || chatInstance == nil)
             }
             Spacer()
         }
@@ -131,101 +139,13 @@ struct ChatView: View {
     func initializeChatInstance() {
         if let model = selectedModel, let config = selectedProvider {
             do {
-                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config)
+                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat)
             } catch {
                 print("Failed to get database \(error)")
             }
         } else {
             chatInstance = nil
         }
-    }
-}
-
-struct ModelSelector: View {
-    @Environment(\.openModernSettings) var openSettings
-    
-    @Binding var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]>
-    @Binding var selectedModel: Model?
-    @Binding var selectedProvider: ConfiguredProvider?
-
-    var body: some View {
-        VStack {
-            header
-            List {
-                ForEach(Array(providerDatabase.keys)) { provider in
-                    Section(provider.name) {
-                        ForEach(providerDatabase[provider] ?? []) { model in
-                            cellFor(model: model, provider: provider)
-                        }
-                    }
-                    .listRowSeparator(.hidden, edges: .all)
-                }
-            }
-            .scrollContentBackground(.hidden)
-        }
-        .frame(width: 350, height: 450)
-    }
-    
-    var header: some View {
-        HStack {
-            Text("Available Models")
-                .font(.title3)
-                .bold()
-                .lineLimit(1)
-            HStack(alignment: .center) {
-                Text("\(providerDatabase.flatMap({$0.value}).count)")
-                    .textCase(.uppercase)
-                    .foregroundStyle(.secondary)
-            }
-            .font(.system(size: 10, weight: .regular, design: .default))
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 4)
-            .padding(.vertical, 2)
-            .background(Color.pillBackground)
-            .clipShape(.rect(cornerRadius: 4))
-            Spacer()
-            Button {
-                openSettings()
-            } label: {
-                Label("Get More", systemSymbol: .plus)
-            }
-        }
-        .padding(.top, 10)
-        .padding(.horizontal)
-    }
-    
-    @ViewBuilder
-    func cellFor(model: Model, provider: ConfiguredProvider) -> some View {
-        Button {
-            selectedModel = model
-            selectedProvider = provider
-        } label: {
-            HStack {
-                Image(systemSymbol: .checkmark)
-                    .fontWeight(.semibold)
-                    .symbolEffect(.bounce, value: selectedModel == model)
-                    .opacity(selectedModel == model ? 1 : 0)
-                    .accessibilityLabel("Model Selected", isEnabled: selectedModel == model)
-                
-                ModelName(model: model)
-            }
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-struct ModelName: View {
-    let model: Model
-    
-    var body: some View {
-        if let assetProvider = model.provider as? AssetProvider.Type {
-            Image(assetProvider.image)
-                .resizable()
-                .frame(width: 15, height: 15)
-                .accessibilityLabel("\(assetProvider.marketingName)'s logo")
-        }
-        
-        Text(model.displayName)
     }
 }
 

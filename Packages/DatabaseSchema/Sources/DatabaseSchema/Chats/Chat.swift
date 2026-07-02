@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import AnyLanguageModel
 
 @Model
 public final class Chat {
@@ -14,13 +15,17 @@ public final class Chat {
     public var uuid: UUID
     public var createdAt: Date
     public var lastMessage: Date?
-    
-    @Relationship(deleteRule: .cascade) public var messages: [Message]
+    public var transcript: Transcript = Transcript()
         
     public init(uuid: UUID = UUID(), createdAt: Date = .now) {
         self.uuid = uuid
         self.createdAt = createdAt
         self.lastMessage = nil
-        self.messages = []
+    }
+    
+    public func apply(_ transcript: Transcript) {
+        self.transcript = transcript
+        self.lastMessage = .now
+//        self.lastMessagePreview = transcript.last.flatMap(\.plainTextPreview)
     }
 }

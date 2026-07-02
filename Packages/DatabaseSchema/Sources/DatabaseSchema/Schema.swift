@@ -16,7 +16,6 @@ public extension Schema {
         
         // Chats
         Chat.self,
-        Message.self,
         
         // Models
         ChatModel.self,

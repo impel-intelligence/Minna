@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "DatabaseSchema",
     platforms: [
-        .macOS(.v14)
+        .macOS(.v26)
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -16,7 +16,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/evgenyneu/keychain-swift.git", from: "24.0.0")
+        .package(url: "https://github.com/evgenyneu/keychain-swift.git", from: "24.0.0"),
+        .package(url: "https://github.com/huggingface/AnyLanguageModel", from: "0.8.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,7 +25,8 @@ let package = Package(
         .target(
             name: "DatabaseSchema",
             dependencies: [
-                .product(name: "KeychainSwift", package: "keychain-swift")
+                .product(name: "KeychainSwift", package: "keychain-swift"),
+                .product(name: "AnyLanguageModel", package: "AnyLanguageModel")
             ]
         ),
 

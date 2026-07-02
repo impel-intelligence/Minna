@@ -25,44 +25,7 @@ class SampleDatabase {
     }
     
     static let shared = SampleDatabase()
-    
-    public var sampleMessages: [Message] = [
-        Message(chat: Chat(), owner: .user, textContent: "How did we implement a mutex in C in my embedded course?"),
-        Message(chat: Chat(), owner: .assistant, textContent: """
-                You used the CMSIS-RTOS v2 osMutex API (which wraps FreeRTOS mutexes under the hood). The pattern is consistent across all your projects (bank, Game, DMA):
-                1. Declare the handle and attributes (global scope)
-                ```c
-                osMutexId_t tellerOneStatsMutexHandle;
-                const osMutexAttr_t tellerOneStatsMutex_attributes = {
-                    .name = "tellerOneStatsMutex"
-                };
-                ```
-                2. Create in MX_FREERTOS_Init()
-                ```c
-                tellerOneStatsMutexHandle = osMutexNew(&tellerOneStatsMutex_attributes);
-                ```
-                3. Acquire with a timeout
-                ```c
-                osMutexAcquire(tellerOneStatsMutexHandle, osWaitForever);  // block indefinitely
-                osMutexAcquire(uart2MutexHandle, 10);                      // timeout in ms
-                ```
-                4. Release
-                ```c
-                osMutexRelease(tellerOneStatsMutexHandle);
-                ```
-                """),
-        Message(chat: Chat(), owner: .user, textContent: """
-                Is this right?
-                ```c
-                osMutexAcquire(tellerOneStatsMutexHandle, osWaitForever);  // block indefinitely
-                ... work ...
-                osMutexRelease(tellerOneStatsMutexHandle);
-                ```
-                """)
-
-        
-    ]
-        
+            
     public var sampleFolders: [Folder] = [
         Folder(name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), files: [
             
@@ -340,14 +303,6 @@ class SampleDatabase {
                 sampleFiles.append(file)
                 context.insert(file)
             }
-        }
-        
-        let chat = Chat()
-        context.insert(chat)
-        
-        for message in sampleMessages {
-            message.chat = chat
-            context.insert(message)
         }
         
         // Add Apple Provider

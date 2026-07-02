@@ -14,6 +14,40 @@ import DatabaseSchema
 import ModelManager
 import HuggingFace
 
+
+//extension Message {
+//    var entry: Transcript.Entry {
+//        switch message.owner {
+//        case .assistant:
+//            entries.append(Transcript.Entry.response(Transcript.Response(assetIDs: <#T##[String]#>, segments: [.text(<#T##Transcript.TextSegment#>)])))
+//        case .user:
+//            entries.append(Transcript.Entry.prompt(
+//                Transcript.Prompt(segments: [
+//                    .text(Transcript.TextSegment(content: self))
+//                ])
+//            ))
+//        }
+//
+//    }
+//    
+//    var transcriptPrompt: Transcript.Prompt {
+//        Transcript.Prompt(segments: [
+//            .text(Transcript.TextSegment(content: self))
+//        ])
+//    }
+//}
+
+//extension Array where Element == DatabaseSchema.Message {
+//    func createTranscript() -> Transcript {
+//        var entries: [Transcript.Entry] = []
+//        
+//        for message in self.sorted(using: KeyPathComparator(\.createdAt, order: .reverse)) {
+//        }
+//        
+//        return Transcript(entries: entries)
+//    }
+//}
+
 @Observable @MainActor
 public final class ChatInstance {
     enum ChatError: Error {
@@ -22,8 +56,10 @@ public final class ChatInstance {
         case modelNotLoaded
         case modelFailedToLoad(reason: String?)
     }
-        
+    
     let databaseContext: ModelContext
+    let irisDB: IrisDB
+    let chat: Chat
     
     let model: ModelManager.Model
 
@@ -33,23 +69,25 @@ public final class ChatInstance {
     let session: LanguageModelSession
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
     
-    public var generatingMessage: DatabaseSchema.Message? = nil
+    public private(set) var streamingResponse: String? = nil
     
-    public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider) throws {
+    public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat) throws {
         self.databaseContext = databaseContext
         self.model = model
+        self.irisDB = irisDB
+        self.chat = chat
         
         guard let provider = try ProviderFactory.makeInstance(configuration: configuration) else { throw ChatError.invalidConfiguration }
         
         self.provider = provider
         self.languageModel = provider.getModel(id: model.id)
         
-        self.session = LanguageModelSession(model: languageModel, tools: [])
+        self.session = LanguageModelSession(model: languageModel, tools: [], transcript: chat.transcript)
         session.toolExecutionDelegate = toolObserver
         session.prewarm()
     }
     
-    public func sendMessage(_ message: String, in chat: Chat) async throws {
+    public func sendMessage(_ message: String) async throws {
         guard !session.isResponding else {
             throw ChatError.alreadyResponding
         }
@@ -58,15 +96,18 @@ public final class ChatInstance {
             throw ChatError.modelNotLoaded
         }
         
-        generatingMessage = DatabaseSchema.Message(chat: chat, owner: .assistant, textContent: "")
-        
-        for try await chunk in session.streamResponse(to: Prompt(message)) {
-            generatingMessage?.textContent = chunk.content
+        // Start the stream response
+        let stream = session.streamResponse(to: Prompt(message))
+        // Update transcript because the user message was just inserted
+        chat.apply(session.transcript)
+
+        // Update the streamingResponse as new text comes from the stream.
+        for try await chunk in stream {
+            streamingResponse = chunk.content
         }
         
-        guard let message = generatingMessage else { return }
-        generatingMessage = nil
-        databaseContext.insert(message)
+        streamingResponse = nil
+        chat.apply(session.transcript)
     }
         
 //    /// Downloads the model weights with progress, then loads them into memory.
