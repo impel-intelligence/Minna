@@ -5,9 +5,13 @@
 //  Created by Taylor Lineman on 6/29/26.
 //
 //
+
 import AnyLanguageModel
+import Foundation
 
 actor ToolExecutionObserver: ToolExecutionDelegate {
+    var searchedDocuments: [UUID] = []
+    
     func didGenerateToolCalls(_ toolCalls: [Transcript.ToolCall], in session: LanguageModelSession) async {
         print("Generated tool calls: \(toolCalls)")
     }
@@ -19,6 +23,10 @@ actor ToolExecutionObserver: ToolExecutionDelegate {
     }
 
     func didExecuteToolCall(_ toolCall: Transcript.ToolCall, output: Transcript.ToolOutput, in session: LanguageModelSession) async {
+        if toolCall.toolName == "searchDocuments" {
+            print(output.segments)
+        }
+        
         print("Executed tool call: \(toolCall)")
     }
 }

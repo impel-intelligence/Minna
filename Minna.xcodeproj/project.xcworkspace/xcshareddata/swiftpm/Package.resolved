@@ -1,15 +1,6 @@
 {
-  "originHash" : "c3f181ae9fe2c471c9164547a1de48e14b959a5bb8375208c3405201b6d2b7ae",
+  "originHash" : "0b850f68620909e26d1a1db50aa5b64274fec48c79fefc4120cb1f6ab3142def",
   "pins" : [
-    {
-      "identity" : "anylanguagemodel",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/impel-intelligence/AnyLanguageModel",
-      "state" : {
-        "revision" : "bb82653260ae3f306bea09a38f7ba3bdb07b3d26",
-        "version" : "1.0.0"
-      }
-    },
     {
       "identity" : "blurbkit",
       "kind" : "remoteSourceControl",
@@ -150,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "0687f71944021d616d34d922343dcef086855920",
-        "version" : "600.0.1"
+        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
+        "version" : "602.0.0"
       }
     },
     {

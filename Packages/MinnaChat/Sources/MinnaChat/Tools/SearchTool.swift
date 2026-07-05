@@ -34,14 +34,15 @@ struct SearchTool: Tool {
         print("Call Search Tool")
         let searchResults = try await self.database.search(query: .init(text: arguments.query), nItems: arguments.nItems)
         
-        var toolOutput: String = ""
+        var toolOutput: [String] = ["The following documents are the result of searching '\(arguments.query)'. Each document is separated by a markdown header. Only partial documents are included, the pieces that are included have been deemed as 'important' based on the search query. Document pieces are separated by a new line. Use the getDocument tool to retrieve the full document context."]
         
         for result in searchResults {
             var importantText = ""
             
+            // TODO: Fetch the number of pages. Really need to embed document positions into the data that is retrieved for better LLM tool calling.
             if result.importantPieces.isEmpty {
                 let documentPrompt = """
-                ## Document: \(result.document.title)
+                # Document: \(result.document.title) uuid: {\(result.document.uuid)}
                 \(result.document.description)
                 """
 
@@ -53,8 +54,7 @@ struct SearchTool: Tool {
                 }
                 
                 let documentPrompt = """
-                ## Document: \(result.document.title)
-                The following are pieces of this document that best matched the search. Use the getDocument tool to retrieve the full document context. Pieces are separated by two new lines. 
+                ## Document: \(result.document.title) uuid: {\(result.document.uuid)}
                 
                 \(importantText)
                 """
@@ -63,9 +63,7 @@ struct SearchTool: Tool {
             }
         }
         
-        print("Called search tool with '\(arguments.query)', \(arguments.nItems)\n\(toolOutput)")
-        
-        return toolOutput
+        return toolOutput.joined(separator: "\n")
     }
 }
 

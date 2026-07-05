@@ -66,36 +66,6 @@
             endingLineNumber = "478"
             landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "187E483A-724E-4420-A5F4-0194A32A4D03 - a6265b16c7c15d59"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.AsyncThrowingStream&lt;AnyLanguageModel.LanguageModelSession.ResponseStream&lt;&#x3c4;_0_0&gt;.Snapshot, Swift.Error&gt;.Continuation) -&gt; () in AnyLanguageModel.AnthropicLanguageModel.streamResponse&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) -&gt; AnyLanguageModel.LanguageModelSession.ResponseStream&lt;&#x3c4;_0_0&gt;"
-                  moduleName = "Minna.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "478"
-                  endingLineNumber = "478">
-               </Location>
-               <Location
-                  uuid = "187E483A-724E-4420-A5F4-0194A32A4D03 - 4d34a254de8b7b5a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 (Swift.AsyncThrowingStream&lt;AnyLanguageModel.LanguageModelSession.ResponseStream&lt;&#x3c4;_0_0&gt;.Snapshot, Swift.Error&gt;.Continuation) -&gt; () in AnyLanguageModel.AnthropicLanguageModel.streamResponse&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) -&gt; AnyLanguageModel.LanguageModelSession.ResponseStream&lt;&#x3c4;_0_0&gt;"
-                  moduleName = "Minna.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "478"
-                  endingLineNumber = "478">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -206,6 +176,38 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "472"
             endingLineNumber = "472"
+            landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1681E78B-BAE2-4BE1-A3EC-DA609A141A42"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../git/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "667"
+            endingLineNumber = "667"
+            landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "92A64F19-8B3E-4970-83FD-E65ED80E0DB8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../git/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "639"
+            endingLineNumber = "639"
             landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
             landmarkType = "7">
          </BreakpointContent>

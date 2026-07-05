@@ -27,7 +27,7 @@ struct ChatView: View {
     @State var selectedModel: Model?
     
     @State var chatInstance: ChatInstance?
-    @State var chatMessage: String = ""
+    @State var chatMessage: String = "Search my database for displays and make a summary."
 
     @State var presentModelPicker: Bool = false
 
@@ -36,31 +36,35 @@ struct ChatView: View {
     var body: some View {
         GeometryReader { reader in
             ScrollView {
-                VStack {
-                    ForEach(chat.transcript) { entry in
-                        switch entry {
-                        case .instructions:
-                            EmptyView()
-                        case .prompt(let prompt):
-                            UserMessage(prompt: prompt, proxy: reader)
-                        case .toolCalls(let toolCalls):
-                            ToolCallsView(toolCalls: toolCalls, theme: .azure)
-                        case .toolOutput(let toolOutput):
-                            ToolOutputView(output: toolOutput, theme: .azure)
-                        case .response(let response):
-                            AssistantMessage(response: response, proxy: reader)
-                        @unknown default:
-                            EmptyView()
+                if let chatInstance {
+                    VStack {
+                        ForEach(chatInstance.session.transcript) { entry in
+                            switch entry {
+                            case .instructions:
+                                EmptyView()
+                            case .prompt(let prompt):
+                                UserMessage(prompt: prompt, proxy: reader)
+                            case .toolCalls(let toolCalls):
+                                ToolCallsView(toolCalls: toolCalls, theme: .azure)
+                            case .toolOutput(let toolOutput):
+                                ToolOutputView(output: toolOutput, theme: .azure)
+                            case .response(let response):
+                                AssistantMessage(response: response, proxy: reader)
+                            @unknown default:
+                                EmptyView()
+                            }
                         }
-                    }
-                    
-                    if let streamingResponse = chatInstance?.streamingResponse {
-                        AssistantMessage(response: Transcript.Response.tempResponse(content: streamingResponse), proxy: reader)
-                    }
+                        
+                        if let streamingResponse = chatInstance.streamingResponse {
+                            AssistantMessage(response: Transcript.Response.tempResponse(content: streamingResponse), proxy: reader)
+                        }
+                    }                                                       
+                    .padding(.horizontal)
+                } else {
+                    Text("No Model Selected")
                 }
-                .padding(.horizontal)
             }
-//            .defaultScrollAnchor(.bottom)
+            .defaultScrollAnchor(.bottom)
             .safeAreaInset(edge: .bottom) {
                 chatBox
             }
@@ -145,7 +149,7 @@ struct ChatView: View {
     func initializeChatInstance() {
         if let model = selectedModel, let config = selectedProvider {
             do {
-                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat)
+                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat, instructions: AskMinnaInstructions.self)
             } catch {
                 print("Failed to get database \(error)")
             }

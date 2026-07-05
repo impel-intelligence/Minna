@@ -64,12 +64,12 @@ public final class ChatInstance {
     let provider: any ModelProvider
     let languageModel: any LanguageModel
     
-    let session: LanguageModelSession
+    public let session: LanguageModelSession
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
     
     public private(set) var streamingResponse: String? = nil
     
-    public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat) throws {
+    public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: AskMinnaInstructions.Type) throws {
         self.databaseContext = databaseContext
         self.model = model
         self.irisDB = irisDB
@@ -80,10 +80,17 @@ public final class ChatInstance {
         self.provider = provider
         self.languageModel = provider.getModel(id: model.id)
         
-        self.session = LanguageModelSession(model: languageModel, tools: [
+        let tools: [any Tool] = [
             SearchTool(database: irisDB),
             GetDocumentTool(database: irisDB)
-        ], transcript: chat.transcript)
+        ]
+        
+        if chat.transcript.isEmpty {
+            self.session = LanguageModelSession(model: languageModel, tools: tools, instructions: instructions.getPrompt())
+        } else {
+            self.session = LanguageModelSession(model: languageModel, tools: tools, transcript: chat.transcript)
+        }
+        
         session.toolExecutionDelegate = toolObserver
         session.prewarm()
     }
@@ -97,19 +104,20 @@ public final class ChatInstance {
             throw ChatError.modelNotLoaded
         }
         
-        // Start the stream response
-        let stream = session.streamResponse(to: Prompt(message), options: GenerationOptions(maximumResponseTokens: 4096))
-        // Update transcript because the user message was just inserted
-//        try await session.respond(to: Prompt(message))
-        chat.apply(session.transcript)
-
-        // Update the streamingResponse as new text comes from the stream.
-        for try await chunk in stream {
-            streamingResponse = chunk.content
-        }
+        var generationOptions = GenerationOptions(maximumResponseTokens: 4096)
+        generationOptions[custom: AnthropicLanguageModel.self] = .init(
+            thinking: AnthropicLanguageModel.CustomGenerationOptions.Thinking.adaptive(display: .summarized),
+            effort: .high
+        )
         
-        streamingResponse = nil
+        // Start the stream response
+        let stream = session.streamResponse(to: Prompt(message), options: generationOptions)
+        
+        let _ = try await stream.collect()
+        
+        // Save the transcript into persistence
         chat.apply(session.transcript)
+        try databaseContext.save()
     }
         
 //    /// Downloads the model weights with progress, then loads them into memory.
