@@ -20,6 +20,8 @@ struct ChatView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
 //    @Environment(ModelDownloader.self) var modelDownloader
+    
+    @State var citationHandler: CitationHandler = CitationHandler()
         
     @Query(sort: \ConfiguredProvider.name) private var providers: [ConfiguredProvider]
     @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [:]
@@ -68,6 +70,21 @@ struct ChatView: View {
             .safeAreaInset(edge: .bottom) {
                 chatBox
             }
+        }
+        .environment(citationHandler)
+        .environment(\.openURL, OpenURLAction { url in
+            print(url)
+            guard url.scheme == "cite", let docID = url.host() else {
+                return .systemAction
+            }
+            let title = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+                .queryItems?.first(where: { $0.name == "title" })?.value
+            // TODO: navigate to / preview the cited document using docID (and title).
+            print(docID, title)
+            return .handled
+        })
+        .inspector(isPresented: .constant(true)) {
+            CitationColumnView(citations: $citationHandler.citations)
         }
         .task {
             for configuration in providers {

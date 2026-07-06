@@ -11,14 +11,14 @@ import Textual
 import DatabaseSchema
 
 struct SegmentView: View {
+    @Environment(CitationHandler.self) var handler
+    
     let segment: Transcript.Segment
     
     var body: some View {
         switch segment {
         case .text(let text):
-            StructuredText(markdown: text.content, syntaxExtensions: [
-                .emoji(<#T##emoji: Set<Emoji>##Set<Emoji>#>)
-            ])
+            StructuredText(text.content, parser: handler)
                 .textual.textSelection(.enabled)
                 .textual.codeBlockStyle(MinnaCodeBlockStyle(theme: .azure))
         case .image(let image):
