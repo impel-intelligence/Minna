@@ -83,8 +83,18 @@ struct ChatView: View {
             print(docID, title)
             return .handled
         })
-        .inspector(isPresented: .constant(true)) {
+        .inspector(isPresented: $citationHandler.citationSidebarOpen) {
             CitationColumnView(citations: $citationHandler.citations)
+        }
+        .toolbar {
+            ToolbarItem(id: "sidebar") {
+                Button {
+                    citationHandler.citationSidebarOpen.toggle()
+                } label: {
+                    Label("Toggle Sidebar", systemSymbol: .sidebarRight)
+                }
+            }
+
         }
         .task {
             for configuration in providers {

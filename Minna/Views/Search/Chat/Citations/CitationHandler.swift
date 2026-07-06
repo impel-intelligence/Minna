@@ -26,16 +26,16 @@ struct Citation: Hashable, Identifiable {
 
 /// A ``MarkupParser`` that understands `<cite doc_id="…" title="…"/>` markup.
 ///
-/// Each citation is rendered as a small, raised, footnote-style number (`¹`, `²`, …) that is
+/// Each citation is rendered as a small, raised, superscript-style number (`¹`, `²`, …) that is
 /// numbered by order of appearance and remains tappable via a `cite://<doc_id>` link. Everything
 /// else is delegated to Textual's built-in Markdown parser.
-///
-/// - Authored by: Claude Opus 4.8 (Anthropic)
 @Observable
 class CitationHandler: MarkupParser {
     private let base: AttributedStringMarkdownParser
 
     var citations: OrderedSet<Citation> = []
+    var citationSidebarOpen: Bool = false
+    var hasOpenedCitationsOnce: Bool = false
 
     init() {
         self.base = AttributedStringMarkdownParser(baseURL: nil) // (baseURL: URL(string: "iris://"))
@@ -45,6 +45,13 @@ class CitationHandler: MarkupParser {
         let citedText = input.replaceCitations(existing: self.citations)
         self.citations.formUnion(citedText.citations)
         
+        // Only pop the citations open once. If the user closes it manually we don't want to re-open it.
+        if !citations.isEmpty && !citationSidebarOpen && !hasOpenedCitationsOnce {
+            citationSidebarOpen = true
+            hasOpenedCitationsOnce = true
+        }
+        
+        /// - Authored by: Claude Opus 4.8 (Anthropic)
         var attributed = try base.attributedString(for: citedText.text)
         
         // Collect the ranges first: mutating attributes below would otherwise interfere with
