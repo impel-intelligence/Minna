@@ -16,11 +16,14 @@ public final class Chat {
     public var createdAt: Date
     public var lastMessage: Date?
     public var transcript: Transcript = Transcript()
+    
+    public var theme: ThemeColor
         
     public init(uuid: UUID = UUID(), createdAt: Date = .now) {
         self.uuid = uuid
         self.createdAt = createdAt
         self.lastMessage = nil
+        self.theme = .random
     }
     
     public func apply(_ transcript: Transcript) {

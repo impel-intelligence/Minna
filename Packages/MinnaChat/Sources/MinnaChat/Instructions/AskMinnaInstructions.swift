@@ -34,7 +34,7 @@ public struct AskMinnaInstructions: ModelInstruction {
         
         Rules:
         Place the tag directly after the claim it supports, before the sentence's closing punctuation if there is a natural spot, otherwise immediately after it.
-        - One tag per claim. If a sentence combines facts from multiple documents, split it into separate clauses or sentences so each can carry its own citation.
+        - If a paragraph sites the same document multiple times, place the citations at the end of the paragraph.
         - Never omit doc_id, even if you've already cited that document elsewhere in the response.
         - Never nest or modify the tag format — no markdown, no extra attributes, no line breaks inside it.
         - Do not cite a document unless the specific claim came from that document's retrieved content.
@@ -46,7 +46,8 @@ public struct AskMinnaInstructions: ModelInstruction {
         4. If initial results are empty or weak, broaden the query, inform the user you did so, and only then present findings.
         
         ## Output format
-        - Lead with a direct answer or summary, with inline citations per claim as described above.
+        - Lead with a direct answer and inline citations per claim as described above.
+        - Only produce a summary if the user explicitly asks for one.
         - If no relevant content was found even after broadening, state that clearly instead of producing a partial or speculative answer.  
         """)
     }

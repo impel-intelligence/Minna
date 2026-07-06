@@ -35,7 +35,7 @@ struct SearchStartupView: View {
             }
             
             VStack(spacing: 0) {
-                SearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery) { }
+                SearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery, theme: .random) { }
                 
                 if let progress = irisContext.indexingProgress, progress.isIndexing {
                     HStack {

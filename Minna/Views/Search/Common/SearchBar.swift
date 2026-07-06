@@ -7,10 +7,12 @@
 
 import SwiftUI
 import SFSafeSymbols
+import DatabaseSchema
 
 struct SearchBar: View {
     var placeHolder: String
     @Binding var searchQuery: String
+    let theme: ThemeColor
     let submit: () -> Void
 
     var body: some View {
@@ -36,6 +38,8 @@ struct SearchBar: View {
         .padding(.vertical, 10)
         .frame(maxWidth: 500)
         .glassEffect(.regular, in: .rect(cornerRadius: 100))
+        .shadow(color: theme.background.opacity(0.18), radius: 18, x: 0, y: 8)
+
         .onSubmit {
             submit()
         }
@@ -44,7 +48,7 @@ struct SearchBar: View {
 
 #Preview {
     @Previewable @State var searchQuery: String = "Hello"
-    SearchBar(placeHolder: "Hello World", searchQuery: $searchQuery) {
+    SearchBar(placeHolder: "Hello World", searchQuery: $searchQuery, theme: .random) {
         print("Hello")
     }
 }

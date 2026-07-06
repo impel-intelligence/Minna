@@ -11,48 +11,34 @@ import Textual
 import AnyLanguageModel
 
 struct UserMessage: View {
+    let theme: ThemeColor
     let prompt: Transcript.Prompt
     let proxy: GeometryProxy
-    
-    @State var isHovering: Bool = false
     
     var body: some View {
         ForEach(prompt.segments) { segment in
             if case .text(let text) = segment {
-                VStack {
-                    HStack {
-                        Spacer()
-                        StructuredText(markdown: text.content)
-                            .textual.textSelection(.enabled)
-                            .textual.padding(.all, .fontScaled(0))
-                            .padding(5)
-                            .background(ThemeColor.azure.background)
-                            .cornerRadius(8)
-                            .frame(maxWidth: proxy.size.width * 2/3, alignment: .trailing)
-                    }
-                    //            if isHovering {
-                    //                HStack {
-                    //                    Spacer()
-                    //                    Button {
-                    //
-                    //                    } label: {
-                    //                        Label("Copy", systemSymbol: .documentOnDocument)
-                    //                            .imageScale(.small)
-                    //                    }
-                    //                    .labelStyle(.iconOnly)
-                    //                    .buttonStyle(.plain)
-                    //                    Text(message.createdAt, style: .relative)
-                    //                        .help(message.createdAt.formatted(date: .complete, time: .complete))
-                    //                }
-                    //                .font(.caption)
-                    //                .foregroundStyle(.secondary)
-                    //            }
-                }
-                .contentShape(.rect)
-                .onHover { hovering in
-                    isHovering = hovering
+                HStack {
+                    Spacer()
+                    StructuredText(markdown: text.content)
+                        .textual.textSelection(.enabled)
+                        .textual.padding(.all, .fontScaled(0))
+                        .padding(5)
+                        .background {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.white)
+                                .stroke(Color.border, lineWidth: 1)
+                                .shadow(color: theme.background.opacity(0.35), radius: 10, x: 0, y: 0)
+                        }
+                        .frame(maxWidth: proxy.size.width * 2/3, alignment: .trailing)
                 }
             }
         }
+    }
+}
+
+#Preview {
+    GeometryReader { reader in
+        UserMessage(theme: .random, prompt: .init(segments: [.text(.init(content: "What was the."))]), proxy: reader)
     }
 }

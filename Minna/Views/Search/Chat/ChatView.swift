@@ -45,7 +45,7 @@ struct ChatView: View {
                             case .instructions:
                                 EmptyView()
                             case .prompt(let prompt):
-                                UserMessage(prompt: prompt, proxy: reader)
+                                UserMessage(theme: chat.theme, prompt: prompt, proxy: reader)
                             case .toolCalls(let toolCalls):
                                 ToolCallsView(toolCalls: toolCalls, theme: .azure)
                             case .toolOutput(let toolOutput):
@@ -141,7 +141,7 @@ struct ChatView: View {
                     ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
                 }
 
-                SearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage) {
+                SearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage, theme: chat.theme) {
                     Task {
                         let tmpMessage = chatMessage
                         chatMessage = ""
