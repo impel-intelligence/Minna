@@ -66,9 +66,7 @@ public final class ChatInstance {
     
     public let session: LanguageModelSession
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
-    
-    public private(set) var streamingResponse: String? = nil
-    
+        
     public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: AskMinnaInstructions.Type) throws {
         self.databaseContext = databaseContext
         self.model = model

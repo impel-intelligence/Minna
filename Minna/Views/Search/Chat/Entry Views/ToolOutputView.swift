@@ -16,7 +16,7 @@ struct ToolOutputView: View {
     var body: some View {
         DisclosureGroup {
             ForEach(output.segments) { segment in
-                SegmentView(segment: segment)
+                SegmentView(segment: segment, isStreaming: false)
                     .padding(.leading, 10)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

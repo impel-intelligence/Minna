@@ -14,11 +14,13 @@ struct SegmentView: View {
     @Environment(CitationHandler.self) var handler
     
     let segment: Transcript.Segment
-    
+    /// True when this segment view is the one currently generating.
+    let isStreaming: Bool
+
     var body: some View {
         switch segment {
         case .text(let text):
-            StructuredText(text.content, parser: handler)
+            StreamingStructuredText(content: text.content, isStreaming: isStreaming)
                 .textual.textSelection(.enabled)
                 .textual.codeBlockStyle(MinnaCodeBlockStyle(theme: .azure))
         case .image(let image):

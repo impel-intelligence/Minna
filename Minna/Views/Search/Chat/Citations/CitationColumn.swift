@@ -13,17 +13,23 @@ import SwiftData
 struct CitationColumnView: View {
     @Environment(\.modelContext) private var modelContext
     @Binding var citations: OrderedSet<Citation>
-    @State private var files: [File] = []
+    @State var files: [File] = []
 
     var body: some View {
         List {
             Section("References") {
                 ForEach(files.enumerated(), id: \.offset) { (offset, file) in
-                    ListFileCard(file: file, editingTitle: .constant(false), editingDescription: .constant(false))
-//                    HStack {
-//                        Text("\(offset + 1)")
-//                        Text(citation.title)
-//                    }
+                    HStack(spacing: 0) {
+                        Text("\(offset)")
+                            .font(.headline)
+                            .fontWeight(.medium)
+                            .padding(5)
+                            .background {
+                                UnevenRoundedRectangle(cornerRadii: .init(topLeading: 8, bottomLeading: 8))
+                                    .foregroundStyle(Color.accentColor.opacity(0.2))
+                            }
+                        ListFileCard(file: file, editingTitle: .constant(false), editingDescription: .constant(false))
+                    }
                 }
             }
         }
@@ -55,6 +61,10 @@ struct CitationColumnView: View {
         Citation(id: UUID(), title: "The first cited document"),
         Citation(id: UUID(), title: "The second cited document")
     ]
+    @Previewable @State var files: [File] = [
+        File(createdAt: .now, folder: Folder(name: "t", icon: FolderIcon(symbol: .emoji("3"), color: .azure)), title: "Hell", shortDescription: "sad", color: .random, type: ContentType.pdf, url: URL(string: "https://google.com")!, bookmark: nil, source: "Hello")
+    ]
     
-    CitationColumnView(citations: $citations)
+    
+    CitationColumnView(citations: $citations, files: files)
 }

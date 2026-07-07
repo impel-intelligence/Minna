@@ -3,6 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 6/29/26.
+//  Edited by Claude Opus 4.8 (Anthropic) on 2026-07-06.
 //
 
 import SwiftUI
@@ -51,14 +52,12 @@ struct ChatView: View {
                             case .toolOutput(let toolOutput):
                                 ToolOutputView(output: toolOutput, theme: .azure)
                             case .response(let response):
-                                AssistantMessage(response: response, proxy: reader)
+                                // Check to see if this entry is the latest one in the transcript, AND the session is currently responding to a query.
+                                let isStreaming = chatInstance.session.isResponding && entry.id == chatInstance.session.transcript.last?.id
+                                AssistantMessage(response: response, proxy: reader, isStreaming: isStreaming)
                             @unknown default:
                                 EmptyView()
                             }
-                        }
-                        
-                        if let streamingResponse = chatInstance.streamingResponse {
-                            AssistantMessage(response: Transcript.Response.tempResponse(content: streamingResponse), proxy: reader)
                         }
                     }                                                       
                     .padding(.horizontal)
