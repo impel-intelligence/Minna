@@ -85,6 +85,7 @@ struct AskMinnaView: View {
             .padding(.horizontal)
         }
         .theme(chat.theme)
+        .navigationTitle(chat.file.title)
         .environment(citationHandler)
         .environment(\.openURL, OpenURLAction { url in
             guard url.scheme == "cite", let docID = url.host() else {

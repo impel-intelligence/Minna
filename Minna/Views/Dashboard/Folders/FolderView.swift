@@ -228,7 +228,7 @@ struct FolderView: View {
             LazyVGrid(columns: columns) {
                 ForEach(filteredFiles) { file in
                     OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
-                        .onTapGesture {
+                        .onTapGesture(count: 1) {
                             tapGesture(for: file)
                         }
                 }

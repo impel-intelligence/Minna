@@ -30,18 +30,7 @@ struct CitationColumnView: View {
                                 UnevenRoundedRectangle(cornerRadii: .init(topLeading: 8, bottomLeading: 8))
                                     .foregroundStyle(Color.accentColor.opacity(0.2))
                             }
-                        ListFileCard(file: file, editingTitle: .constant(false), editingDescription: .constant(false))
-                            .contextMenu {
-                                Button {
-                                    do {
-                                        try file.open(openURL: openURL)
-                                    } catch {
-                                        print("Failed to open original file: \(error)")
-                                    }
-                                } label: {
-                                    Label("Open Original", systemSymbol: .arrowUpRight)
-                                }
-                            }
+                        OpaqueFileCard(file: file, enableEditing: false, isEditingText: .constant(false), viewMode: .constant(.list), selectedFiles: .constant([]))
                     }
                     .listRowSeparator(.hidden)
                 }

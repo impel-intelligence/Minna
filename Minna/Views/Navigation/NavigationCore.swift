@@ -11,22 +11,6 @@ import SFSafeSymbols
 import SentrySwift
 import DatabaseSchema
 
-enum NavigationDestination: Hashable {
-    case search
-    case recents
-    case folder(Folder)
-}
-
-@Observable
-final class NavigationRouter {
-    var path: NavigationPath = NavigationPath()
-    var selectedTab: NavigationDestination? = .search
-    
-    func push(_ chat: Chat) {
-        self.path.append(chat)
-    }
-}
-
 public struct NavigationCore: View {
     @Environment(\.undoManager) private var undoManager
     @Environment(\.modelContext) private var modelContext
@@ -100,6 +84,7 @@ public struct NavigationCore: View {
                 }
             }
         }
+        .router(navigationRouter)
         .onAppear {
             modelContext.undoManager = undoManager
         }

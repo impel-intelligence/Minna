@@ -24,8 +24,10 @@ struct OpaqueFileCard: View {
     @Environment(\.irisContext) var irisContext
     @Environment(\.openURL) var openURL
     @Environment(\.database) var database
+    @Environment(\.router) var navigationRouter
     
     let file: File
+    var enableEditing: Bool = true
     
     @FocusState private var focusedField: CardEditField?
     
@@ -62,6 +64,9 @@ struct OpaqueFileCard: View {
         .onChange(of: editingDescription) { _, newValue in
             isEditingText = newValue
         }
+        .onTapGesture(count: 2) {
+            open(file)
+        }
     }
     
     @ViewBuilder
@@ -76,78 +81,80 @@ struct OpaqueFileCard: View {
             Label(selectedFiles.count <= 1 ? "Open Original" : "Open Originals", systemSymbol: .arrowUpRight)
         }
         
-        // TODO: Support multi-rename, look at macOS multi-rename for inspo
-        Button {
-            editingTitle.toggle()
-            focusedField = .title
-        } label: {
-            Label(editingTitle ? "Stop Rename" : "Rename", systemSymbol: .pencilLine)
-        }
-        
-        Button {
-            editingDescription.toggle()
-            focusedField = .description
-        } label: {
-            Label(editingDescription ? "Stop Editing" : "Edit Description", systemSymbol: .pencilLine)
-        }
-
-        Button {
-            let filesToGenerate = selectedFiles.isEmpty ? [file] : selectedFiles
-            
-            for file in filesToGenerate {
-                database.queueDescriptionUpdate(for: file)
+        if enableEditing {
+            // TODO: Support multi-rename, look at macOS multi-rename for inspo
+            Button {
+                editingTitle.toggle()
+                focusedField = .title
+            } label: {
+                Label(editingTitle ? "Stop Rename" : "Rename", systemSymbol: .pencilLine)
             }
-        } label: {
-            Label(selectedFiles.count <= 1 ? "Generate Description" : "Generate Descriptions", systemSymbol: .sparkles)
-        }
-        
-        Menu {
-            ForEach(ThemeColor.allCases) { theme in
-                Button {
-                    let filesToChange = selectedFiles.isEmpty ? [file] : selectedFiles
-                    
-                    for file in filesToChange {
-                        file.color = theme
-                    }
-                } label: {
-                    Label(theme.description, systemSymbol: .circleFill)
-                        .foregroundStyle(theme.background)
-                }
-            }
-        } label: {
-            Label("Change Color", systemSymbol: .paintpalette)
             
-        }
-        
-        FolderMenu { newFolder in
-            withAnimation {
-                let filesToMove = selectedFiles.isEmpty ? [file] : selectedFiles
+            Button {
+                editingDescription.toggle()
+                focusedField = .description
+            } label: {
+                Label(editingDescription ? "Stop Editing" : "Edit Description", systemSymbol: .pencilLine)
+            }
+            
+            Button {
+                let filesToGenerate = selectedFiles.isEmpty ? [file] : selectedFiles
                 
-                for file in filesToMove {
-                    move(file: file, to: newFolder)
+                for file in filesToGenerate {
+                    database.queueDescriptionUpdate(for: file)
                 }
+            } label: {
+                Label(selectedFiles.count <= 1 ? "Generate Description" : "Generate Descriptions", systemSymbol: .sparkles)
             }
-        } label: {
-            Label(selectedFiles.count <= 1 ? "Move" : "Move Selected", systemSymbol: .folder)
-        }
-        
-        Divider()
-        
-        Button(role: .destructive) {
-            withAnimation {
-                if selectedFiles.isEmpty {
-                    delete(file)
-                } else {
-                    for selectedFile in selectedFiles {
-                        delete(selectedFile)
+            
+            Menu {
+                ForEach(ThemeColor.allCases) { theme in
+                    Button {
+                        let filesToChange = selectedFiles.isEmpty ? [file] : selectedFiles
+                        
+                        for file in filesToChange {
+                            file.color = theme
+                        }
+                    } label: {
+                        Label(theme.description, systemSymbol: .circleFill)
+                            .foregroundStyle(theme.background)
                     }
-                    selectedFiles.removeAll()
                 }
+            } label: {
+                Label("Change Color", systemSymbol: .paintpalette)
+                
             }
-        } label: {
-            Label(selectedFiles.isEmpty ? "Delete" : "Delete Selected", systemSymbol: .trash)
+            
+            FolderMenu { newFolder in
+                withAnimation {
+                    let filesToMove = selectedFiles.isEmpty ? [file] : selectedFiles
+                    
+                    for file in filesToMove {
+                        move(file: file, to: newFolder)
+                    }
+                }
+            } label: {
+                Label(selectedFiles.count <= 1 ? "Move" : "Move Selected", systemSymbol: .folder)
+            }
+            
+            Divider()
+            
+            Button(role: .destructive) {
+                withAnimation {
+                    if selectedFiles.isEmpty {
+                        delete(file)
+                    } else {
+                        for selectedFile in selectedFiles {
+                            delete(selectedFile)
+                        }
+                        selectedFiles.removeAll()
+                    }
+                }
+            } label: {
+                Label(selectedFiles.isEmpty ? "Delete" : "Delete Selected", systemSymbol: .trash)
+            }
+            .foregroundStyle(.red)
         }
-        .foregroundStyle(.red)
     }
     
     private func move(file: File, to newFolder: Folder) {
@@ -166,11 +173,15 @@ struct OpaqueFileCard: View {
     }
     
     private func open(_ file: File) {
-        do {
-            try file.open(openURL: openURL)
-        } catch {
-            SentrySDK.capture(error: error)
-            print("Failed to open url: \(error) - \(file.url)")
+        if file.type == .askMinna, let chat = file.chat {
+            navigationRouter.push(chat)
+        } else {
+            do {
+                try file.open(openURL: openURL)
+            } catch {
+                SentrySDK.capture(error: error)
+                print("Failed to open url: \(error) - \(file.url)")
+            }
         }
     }
 }
