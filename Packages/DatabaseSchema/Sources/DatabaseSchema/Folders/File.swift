@@ -24,7 +24,11 @@ public final class File {
     @Relationship(deleteRule: .nullify, inverse: \Folder.files)
     public var folder: Folder
     
-    @Relationship(.unique, deleteRule: .cascade, maximumModelCount: 1, inverse: \Chat.file)
+    /// There is a SwiftData crash (Unexpected backing data for snapshot creation: SwiftData._FullFutureBackingData<>) when
+    /// deleting a model that contains a cascading delete rule when an undo manager is present. The exact crash occurs when
+    /// the backing data has not been fully materialized (grabbed from the SQLITE database). This is a recent bug that cropped
+    /// up in Xcode 26, and it has a feedback tracking it FB22539495: https://developer.apple.com/forums/thread/822241.
+    @Relationship(.unique, deleteRule: .cascade)
     public var chat: Chat? = nil
     
     public var title: String

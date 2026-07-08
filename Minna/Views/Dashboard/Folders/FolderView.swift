@@ -302,15 +302,23 @@ struct FolderView: View {
         }
     }
     
+    /// Deletes a file from the SwiftData store and the Iris search index.
+    /// A chat file's `chat` relationship is loaded lazily, so it is normally an
+    /// unfaulted `_FullFutureBackingData` future. Deleting the file fires the
+    /// `File.chat` `.cascade` rule, and SwiftData crashes in `ModelSnapshot`
+    /// ("Unexpected backing data for snapshot creation: _FullFutureBackingData")
+    /// while snapshotting that un-materialized chat. Reading a stored property
+    /// first forces the chat to fault into concrete backing data, after which the
+    /// cascade delete succeeds. Verified against an in-memory store reproduction.
+    ///
+    /// By realizing components of the chat, SwiftData is forced to load the model,
+    /// which allows it to properly delete the chat.
+    ///
+    /// - Fix Authored by: Claude Opus 4.8 (Anthropic)
     private func delete(_ file: File) {
-        // Make sure any pending changes are saved before deletion. Fixes a crash when deleting unsaved documents.
-        if modelContext.hasChanges {
-            do {
-                try modelContext.save()
-            } catch {
-                SentrySDK.capture(error: error)
-                print("Failed to flush pending changes before delete \(error)")
-            }
+        // Fault the related chat into memory so the cascade delete can snapshot it.
+        if let chat = file.chat {
+            _ = chat.uuid
         }
 
         modelContext.delete(file)

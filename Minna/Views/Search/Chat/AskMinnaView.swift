@@ -85,7 +85,7 @@ struct AskMinnaView: View {
             .padding(.horizontal)
         }
         .theme(chat.theme)
-        .navigationTitle(chat.file.title)
+        .navigationTitle(chat.title())
         .environment(citationHandler)
         .environment(\.openURL, OpenURLAction { url in
             guard url.scheme == "cite", let docID = url.host() else {
@@ -127,10 +127,9 @@ struct AskMinnaView: View {
                     guard let provider = try ProviderFactory.makeInstance(configuration: configuration) else { continue }
                     let models = try await provider.availableModels()
 
-                    // TODO: Remember the user's model selection
-                    // Set the selected model to the first available.
-                    if selectedModel == nil, let first = models.first {
-                        selectedModel = first
+                    if let lastUsedModel = chat.lastUsedModel,
+                       let model = models.first(where: { $0.id == lastUsedModel }) {
+                        selectedModel = model
                         selectedProvider = configuration
                     }
 
@@ -138,6 +137,14 @@ struct AskMinnaView: View {
                 } catch {
                     print("Failed to fetch available models for \(configuration.name): \(error)")
                 }
+            }
+            
+            // If no previously used model was found, pick the first available one
+            if selectedModel == nil,
+                let firstConfig = providerDatabase.keys.first,
+                let firstModel = providerDatabase[firstConfig]?.first {
+                selectedModel = firstModel
+                selectedProvider = firstConfig
             }
         }
         .onChange(of: selectedModel) { _, _ in
@@ -221,10 +228,8 @@ struct AskMinnaView: View {
         chatMessage = ""
 
         if !hasStarted {
-            // First message: persist the draft, then glide the bar to the bottom.
-            /// - Authored by: Claude Opus 4.8 (Anthropic)
             modelContext.insert(chat.file)
-            hasStarted = true
+            hasStarted = true // Start slide animation
         }
 
         Task {
@@ -249,6 +254,13 @@ struct AskMinnaView: View {
     private func initializeChatInstance() {
         if let model = selectedModel, let config = selectedProvider {
             do {
+                // Update the chat so it will open with the model you last used.
+                chat.lastUsedModel = model.id
+                // If we have already started chatting update the chat in the database. Otherwise, we don't want to insert here or empty chats will be added to the file list.
+                if hasStarted {
+                    modelContext.insert(chat)
+                }
+                
                 chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat, instructions: AskMinnaInstructions.self)
             } catch {
                 print("Failed to get database \(error)")

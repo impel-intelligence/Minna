@@ -16,7 +16,6 @@ public struct NavigationCore: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
     @Environment(\.database) private var database
-    @Namespace var chatTransitionNamespace
 
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \.order) private var folders: [Folder]
 

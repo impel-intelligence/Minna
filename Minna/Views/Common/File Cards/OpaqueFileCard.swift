@@ -141,13 +141,19 @@ struct OpaqueFileCard: View {
             
             Button(role: .destructive) {
                 withAnimation {
-                    if selectedFiles.isEmpty {
-                        delete(file)
-                    } else {
-                        for selectedFile in selectedFiles {
-                            delete(selectedFile)
+                    do {
+                        try modelContext.transaction {
+                            if selectedFiles.isEmpty {
+                                delete(file)
+                            } else {
+                                for selectedFile in selectedFiles {
+                                    delete(selectedFile)
+                                }
+                                selectedFiles.removeAll()
+                            }
                         }
-                        selectedFiles.removeAll()
+                    } catch {
+                        print("Failed to delete files \(error)")
                     }
                 }
             } label: {
@@ -161,9 +167,22 @@ struct OpaqueFileCard: View {
         file.folder = newFolder
     }
     
+    /// Deletes a file from the SwiftData store and the Iris search index.
+    ///
+    /// The related `chat` is faulted into memory first: deleting a chat file fires
+    /// the `File.chat` `.cascade` rule, and SwiftData crashes in `ModelSnapshot`
+    /// while snapshotting an un-materialized `_FullFutureBackingData` chat. See
+    /// ``FolderView/delete(_:)`` for the full explanation.
+    ///
+    /// - Fix Authored by: Claude Opus 4.8 (Anthropic)
     private func delete(_ file: File) {
+        // Fault the related chat into memory so the cascade delete can snapshot it.
+        if let chat = file.chat {
+            _ = chat.uuid
+        }
+
         modelContext.delete(file)
-        
+
         do {
             try irisContext.delete(file)
         } catch {

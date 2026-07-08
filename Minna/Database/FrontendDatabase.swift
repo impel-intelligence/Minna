@@ -45,7 +45,6 @@ class FrontendDatabase: Database {
             modelContainer = try ModelContainer(for: Schema.minnaSchema, configurations: [modelConfiguration])
             fileDescriptionWriter = FileDescriptionWriter(modelContainer: modelContainer)
             try populateStartupData()
-            modelContainer.mainContext.undoManager = UndoManager()
         } catch {
             SentrySDK.capture(error: error)
             fatalError("Could not create ModelContainer: \(error)")

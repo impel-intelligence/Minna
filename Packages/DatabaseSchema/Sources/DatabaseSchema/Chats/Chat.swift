@@ -21,7 +21,10 @@ public final class Chat {
     
     public var theme: ThemeColor
     
+    @Relationship(deleteRule: .nullify, inverse: \File.chat)
     public var file: File
+    
+    public var lastUsedModel: String? = nil
 
     public init(uuid: UUID = UUID(), createdAt: Date = .now, file: File) {
         self.uuid = uuid
@@ -35,6 +38,10 @@ public final class Chat {
         self.transcript = transcript
         self.lastMessage = .now
 //        self.lastMessagePreview = transcript.last.flatMap(\.plainTextPreview)
+    }
+    
+    public func setModel(modelID: String) {
+        self.lastUsedModel = modelID
     }
 }
 
@@ -65,5 +72,14 @@ extension Chat {
         file.searchIndexed = true
         file.descriptionGenerated = true
         return chat
+    }
+}
+
+extension Chat {
+    public func title() -> String {
+        if !file.title.isEmpty, file.title != Chat.defaultTitle {
+            return file.title
+        }
+        return "Ask Minna"
     }
 }
