@@ -29,9 +29,9 @@ final class TypewritingEngine {
         completeText = text
         
         if isStreaming { hasStartedAnimation = true }
-        
-        // If we are already animating, finish the animation. This can happen when the text finishes streaming but the animation has not finished.
-        guard hasStartedAnimation && revealedCharacters >= completeText.count else {
+
+        // Only animate when the text is streaming, and there are still characters left to reveal.
+        guard hasStartedAnimation && revealedCharacters < completeText.count else {
             revealedCharacters = completeText.count
             displayedText = String(completeText.prefix(revealedCharacters))
             return
@@ -64,7 +64,7 @@ final class TypewritingEngine {
             // Variable step in case a lot of text comes in at once. To keep up we want to adjust the step to go quicker.
             let step = max(charactersPerTick, charactersNeedingDisplay / catchUpDivisor)
             
-            revealedCharacters = min(completeText.count, step)
+            revealedCharacters = min(completeText.count, revealedCharacters + step)
             
             // Actually display the text.
             displayedText = String(completeText.prefix(revealedCharacters))
