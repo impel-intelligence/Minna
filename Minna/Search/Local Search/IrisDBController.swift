@@ -119,6 +119,7 @@ final class IrisDBController {
 
                 await self?.completeIndexing(uuid: uuid)
             } catch {
+                print("Failed to index file \(uuid): \(error)")
                 SentrySDK.capture(error: error)
                 // Clear progress even on failure so the indexing indicator never hangs.
                 await self?.completeIndexing(uuid: uuid)
