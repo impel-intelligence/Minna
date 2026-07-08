@@ -11,7 +11,8 @@ import Textual
 import AnyLanguageModel
 
 struct UserMessage: View {
-    let theme: ThemeColor
+    @Environment(\.theme) var theme: ThemeColor
+
     let prompt: Transcript.Prompt
     let proxy: GeometryProxy
     
@@ -39,6 +40,6 @@ struct UserMessage: View {
 
 #Preview {
     GeometryReader { reader in
-        UserMessage(theme: .random, prompt: .init(segments: [.text(.init(content: "What was the."))]), proxy: reader)
+        UserMessage(prompt: .init(segments: [.text(.init(content: "What was the."))]), proxy: reader)
     }
 }

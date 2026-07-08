@@ -165,20 +165,8 @@ struct OpaqueFileCard: View {
     }
     
     private func open(_ file: File) {
-        // Check if we are a file URL and have bookmark data. Otherwise, try and open like a webpage.
-        guard file.url.isFileURL, file.bookmark != nil else {
-            openURL(file.url)
-            return
-        }
-        
         do {
-            let url = try file.securityScopedURL()
-            guard url.startAccessingSecurityScopedResource() else { return }
-            
-            NSWorkspace.shared.open(url, configuration: NSWorkspace.OpenConfiguration()) { _, error in
-                url.stopAccessingSecurityScopedResource()
-                if let error { print("Failed to open original \(url): \(error)") }
-            }
+            try file.open(openURL: openURL)
         } catch {
             SentrySDK.capture(error: error)
             print("Failed to open url: \(error) - \(file.url)")

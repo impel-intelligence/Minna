@@ -10,8 +10,9 @@ import AnyLanguageModel
 import DatabaseSchema
 
 struct ToolOutputView: View {
+    @Environment(\.theme) var theme: ThemeColor
+    
     let output: Transcript.ToolOutput
-    let theme: ThemeColor
     
     var body: some View {
         DisclosureGroup {
@@ -38,6 +39,6 @@ struct ToolOutputView: View {
         id: "tool-output-id",
         toolName: "getWeather",
         segments: [.text(.init(id: "tool-output-segment", content: "Sunny"))]
-    ), theme: .azure)
+    ))
     .frame(height: 200)
 }

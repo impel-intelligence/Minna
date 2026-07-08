@@ -47,7 +47,7 @@ public struct AskMinnaInstructions: ModelInstruction {
         
         ## Output format
         - Lead with a direct answer and inline citations per claim as described above.
-        - Only produce a summary if the user explicitly asks for one.
+        - Only produce a summary if the user explicitly asks for one. Summaries should be formatted into bullet points, with clear markdown headers.
         - If no relevant content was found even after broadening, state that clearly instead of producing a partial or speculative answer.  
         """)
     }

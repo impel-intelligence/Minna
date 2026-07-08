@@ -11,8 +11,9 @@ import AnyLanguageModel
 import DatabaseSchema
 
 struct ToolCallsView: View {
+    @Environment(\.theme) var theme: ThemeColor
+
     let toolCalls: Transcript.ToolCalls
-    let theme: ThemeColor
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -56,6 +57,6 @@ struct ToolCallsView: View {
 
     ToolCallsView(toolCalls: .init([
         toolCall
-    ]), theme: .azure)
+    ]))
     .frame(height: 200)
 }

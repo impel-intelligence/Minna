@@ -9,8 +9,10 @@ import SwiftUI
 import OrderedCollections
 import DatabaseSchema
 import SwiftData
+import SFSafeSymbols
 
 struct CitationColumnView: View {
+    @Environment(\.openURL) private var openURL
     @Environment(\.modelContext) private var modelContext
     @Binding var citations: OrderedSet<Citation>
     @State var files: [File] = []
@@ -20,7 +22,7 @@ struct CitationColumnView: View {
             Section("References") {
                 ForEach(files.enumerated(), id: \.offset) { (offset, file) in
                     HStack(spacing: 0) {
-                        Text("\(offset)")
+                        Text("\(offset + 1)")
                             .font(.headline)
                             .fontWeight(.medium)
                             .padding(5)
@@ -29,10 +31,23 @@ struct CitationColumnView: View {
                                     .foregroundStyle(Color.accentColor.opacity(0.2))
                             }
                         ListFileCard(file: file, editingTitle: .constant(false), editingDescription: .constant(false))
+                            .contextMenu {
+                                Button {
+                                    do {
+                                        try file.open(openURL: openURL)
+                                    } catch {
+                                        print("Failed to open original file: \(error)")
+                                    }
+                                } label: {
+                                    Label("Open Original", systemSymbol: .arrowUpRight)
+                                }
+                            }
                     }
+                    .listRowSeparator(.hidden)
                 }
             }
         }
+        .listStyle(.sidebar)
         .onChange(of: citations, initial: true) { _, newValue in
             let ids = newValue.map(\.id)
             let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in

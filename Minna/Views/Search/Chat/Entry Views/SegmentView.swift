@@ -12,7 +12,8 @@ import DatabaseSchema
 
 struct SegmentView: View {
     @Environment(CitationHandler.self) var handler
-    
+    @Environment(\.theme) var theme: ThemeColor
+
     let segment: Transcript.Segment
     /// True when this segment view is the one currently generating.
     let isStreaming: Bool
@@ -22,7 +23,7 @@ struct SegmentView: View {
         case .text(let text):
             StreamingStructuredText(content: text.content, isStreaming: isStreaming)
                 .textual.textSelection(.enabled)
-                .textual.codeBlockStyle(MinnaCodeBlockStyle(theme: .azure))
+                .textual.codeBlockStyle(MinnaCodeBlockStyle(theme: theme))
         case .image(let image):
             switch image.source {
             case .url(let url):

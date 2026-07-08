@@ -81,3 +81,23 @@ extension File {
         return url
     }
 }
+
+extension File {
+    @MainActor
+    public func open(openURL: OpenURLAction) throws {
+        guard self.url.isFileURL, self.bookmark != nil else {
+            openURL(url)
+            return
+        }
+        
+        let url = try securityScopedURL()
+        guard url.startAccessingSecurityScopedResource() else { return }
+        
+        NSWorkspace.shared.open(url, configuration: NSWorkspace.OpenConfiguration()) { _, error in
+            url.stopAccessingSecurityScopedResource()
+            if let error {
+                print("Failed to open original \(url): \(error)")
+            }
+        }
+    }
+}

@@ -46,13 +46,12 @@ struct ChatView: View {
                             case .instructions:
                                 EmptyView()
                             case .prompt(let prompt):
-                                UserMessage(theme: chat.theme, prompt: prompt, proxy: reader)
+                                UserMessage(prompt: prompt, proxy: reader)
                             case .toolCalls(let toolCalls):
-                                ToolCallsView(toolCalls: toolCalls, theme: .azure)
+                                ToolCallsView(toolCalls: toolCalls)
                             case .toolOutput(let toolOutput):
-                                ToolOutputView(output: toolOutput, theme: .azure)
+                                ToolOutputView(output: toolOutput)
                             case .response(let response):
-                                // Check to see if this entry is the latest one in the transcript, AND the session is currently responding to a query.
                                 let isStreaming = chatInstance.session.isResponding && entry.id == chatInstance.session.transcript.last?.id
                                 AssistantMessage(response: response, proxy: reader, isStreaming: isStreaming)
                             @unknown default:
@@ -70,6 +69,7 @@ struct ChatView: View {
                 chatBox
             }
         }
+        .theme(chat.theme)
         .environment(citationHandler)
         .environment(\.openURL, OpenURLAction { url in
             print(url)
@@ -82,6 +82,7 @@ struct ChatView: View {
             print(docID, title)
             return .handled
         })
+        .animation(.bouncy, value: chat.transcript)
         .inspector(isPresented: $citationHandler.citationSidebarOpen) {
             CitationColumnView(citations: $citationHandler.citations)
         }
@@ -120,56 +121,60 @@ struct ChatView: View {
     }
 
     var chatBox: some View {
-        HStack(alignment: .bottom) {
-            Spacer()
-            Image(.impelLogo)
-                .resizable()
-                .frame(width: 36, height: 36)
-                .accessibilityLabel("Minna Logo")
-            VStack(alignment: .leading) {
-                Button {
-                    presentModelPicker.toggle()
-                } label: {
-                    if let selectedModel {
-                        ModelName(model: selectedModel)
-                    } else {
-                        Text("No Model Selected")
-                    }
-                }
-                .popover(isPresented: $presentModelPicker) {
-                    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
-                }
-
-                SearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage, theme: chat.theme) {
-                    Task {
-                        let tmpMessage = chatMessage
-                        chatMessage = ""
-                        
-                        do {
-                            try await chatInstance?.sendMessage(tmpMessage)
-                        } catch {
-                            if chatMessage.isEmpty {
-                                chatMessage = tmpMessage
-                            }
-                            print("Failed to send chat: \(error)")
+        GlassEffectContainer {
+            HStack(alignment: .bottom) {
+                Spacer()
+                Image(.impelLogo)
+                    .resizable()
+                    .frame(width: 36, height: 36)
+                    .accessibilityLabel("Minna Logo")
+                VStack(alignment: .leading) {
+                    Button {
+                        presentModelPicker.toggle()
+                    } label: {
+                        if let selectedModel {
+                            ModelName(model: selectedModel)
+                        } else {
+                            Text("No Model Selected")
                         }
                     }
-                }
-                .disabled(selectedModel == nil || chatInstance == nil)
-                
-                if let progress = irisContext.indexingProgress, progress.isIndexing {
-                    HStack {
-                        Text("Indexing...")
-                        ProgressView(value: progress.fractionCompleted)
+                    .popover(isPresented: $presentModelPicker) {
+                        ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
                     }
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: 450)
+                    .buttonStyle(.glass)
+                    
+                    SearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage, theme: chat.theme) {
+                        Task {
+                            let tmpMessage = chatMessage
+                            chatMessage = ""
+                            
+                            do {
+                                try await chatInstance?.sendMessage(tmpMessage)
+                            } catch {
+                                if chatMessage.isEmpty {
+                                    chatMessage = tmpMessage
+                                }
+                                print("Failed to send chat: \(error)")
+                            }
+                        }
+                    }
+                    .disabled(selectedModel == nil || chatInstance == nil)
+                    
+                    if let progress = irisContext.indexingProgress, progress.isIndexing {
+                        HStack {
+                            Text("Indexing...")
+                            ProgressView(value: progress.fractionCompleted)
+                        }
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: 450)
+                    }
                 }
+                Spacer()
             }
-            Spacer()
+            .padding([.bottom], 20)
+
         }
-        .padding([.bottom], 20)
     }
     
     func initializeChatInstance() {

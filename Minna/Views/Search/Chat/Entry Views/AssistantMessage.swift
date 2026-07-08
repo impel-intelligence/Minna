@@ -14,7 +14,7 @@ struct AssistantMessage: View {
     let response: Transcript.Response
     let proxy: GeometryProxy
     let isStreaming: Bool
-
+    
     var body: some View {
         VStack {
             ForEach(response.segments) { segment in
