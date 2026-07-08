@@ -77,7 +77,7 @@ public struct NavigationCore: View {
                         .environment(navigationRouter)
                 }
                 .navigationDestination(for: Chat.self) { chat in
-                    AskMinnaView(chat: chat, hasStarted: !chat.transcript.isEmpty)
+                    AskMinnaView(chat: chat, viewMode: chat.transcript.isEmpty ? .startup : .chat)
                         .id(chat.uuid)
                         .environment(navigationRouter)
                 }

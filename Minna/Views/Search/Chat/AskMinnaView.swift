@@ -30,22 +30,27 @@ import AnyLanguageModel
 ///
 /// - Authored by: Claude Opus 4.8 (Anthropic)
 struct AskMinnaView: View {
+    enum ViewMode {
+        case startup
+        case chat
+    }
+    
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
     
+    @Namespace private var searchContainerTransitions
+
     @AppStorage(AppStorageKeys.preferredModel) var preferredModel: String = ""
 
     /// The chat this view drives. Stable for the lifetime of the view's identity;
     /// callers swap chats by changing the view's `.id`.
     let chat: Chat
+    
+    @State var viewMode: ViewMode
 
     /// Invoked by the New Chat toolbar button. `nil` hides the button (e.g. when
     /// viewing an existing chat pushed from a folder).
     var newChat: (() -> Void)?
-
-    /// Layout phase. `false` shows the centered compose state; `true` shows the
-    /// transcript with the bar pinned to the bottom.
-    @State private var hasStarted: Bool
 
     @State private var citationHandler: CitationHandler = CitationHandler()
 
@@ -58,33 +63,18 @@ struct AskMinnaView: View {
     @State private var chatMessage: String = ""
 
     @State private var presentModelPicker: Bool = false
-
-    init(chat: Chat, hasStarted: Bool, newChat: (() -> Void)? = nil) {
-        self.chat = chat
-        self.newChat = newChat
-        _hasStarted = State(initialValue: hasStarted)
-    }
-
+    
     var body: some View {
         GeometryReader { reader in
-            VStack(spacing: 16) {
-                if !hasStarted {
-                    Spacer(minLength: 0)
-                    composeHeader
-                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
-                } else {
+            Group {
+                switch viewMode {
+                case .startup:
+                    startup()
+                case .chat:
                     transcript(reader: reader)
-                        .transition(.opacity)
-                }
-
-                searchCluster
-
-                if !hasStarted {
-                    Spacer(minLength: 0)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .padding(.horizontal)
         }
         .theme(chat.theme)
         .navigationTitle(chat.title())
@@ -99,7 +89,7 @@ struct AskMinnaView: View {
             print(docID, title as Any)
             return .handled
         })
-        .animation(.bouncy, value: hasStarted)
+        .animation(.bouncy, value: viewMode)
         .animation(.bouncy, value: chat.transcript)
         .inspector(isPresented: $citationHandler.citationSidebarOpen) {
             CitationColumnView(citations: $citationHandler.citations)
@@ -158,19 +148,6 @@ struct AskMinnaView: View {
         }
     }
 
-    // MARK: Compose state
-
-    private var composeHeader: some View {
-        VStack(spacing: 5) {
-            Image("impel_logo")
-                .resizable()
-                .frame(width: 45, height: 45)
-                .accessibilityLabel("Minna Logo")
-            Text("Hey \(NSUserFirstName())!")
-                .font(.system(size: 36, design: .serif))
-        }
-    }
-
     // MARK: Chat state
     private func transcript(reader: GeometryProxy) -> some View {
         ScrollView {
@@ -193,6 +170,13 @@ struct AskMinnaView: View {
                             EmptyView()
                         }
                     }
+                    
+                    if chatInstance.waitingForResponse {
+                        HStack {
+                            BouncingBubbles(text: Wordlists.generatingContentQuips.randomElement() ?? "Generating")
+                            Spacer()
+                        }
+                    }
                 }
                 .padding(.horizontal)
             } else {
@@ -200,9 +184,31 @@ struct AskMinnaView: View {
             }
         }
         .defaultScrollAnchor(.bottom)
+        .safeAreaInset(edge: .bottom) {
+            if viewMode == .chat {
+                searchCluster
+            }
+        }
+    }
+    
+    // MARK: Startup State
+    private func startup() -> some View {
+        VStack(spacing: 16) {
+            Spacer()
+            VStack(spacing: 5) {
+                Image("impel_logo")
+                    .resizable()
+                    .frame(width: 45, height: 45)
+                    .accessibilityLabel("Minna Logo")
+                Text("Hey \(NSUserFirstName())!")
+                    .font(.system(size: 36, design: .serif))
+            }
+            .transition(.opacity.combined(with: .scale(scale: 0.9)))
+            searchCluster
+            Spacer()
+        }
     }
 
-    // MARK: Shared search bar (stable node across states)
     private var searchCluster: some View {
         VStack(alignment: .leading, spacing: 8) {
             Button {
@@ -225,7 +231,9 @@ struct AskMinnaView: View {
             .disabled(selectedModel == nil || chatInstance == nil)
         }
         .frame(maxWidth: 640)
-        .padding(.bottom, hasStarted ? 20 : 0)
+        .padding(.bottom, viewMode == .chat ? 20 : 0)
+        .id("search")
+        .matchedGeometryEffect(id: "search", in: searchContainerTransitions)
     }
 
     private func submit() {
@@ -233,9 +241,9 @@ struct AskMinnaView: View {
         guard !message.isEmpty else { return }
         chatMessage = ""
 
-        if !hasStarted {
+        if viewMode == .startup {
             modelContext.insert(chat.file)
-            hasStarted = true // Start slide animation
+            viewMode = .chat // Start animations
         }
 
         Task {
@@ -263,7 +271,7 @@ struct AskMinnaView: View {
                 // Update the chat so it will open with the model you last used.
                 chat.lastUsedModel = model.id
                 // If we have already started chatting update the chat in the database. Otherwise, we don't want to insert here or empty chats will be added to the file list.
-                if hasStarted {
+                if viewMode == .chat {
                     modelContext.insert(chat)
                 }
                 
@@ -278,6 +286,11 @@ struct AskMinnaView: View {
 }
 
 #Preview {
-    AskMinnaView(chat: Chat.make(in: SampleDatabase.shared.sampleFolders.first!), hasStarted: false)
-        .modelContext(SampleDatabase.shared.context)
+    @Previewable var controller = IrisDBController(modelContainer: SampleDatabase.shared.modelContainer)
+    
+    AskMinnaView(chat: Chat.make(in: SampleDatabase.shared.sampleFolders.first!), viewMode: .chat) {
+        
+    }
+    .irisContext(controller.mainContext)
+    .modelContext(SampleDatabase.shared.context)
 }

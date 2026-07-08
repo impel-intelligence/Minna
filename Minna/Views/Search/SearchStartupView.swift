@@ -28,7 +28,7 @@ struct SearchStartupView: View {
     var body: some View {
         Group {
             if let draft {
-                AskMinnaView(chat: draft, hasStarted: false, newChat: startNewChat)
+                AskMinnaView(chat: draft, viewMode: .startup, newChat: startNewChat)
                     .id(draft.uuid)
             } else {
                 ContentUnavailableView("Couldn't start a chat", systemSymbol: .exclamationmarkTriangle)

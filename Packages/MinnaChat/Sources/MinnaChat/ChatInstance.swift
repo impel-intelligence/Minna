@@ -12,40 +12,6 @@ import SwiftData
 import DatabaseSchema
 import ModelManager
 
-
-//extension Message {
-//    var entry: Transcript.Entry {
-//        switch message.owner {
-//        case .assistant:
-//            entries.append(Transcript.Entry.response(Transcript.Response(assetIDs: <#T##[String]#>, segments: [.text(<#T##Transcript.TextSegment#>)])))
-//        case .user:
-//            entries.append(Transcript.Entry.prompt(
-//                Transcript.Prompt(segments: [
-//                    .text(Transcript.TextSegment(content: self))
-//                ])
-//            ))
-//        }
-//
-//    }
-//    
-//    var transcriptPrompt: Transcript.Prompt {
-//        Transcript.Prompt(segments: [
-//            .text(Transcript.TextSegment(content: self))
-//        ])
-//    }
-//}
-
-//extension Array where Element == DatabaseSchema.Message {
-//    func createTranscript() -> Transcript {
-//        var entries: [Transcript.Entry] = []
-//        
-//        for message in self.sorted(using: KeyPathComparator(\.createdAt, order: .reverse)) {
-//        }
-//        
-//        return Transcript(entries: entries)
-//    }
-//}
-
 @Observable @MainActor
 public final class ChatInstance {
     enum ChatError: Error {
@@ -66,6 +32,8 @@ public final class ChatInstance {
     
     public let session: LanguageModelSession
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
+    
+    public var waitingForResponse: Bool = true
         
     public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: AskMinnaInstructions.Type) throws {
         self.databaseContext = databaseContext
@@ -102,6 +70,9 @@ public final class ChatInstance {
             throw ChatError.modelNotLoaded
         }
         
+        waitingForResponse = true
+        defer { waitingForResponse = false }
+        
         var generationOptions = GenerationOptions(maximumResponseTokens: 4096)
         generationOptions[custom: AnthropicLanguageModel.self] = .init(
             thinking: AnthropicLanguageModel.CustomGenerationOptions.Thinking.adaptive(display: .summarized),
@@ -111,7 +82,10 @@ public final class ChatInstance {
         // Start the stream response
         let stream = session.streamResponse(to: Prompt(message), options: generationOptions)
         
-        let _ = try await stream.collect()
+        // Loop over the stream to collect it, tossing out the values. We are doing this instead of `stream.collect()` so we can set waitingForResponse to false when we receive a packet.
+        for try await _ in stream {
+            waitingForResponse = false
+        }
         
         // Save the transcript into persistence
         chat.apply(session.transcript)
