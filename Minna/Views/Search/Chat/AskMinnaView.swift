@@ -32,6 +32,8 @@ import AnyLanguageModel
 struct AskMinnaView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
+    
+    @AppStorage(AppStorageKeys.preferredModel) var preferredModel: String = ""
 
     /// The chat this view drives. Stable for the lifetime of the view's identity;
     /// callers swap chats by changing the view's `.id`.
@@ -127,9 +129,13 @@ struct AskMinnaView: View {
                     guard let provider = try ProviderFactory.makeInstance(configuration: configuration) else { continue }
                     let models = try await provider.availableModels()
 
+                    // Check this provider for the last used model in this chat. If the chat does not have a last used model, check to see if the user's preferred model is from this provider.
                     if let lastUsedModel = chat.lastUsedModel,
                        let model = models.first(where: { $0.id == lastUsedModel }) {
                         selectedModel = model
+                        selectedProvider = configuration
+                    } else if !preferredModel.isEmpty, let preferred = models.first(where: {$0.id == preferredModel}) {
+                        selectedModel = preferred
                         selectedProvider = configuration
                     }
 

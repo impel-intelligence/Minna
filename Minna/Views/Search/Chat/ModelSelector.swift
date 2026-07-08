@@ -15,6 +15,8 @@ import SFSafeSymbols
 struct ModelSelector: View {
     @Environment(\.openModernSettings) var openSettings
     
+    @AppStorage(AppStorageKeys.preferredModel) var preferredModel: String = ""
+
     @Binding var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]>
     @Binding var selectedModel: Model?
     @Binding var selectedProvider: ConfiguredProvider?
@@ -70,6 +72,7 @@ struct ModelSelector: View {
         Button {
             selectedModel = model
             selectedProvider = provider
+            preferredModel = model.id
         } label: {
             HStack {
                 Image(systemSymbol: .checkmark)
