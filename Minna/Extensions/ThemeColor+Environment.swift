@@ -19,7 +19,7 @@ extension View {
 }
 
 extension Scene {
-    func irisContext(_ theme: ThemeColor) -> some Scene {
+    func theme(_ theme: ThemeColor) -> some Scene {
         environment(\.theme, theme)
     }
 }

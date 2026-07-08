@@ -21,7 +21,9 @@ struct ChatView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
 //    @Environment(ModelDownloader.self) var modelDownloader
-    
+
+    @Namespace var chatTransitionNamespace
+
     @State var citationHandler: CitationHandler = CitationHandler()
         
     @Query(sort: \ConfiguredProvider.name) private var providers: [ConfiguredProvider]
@@ -34,7 +36,7 @@ struct ChatView: View {
 
     @State var presentModelPicker: Bool = false
 
-    @State var chat: Chat = Chat()
+    @State var chat: Chat
 
     var body: some View {
         GeometryReader { reader in
@@ -121,60 +123,58 @@ struct ChatView: View {
     }
 
     var chatBox: some View {
-        GlassEffectContainer {
-            HStack(alignment: .bottom) {
-                Spacer()
-                Image(.impelLogo)
-                    .resizable()
-                    .frame(width: 36, height: 36)
-                    .accessibilityLabel("Minna Logo")
-                VStack(alignment: .leading) {
-                    Button {
-                        presentModelPicker.toggle()
-                    } label: {
-                        if let selectedModel {
-                            ModelName(model: selectedModel)
-                        } else {
-                            Text("No Model Selected")
-                        }
-                    }
-                    .popover(isPresented: $presentModelPicker) {
-                        ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
-                    }
-                    .buttonStyle(.glass)
-                    
-                    SearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage, theme: chat.theme) {
-                        Task {
-                            let tmpMessage = chatMessage
-                            chatMessage = ""
-                            
-                            do {
-                                try await chatInstance?.sendMessage(tmpMessage)
-                            } catch {
-                                if chatMessage.isEmpty {
-                                    chatMessage = tmpMessage
-                                }
-                                print("Failed to send chat: \(error)")
-                            }
-                        }
-                    }
-                    .disabled(selectedModel == nil || chatInstance == nil)
-                    
-                    if let progress = irisContext.indexingProgress, progress.isIndexing {
-                        HStack {
-                            Text("Indexing...")
-                            ProgressView(value: progress.fractionCompleted)
-                        }
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: 450)
+        HStack(alignment: .bottom) {
+            Spacer()
+            Image(.impelLogo)
+                .resizable()
+                .frame(width: 36, height: 36)
+                .accessibilityLabel("Minna Logo")
+                .matchedTransitionSource(id: "logo", in: chatTransitionNamespace)
+            
+            VStack(alignment: .leading) {
+                Button {
+                    presentModelPicker.toggle()
+                } label: {
+                    if let selectedModel {
+                        ModelName(model: selectedModel)
+                    } else {
+                        Text("No Model Selected")
                     }
                 }
-                Spacer()
+                .popover(isPresented: $presentModelPicker) {
+                    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
+                }
+                .buttonStyle(.glass)
+                
+                IndexingSearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage) {
+                    Task {
+                        let tmpMessage = chatMessage
+                        chatMessage = ""
+                        
+                        do {
+                            try await chatInstance?.sendMessage(tmpMessage)
+                            
+                            if chat.file.title == Chat.defaultTitle,
+                               let lastMessage = chat.transcript.last,
+                               case .response(let response) = lastMessage,
+                               case .text(let last)? = response.segments.last {
+                                chat.file.title = last.content.makeTitle()
+                                modelContext.insert(chat.file)
+                            }
+                        } catch {
+                            if chatMessage.isEmpty {
+                                chatMessage = tmpMessage
+                            }
+                            print("Failed to send chat: \(error)")
+                        }
+                    }
+                }
+                .disabled(selectedModel == nil || chatInstance == nil)
+                .matchedTransitionSource(id: "searchBar", in: chatTransitionNamespace)
             }
-            .padding([.bottom], 20)
-
+            Spacer()
         }
+        .padding([.bottom], 20)
     }
     
     func initializeChatInstance() {
@@ -191,7 +191,7 @@ struct ChatView: View {
 }
 
 #Preview {
-    ChatView()
+    ChatView(chat: Chat.create(in: SampleDatabase.shared.sampleFolders.first!, context: SampleDatabase.shared.context))
         .modelContext(SampleDatabase.shared.context)
-//        .environment(ModelDownloader())
+//        .environment (ModelDownloader())
 }

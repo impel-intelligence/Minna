@@ -39,9 +39,10 @@ struct MinnaApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationCore()
-//                .environment(modelDownloader)
         }
         .commands {
+            SidebarCommands()
+
             CommandGroup(replacing: .newItem) {
                 AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
                     .standardFileImporter(
@@ -56,6 +57,7 @@ struct MinnaApp: App {
             }
         }
         .modelContainer(frontendDatabase.modelContainer)
+        .database(frontendDatabase)
         .irisContext(irisDBController.mainContext)
         ModernSettings {
             SettingsController()

@@ -301,7 +301,26 @@ struct FolderView: View {
         }
     }
     
+    /// Deletes a file from both the SwiftData store and the Iris search index.
+    ///
+    /// Pending, unsaved inserts are flushed first: deleting a chat file cascades
+    /// (via `File.chat`) to its attached `Chat`, and SwiftData crashes while
+    /// snapshotting a cascade target whose backing data is still
+    /// `_FullFutureBackingData` (i.e. an insert not yet persisted — e.g. a brand
+    /// new chat deleted before autosave runs). Saving first materializes real
+    /// backing data so the cascade delete can snapshot it safely.
+    ///
+    /// - Authored by: Claude Opus 4.8 (Anthropic)
     private func delete(_ file: File) {
+        if modelContext.hasChanges {
+            do {
+                try modelContext.save()
+            } catch {
+                SentrySDK.capture(error: error)
+                print("Failed to flush pending changes before delete \(error)")
+            }
+        }
+
         modelContext.delete(file)
 
         do {

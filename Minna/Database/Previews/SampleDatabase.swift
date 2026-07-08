@@ -12,7 +12,7 @@ import DatabaseSchema
 
 // swiftlint:disable type_body_length
 @MainActor
-class SampleDatabase {
+class SampleDatabase: Database {
     /// A struct that holds data to be populated into files during sample population.
     struct SampleFile {
         var createdAt: Date
@@ -278,7 +278,8 @@ class SampleDatabase {
     ]
             
     let modelContainer: ModelContainer
-    
+    var unfilledFolderUUID: UUID = UUID()
+
     var context: ModelContext {
         modelContainer.mainContext
     }
@@ -296,6 +297,10 @@ class SampleDatabase {
     
     private func populateSampleData() throws {
         for folder in sampleFolders {
+            if folder.name == "Unfilled" {
+                unfilledFolderUUID = folder.uuid
+            }
+            
             context.insert(folder)
             
             for sampleFile in sampleFileData {
@@ -309,5 +314,7 @@ class SampleDatabase {
         let appleProvider = ConfiguredProvider(name: "Apple Foundation Models", providerID: "apple")
         context.insert(appleProvider)
     }
+    
+    func queueDescriptionUpdate(for file: DatabaseSchema.File) { }
 }
 // swiftlint:enable type_body_length

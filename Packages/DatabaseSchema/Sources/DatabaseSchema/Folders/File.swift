@@ -24,6 +24,9 @@ public final class File {
     @Relationship(deleteRule: .nullify, inverse: \Folder.files)
     public var folder: Folder
     
+    @Relationship(.unique, deleteRule: .cascade, maximumModelCount: 1, inverse: \Chat.file)
+    public var chat: Chat? = nil
+    
     public var title: String
     public var shortDescription: String
     public var color: ThemeColor
@@ -37,7 +40,7 @@ public final class File {
     public var searchIndexed: Bool = false
     public var descriptionGenerated: Bool = false
 
-    public init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String) {
+    public init(uuid: UUID = UUID(), createdAt: Date, folder: Folder, title: String, shortDescription: String, color: ThemeColor, type: ContentType, url: URL, bookmark: Data?, source: String, chat: Chat? = nil) {
         self.uuid = uuid
         self.createdAt = createdAt
         self.folder = folder
@@ -48,6 +51,7 @@ public final class File {
         self.bookmark = bookmark
         self.url = url
         self.source = source
+        self.chat = chat
     }
 }
 

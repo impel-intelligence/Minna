@@ -17,23 +17,35 @@ enum NavigationDestination: Hashable {
     case folder(Folder)
 }
 
+@Observable
+final class NavigationRouter {
+    var path: NavigationPath = NavigationPath()
+    var selectedTab: NavigationDestination? = .search
+    
+    func push(_ chat: Chat) {
+        self.path.append(chat)
+    }
+}
+
 public struct NavigationCore: View {
     @Environment(\.undoManager) private var undoManager
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
-    
+    @Environment(\.database) private var database
+    @Namespace var chatTransitionNamespace
+
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \.order) private var folders: [Folder]
 
     @AppStorage("knowledgeExpanded") var knowledgeExpanded: Bool = true
     @AppStorage("connectionsExpanded") var connectionsExpanded: Bool = true
 
-    @State var selectedDestination: NavigationDestination? = .search
+    @State var navigationRouter: NavigationRouter = NavigationRouter()
     
     @State var addFolderRequest: AddFolderRequest?
     
     public var body: some View {
         NavigationSplitView {
-            List(selection: $selectedDestination) {                
+            List(selection: $navigationRouter.selectedTab) {
                 SearchStartupView.label
                     .tag(NavigationDestination.search)
 
@@ -63,14 +75,29 @@ public struct NavigationCore: View {
                 }
             }
         } detail: {
-            switch selectedDestination {
-            case .search, nil:
-                ChatView()
-            case .recents:
-                RecentsView()
-            case .folder(let folder):
-                FolderView(folder: folder)
-                    .id(folder.uuid)
+            NavigationStack(path: $navigationRouter.path) {
+                Group {
+                    switch navigationRouter.selectedTab {
+                    case .search, nil:
+                        SearchStartupView()
+                    case .recents:
+                        RecentsView()
+                    case .folder(let folder):
+                        FolderView(folder: folder)
+                            .id(folder.uuid)
+                    }
+                }
+                .environment(navigationRouter)
+                .navigationDestination(for: Folder.self) { folder in
+                    FolderView(folder: folder)
+                        .id(folder.uuid)
+                        .environment(navigationRouter)
+                }
+                .navigationDestination(for: Chat.self) { chat in
+                    ChatView(chat: chat)
+                        .id(chat.uuid)
+                        .environment(navigationRouter)
+                }
             }
         }
         .onAppear {
@@ -110,5 +137,6 @@ public struct NavigationCore: View {
 #Preview {
     NavigationCore()
         .modelContainer(SampleDatabase.shared.modelContainer)
+        .database(SampleDatabase.shared)
         .irisContext(IrisContext.notConnected)
 }

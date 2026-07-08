@@ -16,11 +16,17 @@ import DatabaseSchema
 struct SearchStartupView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
+    @Environment(\.database) var database
+    @Environment(NavigationRouter.self) private var navigationRouter
+
+    @Namespace var chatTransitionNamespace
 
     @State private var orderedSearch: [File] = []
 
     @State var searchQuery: String = ""
     @State var searchTask: Task<Void, Never>?
+    
+    @State var theme: ThemeColor = .random
 
     var body: some View {
         VStack(spacing: 15) {
@@ -29,38 +35,42 @@ struct SearchStartupView: View {
                 Image("impel_logo")
                     .resizable()
                     .frame(width: 45, height: 45)
-                    .accessibilityHidden(true)
+                    .accessibilityLabel("Minna Logo")
+                    .matchedTransitionSource(id: "logo", in: chatTransitionNamespace)
                 Text("Hey \(NSUserFirstName())!")
                     .font(.system(size: 36, design: .serif))
             }
             
-            VStack(spacing: 0) {
-                SearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery, theme: .random) { }
-                
-                if let progress = irisContext.indexingProgress, progress.isIndexing {
-                    HStack {
-                        Text("Indexing...")
-                        ProgressView(value: progress.fractionCompleted)
-                    }
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: 450)
+            IndexingSearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery) {
+                do {
+                    let unfilledUUID = database.unfilledFolderUUID
+                    var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == unfilledUUID })
+                    descriptor.fetchLimit = 1
+                    let folders = try modelContext.fetch(descriptor)
+                    guard let unfilledFolder = folders.first else { return }
+                    
+                    let newChat = Chat.create(in: unfilledFolder, context: modelContext)
+                    navigationRouter.push(newChat)
+                } catch {
+                    print("Failed to create chat: \(error)")
                 }
             }
+            .theme(theme)
+            .matchedTransitionSource(id: "searchBar", in: chatTransitionNamespace)
 
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(orderedSearch) { file in
-                        OpaqueFileCard(file: file, isEditingText: .constant(false), viewMode: .constant(.grid), selectedFiles: .constant([]))
-                    }
-                }
-            }
+//            ScrollView(.horizontal) {
+//                HStack {
+//                    ForEach(orderedSearch) { file in
+//                        OpaqueFileCard(file: file, isEditingText: .constant(false), viewMode: .constant(.grid), selectedFiles: .constant([]))
+//                    }
+//                }
+//            }
             Spacer()
         }
         .navigationTitle("Ask Minna", image: Image(systemSymbol: .sparkles2).accessibilityHidden(true))
-        .onChange(of: searchQuery) { _, newValue in
-            searchIrisIndex(query: newValue)
-        }
+//        .onChange(of: searchQuery) { _, newValue in
+//            searchIrisIndex(query: newValue)
+//        }
     }
     
     func searchIrisIndex(query: String) {
@@ -131,5 +141,6 @@ extension SearchStartupView: Navigable {
 #Preview {
     SearchStartupView()
         .navigationTitle("Ask Minna")
+        .environment(NavigationRouter())
         .irisContext(IrisDBController(modelContainer: SampleDatabase.shared.modelContainer).mainContext)
 }

@@ -10,9 +10,10 @@ import SFSafeSymbols
 import DatabaseSchema
 
 struct SearchBar: View {
+    @Environment(\.theme) var theme
+    
     var placeHolder: String
     @Binding var searchQuery: String
-    let theme: ThemeColor
     let submit: () -> Void
 
     var body: some View {
@@ -39,7 +40,6 @@ struct SearchBar: View {
         .frame(maxWidth: 500)
         .glassEffect(.regular, in: .rect(cornerRadius: 100))
         .shadow(color: theme.background.opacity(0.18), radius: 18, x: 0, y: 8)
-
         .onSubmit {
             submit()
         }
@@ -48,7 +48,8 @@ struct SearchBar: View {
 
 #Preview {
     @Previewable @State var searchQuery: String = "Hello"
-    SearchBar(placeHolder: "Hello World", searchQuery: $searchQuery, theme: .random) {
+    SearchBar(placeHolder: "Hello World", searchQuery: $searchQuery) {
         print("Hello")
     }
+    .theme(.random)
 }

@@ -14,7 +14,7 @@ import DatabaseSchema
 import FoundationModels
 
 @MainActor
-class FrontendDatabase {
+class FrontendDatabase: Database {
     static let shared: FrontendDatabase = FrontendDatabase()
 
     private static let unfilledFolderKey: String = "unfilled_folder_key"
@@ -82,7 +82,7 @@ class FrontendDatabase {
         context.insert(appleProvider)
     }
     
-    func queueDescriptionUpdate(for file: File) {
+    public func queueDescriptionUpdate(for file: File) {
         let persistentID = file.persistentModelID
         let writer = fileDescriptionWriter
 
