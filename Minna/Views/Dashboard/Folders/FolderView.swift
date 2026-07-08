@@ -39,7 +39,7 @@ enum ArrowDirection {
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
-    
+    @Environment(\.database) var database
     @Environment(\.openURL) private var openURL
 
     static let cardWidth: CGFloat = 150
@@ -98,7 +98,8 @@ struct FolderView: View {
             presented: $standardFileImporterPresented,
             selectedFolder: folder,
             modelContext: modelContext,
-            irisContext: irisContext
+            irisContext: irisContext,
+            database: database
         )
         .toolbar {
 //            ToolbarItem {
@@ -301,17 +302,8 @@ struct FolderView: View {
         }
     }
     
-    /// Deletes a file from both the SwiftData store and the Iris search index.
-    ///
-    /// Pending, unsaved inserts are flushed first: deleting a chat file cascades
-    /// (via `File.chat`) to its attached `Chat`, and SwiftData crashes while
-    /// snapshotting a cascade target whose backing data is still
-    /// `_FullFutureBackingData` (i.e. an insert not yet persisted — e.g. a brand
-    /// new chat deleted before autosave runs). Saving first materializes real
-    /// backing data so the cascade delete can snapshot it safely.
-    ///
-    /// - Authored by: Claude Opus 4.8 (Anthropic)
     private func delete(_ file: File) {
+        // Make sure any pending changes are saved before deletion. Fixes a crash when deleting unsaved documents.
         if modelContext.hasChanges {
             do {
                 try modelContext.save()
@@ -341,4 +333,5 @@ struct FolderView: View {
         FolderView(folder: folder)
     }
     .modelContainer(SampleDatabase.shared.modelContainer)
+    .database(SampleDatabase.shared)
 }

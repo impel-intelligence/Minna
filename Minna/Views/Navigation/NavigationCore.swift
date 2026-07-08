@@ -94,7 +94,7 @@ public struct NavigationCore: View {
                         .environment(navigationRouter)
                 }
                 .navigationDestination(for: Chat.self) { chat in
-                    ChatView(chat: chat)
+                    AskMinnaView(chat: chat, hasStarted: !chat.transcript.isEmpty)
                         .id(chat.uuid)
                         .environment(navigationRouter)
                 }
@@ -123,7 +123,7 @@ public struct NavigationCore: View {
             }
             
             for file in files where !file.descriptionGenerated {
-                FrontendDatabase.shared.queueDescriptionUpdate(for: file)
+                database.queueDescriptionUpdate(for: file)
             }
         }
     }

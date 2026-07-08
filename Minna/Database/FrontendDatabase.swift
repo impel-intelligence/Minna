@@ -60,10 +60,27 @@ class FrontendDatabase: Database {
     }
     
     private func populateUnfilledFolder() throws {
-        let descriptor = FetchDescriptor<Folder>()
+        let uuid = unfilledFolderUUID
+        var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == uuid })
+        descriptor.fetchLimit = 1
+
         guard try context.fetch(descriptor).isEmpty else { return }
         let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), protected: true)
         context.insert(unfilledFolder)
+    }
+    
+    public func unfilledFolder() -> Folder {
+        let uuid = unfilledFolderUUID
+        var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == uuid })
+        descriptor.fetchLimit = 1
+        
+        if let folder = try? context.fetch(descriptor).first {
+            return folder
+        }
+        
+        let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), protected: true)
+        context.insert(unfilledFolder)
+        return unfilledFolder
     }
     
     private func populateAppleProvider() throws {

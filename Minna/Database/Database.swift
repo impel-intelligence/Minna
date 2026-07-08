@@ -11,5 +11,6 @@ import DatabaseSchema
 protocol Database {
     var unfilledFolderUUID: UUID { get }
     
+    func unfilledFolder() -> Folder
     func queueDescriptionUpdate(for file: File)
 }

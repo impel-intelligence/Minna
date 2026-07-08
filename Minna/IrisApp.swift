@@ -49,7 +49,8 @@ struct MinnaApp: App {
                         presented: $standardFileImporterPresented,
                         selectedFolder: nil,
                         modelContext: frontendDatabase.modelContainer.mainContext,
-                        irisContext: irisDBController.mainContext
+                        irisContext: irisDBController.mainContext,
+                        database: frontendDatabase
                     )
             }
             CommandGroup(after: .appInfo) {

@@ -39,10 +39,23 @@ public final class Chat {
 }
 
 extension Chat {
-    public static func create(in folder: Folder, context: ModelContext) -> Chat {
+    /// Builds a chat and its backing `File` entirely in memory, without inserting
+    /// into a `ModelContext`. Insertion is the caller's responsibility and should
+    /// happen only once the chat has real content (e.g. the first message), so an
+    /// abandoned compose does not leave an empty chat behind.
+    ///
+    /// The `File` and `Chat` share one `UUID` so the synthesized `iris-chat://`
+    /// URL deterministically identifies the chat. `searchIndexed` /
+    /// `descriptionGenerated` are pre-marked so the background indexing sweep never
+    /// tries to fetch content for an `iris-chat://` URL.
+    ///
+    /// - Parameter folder: The (already persisted) folder the chat's file belongs to.
+    /// - Returns: An un-inserted `Chat`; call `context.insert(chat.file)` to persist.
+    /// - Authored by: Claude Opus 4.8 (Anthropic)
+    public static func make(in folder: Folder) -> Chat {
         let id = UUID()
         let file = File(
-            uuid: id, createdAt: .now, folder: folder,title: defaultTitle,
+            uuid: id, createdAt: .now, folder: folder, title: defaultTitle,
             shortDescription: "", color: .random, type: .askMinna,
             url: URL(string: "iris-chat://\(id)")!, bookmark: nil,
             source: "Ask Minna"
@@ -51,7 +64,6 @@ extension Chat {
         file.chat = chat
         file.searchIndexed = true
         file.descriptionGenerated = true
-        context.insert(file)
         return chat
     }
 }

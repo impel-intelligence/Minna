@@ -23,6 +23,7 @@ struct OpaqueFileCard: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
     @Environment(\.openURL) var openURL
+    @Environment(\.database) var database
     
     let file: File
     
@@ -94,7 +95,7 @@ struct OpaqueFileCard: View {
             let filesToGenerate = selectedFiles.isEmpty ? [file] : selectedFiles
             
             for file in filesToGenerate {
-                FrontendDatabase.shared.queueDescriptionUpdate(for: file)
+                database.queueDescriptionUpdate(for: file)
             }
         } label: {
             Label(selectedFiles.count <= 1 ? "Generate Description" : "Generate Descriptions", systemSymbol: .sparkles)
@@ -180,6 +181,8 @@ struct OpaqueFileCard: View {
     
     OpaqueFileCard(file: file, isEditingText: .constant(false), viewMode: .constant(.grid), selectedFiles: $selectedFiles)
         .modelContext(SampleDatabase.shared.context)
+        .database(SampleDatabase.shared)
     OpaqueFileCard(file: file, isEditingText: .constant(false), viewMode: .constant(.list), selectedFiles: $selectedFiles)
         .modelContext(SampleDatabase.shared.context)
+        .database(SampleDatabase.shared)
 }

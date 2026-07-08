@@ -1,129 +1,48 @@
-
 //
 //  SearchStartupView.swift
 //  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
+//  Reworked into the Ask Minna compose wrapper by Claude Opus 4.8 (Anthropic) on 2026-07-08.
 //
 
 import SwiftUI
 import SFSafeSymbols
 import SwiftData
 import SentrySwift
-import OrderedCollections
 import DatabaseSchema
 
+/// The Search tab's entry point. It owns an in-memory *draft* chat (created with
+/// `Chat.make`, not yet persisted) and hosts ``AskMinnaView`` in its compose
+/// state. Persisting the draft happens inside `AskMinnaView` on the first
+/// message; the New Chat toolbar button swaps in a fresh draft, which — via the
+/// changing `.id` — resets `AskMinnaView` to compose.
+///
+/// - Authored by: Claude Opus 4.8 (Anthropic)
 struct SearchStartupView: View {
-    @Environment(\.modelContext) var modelContext
-    @Environment(\.irisContext) var irisContext
-    @Environment(\.database) var database
-    @Environment(NavigationRouter.self) private var navigationRouter
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.database) private var database
 
-    @Namespace var chatTransitionNamespace
-
-    @State private var orderedSearch: [File] = []
-
-    @State var searchQuery: String = ""
-    @State var searchTask: Task<Void, Never>?
-    
-    @State var theme: ThemeColor = .random
+    @State private var draft: Chat?
 
     var body: some View {
-        VStack(spacing: 15) {
-            Spacer()
-            VStack(spacing: 5) {
-                Image("impel_logo")
-                    .resizable()
-                    .frame(width: 45, height: 45)
-                    .accessibilityLabel("Minna Logo")
-                    .matchedTransitionSource(id: "logo", in: chatTransitionNamespace)
-                Text("Hey \(NSUserFirstName())!")
-                    .font(.system(size: 36, design: .serif))
+        Group {
+            if let draft {
+                AskMinnaView(chat: draft, hasStarted: false, newChat: startNewChat)
+                    .id(draft.uuid)
+            } else {
+                ContentUnavailableView("Couldn't start a chat", systemSymbol: .exclamationmarkTriangle)
             }
-            
-            IndexingSearchBar(placeHolder: "Search or Ask across your Knowledge", searchQuery: $searchQuery) {
-                do {
-                    let unfilledUUID = database.unfilledFolderUUID
-                    var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == unfilledUUID })
-                    descriptor.fetchLimit = 1
-                    let folders = try modelContext.fetch(descriptor)
-                    guard let unfilledFolder = folders.first else { return }
-                    
-                    let newChat = Chat.create(in: unfilledFolder, context: modelContext)
-                    navigationRouter.push(newChat)
-                } catch {
-                    print("Failed to create chat: \(error)")
-                }
+        }
+        .onAppear {
+            if draft == nil {
+                draft = Chat.make(in: database.unfilledFolder())
             }
-            .theme(theme)
-            .matchedTransitionSource(id: "searchBar", in: chatTransitionNamespace)
-
-//            ScrollView(.horizontal) {
-//                HStack {
-//                    ForEach(orderedSearch) { file in
-//                        OpaqueFileCard(file: file, isEditingText: .constant(false), viewMode: .constant(.grid), selectedFiles: .constant([]))
-//                    }
-//                }
-//            }
-            Spacer()
         }
-        .navigationTitle("Ask Minna", image: Image(systemSymbol: .sparkles2).accessibilityHidden(true))
-//        .onChange(of: searchQuery) { _, newValue in
-//            searchIrisIndex(query: newValue)
-//        }
-    }
-    
-    func searchIrisIndex(query: String) {
-        searchTask?.cancel()
-
-        guard !query.isEmpty else {
-            orderedSearch = []
-            return
-        }
-
-        searchTask = Task {
-            // Debounce: wait 20ms before searching
-            try? await Task.sleep(for: Duration.milliseconds(20))
-
-            // Check if cancelled during wait
-            guard !Task.isCancelled else { return }
-
-//            isLoading = true
-            do {
-                let searchedUUIDs = try await irisContext.search(query: query)
-                orderedSearch = fetchOrderedFiles(for: searchedUUIDs)
-            } catch is CancellationError {
-                return
-            } catch {
-                SentrySDK.capture(error: error)
-                print("Failed to search \(error)")
-            }
-//            isLoading = false
-        }
-
     }
 
-    /// Fetch the files matching the search result UUIDs and order them by their rank in the results.
-    private func fetchOrderedFiles(for searchedUUIDs: [UUID]) -> [File] {
-        guard !searchedUUIDs.isEmpty else { return [] }
-
-        let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
-            searchedUUIDs.contains(file.uuid)
-        })
-
-        guard let files = try? modelContext.fetch(descriptor) else { return [] }
-
-        // Pre-size an array for ordered results and place docs directly by rank
-        var orderedByRank = [File?](repeating: nil, count: searchedUUIDs.count)
-
-        // O(n) loop over the retrieved documents, placing each document into the array at its rank position.
-        for file in files {
-            guard let index = searchedUUIDs.firstIndex(of: file.uuid) else { continue }
-            orderedByRank[index] = file
-        }
-
-        // Compact the rank order list, to remove any documents that were not found.
-        return orderedByRank.compactMap { $0 }
+    private func startNewChat() {
+        draft = Chat.make(in: database.unfilledFolder())
     }
 }
 
@@ -141,6 +60,7 @@ extension SearchStartupView: Navigable {
 #Preview {
     SearchStartupView()
         .navigationTitle("Ask Minna")
-        .environment(NavigationRouter())
+        .modelContainer(SampleDatabase.shared.modelContainer)
+        .database(SampleDatabase.shared)
         .irisContext(IrisDBController(modelContainer: SampleDatabase.shared.modelContainer).mainContext)
 }

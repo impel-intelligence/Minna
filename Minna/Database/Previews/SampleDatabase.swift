@@ -315,6 +315,10 @@ class SampleDatabase: Database {
         context.insert(appleProvider)
     }
     
+    func unfilledFolder() -> Folder {
+        return sampleFolders.first!
+    }
+    
     func queueDescriptionUpdate(for file: DatabaseSchema.File) { }
 }
 // swiftlint:enable type_body_length
