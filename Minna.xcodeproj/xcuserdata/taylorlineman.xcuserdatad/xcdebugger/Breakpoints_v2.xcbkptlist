@@ -50,6 +50,36 @@
             endingLineNumber = "476"
             landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5CCC5A44-42C4-4183-8AEB-8C7AC4DE88A4 - 7fcb21709075e1bf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "478"
+                  endingLineNumber = "478">
+               </Location>
+               <Location
+                  uuid = "5CCC5A44-42C4-4183-8AEB-8C7AC4DE88A4 - b92ebb448b5983"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "478"
+                  endingLineNumber = "478">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -66,6 +96,36 @@
             endingLineNumber = "478"
             landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "187E483A-724E-4420-A5F4-0194A32A4D03 - 7fcb21709075e1bf"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "478"
+                  endingLineNumber = "478">
+               </Location>
+               <Location
+                  uuid = "187E483A-724E-4420-A5F4-0194A32A4D03 - b92ebb448b5983"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "478"
+                  endingLineNumber = "478">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -146,6 +206,50 @@
             endingLineNumber = "465"
             landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "56E35EA5-EF5A-4BA2-9C74-288E303EF803 - 7fcb217090759fc8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "465"
+                  endingLineNumber = "465">
+               </Location>
+               <Location
+                  uuid = "56E35EA5-EF5A-4BA2-9C74-288E303EF803 - b92ebb448b27f4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "465"
+                  endingLineNumber = "465">
+               </Location>
+               <Location
+                  uuid = "56E35EA5-EF5A-4BA2-9C74-288E303EF803 - 482981f6d05f0f4e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (AnyLanguageModel.AnthropicContent) -&gt; Swift.Optional&lt;Swift.String&gt; in AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "465"
+                  endingLineNumber = "465">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -162,6 +266,50 @@
             endingLineNumber = "459"
             landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2B0F71B1-98AF-4728-BBFA-2BE9566360D5 - 7fcb217090759f6d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460">
+               </Location>
+               <Location
+                  uuid = "2B0F71B1-98AF-4728-BBFA-2BE9566360D5 - b92ebb448b2751"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460">
+               </Location>
+               <Location
+                  uuid = "2B0F71B1-98AF-4728-BBFA-2BE9566360D5 - 482981f6d05f0feb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (AnyLanguageModel.AnthropicContent) -&gt; Swift.Optional&lt;Swift.String&gt; in AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -178,6 +326,36 @@
             endingLineNumber = "472"
             landmarkName = "streamResponse(within:to:generating:includeSchemaInPrompt:options:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "72590518-5B98-457C-AF66-0A4D9081B87F - 7fcb21709075e0f1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "472"
+                  endingLineNumber = "472">
+               </Location>
+               <Location
+                  uuid = "72590518-5B98-457C-AF66-0A4D9081B87F - b92ebb448b58cd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(5) suspend resume partial function for AnyLanguageModel.AnthropicLanguageModel.respond&lt;&#x3c4;_0_0 where &#x3c4;_0_0: AnyLanguageModel.Generable&gt;(within: AnyLanguageModel.LanguageModelSession, to: AnyLanguageModel.Prompt, generating: &#x3c4;_0_0.Type, includeSchemaInPrompt: Swift.Bool, options: AnyLanguageModel.GenerationOptions) async throws -&gt; AnyLanguageModel.LanguageModelSession.Response&lt;&#x3c4;_0_0&gt;"
+                  moduleName = "Minna.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/taylorlineman/Library/Developer/Xcode/DerivedData/Minna-arbycywmxstwlwezxkunkozbuakt/SourcePackages/checkouts/AnyLanguageModel/Sources/AnyLanguageModel/Models/AnthropicLanguageModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "472"
+                  endingLineNumber = "472">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
