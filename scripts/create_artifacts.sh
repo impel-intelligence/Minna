@@ -6,8 +6,8 @@ APP_PATH=$1
 STAGE_DIR=stage
 
 # Delete existing artifacts
-rm minna.dmg
-rm minna.tar.xz
+rm -f minna.dmg
+rm -f minna.tar.xz
 
 ### CREATE DMG ###
 

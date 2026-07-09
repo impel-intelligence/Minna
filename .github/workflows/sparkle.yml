@@ -24,13 +24,14 @@ jobs:
     
     # Download the last builds
     - name: release-downloader
-      uses: robinraju/release-downloader@v1.10
+      uses: robinraju/release-downloader@v1.13
       with:
         tag: '${{ github.ref_name }}'
         fileName: |
           'minna.dmg'
           'minna.tar.xz'
         out-file-path: 'tmp'
+        token: ${{ secrets.ACTIONS_PAT }}
 
     - name: Restore Sparkle Updater Cache
       id: cache-sparkle
