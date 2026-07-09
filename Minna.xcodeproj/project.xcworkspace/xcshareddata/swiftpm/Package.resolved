@@ -1,6 +1,15 @@
 {
-  "originHash" : "0b850f68620909e26d1a1db50aa5b64274fec48c79fefc4120cb1f6ab3142def",
+  "originHash" : "3ac6d451cb67476810904e04ea2d25a21314655b22a0239c5af6ce168b5265f1",
   "pins" : [
+    {
+      "identity" : "anylanguagemodel",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/impel-intelligence/AnyLanguageModel",
+      "state" : {
+        "revision" : "ac63db38673ed725b781fd43040b0ad667cade1d",
+        "version" : "2.0.0"
+      }
+    },
     {
       "identity" : "blurbkit",
       "kind" : "remoteSourceControl",
@@ -78,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "d3562ee73e56a7b0b8319ec613db3c529924f07a",
-        "version" : "9.19.1"
+        "revision" : "53eb9bd5da18e208cfd80e86863d3f4c7ba21b1d",
+        "version" : "9.21.0"
       }
     },
     {
@@ -150,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-system.git",
       "state" : {
-        "revision" : "7502b711c92a17741fa625d722b0ccbd595d8ed1",
-        "version" : "1.7.2"
+        "revision" : "b5544ba79a70a0cb3563e75bf26dc198d6b40ed3",
+        "version" : "1.7.4"
       }
     },
     {

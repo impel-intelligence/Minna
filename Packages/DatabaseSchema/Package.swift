@@ -18,8 +18,8 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/evgenyneu/keychain-swift.git", from: "24.0.0"),
 //        .package(url: "https://github.com/huggingface/AnyLanguageModel", from: "0.8.0"),
-//        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "1.0.0")
-        .package(path: "/Users/taylorlineman/Developer/git/AnyLanguageModel"),
+        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.0.0")
+//        .package(path: "/Users/taylorlineman/Developer/git/AnyLanguageModel"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
