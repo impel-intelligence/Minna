@@ -33,7 +33,7 @@ public final class ChatInstance {
     public let session: LanguageModelSession
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
     
-    public var waitingForResponse: Bool = true
+    public var waitingForResponse: Bool = false
         
     public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: AskMinnaInstructions.Type) throws {
         self.databaseContext = databaseContext

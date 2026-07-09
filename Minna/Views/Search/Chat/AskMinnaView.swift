@@ -90,7 +90,6 @@ struct AskMinnaView: View {
             return .handled
         })
         .animation(.bouncy, value: viewMode)
-        .animation(.bouncy, value: chat.transcript)
         .inspector(isPresented: $citationHandler.citationSidebarOpen) {
             CitationColumnView(citations: $citationHandler.citations)
         }
