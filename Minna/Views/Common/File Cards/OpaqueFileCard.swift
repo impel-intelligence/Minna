@@ -64,9 +64,9 @@ struct OpaqueFileCard: View {
         .onChange(of: editingDescription) { _, newValue in
             isEditingText = newValue
         }
-        .onTapGesture(count: 2) {
+        .simultaneousGesture(TapGesture(count: 2).onEnded {
             open(file)
-        }
+        })
     }
     
     @ViewBuilder

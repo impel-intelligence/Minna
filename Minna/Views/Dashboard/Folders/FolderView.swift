@@ -211,9 +211,9 @@ struct FolderView: View {
             VStack {
                 ForEach(filteredFiles) { file in
                     OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
-                        .onTapGesture {
+                        .simultaneousGesture(TapGesture(count: 1).onEnded {
                             tapGesture(for: file)
-                        }
+                        })
                 }
             }
             .padding(.vertical, 8)
@@ -228,9 +228,9 @@ struct FolderView: View {
             LazyVGrid(columns: columns) {
                 ForEach(filteredFiles) { file in
                     OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
-                        .onTapGesture(count: 1) {
+                        .simultaneousGesture(TapGesture(count: 1).onEnded {
                             tapGesture(for: file)
-                        }
+                        })
                 }
             }
             .padding(.vertical, 8)
@@ -282,11 +282,6 @@ struct FolderView: View {
     private func tapGesture(for file: File) {
         // MARK: Selection Support (https://support.apple.com/guide/mac-help/select-items-mchlp1378/mac)
         
-        // If we are not holding command, clear the previous selection
-        if !NSEvent.modifierFlags.contains(.command) {
-            selectedFiles.removeAll()
-        }
-        
         // Select multiple items that are adjacent
         if NSEvent.modifierFlags.contains(.shift), let selectionAnchor,
            let currentIndex = filteredFiles.firstIndex(of: file),
@@ -297,6 +292,11 @@ struct FolderView: View {
                 selectedFiles.append(file)
             }
         } else {
+            // If we are not holding command, clear all files other than the current one
+            if !NSEvent.modifierFlags.contains(.command) {
+                selectedFiles.removeAll(where: { $0 != file })
+            }
+            
             selectionAnchor = file
             selectedFiles.toggle(file)
         }
