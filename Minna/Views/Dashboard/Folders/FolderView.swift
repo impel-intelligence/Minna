@@ -41,6 +41,7 @@ struct FolderView: View {
     @Environment(\.irisContext) private var irisContext
     @Environment(\.database) var database
     @Environment(\.openURL) private var openURL
+    @Environment(\.router) private var navigationRouter
 
     static let cardWidth: CGFloat = 150
     static let gridSpacing: CGFloat = 12
@@ -54,6 +55,9 @@ struct FolderView: View {
     var filteredFiles: [File] {
         files.filter { contentTypes.contains($0.type) }.sorted(by: sortMode.sortFunction(lhs:rhs:))
     }
+    
+    // WARN: Do not edit this query, its actual value is set in the initializer
+    @Query private var folders: [Folder]
 
     @ViewStorage("viewMode", path: \Self.folder.uuid.uuidString) var viewMode: FolderViewMode = .grid
     @ViewStorage("contentTypes", path: \Self.folder.uuid.uuidString) var contentTypes: Set<ContentType> = Set(ContentType.allCases)
@@ -82,10 +86,39 @@ struct FolderView: View {
         _files = Query(filter: #Predicate<File> { file in
             return file.folder.persistentModelID == id
         })
+        
+        _folders = Query(filter: #Predicate<Folder> { folder in
+            return folder.parent?.persistentModelID == id
+        }, sort: \.name)
     }
     
     var body: some View {
-        Group {
+        ScrollView {
+            if !folders.isEmpty {
+                VStack {
+                    HStack {
+                        Text("Folders")
+                        Spacer()
+                    }
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(folders) { folder in
+                                FolderCard(folder: folder)
+                                    .accessibilityAddTraits(.isLink)
+                                    .onTapGesture {
+                                        navigationRouter.push(folder)
+                                    }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                .padding(.vertical, 8)
+            }
+            
             switch viewMode {
             case .grid:
                 gridBody
@@ -102,22 +135,6 @@ struct FolderView: View {
             database: database
         )
         .toolbar {
-//            ToolbarItem {
-//                NotificationsViewButton()
-//                Button("Send Notification") {
-//                    let notification = UserNotification(title: "This is a test notification", message: "Tesyt test ", actions: [
-//                        UserNotification.ActionOption(title: "Move", action: {
-//                            print("Move")
-//                        }),
-//                        UserNotification.ActionOption(title: "Ignore", action: {
-//                            print("Ignore")
-//                        })
-//                    ])
-//                    
-//                    alertCenter.post(notification)
-//                }
-//            }
-
             ToolbarItemGroup(placement: .primaryAction) {
                 Menu {
                     AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
@@ -207,35 +224,28 @@ struct FolderView: View {
     }
     
     var listBody: some View {
-        ScrollView {
-            VStack {
-                ForEach(filteredFiles) { file in
-                    OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
-                        .simultaneousGesture(TapGesture(count: 1).onEnded {
-                            tapGesture(for: file)
-                        })
-                }
+        VStack {
+            ForEach(filteredFiles) { file in
+                OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
+                    .simultaneousGesture(TapGesture(count: 1).onEnded {
+                        tapGesture(for: file)
+                    })
             }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 10)
         }
-        .scrollContentBackground(.hidden)
-
+        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
     }
     
     var gridBody: some View {
-        ScrollView {
-            LazyVGrid(columns: columns) {
-                ForEach(filteredFiles) { file in
-                    OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
-                        .simultaneousGesture(TapGesture(count: 1).onEnded {
-                            tapGesture(for: file)
-                        })
-                }
+        LazyVGrid(columns: columns) {
+            ForEach(filteredFiles) { file in
+                OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
+                    .simultaneousGesture(TapGesture(count: 1).onEnded {
+                        tapGesture(for: file)
+                    })
             }
-            .padding(.vertical, 8)
         }
-        .scrollContentBackground(.hidden)
+        .padding(.vertical, 8)
     }
     
     
