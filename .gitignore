@@ -2,6 +2,7 @@
 
 # Ignore generated Xcode projects and workspaces
 *.xcuserstate
+*.xcuserdatad
 
 # Ignore Tuist build artifacts and cached files
 /.build/
