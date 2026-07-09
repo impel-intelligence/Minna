@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/IrisSearch",
       "state" : {
-        "revision" : "49a97b95236f8ba8124a7e65c6beb0b33b0cb688",
-        "version" : "1.0.1"
+        "revision" : "9f59a4e2dcf5d033736276ef1c9c5194a72a0492",
+        "version" : "1.0.2"
       }
     },
     {
