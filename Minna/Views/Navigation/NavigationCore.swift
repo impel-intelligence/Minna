@@ -110,12 +110,21 @@ public struct NavigationCore: View {
                 database.queueDescriptionUpdate(for: file)
             }
         }
+        .onOpenURL { url in
+            do {
+                try URLHandler.handle(url, context: modelContext, router: navigationRouter)
+            } catch {
+                print("Failed to handle \(url): \(error)")
+            }
+    
+        }
     }
 
     func addFolder(in folder: Folder?) {
         print("Adding folder with parent \(folder?.name ?? "No parent")")
         addFolderRequest = AddFolderRequest(parent: folder)
     }
+    
 }
 
 #Preview {

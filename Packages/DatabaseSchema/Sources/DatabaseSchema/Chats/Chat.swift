@@ -64,7 +64,7 @@ extension Chat {
         let file = File(
             uuid: id, createdAt: .now, folder: folder, title: defaultTitle,
             shortDescription: "", color: .random, type: .askMinna,
-            url: URL(string: "iris-chat://\(id)")!, bookmark: nil,
+            url: URL(string: "iris://doc/\(id)")!, bookmark: nil,
             source: "Ask Minna"
         )
         let chat = Chat(uuid: id, createdAt: .now, file: file)

@@ -37,7 +37,8 @@ struct AskMinnaView: View {
     
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
-    
+    @Environment(\.router) var navigationRouter
+
     @Namespace private var searchContainerTransitions
 
     @AppStorage(AppStorageKeys.preferredModel) var preferredModel: String = ""
@@ -80,14 +81,13 @@ struct AskMinnaView: View {
         .navigationTitle(chat.title())
         .environment(citationHandler)
         .environment(\.openURL, OpenURLAction { url in
-            guard url.scheme == "cite", let docID = url.host() else {
+            do {
+                try URLHandler.handle(url, context: modelContext, router: navigationRouter)
+                return .handled
+            } catch {
+                print("Failed to handle url: \(url), \(error)")
                 return .systemAction
             }
-            let title = URLComponents(url: url, resolvingAgainstBaseURL: false)?
-                .queryItems?.first(where: { $0.name == "title" })?.value
-            // TODO: navigate to / preview the cited document using docID (and title).
-            print(docID, title as Any)
-            return .handled
         })
         .animation(.bouncy, value: viewMode)
         .inspector(isPresented: $citationHandler.citationSidebarOpen) {

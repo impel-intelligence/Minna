@@ -16,9 +16,13 @@ struct Citation: Hashable, Identifiable {
     
     var urlComponents: URLComponents {
         var components = URLComponents()
-        components.scheme = "iris"
-        components.host = id.uuidString
-        components.queryItems = [URLQueryItem(name: "title", value: title)]
+        components.scheme = "minna"
+        components.host = "doc"
+        components.path = "/\(id.uuidString)"
+        
+        components.queryItems = [
+            URLQueryItem(name: "title", value: title)
+        ]
         
         return components
     }
@@ -57,7 +61,7 @@ class CitationHandler: MarkupParser {
         // Collect the ranges first: mutating attributes below would otherwise interfere with
         // iterating `runs`. Attribute-only edits don't shift text, so the ranges stay valid.
         let citationRanges = attributed.runs.compactMap { run -> Range<AttributedString.Index>? in
-            guard let link = run.link, link.scheme == "iris" else { return nil }
+            guard let link = run.link, link.scheme == "minna" else { return nil }
             return run.range
         }
 
@@ -102,7 +106,7 @@ private extension String {
                 citationNumber = citations.distance(from: citations.startIndex, to: docIndex) + 1
             }
                         
-            return "[\(citationNumber)](\(citation.urlComponents.string ?? "iris://\(docID)"))"
+            return "[\(citationNumber)](\(citation.urlComponents.string ?? "minna://doc/\(docID)"))"
         }
         
         return (output, citations)
