@@ -9,6 +9,7 @@ import Foundation
 import SwiftData
 import BlurbKit
 import UniformTypeIdentifiers
+import DatabaseSchema
 
 struct FileFactory {
     enum FileFactoryError: Error {

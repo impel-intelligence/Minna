@@ -1,0 +1,121 @@
+//
+//  ModelsSettingsView.swift
+//  Minna
+//
+//  Created by Taylor Lineman on 6/29/26.
+//  Edited by Claude Opus 4.8 (Anthropic) on 2026-07-01.
+//
+
+import SwiftUI
+import SwiftData
+import DatabaseSchema
+import SFSafeSymbols
+import ModelManager
+
+struct ProviderWrapper: Identifiable {
+    var id: String { provider.id }
+
+    /// The provider being configured. It owns the description of the fields the
+    /// form should render (via `provider.fields`) and knows how to build itself
+    /// from the collected input (via `provider.make(from:)`).
+    let provider: any ModelProvider.Type
+    
+    let existingConfiguration: ConfiguredProvider?
+}
+
+struct ModelsSettingsView: View {
+    @Query var providers: [ConfiguredProvider]
+    @Query var models: [ChatModel]
+
+    private var onDeviceModels: [ChatModel] {
+        models.filter { $0.location == .device }
+    }
+
+    private var cloudModels: [ChatModel] {
+        models.filter { $0.location == .cloud }
+    }
+    
+    @State var providerWrapper: ProviderWrapper?
+    
+    var body: some View {
+        Form {
+            Section("Local Models") {
+                NavigationLink("Install New Models") {
+                    InstallModelsView()
+                }
+            }
+            
+            Section("Configured Providers") {
+                ForEach(providers) { configuration in
+                    if let classedProvider = ProviderFactory.makeType(id: configuration.providerID) {
+                        Button {
+                            if classedProvider.editable {
+                                providerWrapper = ProviderWrapper(provider: classedProvider, existingConfiguration: configuration)
+                            }
+                        } label: {
+                            labelFor(provider: classedProvider, configuration: configuration)
+                        }
+                        .contentShape(.rect)
+                        .buttonStyle(NavigationLinkButtonStyle())
+                        .accessibilityLabel("Edit \(configuration.name)")
+                    } else {
+                        Text("Invalid Provider: \(configuration.providerID)")
+                    }
+                }
+            }
+            
+            Section("Add a new provider") {
+                Button {
+                    providerWrapper = ProviderWrapper(provider: AnthropicProvider.self, existingConfiguration: nil)
+                } label: {
+                    HStack {
+                        Image(AnthropicProvider.image)
+                            .resizable()
+                            .frame(width: 15, height: 15)
+                        Text(AnthropicProvider.marketingName)
+                    }
+                }
+                .contentShape(.rect)
+                .buttonStyle(NavigationLinkButtonStyle())
+                .accessibilityLabel("Add \(AnthropicProvider.marketingName) as a model provider.")
+            }
+        }
+        .formStyle(.grouped)
+        .navigationTitle("Models")
+        .sheet(item: $providerWrapper) { wrapper in
+            ProviderConfigurationForm(wrapper: wrapper)
+        }
+    }
+    
+    @ViewBuilder
+    func labelFor(provider: any ModelProvider.Type, configuration: ConfiguredProvider) -> some View {
+        if let assetProvider = provider as? (any AssetProvider.Type) {
+            HStack {
+                Image(assetProvider.image)
+                    .resizable()
+                    .frame(width: 15, height: 15)
+                    .accessibilityLabel("\(assetProvider.marketingName) Logo")
+                
+                // If the user set a custom name for this provider, show the name of the provider as a subtitle.
+                if configuration.name != assetProvider.marketingName {
+                    VStack(alignment: .leading) {
+                        Text(configuration.name)
+                        Text(assetProvider.marketingName)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } else {
+                    Text(configuration.name)
+                }
+            }
+        } else {
+            Text(configuration.name)
+        }
+    }
+}
+
+#Preview {
+    NavigationStack {
+        ModelsSettingsView()
+    }
+}

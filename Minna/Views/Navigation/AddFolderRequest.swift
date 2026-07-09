@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import DatabaseSchema
 
 /// Wraps the (optional) parent folder so it can drive `.sheet(item:)`. Using two
 struct AddFolderRequest: Identifiable {

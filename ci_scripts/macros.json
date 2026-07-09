@@ -1,7 +1,17 @@
 [
-    {
-        "fingerprint" : "192ff3521e0495b4e01cdff4be37fea1071d1ac3",
-        "packageIdentity" : "viewstorage",
-        "targetName" : "ViewStorageMacros"
-    }
+  {
+    "fingerprint" : "16b729283b3ce269f82fd80c327a23e992eb67e6",
+    "packageIdentity" : "viewstorage",
+    "targetName" : "ViewStorageMacros"
+  },
+  {
+    "fingerprint" : "ac63db38673ed725b781fd43040b0ad667cade1d",
+    "packageIdentity" : "anylanguagemodel",
+    "targetName" : "AnyLanguageModelMacros"
+  },
+  {
+    "fingerprint" : "1c05248bb0899e2a7a4962b84d319cf12f4e12aa",
+    "packageIdentity" : "mlx-swift-lm",
+    "targetName" : "MLXHuggingFaceMacros"
+  }
 ]

@@ -11,6 +11,7 @@ import Digester
 import SwiftData
 import SentrySwift
 import UniformTypeIdentifiers
+import DatabaseSchema
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
@@ -60,7 +61,7 @@ struct IndexingProgress {
 final class IrisDBController {
     @MainActor public private(set) var mainContext: IrisContext!
     
-    @ObservationIgnored private let irisDB: IrisDB
+    @ObservationIgnored let irisDB: IrisDB
     @ObservationIgnored private let textEmbedder: EmbeddingProvider
     @ObservationIgnored private let textChunker: TextChunker = BasicTextChunker()
     
@@ -118,6 +119,7 @@ final class IrisDBController {
 
                 await self?.completeIndexing(uuid: uuid)
             } catch {
+                print("Failed to index file \(uuid): \(error)")
                 SentrySDK.capture(error: error)
                 // Clear progress even on failure so the indexing indicator never hangs.
                 await self?.completeIndexing(uuid: uuid)
@@ -149,6 +151,6 @@ extension IrisDBController: Searchable {
         let query = IrisQuery(text: query)
         let documents = try await irisDB.search(query: query, ranking: .relativeScoreFusion)
 
-        return documents.map { $0.uuid }
+        return documents.map { $0.document.uuid }
     }
 }

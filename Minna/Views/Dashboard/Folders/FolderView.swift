@@ -11,6 +11,7 @@ import ViewStorage
 import OrderedCollections
 import SFSafeSymbols
 import SentrySwift
+import DatabaseSchema
 
 enum ArrowDirection {
     case up
@@ -38,7 +39,7 @@ enum ArrowDirection {
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
-    
+    @Environment(\.database) var database
     @Environment(\.openURL) private var openURL
 
     static let cardWidth: CGFloat = 150
@@ -97,7 +98,8 @@ struct FolderView: View {
             presented: $standardFileImporterPresented,
             selectedFolder: folder,
             modelContext: modelContext,
-            irisContext: irisContext
+            irisContext: irisContext,
+            database: database
         )
         .toolbar {
 //            ToolbarItem {
@@ -209,9 +211,9 @@ struct FolderView: View {
             VStack {
                 ForEach(filteredFiles) { file in
                     OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
-                        .onTapGesture {
+                        .simultaneousGesture(TapGesture(count: 1).onEnded {
                             tapGesture(for: file)
-                        }
+                        })
                 }
             }
             .padding(.vertical, 8)
@@ -226,9 +228,9 @@ struct FolderView: View {
             LazyVGrid(columns: columns) {
                 ForEach(filteredFiles) { file in
                     OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
-                        .onTapGesture {
+                        .simultaneousGesture(TapGesture(count: 1).onEnded {
                             tapGesture(for: file)
-                        }
+                        })
                 }
             }
             .padding(.vertical, 8)
@@ -280,11 +282,6 @@ struct FolderView: View {
     private func tapGesture(for file: File) {
         // MARK: Selection Support (https://support.apple.com/guide/mac-help/select-items-mchlp1378/mac)
         
-        // If we are not holding command, clear the previous selection
-        if !NSEvent.modifierFlags.contains(.command) {
-            selectedFiles.removeAll()
-        }
-        
         // Select multiple items that are adjacent
         if NSEvent.modifierFlags.contains(.shift), let selectionAnchor,
            let currentIndex = filteredFiles.firstIndex(of: file),
@@ -295,12 +292,35 @@ struct FolderView: View {
                 selectedFiles.append(file)
             }
         } else {
+            // If we are not holding command, clear all files other than the current one
+            if !NSEvent.modifierFlags.contains(.command) {
+                selectedFiles.removeAll(where: { $0 != file })
+            }
+            
             selectionAnchor = file
             selectedFiles.toggle(file)
         }
     }
     
+    /// Deletes a file from the SwiftData store and the Iris search index.
+    /// A chat file's `chat` relationship is loaded lazily, so it is normally an
+    /// unfaulted `_FullFutureBackingData` future. Deleting the file fires the
+    /// `File.chat` `.cascade` rule, and SwiftData crashes in `ModelSnapshot`
+    /// ("Unexpected backing data for snapshot creation: _FullFutureBackingData")
+    /// while snapshotting that un-materialized chat. Reading a stored property
+    /// first forces the chat to fault into concrete backing data, after which the
+    /// cascade delete succeeds. Verified against an in-memory store reproduction.
+    ///
+    /// By realizing components of the chat, SwiftData is forced to load the model,
+    /// which allows it to properly delete the chat.
+    ///
+    /// - Fix Authored by: Claude Opus 4.8 (Anthropic)
     private func delete(_ file: File) {
+        // Fault the related chat into memory so the cascade delete can snapshot it.
+        if let chat = file.chat {
+            _ = chat.uuid
+        }
+
         modelContext.delete(file)
 
         do {
@@ -321,4 +341,5 @@ struct FolderView: View {
         FolderView(folder: folder)
     }
     .modelContainer(SampleDatabase.shared.modelContainer)
+    .database(SampleDatabase.shared)
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SFSafeSymbols
+import DatabaseSchema
 
 struct GridFileCard: View {
     @State var file: File

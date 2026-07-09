@@ -10,9 +10,10 @@ import SwiftUI
 import Digester
 import SentrySwift
 import UniformTypeIdentifiers
+import DatabaseSchema
 
 extension View {
-    func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext) -> some View {
+    func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext, database: Database) -> some View {
         self
             .fileDialogMessage("Pick a file to add to Minna.")
             .fileDialogCustomizationID(MinnaFileDialog.main)
@@ -31,7 +32,7 @@ extension View {
                         folder = selectedFolder
                     } else {
                         // Capture the unfilled UUID so the predicate operates (it needs local state)
-                        let unfilledUUID = FrontendDatabase.shared.unfilledFolderUUID
+                        let unfilledUUID = database.unfilledFolderUUID
                         var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == unfilledUUID })
                         descriptor.fetchLimit = 1
                         let folders = try modelContext.fetch(descriptor)
@@ -87,7 +88,7 @@ extension View {
                     // Run service tasks. These are both async, they will dispatch their own tasks within.
                     for file in insertedFiles {
                         try irisContext.insert(file)
-                        FrontendDatabase.shared.queueDescriptionUpdate(for: file)
+                        database.queueDescriptionUpdate(for: file)
                     }
                 } catch {
                     SentrySDK.capture(error: error)

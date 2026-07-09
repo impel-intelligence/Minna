@@ -9,6 +9,7 @@ import SwiftUI
 import SFSafeSymbols
 import OrderedCollections
 import SwiftData
+import DatabaseSchema
 
 struct AddFolderForm: View {
     @Environment(\.modelContext) var modelContext

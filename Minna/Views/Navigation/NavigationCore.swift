@@ -9,30 +9,26 @@ import SwiftData
 import SwiftUI
 import SFSafeSymbols
 import SentrySwift
-
-enum NavigationDestination: Hashable {
-    case search
-    case recents
-    case folder(Folder)
-}
+import DatabaseSchema
 
 public struct NavigationCore: View {
     @Environment(\.undoManager) private var undoManager
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
-    
+    @Environment(\.database) private var database
+
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \.order) private var folders: [Folder]
 
     @AppStorage("knowledgeExpanded") var knowledgeExpanded: Bool = true
     @AppStorage("connectionsExpanded") var connectionsExpanded: Bool = true
 
-    @State var selectedDestination: NavigationDestination? = .search
+    @State var navigationRouter: NavigationRouter = NavigationRouter()
     
     @State var addFolderRequest: AddFolderRequest?
     
     public var body: some View {
         NavigationSplitView {
-            List(selection: $selectedDestination) {                
+            List(selection: $navigationRouter.selectedTab) {
                 SearchStartupView.label
                     .tag(NavigationDestination.search)
 
@@ -62,16 +58,32 @@ public struct NavigationCore: View {
                 }
             }
         } detail: {
-            switch selectedDestination {
-            case .search, nil:
-                SearchStartupView()
-            case .recents:
-                RecentsView()
-            case .folder(let folder):
-                FolderView(folder: folder)
-                    .id(folder.uuid)
+            NavigationStack(path: $navigationRouter.path) {
+                Group {
+                    switch navigationRouter.selectedTab {
+                    case .search, nil:
+                        SearchStartupView()
+                    case .recents:
+                        RecentsView()
+                    case .folder(let folder):
+                        FolderView(folder: folder)
+                            .id(folder.uuid)
+                    }
+                }
+                .environment(navigationRouter)
+                .navigationDestination(for: Folder.self) { folder in
+                    FolderView(folder: folder)
+                        .id(folder.uuid)
+                        .environment(navigationRouter)
+                }
+                .navigationDestination(for: Chat.self) { chat in
+                    AskMinnaView(chat: chat, viewMode: chat.transcript.isEmpty ? .startup : .chat)
+                        .id(chat.uuid)
+                        .environment(navigationRouter)
+                }
             }
         }
+        .router(navigationRouter)
         .onAppear {
             modelContext.undoManager = undoManager
         }
@@ -85,7 +97,7 @@ public struct NavigationCore: View {
             })
             
             guard let files = try? modelContext.fetch(descriptor) else { return }
-            for file in files where file.searchIndexed {
+            for file in files where !file.searchIndexed {
                 do {
                     try irisContext.reIndex(file)
                 } catch {
@@ -94,8 +106,8 @@ public struct NavigationCore: View {
                 }
             }
             
-            for file in files where file.descriptionGenerated {
-                FrontendDatabase.shared.queueDescriptionUpdate(for: file)
+            for file in files where !file.descriptionGenerated {
+                database.queueDescriptionUpdate(for: file)
             }
         }
     }
@@ -109,5 +121,6 @@ public struct NavigationCore: View {
 #Preview {
     NavigationCore()
         .modelContainer(SampleDatabase.shared.modelContainer)
+        .database(SampleDatabase.shared)
         .irisContext(IrisContext.notConnected)
 }

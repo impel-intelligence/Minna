@@ -8,6 +8,7 @@
 import SwiftUI
 import SFSafeSymbols
 import SwiftData
+import DatabaseSchema
 
 struct FolderRow: View {
     @Environment(\.modelContext) private var modelContext

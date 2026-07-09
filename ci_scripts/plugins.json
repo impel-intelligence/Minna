@@ -1,7 +1,12 @@
 [
-    {
-        "fingerprint" : "ecb6907e0db6f79ed2c7a569df4e723a47615208",
-        "packageIdentity" : "swiftlintplugins",
-        "targetName" : "SwiftLintBuildToolPlugin"
-    }
+  {
+    "fingerprint" : "3292bab28e6e92000161348003fdef8edc4e582d",
+    "packageIdentity" : "swiftlintplugins",
+    "targetName" : "SwiftLintBuildToolPlugin"
+  },
+  {
+    "fingerprint" : "eb889e01b7267bc6d9c01fde91bc517b09506c2d",
+    "packageIdentity" : "mlx-swift",
+    "targetName" : "CudaBuild"
+  }
 ]
