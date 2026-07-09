@@ -43,7 +43,7 @@ set +e # It is okay if something here fails so just ignore it and keep going
 "${REPO_ROOT}/${UPDATER_DIR}/bin/generate_keys" -f private_key_file
 set -e # Re-enable errors
 
-echo "Creating appcast
+echo "Creating appcast"
 "${REPO_ROOT}/${UPDATER_DIR}/bin/${APPCAST_TOOL_PATH}/generate_appcast" $RELEASE_DIR
 
 echo "Committing changes to updater repository"
@@ -52,5 +52,3 @@ git commit -m "$VERSION"
 git tag -a "$VERSION" -m "Version $VERSION"
 git push
 git push origin "$VERSION"
-
-cd "$REPO_ROOT"
