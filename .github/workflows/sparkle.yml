@@ -1,0 +1,48 @@
+name: Update Sparkle w/ Latest Release
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upload:
+    name: Upload Release Files
+    runs-on: macos-26
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Install xcbeautify
+      run: brew install xcbeautify
+
+    - name: Configure Git for Private Packages
+      run: |
+        git config --global url."https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/".insteadOf "https://github.com/"
+    
+    # Download the last builds
+    - name: release-downloader
+      uses: robinraju/release-downloader@v1.10
+      with:
+        tag: '${{ github.ref_name }}'
+        fileName: |
+          'minna.dmg'
+          'minna.tar.xz'
+        out-file-path: 'tmp'
+
+    - name: Restore Sparkle Updater Cache
+      id: cache-sparkle
+      uses: actions/cache@v6
+      with:
+        path: iris-sparkle-updater
+        key: updater-cache
+
+    # Depth 1 for a shallow clone
+    - name: Checkout Minna Sparkle Updater
+      if: steps.cache-sparkle.outputs.cache-hit != 'true'
+      run: git clone --depth 1 https://github.com/impel-intelligence/minna-sparkle-updater/
+
+    - name: Update Sparkle
+      run: ./scripts/update_sparkle.sh ${{ secrets.SPARKLE_SIGNING_KEY }}  ${{ github.ref_name }} "${{ github.event.release.body }}"

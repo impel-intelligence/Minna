@@ -1,56 +1,38 @@
 #!/bin/sh
 set -eu # Fail on errors and unset variables
 
-# Builds tmp/apps/iris.dmg from the notarized tmp/apps/Iris.app using create-dmg.
-# Layout (window, icon size, positions) mirrors the old DropDMG configuration.
+APP_PATH=$1
 
-TMP_PATH="tmp/apps"
+STAGE_DIR=stage
 
-APP_NAME="Iris.app"
-APP_PATH="${TMP_PATH}/${APP_NAME}"
+# Delete existing artifacts
+rm minna.dmg
+rm minna.tar.xz
 
-DMG_NAME="iris.dmg"
-DMG_PATH="${TMP_PATH}/${DMG_NAME}"
+### CREATE DMG ###
 
-TAR_NAME="iris.tar.xz"
-TAR_PATH="${TMP_PATH}/${TAR_NAME}"
+# Create a staging directory
+rm -rf $STAGE_DIR
+mkdir $STAGE_DIR
 
-STAGING_PATH="tmp/dmg"
-BACKGROUND="scripts/dmg/background.png"
-VOLUME_ICON="scripts/dmg/volume.icns"
-
-if [ ! -d "$APP_PATH" ]; then
-    echo "error: $APP_PATH not found (run notarize.sh first)"
-    exit 1
-fi
-
-echo "Creating DMG"
-
-# create-dmg copies the contents of the source folder into the disk image, so
-# stage a clean folder containing only the app (tmp/apps also holds the tarball).
-rm -rf "$STAGING_PATH" "$DMG_PATH"
-mkdir -p "$STAGING_PATH"
-cp -R "$APP_PATH" "$STAGING_PATH/"
+# Copy the app into the staging directory
+cp -r $APP_PATH stage/Minna.app
 
 create-dmg \
-    --volname "Iris" \
-    --volicon "$VOLUME_ICON" \
-    --background "$BACKGROUND" \
-    --window-pos 100 100 \
-    --window-size 740 494 \
-    --icon-size 128 \
-    --text-size 12 \
-    --icon "Iris.app" 208 208 \
-    --app-drop-link 544 208 \
-    --hide-extension "Iris.app" \
-    --no-internet-enable \
-    "$DMG_PATH" \
-    "$STAGING_PATH"
+	--volname "Minna" \
+	--volicon dmg/icon.icns \
+	--background dmg/background.png \
+	--window-size 540 440 \
+	--icon "Minna.app" 130 170  \
+	--app-drop-link 410 170  \
+	--hide-extension "Minna.app" \
+	--no-internet-enable \
+	minna.dmg \
+	$STAGE_DIR \
 
-rm -rf "$STAGING_PATH"
-echo "Created $DMG_PATH"
+### CREATE TAR ###
 
 # Create a tar for the sparkle updater.
-tar --no-xattrs -cJf "$TAR_PATH" -C "$TMP_PATH" "$APP_NAME"
+tar --no-xattrs -cJf minna.tar.xz -C $STAGE_DIR Minna.app
 
-echo "Created $TAR_PATH"
+rm -rf $STAGE_DIR
