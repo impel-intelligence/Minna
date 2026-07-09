@@ -22,6 +22,10 @@ final class NavigationRouter {
     func push(_ chat: Chat) {
         self.path.append(chat)
     }
+    
+    func push(_ folder: Folder) {
+        self.path.append(folder)
+    }
 }
 
 extension EnvironmentValues {
