@@ -30,7 +30,7 @@ mkdir $STAGE_DIR
 mkdir -p $OUTPUT_DIR
 
 # Copy the app into the staging directory
-cp -r $APP_PATH "$STAGE_DIR/Minna.app"
+ditto "$APP_PATH" "$STAGE_DIR/Minna.app"
 
 create-dmg \
 	--volname "Minna" \

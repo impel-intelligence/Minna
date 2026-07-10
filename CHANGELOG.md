@@ -5,30 +5,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+
+- Added support for resumable releases in the event of a crash or cancelation.
 
 ## [v0.7.2] - Split Builds - 2026-07-10
 
 ### Added
+
 - Split builds between Mac App Store and Sparkle
 
 ## [0.7.1] - Model Chatting - 2026-07-09
 
 ### Added
+
 - Basics for URL handling
 - Sub folders now show in Folder View
 
 ### Fixed
+
 - Fatal error caused by bad FAISS memory access
 
 ## [0.7.0] - Model Chatting - 2026-07-09
 
 ### Added
+
 - Ask Minna chatting
 - App icon
 
 ## [0.6.1] - Build System - 2026-06-26
 
 ### Added
+
 - Initial build system setup
 - Working build GitHub Action
 - Sparkle framework and release actions

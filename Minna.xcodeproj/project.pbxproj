@@ -374,7 +374,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "FRAMEWORK_DEST=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework\"\nif [[ \"$CONFIGURATION\" == \"Debug Sparkle\" || \"$CONFIGURATION\" == \"Release Sparkle\" ]]; then\n    echo \"Embedding Sparkle.framework\"\n    mkdir -p \"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n    rm -rf \"$FRAMEWORK_DEST\"\n    ditto \"${PROJECT_DIR}/Frameworks/Sparkle.framework\" \"$FRAMEWORK_DEST\"\n    codesign --force --deep --sign \"$EXPANDED_CODE_SIGN_IDENTITY\" \"$FRAMEWORK_DEST\"\nelse\n    echo \"Removing Sparkle.framework for configuration: $CONFIGURATION\"\n    rm -rf \"$FRAMEWORK_DEST\"\nfi\n";
+			shellScript = "FRAMEWORK_DEST=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Sparkle.framework\"\nif [[ \"$CONFIGURATION\" == \"Debug Sparkle\" || \"$CONFIGURATION\" == \"Release Sparkle\" ]]; then\n    echo \"Embedding Sparkle.framework\"\n    mkdir -p \"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\n    rm -rf \"$FRAMEWORK_DEST\"\n    ditto \"${PROJECT_DIR}/Frameworks/Sparkle.framework\" \"$FRAMEWORK_DEST\"\n    codesign --force --deep --options runtime --timestamp --sign \"$EXPANDED_CODE_SIGN_IDENTITY\" \"$FRAMEWORK_DEST\"\nelse\n    echo \"Removing Sparkle.framework for configuration: $CONFIGURATION\"\n    rm -rf \"$FRAMEWORK_DEST\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
