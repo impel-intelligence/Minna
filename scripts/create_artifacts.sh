@@ -2,12 +2,23 @@
 set -eu # Fail on errors and unset variables
 
 APP_PATH=$1
+OUTPUT_DIR=$2
 
+### Pre-flight Checks ###
+
+if [ ! -d "Minna.xcodeproj" ]; then
+    echo "This script must be run from the root directory of the project: './scripts/release.sh'!"
+    exit 1
+fi
+
+### Directory Management ###
 STAGE_DIR=stage
+DMG_OUTPUT="$OUTPUT_DIR/minna.dmg"
+TAR_OUTPUT="$OUTPUT_DIR/minna.tar.xz"
 
 # Delete existing artifacts
-rm -f minna.dmg
-rm -f minna.tar.xz
+rm -f $DMG_OUTPUT
+rm -f $TAR_OUTPUT
 
 ### CREATE DMG ###
 
@@ -15,24 +26,29 @@ rm -f minna.tar.xz
 rm -rf $STAGE_DIR
 mkdir $STAGE_DIR
 
+# Create output directory
+mkdir -p $OUTPUT_DIR
+
 # Copy the app into the staging directory
-cp -r $APP_PATH stage/Minna.app
+cp -r $APP_PATH "$STAGE_DIR/Minna.app"
 
 create-dmg \
 	--volname "Minna" \
-	--volicon dmg/icon.icns \
-	--background dmg/background.png \
+	--volicon scripts/dmg/icon.icns \
+	--background scripts/dmg/background.png \
 	--window-size 540 440 \
 	--icon "Minna.app" 130 170  \
 	--app-drop-link 410 170  \
 	--hide-extension "Minna.app" \
 	--no-internet-enable \
-	minna.dmg \
+	$DMG_OUTPUT \
 	$STAGE_DIR \
 
 ### CREATE TAR ###
 
 # Create a tar for the sparkle updater.
-tar --no-xattrs -cJf minna.tar.xz -C $STAGE_DIR Minna.app
+printf "%s\n" "Creating Tarball"
+tar --no-xattrs -cJf $TAR_OUTPUT -C $STAGE_DIR Minna.app
+printf "%s\n" "Tarball done"
 
 rm -rf $STAGE_DIR
