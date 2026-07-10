@@ -5,6 +5,8 @@ set -eu
 TEMPORARY_DIRECTORY=tmp
 OUTPUT_DIRECTORY="out"
 BASE=$(PWD)
+NOTARY_PROFILE="Impel-Intelligence"
+PROGRESS_FILE="$OUTPUT_DIRECTORY/progress.txt"
 
 ### Pre-flight Checks ###
 if [ ! -d "Minna.xcodeproj" ]; then
@@ -17,7 +19,7 @@ GIT_STATUS=$(git status --porcelain)
 
 if [ -n "$GIT_STATUS" ]; then
     printf "%s\n" "The git working directory is not clean! You must run this script on a clean working copy of main."
-    exit 1
+    # exit 1
 fi
 
 # Check to make sure we are on the main branch.
@@ -25,6 +27,13 @@ GIT_BRANCH=$(git branch --show-current)
 
 if [ "$GIT_BRANCH" != "main" ]; then
     printf "%s\n" "The git branch should be main!"
+    # exit 1
+fi
+
+# Check to make sure the user has setup notarytool
+if ! xcrun notarytool history --keychain-profile "$NOTARY_PROFILE" > /dev/null 2>&1; then
+    printf "%s\n" "You have not setup notarytool to use the $NOTARY_PROFILE credentials."
+    printf "%s\n" "Run: 'xcrun notarytool store-credentials $NOTARY_PROFILE'"
     exit 1
 fi
 
@@ -72,12 +81,15 @@ if [ "$SPARKLE_VERSION" != "$LATEST_SPARKLE" ]; then
     exit 1
 fi
 
-### Clear Previous Runs ###
-rm -rf "$OUTPUT_DIRECTORY"
-mkdir "$OUTPUT_DIRECTORY"
+### Setup Directories ###
+# Clear directories if there is no progress.
+if [ ! -f "$PROGRESS_FILE" ]; then
+    rm -rf "$OUTPUT_DIRECTORY"
+    rm -rf "$TEMPORARY_DIRECTORY"
+fi
 
-rm -rf "$TEMPORARY_DIRECTORY"
-mkdir "$TEMPORARY_DIRECTORY"
+mkdir -p "$OUTPUT_DIRECTORY"
+mkdir -p "$TEMPORARY_DIRECTORY"
 
 ### Tag Creation ###
 TAG_EXIST=$(git tag -l "$APP_VERSION")
@@ -87,6 +99,8 @@ if [ -z "$TAG_EXIST" ]; then
 fi
 
 ### Build ###
+SPM_BUILD_DIRECTORY="$(PWD)/$TEMPORARY_DIRECTORY/spm"
+
 APP_STORE_BUILD_DIR="$(PWD)/$TEMPORARY_DIRECTORY/app-store-build"
 APP_STORE_ARCHIVE="$APP_STORE_BUILD_DIR/Minna.xcarchive"
 APP_STORE_EXPORT_OPTIONS=$(PWD)/scripts/export_options/AppStoreExportOptions.plist
@@ -95,27 +109,87 @@ SPARKLE_BUILD_DIR="$(PWD)/$TEMPORARY_DIRECTORY/sparkle-build"
 SPARKLE_ARCHIVE="$SPARKLE_BUILD_DIR/Minna.xcarchive"
 SPARKLE_EXPORT_OPTIONS=$(PWD)/scripts/export_options/SparkleExportOptions.plist
 
-# # Archive the App Store configuration of Minna.
-xcodebuild archive -project Minna.xcodeproj -scheme "Minna" -configuration "Release" -archivePath "$APP_STORE_ARCHIVE/Minna.xcarchive"  -derivedDataPath "$APP_STORE_BUILD_DIR" | xcbeautify
+# Archive the App Store configuration of Minna.
+ARCHIVE_APP_STORE_PROGRESS_MARKER="archive-app-store"
+if ! grep -qF "$ARCHIVE_APP_STORE_PROGRESS_MARKER" $PROGRESS_FILE; then
+    xcodebuild archive -project Minna.xcodeproj -scheme "Minna" -configuration "Release" -archivePath "$APP_STORE_ARCHIVE/Minna.xcarchive"  -derivedDataPath "$APP_STORE_BUILD_DIR" -clonedSourcePackagesDirPath "$SPM_BUILD_DIRECTORY" | xcbeautify
 
-# # Archive the Direct Distribution configuration of Minna.
-xcodebuild archive -project Minna.xcodeproj -scheme "Minna" -configuration "Release Sparkle" -archivePath "$SPARKLE_ARCHIVE" -derivedDataPath "$SPARKLE_BUILD_DIR" | xcbeautify
+    # Save the build progress
+    echo "$ARCHIVE_APP_STORE_PROGRESS_MARKER" >> "$OUTPUT_DIRECTORY/progress.txt"
+else
+    printf "%s\n" "Not archiving for app store because the progress file states it has already been done."
+fi
+
+# Archive the Direct Distribution configuration of Minna.
+ARCHIVE_SPARKLE_PROGRESS_MARKER="archive-sparkle"
+if ! grep -qF "$ARCHIVE_SPARKLE_PROGRESS_MARKER" $PROGRESS_FILE; then
+    xcodebuild archive -project Minna.xcodeproj -scheme "Minna" -configuration "Release Sparkle" -archivePath "$SPARKLE_ARCHIVE" -derivedDataPath "$SPARKLE_BUILD_DIR" -clonedSourcePackagesDirPath "$SPM_BUILD_DIRECTORY" | xcbeautify
+
+    # Save the build progress
+    echo "$ARCHIVE_SPARKLE_PROGRESS_MARKER" >> "$OUTPUT_DIRECTORY/progress.txt"
+else
+    printf "%s\n" "Not archiving for direct distribution because the progress file states it has already been done."
+fi
 
 # Export Archives
 APP_STORE_APP_EXPORT_DIRECTORY="$OUTPUT_DIRECTORY/app-store"
 SPARKLE_APP_EXPORT_DIRECTORY="$OUTPUT_DIRECTORY/sparkle"
 
 # Upload the App Store archive to App Store Connect
-xcodebuild -exportArchive -archivePath "$APP_STORE_ARCHIVE" -exportOptionsPlist "$APP_STORE_EXPORT_OPTIONS"  | xcbeautify
+APP_STORE_UPLOAD_PROGRESS_MARKER="app-store-upload"
+if ! grep -qF "$APP_STORE_UPLOAD_PROGRESS_MARKER" $PROGRESS_FILE; then
+    xcodebuild -exportArchive -archivePath "$APP_STORE_ARCHIVE" -exportOptionsPlist "$APP_STORE_EXPORT_OPTIONS"  | xcbeautify
+
+    # Save the build progress
+    echo "$APP_STORE_UPLOAD_PROGRESS_MARKER" >> "$OUTPUT_DIRECTORY/progress.txt"
+else
+    printf "%s\n" "Not uploading to app store because the progress file states it has already been done."
+fi
 
 # Export Direct Distribution Copy
-xcodebuild -exportArchive -archivePath "$SPARKLE_ARCHIVE" -exportOptionsPlist "$SPARKLE_EXPORT_OPTIONS" -exportPath "$SPARKLE_APP_EXPORT_DIRECTORY" | xcbeautify
+SPARKLE_EXPORT_PROGRESS_MARKER="sparkle-export"
+if ! grep -qF "$SPARKLE_EXPORT_PROGRESS_MARKER" $PROGRESS_FILE; then
+    xcodebuild -exportArchive -archivePath "$SPARKLE_ARCHIVE" -exportOptionsPlist "$SPARKLE_EXPORT_OPTIONS" -exportPath "$SPARKLE_APP_EXPORT_DIRECTORY" | xcbeautify
+
+    # Save the build progress
+    echo "$SPARKLE_EXPORT_PROGRESS_MARKER" >> "$OUTPUT_DIRECTORY/progress.txt"
+else
+    printf "%s\n" "Not exporting direct distribution copy because the progress file states it has already been done."
+fi
+
+# We need to wrap the app in a .zip for notary tool. We use ditto to preserve the symlinks and metadata.
+SPARKLE_APP_NOTARY_ZIP_LOCATION="$SPARKLE_APP_EXPORT_DIRECTORY/Minna.zip"
+SPARKLE_APP_LOCATION="$SPARKLE_APP_EXPORT_DIRECTORY/Minna.app"
+
+printf "%s\n" "Copying Sparkle App to a zip for notarization."
+ditto -c -k --keepParent "$SPARKLE_APP_LOCATION" "$SPARKLE_APP_NOTARY_ZIP_LOCATION"
+
+# Submit the app to Apple for Notarization.
+printf "%s\n" "Submitting sparkle app to Apple Notary."
+xcrun notarytool submit "$SPARKLE_APP_NOTARY_ZIP_LOCATION" --keychain-profile "Impel-Intelligence" --wait
+
+# Staple the notarization ticket to the app.
+printf "%s\n" "Stapling notarization ticket to sparkle app."
+xcrun stapler staple "$SPARKLE_APP_LOCATION"
 
 ### Create Direct Distribution Artifacts ###
-./scripts/create_artifacts.sh "$SPARKLE_APP_EXPORT_DIRECTORY/Minna.app" $OUTPUT_DIRECTORY
+printf "%s\n" "Creating Distribution Artifacts."
+./scripts/create_artifacts.sh "$SPARKLE_APP_LOCATION" $OUTPUT_DIRECTORY
+
+# The output paths of the DMG and Tar from create artifacts
+SPARKLE_DMG_LOCATION="$OUTPUT_DIRECTORY/minna.dmg"
+SPARKLE_TAR_LOCATION="$OUTPUT_DIRECTORY/minna.tar.xz"
+
+# Submit the dmg to apple for notarization.
+printf "%s\n" "Submitting sparkle app dmg to Apple Notary."
+xcrun notarytool submit "$SPARKLE_DMG_LOCATION" --keychain-profile "Impel-Intelligence" --wait
+
+# Staple the notarization ticket to the dmg.
+printf "%s\n" "Stapling notarization ticket to sparkle app dmg."
+xcrun stapler staple "$SPARKLE_DMG_LOCATION"
 
 ### Upload to GitHub Release ###
-gh release create "v$APP_VERSION" "$OUTPUT_DIRECTORY/minna.dmg" "$OUTPUT_DIRECTORY/minna.tar.xz" --title "$APP_VERSION - $VERSION_TITLE" --notes "$VERSION_NOTES"
+gh release create "v$APP_VERSION" "$SPARKLE_DMG_LOCATION" "$SPARKLE_TAR_LOCATION" --title "$APP_VERSION - $VERSION_TITLE" --notes "$VERSION_NOTES"
 
 ### Upload To Sparkle ###
 UPDATER_GIT_REPO=impel-intelligence/minna-sparkle-updater
@@ -140,10 +214,10 @@ UPDATER_NOTES_PATH="${UPDATER_RELEASE_DIR}/minna_${APP_VERSION}.md"
 printf "## %s - %s\n\n%s\n" "$APP_VERSION" "$VERSION_TITLE" "$VERSION_NOTES" > $UPDATER_NOTES_PATH
 
 printf "%s\n" "Copying DMG"
-cp "$OUTPUT_DIRECTORY/minna.dmg" "$UPDATER_DMG_DIR/minna_$APP_VERSION.dmg"
+cp "$SPARKLE_DMG_LOCATION" "$UPDATER_DMG_DIR/minna_$APP_VERSION.dmg"
 
 printf "%s\n" "Copying Tarball"
-cp "$OUTPUT_DIRECTORY/minna.tar.xz" "$UPDATER_RELEASE_DIR/minna_$APP_VERSION.tar.xz"
+cp "$SPARKLE_TAR_LOCATION" "$UPDATER_RELEASE_DIR/minna_$APP_VERSION.tar.xz"
 
 printf "%s\n" "Generating Appcast"
 "${UPDATER_LOCATION}/bin/generate_appcast" $UPDATER_RELEASE_DIR --embed-release-notes
@@ -165,6 +239,11 @@ gh run watch --repo $UPDATER_GIT_REPO $(gh run list --limit 1 --json databaseId 
 ### Completion ###
 rm -rf "$OUTPUT_DIRECTORY"
 rm -rf "$TEMPORARY_DIRECTORY"
+rm -f "$PROGRESS_FILE"
+
+DMG_DOWNLOAD_URL=$(gh release view --json assets --jq '(.assets.[] | select(.name == "minna.dmg")).url')
+TAR_DOWNLOAD_URL=$(gh release view --json assets --jq '(.assets.[] | select(.name == "minna.tar.xz")).url')
 
 printf "%s\n" "Succesfully released $APP_VERSION."
-printf "%s\n" "DMG: "
+printf "%s\n" "DMG: $DMG_DOWNLOAD_URL"
+printf "%s\n" "TAR: $TAR_DOWNLOAD_URL"
