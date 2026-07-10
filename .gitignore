@@ -15,3 +15,5 @@ docs/superpowers/
 /scripts/minna.tar.xz
 /scripts/minna.dmg
 /Minna.xcodeproj/xcuserdata/taylorlineman.xcuserdatad/xcschemes/xcschememanagement.plist
+out/
+tmp/

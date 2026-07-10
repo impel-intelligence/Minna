@@ -1,69 +1,170 @@
-#!/bin/bash
-set -euo pipefail # Fail on errors, unset variables, and any failure in a pipeline
-set -x            # Echo each command before running it so the CI log shows progress
+#!/bin/sh
+# A script to run the whole release pipeline for self-distributed Minna :)
+# This script should be run on a development computer, it will not support CI/CD.
+set -eu
+TEMPORARY_DIRECTORY=tmp
+OUTPUT_DIRECTORY="out"
+BASE=$(PWD)
 
-ARCHIVE_PATH="tmp/archive/iris.xcarchive"
-APP_EXPORT_DIRECTORY="tmp/apps"
-APP_PATH="$APP_EXPORT_DIRECTORY/Iris.app"
-ZIP_PATH="$APP_EXPORT_DIRECTORY/Iris.zip"
+### Pre-flight Checks ###
+if [ ! -d "Minna.xcodeproj" ]; then
+    echo "This script must be run from the root directory of the project: './scripts/release.sh'!"
+    exit 1
+fi
 
-# Raw, unfiltered xcodebuild output is teed here. xcpretty condenses the console
-# view and drops the actual compiler/signing diagnostics on failure, so on a
-# failed run the workflow uploads these logs (see prerelease.yml) to read the
-# real error.
-LOG_DIR="tmp/logs"
-mkdir -p "$LOG_DIR"
+# Check to make sure we are on a clean branch.
+GIT_STATUS=$(git status --porcelain)
 
-# Make sure all of the environment options we need exist.
+if [ -n "$GIT_STATUS" ]; then
+    printf "%s\n" "The git working directory is not clean! You must run this script on a clean working copy of main."
+    exit 1
+fi
 
-: "${APPLE_API_KEY_ID:?Please set APPLE_API_KEY_ID (the App Store Connect key ID)}"
+# Check to make sure we are on the main branch.
+GIT_BRANCH=$(git branch --show-current)
 
-: "${APPLE_API_ISSUER_ID:?Please set APPLE_API_ISSUER_ID (the issuer UUID)}"
+if [ "$GIT_BRANCH" != "main" ]; then
+    printf "%s\n" "The git branch should be main!"
+    exit 1
+fi
 
-: "${APPLE_API_KEY_BASE64:?Please set APPLE_API_KEY_BASE64 (base64 of the .p8 key file)}"
+# Check to make sure the projec tag is correct.
+SEM_VER_REGEX="(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?"
+APP_VERSION=$(grep -oE -m 1 "MARKETING_VERSION = $SEM_VER_REGEX" Minna.xcodeproj/project.pbxproj | sed 's/.*MARKETING_VERSION = \([0-9.]*\).*/\1/')
 
-API_KEY_PATH="$(mktemp -t notary_key).p8"
-trap 'rm -f "$API_KEY_PATH"' EXIT
-printf '%s' "$APPLE_API_KEY_BASE64" | base64 --decode > "$API_KEY_PATH"
+printf "%s\n" "Does $APP_VERSION look like the correct version?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) break;;
+        No ) printf "%s\n" "Update the version of Minna in the Xcode project and commit!"; exit 1;;
+    esac
+done
 
-# 1. Build the app using xcodebuild.
-echo "::group::Archive"
-xcodebuild archive \
-    -derivedDataPath tmp/derived \
-    -destination generic/platform=macOS \
-    -workspace Iris.xcworkspace \
-    -scheme "Iris" \
-    -archivePath "$ARCHIVE_PATH" 2>&1 \
-    -authenticationKeyID "$APPLE_API_KEY_ID" \
-    -authenticationKeyIssuerID "$APPLE_API_ISSUER_ID" \
-    -authenticationKeyPath "$API_KEY_PATH" | xcbeautify --renderer github-actions
+# Grab the release title and notes from CHANGELOG.md instead of asking for them manually.
+CHANGELOG_OUTPUT=$(./scripts/extract_changelog.sh "$APP_VERSION")
+VERSION_TITLE=$(printf '%s\n' "$CHANGELOG_OUTPUT" | sed -n '1p')
+VERSION_NOTES=$(printf '%s\n' "$CHANGELOG_OUTPUT" | sed '1,2d')
 
-echo "::endgroup::"
+if [ -z "$VERSION_NOTES" ]; then
+    printf "%s\n" "There are no version notes for this version! Add notes in CHANGELOG.md."
+    exit 1
+fi
 
-# 2. Export the signed Developer ID app from the archive.
-#  - Requires ExportOptions.plist in the repo root (signing/export configuration).
-echo "::group::Export Archive"
-xcodebuild -exportArchive \
-    -archivePath "$ARCHIVE_PATH" \
-    -exportPath "$APP_EXPORT_DIRECTORY" \
-    -exportOptionsPlist ExportOptions.plist 2>&1 \
-    -authenticationKeyID "$APPLE_API_KEY_ID" \
-    -authenticationKeyIssuerID "$APPLE_API_ISSUER_ID" \
-    -authenticationKeyPath "$API_KEY_PATH" | xcbeautify --renderer github-actions
-echo "::endgroup::"
+printf "%s\n" "Is \"$VERSION_TITLE\" the correct title for this release?"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) break;;
+        No ) printf "%s\n" "Update the title for this version in CHANGELOG.md and commit!"; exit 1;;
+    esac
+done
 
-# 3. notarytool excepts a zip/pkg/dmg so we wrap the .app in a zip. We use ditto to preseve the symlinks nad metadata.
-ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
+# Check to see if the Sparkle Framework is the newest verison
+SPARKLE_GITHUB=sparkle-project/Sparkle
+SPARKLE_LOCATION=$(PWD)/Frameworks/Sparkle.framework
+SPARKLE_INFO_PLIST="$SPARKLE_LOCATION/Resources/Info.plist"
+SPARKLE_VERSION=$(plutil -extract CFBundleShortVersionString raw $SPARKLE_INFO_PLIST)
 
-# 4. Submit to apple, block until it is done.
-xcrun notarytool submit "$ZIP_PATH" \
-    --key "$API_KEY_PATH" \
-    --key-id "$APPLE_API_KEY_ID" \
-    --issuer "$APPLE_API_ISSUER_ID" \
-    --wait
+LATEST_SPARKLE=$(gh release view --repo "$SPARKLE_GITHUB" --json tagName --jq .tagName)
 
-# # 4. Staple the ticket onto the .app so it validates offline.
-xcrun stapler staple "$APP_PATH"
+if [ "$SPARKLE_VERSION" != "$LATEST_SPARKLE" ]; then
+    printf "%s\n" "Sparkle is not up to date. Please update it before publishing a new app version."
+    gh release view --repo "$SPARKLE_GITHUB" --web
+    exit 1
+fi
 
-# 5. Delete the zip since it was only used for uploading to notary tool.
-rm -f "$ZIP_PATH"
+### Clear Previous Runs ###
+rm -rf "$OUTPUT_DIRECTORY"
+mkdir "$OUTPUT_DIRECTORY"
+
+rm -rf "$TEMPORARY_DIRECTORY"
+mkdir "$TEMPORARY_DIRECTORY"
+
+### Tag Creation ###
+TAG_EXIST=$(git tag -l "$APP_VERSION")
+if [ -z "$TAG_EXIST" ]; then
+    printf "%s\n" "Created Git Tag for $APP_VERSION"
+    git tag "v$APP_VERSION" -m "$VERSION_NOTES"
+fi
+
+### Build ###
+APP_STORE_BUILD_DIR="$(PWD)/$TEMPORARY_DIRECTORY/app-store-build"
+APP_STORE_ARCHIVE="$APP_STORE_BUILD_DIR/Minna.xcarchive"
+APP_STORE_EXPORT_OPTIONS=$(PWD)/scripts/export_options/AppStoreExportOptions.plist
+
+SPARKLE_BUILD_DIR="$(PWD)/$TEMPORARY_DIRECTORY/sparkle-build"
+SPARKLE_ARCHIVE="$SPARKLE_BUILD_DIR/Minna.xcarchive"
+SPARKLE_EXPORT_OPTIONS=$(PWD)/scripts/export_options/SparkleExportOptions.plist
+
+# # Archive the App Store configuration of Minna.
+xcodebuild archive -project Minna.xcodeproj -scheme "Minna" -configuration "Release" -archivePath "$APP_STORE_ARCHIVE/Minna.xcarchive"  -derivedDataPath "$APP_STORE_BUILD_DIR" | xcbeautify
+
+# # Archive the Direct Distribution configuration of Minna.
+xcodebuild archive -project Minna.xcodeproj -scheme "Minna" -configuration "Release Sparkle" -archivePath "$SPARKLE_ARCHIVE" -derivedDataPath "$SPARKLE_BUILD_DIR" | xcbeautify
+
+# Export Archives
+APP_STORE_APP_EXPORT_DIRECTORY="$OUTPUT_DIRECTORY/app-store"
+SPARKLE_APP_EXPORT_DIRECTORY="$OUTPUT_DIRECTORY/sparkle"
+
+# Upload the App Store archive to App Store Connect
+xcodebuild -exportArchive -archivePath "$APP_STORE_ARCHIVE" -exportOptionsPlist "$APP_STORE_EXPORT_OPTIONS"  | xcbeautify
+
+# Export Direct Distribution Copy
+xcodebuild -exportArchive -archivePath "$SPARKLE_ARCHIVE" -exportOptionsPlist "$SPARKLE_EXPORT_OPTIONS" -exportPath "$SPARKLE_APP_EXPORT_DIRECTORY" | xcbeautify
+
+### Create Direct Distribution Artifacts ###
+./scripts/create_artifacts.sh "$SPARKLE_APP_EXPORT_DIRECTORY/Minna.app" $OUTPUT_DIRECTORY
+
+### Upload to GitHub Release ###
+gh release create "v$APP_VERSION" "$OUTPUT_DIRECTORY/minna.dmg" "$OUTPUT_DIRECTORY/minna.tar.xz" --title "$APP_VERSION - $VERSION_TITLE" --notes "$VERSION_NOTES"
+
+### Upload To Sparkle ###
+UPDATER_GIT_REPO=impel-intelligence/minna-sparkle-updater
+
+UPDATER_LOCATION="$TEMPORARY_DIRECTORY/updater"
+UPDATER_RELEASE_DIR="$UPDATER_LOCATION/public"
+UPDATER_DMG_DIR="$UPDATER_RELEASE_DIR/dmg"
+
+if [ ! -d "$UPDATER_LOCATION" ]; then
+    git clone --depth 1 "https://github.com/$UPDATER_GIT_REPO" $UPDATER_LOCATION
+else
+    cd $UPDATER_LOCATION
+    git fetch --all
+    git reset --hard HEAD
+    cd $BASE
+fi
+
+mkdir -p "$UPDATER_RELEASE_DIR"
+mkdir -p "$UPDATER_DMG_DIR"
+
+UPDATER_NOTES_PATH="${UPDATER_RELEASE_DIR}/minna_${APP_VERSION}.md"
+printf "## %s - %s\n\n%s\n" "$APP_VERSION" "$VERSION_TITLE" "$VERSION_NOTES" > $UPDATER_NOTES_PATH
+
+printf "%s\n" "Copying DMG"
+cp "$OUTPUT_DIRECTORY/minna.dmg" "$UPDATER_DMG_DIR/minna_$APP_VERSION.dmg"
+
+printf "%s\n" "Copying Tarball"
+cp "$OUTPUT_DIRECTORY/minna.tar.xz" "$UPDATER_RELEASE_DIR/minna_$APP_VERSION.tar.xz"
+
+printf "%s\n" "Generating Appcast"
+"${UPDATER_LOCATION}/bin/generate_appcast" $UPDATER_RELEASE_DIR --embed-release-notes
+
+printf "%s\n" "Commiting changes to the updater repository."
+
+# Change directory into the updater, commit, tag then push.
+cd $UPDATER_LOCATION
+git add .
+git commit -m "v$APP_VERSION"
+git tag -a "v$APP_VERSION" -m "Version $APP_VERSION"
+git push
+git push origin "v$APP_VERSION"
+cd $BASE
+
+# Watch the GitHub deploy action run.
+gh run watch --repo $UPDATER_GIT_REPO $(gh run list --limit 1 --json databaseId --jq '.[0].databaseId' --repo $UPDATER_GIT_REPO)
+
+### Completion ###
+rm -rf "$OUTPUT_DIRECTORY"
+rm -rf "$TEMPORARY_DIRECTORY"
+
+printf "%s\n" "Succesfully released $APP_VERSION."
+printf "%s\n" "DMG: "
