@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v0.7.2] - Bug Fixes - 2026-07-10
+## [v0.7.2] - Split Builds - 2026-07-10
 
 ### Added
 - Split builds between Mac App Store and Sparkle
