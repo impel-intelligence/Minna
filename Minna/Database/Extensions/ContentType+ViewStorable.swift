@@ -9,7 +9,7 @@ import Foundation
 import ViewStorage
 import DatabaseSchema
 
-extension ContentType: ViewStorable {
+extension ContentType: @retroactive ViewStorable {
     public static func read(from store: UserDefaults, forKey key: String) -> ContentType? {
         (store.object(forKey: key) as? Int).flatMap({ ContentType(rawValue: $0) })
     }

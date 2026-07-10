@@ -5,6 +5,7 @@
 //  Created by Taylor Lineman on 6/24/26.
 //
 
+#if SPARKLE
 import SwiftUI
 import Sparkle
 import Combine
@@ -49,4 +50,4 @@ struct CheckForUpdatesView: View {
             .disabled(!checkForUpdatesViewModel.canCheckForUpdates)
     }
 }
-
+#endif
