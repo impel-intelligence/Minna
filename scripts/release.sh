@@ -113,7 +113,7 @@ touch "$PROGRESS_FILE"
 TAG_EXIST=$(git tag -l "v$APP_VERSION")
 if [ -z "$TAG_EXIST" ]; then
     printf "%s\n" "✅ Created Git Tag for v$APP_VERSION"
-    git tag "v$APP_VERSION" -m "$VERSION_NOTES"
+    git tag -s "v$APP_VERSION" -m "$VERSION_NOTES"
 fi
 
 ### Build ###
@@ -321,7 +321,7 @@ if ! grep -qF "$UPDATER_PUSH_PROGRESS_MARKER" $PROGRESS_FILE; then
     cd $UPDATER_LOCATION
     git add .
     git commit -m "v$APP_VERSION"
-    git tag -a "v$APP_VERSION" -m "Version $APP_VERSION"
+    git tag  -s "v$APP_VERSION" -m "Version $APP_VERSION"
     git push
     git push origin "v$APP_VERSION"
     cd $BASE
