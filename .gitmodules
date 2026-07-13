@@ -1,0 +1,3 @@
+[submodule "Packages/IrisSearch"]
+	path = Packages/IrisSearch
+	url = https://ActuallyTaylor@github.com/impel-intelligence/IrisSearch

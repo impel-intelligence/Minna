@@ -9,13 +9,13 @@
 /* Begin PBXBuildFile section */
 		DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5862FEDCB9E0036306B /* ViewStorage */; };
 		DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5882FEDCB9E0036306B /* ViewStorageClient */; };
-		DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF58B2FEDCBD70036306B /* Digester */; };
-		DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF58D2FEDCBD70036306B /* IrisCommon */; };
-		DB0CF5902FEDCBD70036306B /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF58F2FEDCBD70036306B /* IrisSearch */; };
 		DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5922FEDCBE80036306B /* BlurbKit */; };
 		DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5952FEDCBF80036306B /* OrderedCollections */; };
 		DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5982FEDCC040036306B /* SFSafeSymbols */; };
 		DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59E2FEDCD1D0036306B /* SentrySPM */; };
+		DB2BB96130052C7D00900E62 /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96030052C7D00900E62 /* Digester */; };
+		DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96230052C7D00900E62 /* IrisCommon */; };
+		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
@@ -45,6 +45,7 @@
 		DB0CF4D02FEDCA6B0036306B /* Minna.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minna.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB2BB95F30052C4D00900E62 /* IrisSearch */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = IrisSearch; sourceTree = "<group>"; };
 		DB3F89CE30005AA4003FE515 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
 		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
@@ -103,13 +104,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB0CF58C2FEDCBD70036306B /* Digester in Frameworks */,
 				DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */,
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
-				DB0CF58E2FEDCBD70036306B /* IrisCommon in Frameworks */,
+				DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */,
 				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
-				DB0CF5902FEDCBD70036306B /* IrisSearch in Frameworks */,
 				DB9695562FF440F200CB037A /* Textual in Frameworks */,
 				DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */,
 				DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */,
@@ -117,6 +116,8 @@
 				DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */,
 				DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */,
 				DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */,
+				DB2BB96130052C7D00900E62 /* Digester in Frameworks */,
+				DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */,
 				DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -180,6 +181,7 @@
 		DB9696A82FF4929600CB037A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				DB2BB95F30052C4D00900E62 /* IrisSearch */,
 				DB9696A62FF4929600CB037A /* DatabaseSchema */,
 				DB9696A72FF4929600CB037A /* MinnaChat */,
 			);
@@ -211,9 +213,6 @@
 			packageProductDependencies = (
 				DB0CF5862FEDCB9E0036306B /* ViewStorage */,
 				DB0CF5882FEDCB9E0036306B /* ViewStorageClient */,
-				DB0CF58B2FEDCBD70036306B /* Digester */,
-				DB0CF58D2FEDCBD70036306B /* IrisCommon */,
-				DB0CF58F2FEDCBD70036306B /* IrisSearch */,
 				DB0CF5922FEDCBE80036306B /* BlurbKit */,
 				DB0CF5952FEDCBF80036306B /* OrderedCollections */,
 				DB0CF5982FEDCC040036306B /* SFSafeSymbols */,
@@ -224,6 +223,9 @@
 				DB9696AD2FF492C000CB037A /* ModelManager */,
 				DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */,
 				DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */,
+				DB2BB96030052C7D00900E62 /* Digester */,
+				DB2BB96230052C7D00900E62 /* IrisCommon */,
+				DB2BB96430052C7D00900E62 /* IrisSearch */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -310,7 +312,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */,
-				DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */,
 				DB0CF5912FEDCBE80036306B /* XCRemoteSwiftPackageReference "BlurbKit" */,
 				DB0CF5942FEDCBF80036306B /* XCRemoteSwiftPackageReference "swift-collections" */,
 				DB0CF5972FEDCC040036306B /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
@@ -1142,14 +1143,6 @@
 				minimumVersion = 1.4.0;
 			};
 		};
-		DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/impel-intelligence/IrisSearch";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.2;
-			};
-		};
 		DB0CF5912FEDCBE80036306B /* XCRemoteSwiftPackageReference "BlurbKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/impel-intelligence/BlurbKit";
@@ -1229,21 +1222,6 @@
 			package = DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */;
 			productName = ViewStorageClient;
 		};
-		DB0CF58B2FEDCBD70036306B /* Digester */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */;
-			productName = Digester;
-		};
-		DB0CF58D2FEDCBD70036306B /* IrisCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */;
-			productName = IrisCommon;
-		};
-		DB0CF58F2FEDCBD70036306B /* IrisSearch */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DB0CF58A2FEDCBD70036306B /* XCRemoteSwiftPackageReference "IrisSearch" */;
-			productName = IrisSearch;
-		};
 		DB0CF5922FEDCBE80036306B /* BlurbKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DB0CF5912FEDCBE80036306B /* XCRemoteSwiftPackageReference "BlurbKit" */;
@@ -1263,6 +1241,18 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
 			productName = SentrySPM;
+		};
+		DB2BB96030052C7D00900E62 /* Digester */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Digester;
+		};
+		DB2BB96230052C7D00900E62 /* IrisCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IrisCommon;
+		};
+		DB2BB96430052C7D00900E62 /* IrisSearch */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IrisSearch;
 		};
 		DB9695552FF440F200CB037A /* Textual */ = {
 			isa = XCSwiftPackageProductDependency;
