@@ -1,31 +1,53 @@
 {
-  "fill" : {
-    "linear-gradient" : [
-      "display-p3:0.66275,0.78039,0.98431,1.00000",
-      "display-p3:0.54118,0.68235,0.92549,1.00000"
-    ],
-    "orientation" : {
-      "start" : {
-        "x" : 0.5,
-        "y" : 0
-      },
-      "stop" : {
-        "x" : 0.5,
-        "y" : 0.7
+  "fill-specializations" : [
+    {
+      "value" : {
+        "linear-gradient" : [
+          "display-p3:0.66275,0.78039,0.98431,1.00000",
+          "display-p3:0.54118,0.68235,0.92549,1.00000"
+        ],
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
+      }
+    },
+    {
+      "appearance" : "dark",
+      "value" : {
+        "automatic-gradient" : "display-p3:0.09052,0.11421,0.15648,1.00000",
+        "orientation" : {
+          "start" : {
+            "x" : 0.5,
+            "y" : 0
+          },
+          "stop" : {
+            "x" : 0.5,
+            "y" : 0.7
+          }
+        }
       }
     }
-  },
+  ],
   "groups" : [
     {
       "layers" : [
         {
-          "image-name" : "Owl 6.svg",
-          "name" : "Owl 6",
+          "blend-mode" : "normal",
+          "glass" : true,
+          "image-name" : "Owl.svg",
+          "name" : "Owl",
           "position" : {
             "scale" : 1.25,
             "translation-in-points" : [
-              -198.1225032949976,
-              81.9993750000001
+              -198,
+              82
             ]
           }
         }
