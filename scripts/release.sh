@@ -10,7 +10,6 @@ BASE=$(PWD)
 NOTARY_PROFILE="Impel-Intelligence"
 PROGRESS_FILE="$TEMPORARY_DIRECTORY/progress.txt"
 
-
 # Notarytool only exits with a failing code if the transport steps fail.
 # It will always succeed after that, even if the notarization is valid.
 # Check here to see if it was accepted, if not print the logs.

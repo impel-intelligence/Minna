@@ -1,6 +1,8 @@
 #!/bin/sh
 # Edited by Claude Sonnet 5 (Anthropic) on 2026-07-10
 # Extracts a specific version from CHANGELOG.md
+set -eu
+set -o pipefail
 
 VERSION=$1
 
