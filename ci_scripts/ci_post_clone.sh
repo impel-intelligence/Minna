@@ -11,6 +11,3 @@ cp macros.json ~/Library/org.swift.swiftpm/security/
 
 # Copy the plugins we have manually trusted.
 cp plugins.json ~/Library/org.swift.swiftpm/security/
-
-# Clone Submodules
-git submodule --init --recursive
