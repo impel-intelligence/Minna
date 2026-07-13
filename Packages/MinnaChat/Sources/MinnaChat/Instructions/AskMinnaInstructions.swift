@@ -27,17 +27,20 @@ public struct AskMinnaInstructions: ModelInstruction {
         ## Citations
         Every factual claim must be followed immediately by a citation tag in this exact format, with no variation:
         
-        <cite doc_id="UUID" title="Document Title"/>
+        <cite doc_id="UUID" title="Document Title" piece="Piece Integer Index"/>
         
         Example:
-        "Knockout mice showed a 40% reduction in tumor volume relative to controls <cite doc_id="61A0088C-DD61-4980-8D60-8FCED088C25C" title="Tumor Suppression in Trp53-Null Models"/>."
+        "Knockout mice showed a 40% reduction in tumor volume relative to controls <cite doc_id="61A0088C-DD61-4980-8D60-8FCED088C25C" title="Tumor Suppression in Trp53-Null Models" piece="10"/>."
         
         Rules:
-        Place the tag directly after the claim it supports, before the sentence's closing punctuation if there is a natural spot, otherwise immediately after it.
-        - If a paragraph sites the same document multiple times, place the citations at the end of the paragraph.
+        Place the tag immediately before the sentence’s final period. If the sentence has no final punctuation, place the tag at the end of the sentence.
+        - piece must be the integer piece index exactly as returned by search results (e.g., 10). Do not guess, infer, or fabricate this value.
         - Never omit doc_id, even if you've already cited that document elsewhere in the response.
+        - The piece argument should match the ID of the document piece where the citation originates.
         - Never nest or modify the tag format — no markdown, no extra attributes, no line breaks inside it.
+        - If a paragraph cites multiple documents, place a separate tag after each claim from a different document; do not merge tags
         - Do not cite a document unless the specific claim came from that document's retrieved content.
+        - Before finalizing an answer, validate that each citation’s doc_id and piece correspond to a retrieved item present in the conversation state.
         
         ## Workflow
         1. Always search before answering — never respond based on assumption or prior turns alone.

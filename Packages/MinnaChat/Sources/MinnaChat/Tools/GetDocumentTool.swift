@@ -22,7 +22,7 @@ struct GetDocumentTool: Tool {
         var title: String
         @Guide(description: "The start of the range of document pieces to retrieve. Some documents have many pieces, use this range to paginate through a document or find a specific range.")
         var pieceStartRange: Int
-        @Guide(description: "The end of the document piece range to retrieve.")
+        @Guide(description: "The non-inclusive end of the document piece range to retrieve. Can NOT be the same as pieceStartRange, and must be greater than pieceStartRange.")
         var pieceEndRange: Int
     }
     
@@ -31,21 +31,37 @@ struct GetDocumentTool: Tool {
     }
     
     func call(arguments: Arguments) async throws -> String {
+        // We have a valid range
+        if arguments.pieceStartRange >= 0 &&
+            arguments.pieceEndRange >= 0 &&
+            arguments.pieceStartRange < arguments.pieceEndRange {
+            return try await callWithRange(arguments: arguments)
+        } else {
+            return try await callWithoutRange(arguments: arguments)
+        }
+    }
+    
+    private func callWithRange(arguments: Arguments) async throws -> String {
+        let range = arguments.pieceStartRange..<arguments.pieceEndRange
+        
+        guard let document = try await database.readDocument(title: arguments.title, pieceSequenceRange: range) else {
+            return "No Document Found"
+        }
+        
+        print("Called document tool with \(arguments.title) and range \(arguments.pieceStartRange)..<\(arguments.pieceEndRange)")
+        
+        return document.pieces.nicelyJoined()
+
+    }
+    
+    private func callWithoutRange(arguments: Arguments) async throws -> String {
         guard let document = try await database.readDocument(title: arguments.title) else {
             return "No Document Found"
         }
         
         print("Called document tool with \(arguments.title)")
-
-        return document.pieces.compactMap({$0.text}).joined(separator: "\n")
-//        if let document {
-//            return """
-//                Document: \(document.title)
-//                
-//                """
-//        } else {
-//            return ""
-//        }
+        
+        return document.pieces.nicelyJoined()
     }
 }
 

@@ -63,7 +63,6 @@ final class IrisDBController {
     
     @ObservationIgnored let irisDB: IrisDB
     @ObservationIgnored private let textEmbedder: EmbeddingProvider
-    @ObservationIgnored private let textChunker: TextChunker = BasicTextChunker()
     
     var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter
@@ -75,7 +74,7 @@ final class IrisDBController {
         do {
             let searchDirectory = Utilities.irisDBDirectory()
             textEmbedder = try NLContextualEmbedder(language: .english)
-            irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder, textChunker: textChunker)
+            irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder)
         } catch {
             SentrySDK.capture(error: error)
             fatalError("Could not create SearchController: \(error)")
@@ -111,8 +110,9 @@ final class IrisDBController {
                 guard let contentType = fileAttributes.contentType else { throw IrisDBControllerError.unableToGetContentType }
 
                 let digester = try DigesterFactory.digester(for: contentType)
-                let embeddableContent = try await digester.digest(file: scopedURL)
-
+                
+                let embeddableContent = try await digester.digest(file: scopedURL, contextSize: irisDB.contextSize)
+               
                 try await irisDB.createDocument(uuid: uuid, title: title, description: description, embeddableContent: embeddableContent)
 
                 try await fileIndexedWriter.markIndexed(for: persistentID)
