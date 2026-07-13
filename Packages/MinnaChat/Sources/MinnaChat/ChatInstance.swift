@@ -48,7 +48,8 @@ public final class ChatInstance {
         
         let tools: [any Tool] = [
             SearchTool(database: irisDB),
-            GetDocumentTool(database: irisDB)
+            GetDocumentTool(database: irisDB),
+            DocumentContextTool(database: irisDB)
         ]
         
         if chat.transcript.isEmpty {

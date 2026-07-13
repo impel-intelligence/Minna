@@ -10,27 +10,42 @@ import OrderedCollections
 import DatabaseSchema
 import SwiftData
 import SFSafeSymbols
+import IrisSearch
+import IrisCommon
 
 struct CitationColumnView: View {
+    struct UuidInteger: Hashable {
+        let uuid: UUID
+        let integer: Int
+    }
+    
     @Environment(\.openURL) private var openURL
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.irisContext) private var irisContext
+    
     @Binding var citations: OrderedSet<Citation>
     @State var files: [File] = []
+    @State var citationPieces: [UuidInteger: EmbeddableContent] = [:]
 
     var body: some View {
         List {
             Section("References") {
                 ForEach(files.enumerated(), id: \.offset) { (offset, file) in
-                    HStack(spacing: 0) {
-                        Text("\(offset + 1)")
-                            .font(.headline)
-                            .fontWeight(.medium)
-                            .padding(5)
-                            .background {
-                                UnevenRoundedRectangle(cornerRadii: .init(topLeading: 8, bottomLeading: 8))
-                                    .foregroundStyle(Color.accentColor.opacity(0.2))
-                            }
-                        OpaqueFileCard(file: file, enableEditing: false, isEditingText: .constant(false), viewMode: .constant(.list), selectedFiles: .constant([]))
+                    VStack {
+                        HStack(spacing: 0) {
+                            Text("\(offset + 1)")
+                                .font(.headline)
+                                .fontWeight(.medium)
+                                .padding(5)
+                                .background {
+                                    UnevenRoundedRectangle(cornerRadii: .init(topLeading: 8, bottomLeading: 8))
+                                        .foregroundStyle(Color.accentColor.opacity(0.2))
+                                }
+                            OpaqueFileCard(file: file, enableEditing: false, isEditingText: .constant(false), viewMode: .constant(.list), selectedFiles: .constant([]))
+                        }
+                        if let citation = citations.first(where: {$0.id == file.uuid}), !citation.pieces.isEmpty {
+                            referenceSnippet(for: citation, offset: offset)
+                        }
                     }
                     .listRowSeparator(.hidden)
                 }
@@ -38,6 +53,12 @@ struct CitationColumnView: View {
         }
         .listStyle(.sidebar)
         .onChange(of: citations, initial: true) { _, newValue in
+            #if DEBUG
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
+                return
+            }
+            #endif
+
             let ids = newValue.map(\.id)
             let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
                 ids.contains(file.uuid)
@@ -56,19 +77,79 @@ struct CitationColumnView: View {
             }
             
             self.files = sortedFiles
+            
+            Task {
+                for citation in citations {
+                    for piece in citation.pieces {
+                        if let dbPiece = try? await irisContext.database.readPiece(uuid: citation.id, pieceSequence: piece) {
+                            
+                            let key = UuidInteger(uuid: citation.id, integer: piece)
+                            
+                            Task { @MainActor in
+                                citationPieces[key] = dbPiece.content
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+    }
+    
+    @ViewBuilder
+    func referenceSnippet(for citation: Citation, offset: Int) -> some View {
+        HStack {
+            // Provide the same spacing that the HStack above has by just copying the citation text and hiding it
+            Text("\(offset + 1)")
+                .font(.headline)
+                .fontWeight(.medium)
+                .padding(5)
+                .opacity(0)
+            VStack {
+                ForEach(citation.pieces.enumerated(), id: \.offset) { (offset, piece) in
+                    if let embeddable = citationPieces[UuidInteger(uuid: citation.id, integer: piece)] {
+                        HStack(spacing: 0) {
+                            Text("s\(offset + 1)")
+//                            Text(embeddable.location.anchor.description)
+                            if let text = embeddable.textContent {
+                                Text(": \(text)")
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            Image(systemSymbol: .arrowUpRight)
+                        }
+                        .padding(5)
+                        .frame(maxWidth: .infinity)
+                        .background {
+                            RoundedRectangle(cornerRadius: 8)
+                                .foregroundStyle(Color.accentColor.opacity(0.2))
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
 #Preview {
     @Previewable @State var citations: OrderedSet<Citation> = [
-        Citation(id: UUID(), title: "The first cited document"),
-        Citation(id: UUID(), title: "The second cited document")
-    ]
-    @Previewable @State var files: [File] = [
-        File(createdAt: .now, folder: Folder(name: "t", icon: FolderIcon(symbol: .emoji("3"), color: .azure)), title: "Hell", shortDescription: "sad", color: .random, type: ContentType.pdf, url: URL(string: "https://google.com")!, bookmark: nil, source: "Hello")
+        Citation(id: UUID(), title: "The first cited document", pieces: []),
+        Citation(id: UUID(), title: "The second cited document", pieces: [1]),
+        Citation(id: UUID(), title: "The third cited document", pieces: [1, 10]),
+        Citation(id: UUID(), title: "The fourth cited document", pieces: [4, 2, 30])
     ]
     
-    
-    CitationColumnView(citations: $citations, files: files)
+    CitationColumnView(citations: $citations, files: citations.map { citation in
+        return File(uuid: citation.id, createdAt: .now, folder: Folder(name: "t", icon: FolderIcon(symbol: .emoji("3"), color: .azure)), title: citation.title, shortDescription: "sad", color: .random, type: ContentType.pdf, url: URL(string: "https://google.com")!, bookmark: nil, source: "Hello")
+    }, citationPieces: citations.reduce(into: [CitationColumnView.UuidInteger: EmbeddableContent]()) { partialResult, citation in
+        for piece in citation.pieces {
+            let key = CitationColumnView.UuidInteger(uuid: citation.id, integer: piece)
+            let content = "Hello World this is a long string of text that is the content of the citation."
+            partialResult[key] = .text(content: content, location: DocumentLocation(sequenceIndex: 0, documentLength: 10000, anchor: .pdf(page: 1, characterRange: 0..<content.count)))
+        }
+    })
+    .modelContext(SampleDatabase.shared.context)
+    .irisContext(IrisDBController(modelContainer: SampleDatabase.shared.modelContainer).mainContext)
 }

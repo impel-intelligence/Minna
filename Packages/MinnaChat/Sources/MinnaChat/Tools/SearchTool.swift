@@ -31,34 +31,29 @@ struct SearchTool: Tool {
     }
     
     func call(arguments: Arguments) async throws -> String {
-        print("Call Search Tool \(arguments)")
         do {
             let searchResults = try await self.database.search(query: .init(text: arguments.query), nItems: arguments.nItems)
             
             var toolOutput: [String] = ["The following documents are the result of searching '\(arguments.query)'. Each document is separated by a markdown header. Only partial documents are included, the pieces that are included have been deemed as 'important' based on the search query. Document pieces are separated by a new line. Use the getDocument tool to retrieve the full document context."]
             
             for result in searchResults {
-                var importantText = ""
-                
                 // TODO: Fetch the number of pages. Really need to embed document positions into the data that is retrieved for better LLM tool calling.
                 if result.importantPieces.isEmpty {
                     let documentPrompt = """
                 # Document: \(result.document.title) uuid: {\(result.document.uuid)}
+                
                 \(result.document.description)
                 """
                     
                     toolOutput.append(documentPrompt)
                 } else {
-                    for piece in result.importantPieces {
-                        guard let text = piece.text else { continue }
-                        importantText.append(text + "\n\n")
-                    }
+                    let importantText = result.importantPieces.nicelyJoined()
                     
                     let documentPrompt = """
-                ## Document: \(result.document.title) uuid: {\(result.document.uuid)}
-                
-                \(importantText)
-                """
+                    ## Document: \(result.document.title) uuid: {\(result.document.uuid)}
+                    
+                    \(importantText)
+                    """
                     
                     toolOutput.append(documentPrompt)
                 }

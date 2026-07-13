@@ -13,6 +13,7 @@ import OrderedCollections
 struct Citation: Hashable, Identifiable {
     let id: UUID
     let title: String
+    let pieces: [Int]
     
     var urlComponents: URLComponents {
         var components = URLComponents()
@@ -21,7 +22,8 @@ struct Citation: Hashable, Identifiable {
         components.path = "/\(id.uuidString)"
         
         components.queryItems = [
-            URLQueryItem(name: "title", value: title)
+            URLQueryItem(name: "title", value: title),
+            URLQueryItem(name: "pieces", value: pieces.map(String.init).joined(separator: ","))
         ]
         
         return components
@@ -93,11 +95,34 @@ private extension String {
             guard let title = attributes.htmlAttribute("title") else {
                 return self[match.range]
             }
+            guard let rawPiece = attributes.htmlAttribute("piece") else {
+                return self[match.range]
+            }
+            guard let piece = Int(rawPiece) else {
+                return self[match.range]
+            }
             
-            let citation = Citation(id: docUUID, title: title)
-            
-            if !citations.contains(citation) {
+            let pieceIndex: Int
+            let citation: Citation
+            if let existingCitationIndex = citations.firstIndex(where: { $0.id == docUUID }) {
+                var existingPieces = citations[existingCitationIndex].pieces
+                
+                // If the piece already exists in the pieces do not re-add it, but grab its index for the url display
+                if let existingIndex = existingPieces.firstIndex(of: piece) {
+                    pieceIndex = existingIndex
+                } else {
+                    // Set the index of the current piece to where it will be inserted.
+                    pieceIndex = existingPieces.count
+                    existingPieces.append(piece)
+                }
+                
+                citation = Citation(id: docUUID, title: title, pieces: existingPieces)
+                citations.remove(at: existingCitationIndex)
+                citations.insert(citation, at: existingCitationIndex)
+            } else {
+                citation = Citation(id: docUUID, title: title, pieces: [piece])
                 citations.append(citation)
+                pieceIndex = 0
             }
             
             var citationNumber = 1
@@ -106,7 +131,7 @@ private extension String {
                 citationNumber = citations.distance(from: citations.startIndex, to: docIndex) + 1
             }
                         
-            return "[\(citationNumber)](\(citation.urlComponents.string ?? "minna://doc/\(docID)"))"
+            return "[\(citationNumber)s\(pieceIndex + 1)](\(citation.urlComponents.string ?? "minna://doc/\(docID)"))"
         }
         
         return (output, citations)
