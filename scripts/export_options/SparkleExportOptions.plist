@@ -10,7 +10,7 @@
 	<string>automatic</string>
 	<key>stripSwiftSymbols</key>
 	<true/>
-    <key>teamID</key>
-    <string>VV548YNZL3</string>
+  <key>teamID</key>
+  <string>VV548YNZL3</string>
 </dict>
 </plist>
