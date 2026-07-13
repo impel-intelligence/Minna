@@ -5,6 +5,7 @@
 //  Created by Taylor Lineman on 6/29/26.
 //  Edited by Claude Opus 4.8 (Anthropic) on 2026-07-06.
 //  Merged compose + chat into AskMinnaView by Claude Opus 4.8 (Anthropic) on 2026-07-08.
+//  Mostly re-written by Taylor Lineman on 7/6/26
 //
 
 import SwiftUI
@@ -18,17 +19,6 @@ import ModernSettingsWindow
 import OrderedCollections
 import AnyLanguageModel
 
-/// The unified "Ask Minna" screen. It renders a single search bar whose position
-/// is driven by ``hasStarted``: centered under the logo while composing, pinned to
-/// the bottom once a conversation is under way. Because the bar is the same view
-/// node in both states, toggling `hasStarted` inside an animation makes it glide
-/// from center to bottom.
-///
-/// The same view serves both the compose flow (Search tab, `hasStarted == false`,
-/// with a `newChat` reset closure) and existing chats opened from a folder
-/// (`hasStarted == true`, no `newChat`).
-///
-/// - Authored by: Claude Opus 4.8 (Anthropic)
 struct AskMinnaView: View {
     enum ViewMode {
         case startup
@@ -43,14 +33,11 @@ struct AskMinnaView: View {
 
     @AppStorage(AppStorageKeys.preferredModel) var preferredModel: String = ""
 
-    /// The chat this view drives. Stable for the lifetime of the view's identity;
-    /// callers swap chats by changing the view's `.id`.
     let chat: Chat
     
     @State var viewMode: ViewMode
 
-    /// Invoked by the New Chat toolbar button. `nil` hides the button (e.g. when
-    /// viewing an existing chat pushed from a folder).
+    /// Invoked by the New Chat toolbar button. `nil` hides the button (e.g. when viewing an existing chat pushed from a folder).
     var newChat: (() -> Void)?
 
     @State private var citationHandler: CitationHandler = CitationHandler()
@@ -101,7 +88,6 @@ struct AskMinnaView: View {
                     } label: {
                         Label("New Chat", systemSymbol: .squareAndPencil)
                     }
-                    .accessibilityIdentifier("askMinna.newChat")
                 }
             }
             ToolbarItem(id: "sidebar") {
