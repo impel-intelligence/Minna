@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [v0.8.0]
+## [v0.8.0] - Document Locations for Citations - 2026-07-13
 ### Added
 - Citations now report their original position in the document. This allows you to see where in a document information actually came from.
 
