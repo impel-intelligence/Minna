@@ -86,8 +86,10 @@ done
 XCODE_BUILD_VERSION=$(xcrun agvtool what-version -terse)
 
 if [ "$XCODE_BUILD_VERSION" != "$APP_VERSION" ]; then
-    printf "🙅‍♀️ The build version does not match the App Version! This can lead to problems with sparkle not recognizing versions as different from each other.\n"
-    exit 1
+    printf "🙅‍♀️ The build version ($XCODE_BUILD_VERSION) does not match the App Version ($APP_VERSION)! This can lead to problems with sparkle not recognizing versions as different from each other. This is being updated now!\n"
+    xcrun agvtool new-version -all "$APP_VERSION"
+    git commit -a -m "Bumped Version Number $APP_VERSION"
+    git push origin
 fi
 
 # Check to see if the Sparkle Framework is the newest verison
