@@ -84,6 +84,13 @@ select yn in "Yes" "No"; do
     esac
 done
 
+XCODE_BUILD_VERSION=$(xcrun agvtool what-version -terse)
+
+if [ "$XCODE_BUILD_VERSION" != "$APP_VERSION" ]; then
+    printf "🙅‍♀️ The build version does not match the App Version! This can lead to problems with sparkle not recognizing versions as different from each other.\n"
+    exit 1
+fi
+
 # Check to see if the Sparkle Framework is the newest verison
 SPARKLE_GITHUB=sparkle-project/Sparkle
 SPARKLE_LOCATION=$(PWD)/Frameworks/Sparkle.framework
