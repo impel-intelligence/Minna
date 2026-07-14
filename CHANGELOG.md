@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed an issue where citation locations would not always appear.
+
 ## [v0.8.1] - Document locations for Citations + Bug Fixes - 2026-07-13
 
 ### Added
