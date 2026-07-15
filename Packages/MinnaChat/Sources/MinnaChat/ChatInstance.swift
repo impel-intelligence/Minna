@@ -29,6 +29,7 @@ public final class ChatInstance {
 
     let provider: any ModelProvider
     let languageModel: any LanguageModel
+    let instructions: AskMinnaInstructions.Type
     
     public let session: LanguageModelSession
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
@@ -53,13 +54,24 @@ public final class ChatInstance {
         ]
         
         if chat.transcript.isEmpty {
-            self.session = LanguageModelSession(model: languageModel, tools: tools, instructions: instructions.getPrompt())
+            self.session = LanguageModelSession(model: languageModel, tools: tools, instructions: instructions.getInstructions())
         } else {
             self.session = LanguageModelSession(model: languageModel, tools: tools, transcript: chat.transcript)
         }
         
+        self.instructions = instructions
         session.toolExecutionDelegate = toolObserver
-        session.prewarm()
+        loadModel()
+    }
+    
+    public func loadModel() {
+        session.prewarm(promptPrefix: instructions.getPrompt())
+    }
+    
+    public func unloadModel() async throws {
+        if let langaugeModel = languageModel as? MLXLanguageModel {
+            await langaugeModel.removeFromCache()
+        }
     }
     
     public func sendMessage(_ message: String) async throws {

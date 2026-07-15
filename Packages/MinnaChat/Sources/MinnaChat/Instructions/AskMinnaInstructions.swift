@@ -8,9 +8,7 @@
 import AnyLanguageModel
 
 public struct AskMinnaInstructions: ModelInstruction {
-    
-    public static func getPrompt() -> Instructions {
-        return Instructions("""
+    public static let prompt: String = """
         # Instructions
         As a search assistant, use the search tools to find the user's requested content. Only create summaries from retrieved content if asked.
         
@@ -52,6 +50,14 @@ public struct AskMinnaInstructions: ModelInstruction {
         - Lead with a direct answer and inline citations per claim as described above.
         - Only produce a summary if the user explicitly asks for one. Summaries should be formatted into bullet points, with clear markdown headers.
         - If no relevant content was found even after broadening, state that clearly instead of producing a partial or speculative answer.  
-        """)
+        """
+    
+    
+    public static func getPrompt() -> Prompt {
+        return Prompt(prompt)
+    }
+    
+    public static func getInstructions() -> Instructions {
+        return Instructions(prompt)
     }
 }

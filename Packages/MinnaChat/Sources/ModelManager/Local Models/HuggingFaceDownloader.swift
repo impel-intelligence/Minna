@@ -10,12 +10,14 @@ import Foundation
 import HuggingFace
 
 actor HuggingFaceModelList {
+    static let shared: HuggingFaceModelList = HuggingFaceModelList()
+    
     static let fileName: String = "model_list.json"
     static let filePath: URL = HubCache.minnaCacheFolder.appendingPathComponent(HuggingFaceModelList.fileName, conformingTo: .json)
 
     var availableModels: [String] = []
 
-    init() {
+    private init() {
         do {
             availableModels = try Self.loadFromFile()
         } catch {
@@ -43,7 +45,7 @@ actor HuggingFaceModelList {
 
 public final class HuggingFaceDownloader: Sendable {
     let client: HubClient
-    let modelList: HuggingFaceModelList = HuggingFaceModelList()
+    let modelList: HuggingFaceModelList = .shared
         
     public init() {
         // Disable Xet's multipathing as Apple's Sandbox breaks it.
