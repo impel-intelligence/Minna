@@ -12,6 +12,7 @@ import SFSafeSymbols
 import SentrySwift
 import DatabaseSchema
 import FoundationModels
+import ModelManager
 
 @MainActor
 class FrontendDatabase: Database {
@@ -54,6 +55,7 @@ class FrontendDatabase: Database {
     private func populateStartupData() throws {
         try populateUnfilledFolder()
         try populateAppleProvider()
+        try populateMlxProvider()
         
         try context.save()
     }
@@ -85,19 +87,33 @@ class FrontendDatabase: Database {
     private func populateAppleProvider() throws {
         // Make sure we can even add the apple foundation model
         guard SystemLanguageModel.default.availability == .available else { return }
-        
+        let id = AppleProvider.id
         // Check to see if we have already inserted it into the models.
         var descriptor = FetchDescriptor<ConfiguredProvider>(predicate: #Predicate { provider in
-            provider.providerID == "apple"
+            provider.providerID == id
         })
         descriptor.fetchLimit = 1
         guard try context.fetch(descriptor).isEmpty else { return }
         
         // Add the model
-        let appleProvider = ConfiguredProvider(name: "Apple Foundation Models", providerID: "apple")
+        let appleProvider = ConfiguredProvider(name: AppleProvider.marketingName, providerID: id)
         context.insert(appleProvider)
     }
     
+    private func populateMlxProvider() throws {
+        // Check to see if we have already inserted it into the models.
+        let id = LocalProvider.id
+        var descriptor = FetchDescriptor<ConfiguredProvider>(predicate: #Predicate { provider in
+            provider.providerID == id
+        })
+        descriptor.fetchLimit = 1
+        guard try context.fetch(descriptor).isEmpty else { return }
+        
+        // Add the model
+        let localProvider = ConfiguredProvider(name: LocalProvider.marketingName, providerID: id)
+        context.insert(localProvider)
+    }
+
     public func queueDescriptionUpdate(for file: File) {
         let persistentID = file.persistentModelID
         let writer = fileDescriptionWriter

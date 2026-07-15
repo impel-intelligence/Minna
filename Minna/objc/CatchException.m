@@ -8,7 +8,7 @@
 // https://stackoverflow.com/a/36454808
 #import "CatchException.h"
 
-@implementation ObjC 
+@implementation ObjcException
 
 + (BOOL)catchException:(void(^)(void))tryBlock error:(__autoreleasing NSError **)error {
     @try {

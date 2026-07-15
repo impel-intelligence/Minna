@@ -26,3 +26,10 @@ extension AppleProvider: AssetProvider {
     static var background: Color { .primary }
 
 }
+
+extension LocalProvider: AssetProvider {
+    static var marketingName: String { "On Device" }
+    static var image: ImageResource { .Providers.Minna.logo }
+    static var background: Color { .primary }
+
+}

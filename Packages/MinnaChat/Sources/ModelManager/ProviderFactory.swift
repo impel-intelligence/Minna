@@ -16,6 +16,8 @@ public struct ProviderFactory {
         switch id {
         case AnthropicProvider.id:
             return AnthropicProvider.self
+        case LocalProvider.id:
+            return LocalProvider.self
         default:
             return nil
         }
@@ -23,12 +25,14 @@ public struct ProviderFactory {
     
     public static func makeInstance(configuration: ConfiguredProvider) throws -> (any ModelProvider)? {
         if #available(macOS 26.0, *), configuration.providerID == AppleProvider.id {
-            return AppleProvider()
+            return try AppleProvider.make(from: configuration)
         }
 
         switch configuration.providerID {
         case AnthropicProvider.id:
             return try AnthropicProvider.make(from: configuration)
+        case LocalProvider.id:
+            return try LocalProvider.make(from: configuration)
         default:
             return nil
         }

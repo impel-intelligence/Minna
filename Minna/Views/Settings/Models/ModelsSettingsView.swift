@@ -36,12 +36,36 @@ struct ModelsSettingsView: View {
     }
     
     @State var providerWrapper: ProviderWrapper?
+    @State var modelDownloadProgress: Progress?
+    @State var localModels: [Model] = []
     
     var body: some View {
         Form {
             Section("Local Models") {
+                                
+                HStack {
+                    Button("Download Model") {
+                        Task {
+                            do {
+                                let stream = try HuggingFaceDownloader().downloadModel(id: "LiquidAI/LFM2.5-8B-A1B-MLX-8bit")
+                                for try await progress in stream {
+                                    modelDownloadProgress = progress
+                                }
+                            } catch {
+                                print("Failed to download \(error)")
+                            }
+                        }
+                    }
+                    if let modelDownloadProgress {
+                        ProgressView(modelDownloadProgress)
+                    }
+                }
                 NavigationLink("Install New Models") {
                     InstallModelsView()
+                }
+                
+                ForEach(localModels) { model in
+                    rowFor(model: model, provider: LocalProvider.self)
                 }
             }
             
@@ -85,6 +109,13 @@ struct ModelsSettingsView: View {
         .sheet(item: $providerWrapper) { wrapper in
             ProviderConfigurationForm(wrapper: wrapper)
         }
+        .task {
+            do {
+                try await updateLocalModels()
+            } catch {
+                print("Failed to get local models \(error)")
+            }
+        }
     }
     
     @ViewBuilder
@@ -111,6 +142,34 @@ struct ModelsSettingsView: View {
         } else {
             Text(configuration.name)
         }
+    }
+    
+    @ViewBuilder
+    func rowFor(model: Model, provider: any ModelProvider.Type) -> some View {
+        if let assetProvider = provider as? (any AssetProvider.Type) {
+            HStack {
+                Image(assetProvider.image)
+                    .resizable()
+                    .frame(width: 15, height: 15)
+                    .accessibilityLabel("\(assetProvider.marketingName) Logo")
+                
+                // If the user set a custom name for this provider, show the name of the provider as a subtitle.
+                VStack(alignment: .leading) {
+                    Text(model.displayName)
+                    Text(assetProvider.marketingName)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } else {
+            Text(model.displayName)
+        }
+    }
+
+    func updateLocalModels() async throws {
+        let localProvider = LocalProvider()
+        self.localModels = try await localProvider.availableModels()
+        print("Local Models \(localModels)")
     }
 }
 

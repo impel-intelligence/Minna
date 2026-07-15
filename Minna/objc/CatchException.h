@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 
 // https://stackoverflow.com/a/36454808
-@interface ObjC : NSObject
+@interface ObjcException : NSObject
 
 + (BOOL)catchException:(void(^)(void))tryBlock error:(__autoreleasing NSError **)error;
 
