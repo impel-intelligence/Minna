@@ -1,5 +1,6 @@
 [submodule "Packages/IrisSearch"]
 	path = Packages/IrisSearch
 	url = https://github.com/impel-intelligence/IrisSearch
-[submodule "LookAtMe"]
-	path = LookAtMe
+[submodule "Packages/LookAtMe"]
+	path = Packages/LookAtMe
+	url = https://github.com/impel-intelligence/LookAtMe.git
