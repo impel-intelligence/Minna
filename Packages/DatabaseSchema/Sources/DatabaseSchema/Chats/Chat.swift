@@ -54,7 +54,7 @@ extension Chat {
     /// The `File` and `Chat` share one `UUID` so the synthesized `iris-chat://`
     /// URL deterministically identifies the chat. `searchIndexed` /
     /// `descriptionGenerated` are pre-marked so the background indexing sweep never
-    /// tries to fetch content for an `iris-chat://` URL.
+    /// tries to fetch content for an `minna-chat://` URL.
     ///
     /// - Parameter folder: The (already persisted) folder the chat's file belongs to.
     /// - Returns: An un-inserted `Chat`; call `context.insert(chat.file)` to persist.
@@ -64,7 +64,7 @@ extension Chat {
         let file = File(
             uuid: id, createdAt: .now, folder: folder, title: defaultTitle,
             shortDescription: "", color: .random, type: .askMinna,
-            url: URL(string: "iris://doc/\(id)")!, bookmark: nil,
+            url: URL(string: "minna://doc/\(id)")!, bookmark: nil,
             source: "Ask Minna"
         )
         let chat = Chat(uuid: id, createdAt: .now, file: file)

@@ -33,5 +33,4 @@ public struct ProviderFactory {
             return nil
         }
     }
-
 }

@@ -3,6 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 7/16/26.
+//  Edited by Claude Opus 4.8 (Anthropic) on 2026-07-16
 //
 
 import SwiftUI
@@ -17,6 +18,9 @@ struct FileViewer: View {
     
     let file: File
     @State var previewURL: URL?
+    @State private var failedToScopeErorr: Error?
+    
+    @State private var sidebarOpen: Bool = false
     
     var body: some View {
         ZStack {
@@ -24,26 +28,23 @@ struct FileViewer: View {
             file.color.background.ignoresSafeArea() // Used to fill the background color.
             ScrollView { } // A scroll view just existing toggles the toolbar to be transparent.
 
-            HStack {
-                content
-                    .ignoresSafeArea(.container, edges: .top)
-                
-                sidebar
-            }
+            content
+                .ignoresSafeArea(.container, edges: .top)
+                .inspector(isPresented: $sidebarOpen) {
+                    sidebar
+                        .inspectorColumnWidth(min: 100, ideal: 150, max: 400)
+                }
+
         }
         .navigationTitle(file.title)
+        .animation(.bouncy, value: sidebarOpen)
         .onAppear {
             do {
-                let scopedURL = try file.securityScopedURL()
-                if scopedURL.startAccessingSecurityScopedResource() {
-                    previewURL = scopedURL
-                }
+                previewURL = try file.securityScopedURL()
             } catch {
+                failedToScopeErorr = error
                 print("Failed to create scoped url: \(error)")
             }
-        }
-        .onDisappear {
-            try? file.securityScopedURL().stopAccessingSecurityScopedResource()
         }
         .toolbar {
             ToolbarItem {
@@ -58,6 +59,21 @@ struct FileViewer: View {
                 }
                 .labelStyle(.titleAndIcon)
             }
+            
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    sidebarOpen.toggle()
+                } label: {
+                    Label {
+                        Text("Ask Minna")
+                    } icon: {
+                        Image(.impelLogo)
+                            .resizable()
+                            .frame(width: 19, height: 19)
+                    }
+                }
+                .labelStyle(.titleAndIcon)
+            }
         }
     }
     
@@ -65,14 +81,20 @@ struct FileViewer: View {
         Group {
             if let previewURL {
                 LookAtMe(url: previewURL, color: file.color.background)
+            } else if let failedToScopeErorr {
+                ContentUnavailableView("Failed to open file", systemSymbol: .pc, description: Text(failedToScopeErorr.localizedDescription))
             } else {
-                Text("Failed to load")
+                ContentUnavailableView("Unkown Error", systemSymbol: .pc)
             }
         }
     }
     
     var sidebar: some View {
-        Text("Sidebar")
+        ScrollView {
+            Text("Hello World")
+        }
+        .scrollContentBackground(.hidden)
+        .background(.ultraThickMaterial)
     }
 }
 
