@@ -32,7 +32,9 @@ struct FileViewer: View {
                 .ignoresSafeArea(.container, edges: .top)
                 .inspector(isPresented: $sidebarOpen) {
                     sidebar
-                        .inspectorColumnWidth(min: 100, ideal: 150, max: 400)
+                        .inspectorColumnWidth(min: 250, ideal: 300, max: 600)
+                        .presentationBackground(.clear)
+                        .scrollContentBackground(.hidden)
                 }
 
         }
@@ -90,11 +92,9 @@ struct FileViewer: View {
     }
     
     var sidebar: some View {
-        ScrollView {
-            Text("Hello World")
-        }
-        .scrollContentBackground(.hidden)
-        .background(.ultraThickMaterial)
+        FileChat(file: file)
+            .presentationBackground(.clear)
+            .scrollContentBackground(.hidden)
     }
 }
 

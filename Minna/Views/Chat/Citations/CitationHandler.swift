@@ -2,7 +2,8 @@
 //  CitationMarkupParser.swift
 //  Minna
 //
-//  Created by Claude Opus 4.8 (Anthropic) on 2026-07-05
+//  Created by Taylor Lineman on 7/5/26.
+//  Ideas from: Claude Opus 4.8 (Anthropic)
 //
 
 import Foundation
@@ -57,7 +58,6 @@ class CitationHandler: MarkupParser {
             hasOpenedCitationsOnce = true
         }
         
-        /// - Authored by: Claude Opus 4.8 (Anthropic)
         var attributed = try base.attributedString(for: citedText.text)
         
         // Collect the ranges first: mutating attributes below would otherwise interfere with

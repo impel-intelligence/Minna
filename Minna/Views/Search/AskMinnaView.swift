@@ -28,8 +28,6 @@ struct AskMinnaView: View {
 
     @Namespace private var searchContainerTransitions
 
-    @AppStorage(AppStorageKeys.preferredModel) var preferredModel: String = ""
-
     @State private var presentModelPicker: Bool = false
     
     @State private var citationHandler: CitationHandler = CitationHandler()
@@ -52,7 +50,7 @@ struct AskMinnaView: View {
             case .startup:
                 startup()
             case .chat:
-                TranscriptView(chatter: chatter)
+                TranscriptView(chatter: chatter, limitSize: true)
                     .safeAreaInset(edge: .bottom) {
                         if viewMode == .chat {
                             searchCluster

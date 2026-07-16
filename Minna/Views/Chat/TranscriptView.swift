@@ -11,6 +11,7 @@ import MinnaChat
 
 struct TranscriptView: View {
     @State var chatter: Chatter
+    let limitSize: Bool
     
     var body: some View {
         GeometryReader { reader in
@@ -22,14 +23,14 @@ struct TranscriptView: View {
                             case .instructions:
                                 EmptyView()
                             case .prompt(let prompt):
-                                UserMessage(prompt: prompt, proxy: reader)
+                                UserMessage(prompt: prompt, proxy: reader, limitSize: limitSize)
                             case .toolCalls(let toolCalls):
                                 ToolCallsView(toolCalls: toolCalls)
                             case .toolOutput(let toolOutput):
                                 ToolOutputView(output: toolOutput)
                             case .response(let response):
                                 let isStreaming = chatInstance.session.isResponding && entry.id == chatInstance.session.transcript.last?.id
-                                AssistantMessage(response: response, proxy: reader, isStreaming: isStreaming)
+                                AssistantMessage(response: response, isStreaming: isStreaming)
                             @unknown default:
                                 EmptyView()
                             }

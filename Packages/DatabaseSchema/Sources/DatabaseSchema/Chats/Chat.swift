@@ -30,7 +30,7 @@ public final class Chat {
         self.uuid = uuid
         self.createdAt = createdAt
         self.lastMessage = nil
-        self.theme = .random
+        self.theme = file.color
         self.file = file
     }
     
@@ -46,18 +46,18 @@ public final class Chat {
 }
 
 extension Chat {
-    /// Builds a chat and its backing `File` entirely in memory, without inserting
+    /// Builds a chat and its backing ``File`` entirely in memory, without inserting
     /// into a `ModelContext`. Insertion is the caller's responsibility and should
     /// happen only once the chat has real content (e.g. the first message), so an
     /// abandoned compose does not leave an empty chat behind.
     ///
-    /// The `File` and `Chat` share one `UUID` so the synthesized `iris-chat://`
+    /// The ``File`` and ``Chat`` share one `UUID` so the synthesized `minna://doc/`
     /// URL deterministically identifies the chat. `searchIndexed` /
     /// `descriptionGenerated` are pre-marked so the background indexing sweep never
     /// tries to fetch content for an `minna-chat://` URL.
     ///
     /// - Parameter folder: The (already persisted) folder the chat's file belongs to.
-    /// - Returns: An un-inserted `Chat`; call `context.insert(chat.file)` to persist.
+    /// - Returns: An un-inserted ``Chat``; call `context.insert(chat.file)` to persist.
     /// - Authored by: Claude Opus 4.8 (Anthropic)
     public static func make(in folder: Folder) -> Chat {
         let id = UUID()
@@ -71,6 +71,18 @@ extension Chat {
         file.chat = chat
         file.searchIndexed = true
         file.descriptionGenerated = true
+        return chat
+    }
+    
+    /// Attaches a ``Chat`` instance to the given `file`.
+    ///
+    /// The chat is not persisted in the database until `context.insert(chat)` is called
+    /// - Parameter file: The file to attach the new chat to
+    /// - Returns: An un-inserted ``Chat``; call `context.insert(chat)` to persist.
+    public static func make(on file: File) -> Chat {
+        let chat = Chat(uuid: file.uuid, createdAt: .now, file: file)
+        file.chat = chat
+        
         return chat
     }
 }
