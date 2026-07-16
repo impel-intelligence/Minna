@@ -35,7 +35,8 @@ public final class ChatInstance {
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
     
     public var waitingForResponse: Bool = false
-        
+    public var waitingForLoad: Bool = false
+
     public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: AskMinnaInstructions.Type) throws {
         self.databaseContext = databaseContext
         self.model = model
@@ -61,11 +62,12 @@ public final class ChatInstance {
         
         self.instructions = instructions
         session.toolExecutionDelegate = toolObserver
-        loadModel()
     }
     
-    public func loadModel() {
-        session.prewarm(promptPrefix: instructions.getPrompt())
+    public func loadModel() async throws {
+        waitingForLoad = true
+        defer { waitingForLoad = false }
+        try await session.prewarm(promptPrefix: instructions.getPrompt())
     }
     
     public func unloadModel() async throws {

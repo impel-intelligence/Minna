@@ -13,12 +13,12 @@
 		DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5952FEDCBF80036306B /* OrderedCollections */; };
 		DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5982FEDCC040036306B /* SFSafeSymbols */; };
 		DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF59E2FEDCD1D0036306B /* SentrySPM */; };
+		DB23284B300829C800646576 /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB23284A300829C800646576 /* MinnaChat */; };
 		DB2BB96130052C7D00900E62 /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96030052C7D00900E62 /* Digester */; };
 		DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96230052C7D00900E62 /* IrisCommon */; };
 		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
-		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
 		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
 		DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */; };
 		DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */; };
@@ -104,6 +104,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB23284B300829C800646576 /* MinnaChat in Frameworks */,
 				DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */,
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
@@ -115,7 +116,6 @@
 				DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */,
 				DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */,
 				DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */,
-				DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */,
 				DB2BB96130052C7D00900E62 /* Digester in Frameworks */,
 				DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */,
 				DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */,
@@ -219,13 +219,13 @@
 				DB0CF59E2FEDCD1D0036306B /* SentrySPM */,
 				DB9695552FF440F200CB037A /* Textual */,
 				DB9696A92FF492BF00CB037A /* DatabaseSchema */,
-				DB9696AB2FF492BF00CB037A /* MinnaChat */,
 				DB9696AD2FF492C000CB037A /* ModelManager */,
 				DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */,
 				DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */,
 				DB2BB96030052C7D00900E62 /* Digester */,
 				DB2BB96230052C7D00900E62 /* IrisCommon */,
 				DB2BB96430052C7D00900E62 /* IrisSearch */,
+				DB23284A300829C800646576 /* MinnaChat */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -1246,6 +1246,10 @@
 			package = DB0CF59D2FEDCD1D0036306B /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
 			productName = SentrySPM;
 		};
+		DB23284A300829C800646576 /* MinnaChat */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MinnaChat;
+		};
 		DB2BB96030052C7D00900E62 /* Digester */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Digester;
@@ -1266,10 +1270,6 @@
 		DB9696A92FF492BF00CB037A /* DatabaseSchema */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DatabaseSchema;
-		};
-		DB9696AB2FF492BF00CB037A /* MinnaChat */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = MinnaChat;
 		};
 		DB9696AD2FF492C000CB037A /* ModelManager */ = {
 			isa = XCSwiftPackageProductDependency;

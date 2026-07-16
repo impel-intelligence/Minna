@@ -196,24 +196,32 @@ struct AskMinnaView: View {
 
     private var searchCluster: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Button {
-                presentModelPicker.toggle()
-            } label: {
-                if let selectedModel {
-                    ModelName(model: selectedModel)
-                } else {
-                    Text("No Model Selected")
+            HStack {
+                Button {
+                    presentModelPicker.toggle()
+                } label: {
+                    if let selectedModel {
+                        ModelName(model: selectedModel)
+                    } else {
+                        Text("No Model Selected")
+                    }
+                }
+                .popover(isPresented: $presentModelPicker) {
+                    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
+                }
+                .buttonStyle(.glass)
+                
+                if chatInstance?.waitingForLoad ?? false {
+                    ProgressView {
+                        Text("Model Loading")
+                    }
                 }
             }
-            .popover(isPresented: $presentModelPicker) {
-                ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
-            }
-            .buttonStyle(.glass)
 
             IndexingSearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatMessage) {
                 submit()
             }
-            .disabled(selectedModel == nil || chatInstance == nil)
+            .disabled(selectedModel == nil || chatInstance == nil || (chatInstance?.waitingForLoad ?? false))
         }
         .frame(maxWidth: 640)
         .padding(.bottom, viewMode == .chat ? 20 : 0)
@@ -260,11 +268,31 @@ struct AskMinnaView: View {
                     modelContext.insert(chat)
                 }
                 
-                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat, instructions: AskMinnaInstructions.self)
+                let instance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat, instructions: AskMinnaInstructions.self)
+                
+                chatInstance = instance
+
+                Task {
+                    do {
+                        try await instance.loadModel()
+                    } catch {
+                        print("Failed to preload model \(error)")
+                    }
+                }
             } catch {
                 print("Failed to get database \(error)")
             }
         } else {
+//            if let chatInstance {
+//                Task {
+//                    do {
+//                        try await chatInstance.unloadModel()
+//                    } catch {
+//                        print("Failed to preload model \(error)")
+//                    }
+//                }
+//            }
+            
             chatInstance = nil
         }
     }

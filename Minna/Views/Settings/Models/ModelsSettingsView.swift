@@ -47,7 +47,7 @@ struct ModelsSettingsView: View {
                     Button("Download Model") {
                         Task {
                             do {
-                                let stream = try HuggingFaceDownloader().downloadModel(id: "LiquidAI/LFM2.5-8B-A1B-MLX-8bit")
+                                let stream = try HuggingFaceDownloader().downloadModel(id: "mlx-community/gemma-4-26b-a4b-it-4bit")
                                 for try await progress in stream {
                                     modelDownloadProgress = progress
                                 }
