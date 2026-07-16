@@ -25,6 +25,7 @@ struct OpaqueFileCard: View {
     @Environment(\.openURL) var openURL
     @Environment(\.database) var database
     @Environment(\.router) var navigationRouter
+    @Environment(\.openWindow) var openWindow
     
     let file: File
     var enableEditing: Bool = true
@@ -75,7 +76,7 @@ struct OpaqueFileCard: View {
             let filesToOpen = selectedFiles.isEmpty ? [file] : selectedFiles
             
             for file in filesToOpen {
-                open(file)
+                openOriginal(file)
             }
         } label: {
             Label(selectedFiles.count <= 1 ? "Open Original" : "Open Originals", systemSymbol: .arrowUpRight)
@@ -195,13 +196,16 @@ struct OpaqueFileCard: View {
         if file.type == .askMinna, let chat = file.chat {
             navigationRouter.push(chat)
         } else {
-            navigationRouter.push(file)
-//            do {
-//                try file.open(openURL: openURL)
-//            } catch {
-//                SentrySDK.capture(error: error)
-//                print("Failed to open url: \(error) - \(file.url)")
-//            }
+            openWindow(id: FileWindow.windowID, value: OpenFileParameters(id: file.id))
+        }
+    }
+    
+    private func openOriginal(_ file: File) {
+        do {
+            try file.openOriginal(openURL: openURL)
+        } catch {
+            SentrySDK.capture(error: error)
+            print("Failed to open url: \(error) - \(file.url)")
         }
     }
 }

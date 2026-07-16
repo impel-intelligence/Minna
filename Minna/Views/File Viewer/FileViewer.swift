@@ -9,6 +9,7 @@ import SwiftUI
 import DatabaseSchema
 import SwiftData
 import QuickLookUI
+import LookAtMe
 
 struct FileViewer: View {
     let file: File
@@ -38,7 +39,7 @@ struct FileViewer: View {
     var content: some View {
         Group {
             if let previewURL {
-                QLPreview(url: previewURL)
+                LookAtMe(url: previewURL, color: file.color.background)
             } else {
                 Text("Failed to load")
             }
@@ -53,22 +54,4 @@ struct FileViewer: View {
 #Preview {
     FileViewer(file: SampleDatabase.shared.sampleFiles[0])
         .modelContainer(SampleDatabase.shared.modelContainer)
-}
-
-struct QLPreview: NSViewRepresentable {
-    let url: URL
-    
-    init(url: URL) {
-        self.url = url
-    }
-    
-    func makeNSView(context: Context) -> QLPreviewView {
-        let previewView = QLPreviewView(frame: .zero, style: .normal) ?? QLPreviewView()
-        previewView.previewItem = url as any QLPreviewItem
-        return previewView
-    }
-    
-    func updateNSView(_ previewView: QLPreviewView, context: Context) {
-        previewView.previewItem = url as any QLPreviewItem
-    }
 }

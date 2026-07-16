@@ -54,6 +54,6 @@ struct URLHandler {
         guard let fileToOpen = folders.first else { throw OpenDocumentActionError.noDocumentWithUUID(uuid: uuid) }
         
         print("Open file \(fileToOpen.title)")
-//        router.push(fileToOpen)
+        
     }
 }

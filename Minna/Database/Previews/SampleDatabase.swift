@@ -46,7 +46,7 @@ class SampleDatabase: Database {
             title: "Syllabus Discussion",
             shortDescription: "A discussion about course requirements and syllabus details.",
             color: .random,
-            url: URL(fileURLWithPath: "/Users/taylorlineman/Developer/impel/minna-router/Papers/Open Research Knowledge Graph.pdf"),
+            url: URL(fileURLWithPath: "/Users/taylorlineman/Developer/impel/minna-router/Papers/Open Research Knowledge Graph.pdf") ,
             source: "pdf",
             type: .pdf
         ),

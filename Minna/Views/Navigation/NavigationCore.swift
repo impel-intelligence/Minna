@@ -121,7 +121,6 @@ public struct NavigationCore: View {
             } catch {
                 print("Failed to handle \(url): \(error)")
             }
-    
         }
     }
 
