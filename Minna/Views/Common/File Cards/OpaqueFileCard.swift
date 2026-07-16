@@ -195,12 +195,13 @@ struct OpaqueFileCard: View {
         if file.type == .askMinna, let chat = file.chat {
             navigationRouter.push(chat)
         } else {
-            do {
-                try file.open(openURL: openURL)
-            } catch {
-                SentrySDK.capture(error: error)
-                print("Failed to open url: \(error) - \(file.url)")
-            }
+            navigationRouter.push(file)
+//            do {
+//                try file.open(openURL: openURL)
+//            } catch {
+//                SentrySDK.capture(error: error)
+//                print("Failed to open url: \(error) - \(file.url)")
+//            }
         }
     }
 }

@@ -26,6 +26,10 @@ final class NavigationRouter {
     func push(_ folder: Folder) {
         self.path.append(folder)
     }
+    
+    func push(_ file: File) {
+        self.path.append(file)
+    }
 }
 
 extension EnvironmentValues {

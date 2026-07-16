@@ -81,6 +81,11 @@ public struct NavigationCore: View {
                         .id(chat.uuid)
                         .environment(navigationRouter)
                 }
+                .navigationDestination(for: File.self) { file in
+                    FileViewer(file: file)
+                        .id(file.uuid)
+                        .environment(navigationRouter)
+                }
             }
         }
         .router(navigationRouter)

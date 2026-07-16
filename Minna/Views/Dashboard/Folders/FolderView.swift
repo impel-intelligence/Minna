@@ -65,7 +65,7 @@ struct FolderView: View {
     
     @State var standardFileImporterPresented: Bool = false
     @State var selectedFiles: OrderedSet<File> = []
-    @State var selectionAnchor: File? = nil
+    @State var selectionAnchor: File?
     @State var frame: CGRect = .zero
     
     @State var editingFileText: Bool = false
