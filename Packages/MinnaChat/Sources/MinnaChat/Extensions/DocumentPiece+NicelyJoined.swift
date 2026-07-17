@@ -14,7 +14,7 @@ extension Array where Element == DocumentPiece {
         for piece in self {
             guard let text = piece.text else { continue }
             let pieceText = """
-                        ## Piece \(piece.content.location.sequenceIndex) out of \(piece.content.location.documentLength): \(piece.content.location.anchor.description)
+                        ## Excerpt "\(piece.content.location.sequenceIndex)" out of \(piece.content.location.documentLength): \(piece.content.location.anchor.description)
                         
                         \(text)
                         """

@@ -10,10 +10,10 @@ import AnyLanguageModel
 import SwiftData
 import Foundation
 
-struct DocumentContextTool: Tool {
+struct GetExcerptContextTool: Tool {
     let database: IrisDB
     
-    let name = "getDocumentPieceContext"
+    let name = "getExcerptContext"
     let description = "Retrieve the pieces of text surrounding a given document piece. Useful for getting the context of an excerpt."
     
     @Generable

@@ -20,10 +20,10 @@ struct GetDocumentTool: Tool {
     struct Arguments {
         @Guide(description: "The title of the document to retrieve.")
         var title: String
-        @Guide(description: "The start of the range of document pieces to retrieve. Some documents have many pieces, use this range to paginate through a document or find a specific range.")
-        var pieceStartRange: Int
-        @Guide(description: "The non-inclusive end of the document piece range to retrieve. Can NOT be the same as pieceStartRange, and must be greater than pieceStartRange.")
-        var pieceEndRange: Int
+        @Guide(description: "The start of the range of document excerpt to retrieve. Some documents have many excerpts, use this range to paginate through a document or find a specific range.")
+        var excerptStartRange: Int
+        @Guide(description: "The non-inclusive end of the document excerpt range to retrieve. Can NOT be the same as excerptStartRange, and must be greater than excerptStartRange.")
+        var excerptEndRange: Int
     }
     
     init(database: IrisDB) {
@@ -32,9 +32,9 @@ struct GetDocumentTool: Tool {
     
     func call(arguments: Arguments) async throws -> String {
         // We have a valid range
-        if arguments.pieceStartRange >= 0 &&
-            arguments.pieceEndRange >= 0 &&
-            arguments.pieceStartRange < arguments.pieceEndRange {
+        if arguments.excerptStartRange >= 0 &&
+            arguments.excerptEndRange >= 0 &&
+            arguments.excerptStartRange < arguments.excerptEndRange {
             return try await callWithRange(arguments: arguments)
         } else {
             return try await callWithoutRange(arguments: arguments)
@@ -42,13 +42,13 @@ struct GetDocumentTool: Tool {
     }
     
     private func callWithRange(arguments: Arguments) async throws -> String {
-        let range = arguments.pieceStartRange..<arguments.pieceEndRange
+        let range = arguments.excerptStartRange..<arguments.excerptEndRange
         
         guard let document = try await database.readDocument(title: arguments.title, pieceSequenceRange: range) else {
             return "No Document Found"
         }
         
-        print("Called document tool with \(arguments.title) and range \(arguments.pieceStartRange)..<\(arguments.pieceEndRange)")
+        print("Called document tool with \(arguments.title) and range \(arguments.excerptStartRange)..<\(arguments.excerptEndRange)")
         
         return document.pieces.nicelyJoined()
 

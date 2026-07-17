@@ -23,9 +23,13 @@ final class Chatter {
 
     var preferredModel: String
     let chat: Chat
-
-    init(chat: Chat) {
+    let instructions: any ModelInstruction
+    let availableTools: [AvailableTool]
+    
+    init(chat: Chat, instructions: any ModelInstruction, availableTools: [AvailableTool]) {
         self.chat = chat
+        self.instructions = instructions
+        self.availableTools = availableTools
         self.preferredModel = UserDefaults.standard.string(forKey: AppStorageKeys.preferredModel) ?? ""
     }
     
@@ -93,7 +97,7 @@ final class Chatter {
                 // Update the chat so it will open with the model you last used.
                 chat.lastUsedModel = model.id
                 
-                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat, instructions: AskMinnaInstructions.self)
+                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat, instructions: instructions, tools: availableTools)
             } catch {
                 print("Failed to get database \(error)")
             }
@@ -102,4 +106,3 @@ final class Chatter {
         }
     }
 }
-
