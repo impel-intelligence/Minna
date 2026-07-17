@@ -25,7 +25,8 @@ struct AskMinnaView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
     @Environment(\.router) var navigationRouter
-
+    @Environment(\.openWindow) var openWindow
+    
     @Namespace private var searchContainerTransitions
 
     @State private var presentModelPicker: Bool = false
@@ -39,7 +40,7 @@ struct AskMinnaView: View {
     var newChat: (() -> Void)?
     
     init(chat: Chat, viewMode: ViewMode, newChat: (() -> Void)? = nil) {
-        self._chatter = State(initialValue: Chatter(chat: chat))
+        self._chatter = State(initialValue: Chatter(chat: chat, instructions: AskMinnaInstructions(), availableTools: AvailableTool.allCases))
         self.viewMode = viewMode
         self.newChat = newChat
     }
@@ -60,6 +61,15 @@ struct AskMinnaView: View {
                     .inspector(isPresented: $citationHandler.citationSidebarOpen) {
                         CitationColumnView(citations: $citationHandler.citations)
                     }
+                    .environment(\.openURL, OpenURLAction { url in
+                        do {
+                            try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
+                            return .handled
+                        } catch {
+                            print("Failed to handle url: \(url), \(error)")
+                            return .systemAction
+                        }
+                    })
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

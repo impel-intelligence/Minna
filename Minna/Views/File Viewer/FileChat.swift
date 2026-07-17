@@ -9,11 +9,13 @@ import SwiftUI
 import MinnaChat
 import SwiftData
 import DatabaseSchema
+import SFSafeSymbols
 
 struct FileChat: View {
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
     @Environment(\.router) var navigationRouter
+    @Environment(\.openWindow) var openWindow
 
     @State private var presentModelPicker: Bool = false
     
@@ -21,11 +23,24 @@ struct FileChat: View {
     
     @State var chatter: Chatter
     let file: File
+    let didMakeNewChat: Bool
 
     init(file: File) {
         self.file = file
-        let chat = Chat.make(on: file)
-        self._chatter = State(initialValue: Chatter(chat: chat))
+        let instructions = AskFileInstructions(uuid: file.uuid, title: file.title)
+        let tools: [AvailableTool] = [
+            .getExcerptContext,
+            .searchInDocument
+        ]
+        
+        if let chat = file.chat {
+            self._chatter = State(initialValue: Chatter(chat: chat, instructions: instructions, availableTools: tools))
+            didMakeNewChat = false
+        } else {
+            let chat = Chat.make(on: file)
+            self._chatter = State(initialValue: Chatter(chat: chat, instructions: instructions, availableTools: tools))
+            didMakeNewChat = true
+        }
     }
     
     var body: some View {
@@ -36,32 +51,53 @@ struct FileChat: View {
             .environment(citationHandler)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .theme(chatter.chat.theme)
-        .task {
-            modelContext.insert(chatter.chat)
-            
-            do {
-                try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
-            } catch {
-                print("Failed to gather providers: \(error)")
+            .task {
+                if didMakeNewChat {
+                    modelContext.insert(chatter.chat)
+                }
+                
+                do {
+                    try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+                } catch {
+                    print("Failed to gather providers: \(error)")
+                }
             }
-        }
+            .environment(\.openURL, OpenURLAction { url in
+                do {
+                    try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
+                    return .handled
+                } catch {
+                    print("Failed to handle url: \(url), \(error)")
+                    return .systemAction
+                }
+            })
     }
     
     var chatBox: some View {
         VStack(alignment: .leading) {
-            Button {
-                presentModelPicker.toggle()
-            } label: {
-                if let selectedModel = chatter.selectedModel {
-                    ModelName(model: selectedModel)
-                } else {
-                    Text("No Model Selected")
+            HStack {
+                Button {
+                    presentModelPicker.toggle()
+                } label: {
+                    if let selectedModel = chatter.selectedModel {
+                        ModelName(model: selectedModel)
+                    } else {
+                        Text("No Model Selected")
+                    }
                 }
+                .popover(isPresented: $presentModelPicker) {
+                    ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel, selectedProvider: $chatter.selectedProvider)
+                }
+                .buttonStyle(.glass)
+                Spacer()
+//                Button {
+//                    
+//                } label: {
+//                    Label("Clear Chat", systemSymbol: .xmark)
+//                }
+//                .buttonStyle(.glass)
+
             }
-            .popover(isPresented: $presentModelPicker) {
-                ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel, selectedProvider: $chatter.selectedProvider)
-            }
-            .buttonStyle(.glass)
             SearchBar(placeHolder: "Ask anything about \(file.title)", searchQuery: $chatter.chatMessage) {
                 Task {
                     do {

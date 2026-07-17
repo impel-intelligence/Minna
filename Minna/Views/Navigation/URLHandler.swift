@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 import DatabaseSchema
+import SwiftUI
 
 struct URLHandler {
     enum HandlingError: Error {
@@ -23,7 +24,7 @@ struct URLHandler {
     }
     
     /// Handles incoming URLs, performing validation before any actions are taken.
-    static func handle(_ url: URL, context: ModelContext, router: NavigationRouter) throws {
+    static func handle(_ url: URL, context: ModelContext, router: NavigationRouter, openWindow: OpenWindowAction) throws {
         guard url.scheme == "minna" else { throw HandlingError.notAMinnaURL }
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else { throw HandlingError.noComponents }
         
@@ -34,14 +35,14 @@ struct URLHandler {
         
         // Check if this is the docs action.
         if action == "doc" {
-            return try handleDocURL(components, context: context, router: router)
+            return try handleDocURL(components, context: context, router: router, openWindow: openWindow)
         }
           
         // If we never returned from an action, throw an unsupported action error.
         throw HandlingError.unsupportedAction
     }
     
-    private static func handleDocURL(_ components: URLComponents, context: ModelContext, router: NavigationRouter) throws {
+    private static func handleDocURL(_ components: URLComponents, context: ModelContext, router: NavigationRouter, openWindow: OpenWindowAction) throws {
         // Find the UUID of the document we want to open.
         let cleanedPath = components.path.replacingOccurrences(of: "/", with: "")
         guard let uuid = UUID(uuidString: cleanedPath) else {
@@ -53,7 +54,12 @@ struct URLHandler {
         let folders = try context.fetch(descriptor)
         guard let fileToOpen = folders.first else { throw OpenDocumentActionError.noDocumentWithUUID(uuid: uuid) }
         
-        print("Open file \(fileToOpen.title)")
-        
+        if let rawExcerpts = components.queryItems?.first(where: {$0.name == "excerpts"})?.value {
+            let excerpts = rawExcerpts.split(separator: ",").map(String.init).compactMap(Int.init)
+            
+            openWindow(id: FileWindow.windowID, value: OpenFileParameters(id: fileToOpen.id, excerpts: excerpts))
+        } else {
+            openWindow(id: FileWindow.windowID, value: OpenFileParameters(id: fileToOpen.id))
+        }
     }
 }

@@ -11,11 +11,19 @@ import DatabaseSchema
 
 struct OpenFileParameters: Identifiable, Codable, Hashable {
     let id: PersistentIdentifier
+    let excerpts: [Int]
+    
+    init(id: PersistentIdentifier, excerpts: [Int] = []) {
+        self.id = id
+        self.excerpts = excerpts
+    }
 }
 
 /// A small conversion layer between a URL and a File from the frontend database.
 struct FileWindow: View {
     static let windowID = "file-details"
+    
+    @Environment(\.dismissWindow) var dismissWindow
     
     var file: File?
     @State var fileLoadError: Error?
@@ -35,10 +43,22 @@ struct FileWindow: View {
     var body: some View {
         if let file {
             FileViewer(file: file)
+                .onReceive(NotificationCenter.default.publisher(for: ModelContext.didSave)) { notification in
+                    guard let userInfo = notification.userInfo else { return }
+                    
+                    // Get the set of deleted object identifiers
+                    if let deleted = userInfo["deleted"] as? Set<PersistentIdentifier> {
+                        // Check if the file was deleted
+                        if deleted.contains(file.persistentModelID) {
+                            dismissWindow()
+                        }
+                    }
+                }
         } else if let fileLoadError {
             ContentUnavailableView(fileLoadError.localizedDescription, systemImage: "pc")
         } else {
             ContentUnavailableView("Unkown Error", systemImage: "pc")
         }
+        
     }
 }

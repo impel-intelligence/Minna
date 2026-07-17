@@ -24,7 +24,7 @@ struct Citation: Hashable, Identifiable {
         
         components.queryItems = [
             URLQueryItem(name: "title", value: title),
-            URLQueryItem(name: "pieces", value: pieces.map(String.init).joined(separator: ","))
+            URLQueryItem(name: "excerpts", value: pieces.map(String.init).joined(separator: ","))
         ]
         
         return components
@@ -95,7 +95,7 @@ private extension String {
             guard let title = attributes.htmlAttribute("title") else {
                 return self[match.range]
             }
-            guard let rawPiece = attributes.htmlAttribute("piece") else {
+            guard let rawPiece = attributes.htmlAttribute("excerpt") else {
                 return self[match.range]
             }
             guard let piece = Int(rawPiece) else {
@@ -131,7 +131,7 @@ private extension String {
                 citationNumber = citations.distance(from: citations.startIndex, to: docIndex) + 1
             }
                         
-            return "[\(citationNumber)s\(pieceIndex + 1)](\(citation.urlComponents.string ?? "minna://doc/\(docID)"))"
+            return "[\(citationNumber)s\(pieceIndex + 1)](\(citation.urlComponents.string ?? "minna://doc/\(docID)?excerpts=\(piece)"))"
         }
         
         return (output, citations)
