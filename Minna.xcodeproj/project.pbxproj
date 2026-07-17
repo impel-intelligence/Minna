@@ -47,6 +47,8 @@
 		DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB3F89CE30005AA4003FE515 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		DB4BC3B6300AA8C3009C20A3 /* LookAtMe */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = LookAtMe; sourceTree = "<group>"; };
+		DB4BC3B7300AA8CC009C20A3 /* IrisSearch */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = IrisSearch; sourceTree = "<group>"; };
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
 		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -182,6 +184,8 @@
 		DB9696A82FF4929600CB037A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				DB4BC3B7300AA8CC009C20A3 /* IrisSearch */,
+				DB4BC3B6300AA8C3009C20A3 /* LookAtMe */,
 				DB9696A62FF4929600CB037A /* DatabaseSchema */,
 				DB9696A72FF4929600CB037A /* MinnaChat */,
 			);
