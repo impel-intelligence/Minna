@@ -17,14 +17,14 @@ struct Citation: Hashable, Identifiable {
     let pieces: [Int]
     
     var urlComponents: URLComponents {
-        return Citation.urlComponents(id: id, title: title, pieces: pieces)
+        return urlComponents(pieces: pieces)
     }
         
-    var backupURL: String {
+    func backup(pieces: [Int]) -> String {
         "minna://doc/\(id)?excerpts=\(pieces.map(String.init).joined(separator: ","))"
     }
     
-    private static func urlComponents(id: UUID, title: String, pieces: [Int]) -> URLComponents {
+    func urlComponents(pieces: [Int]) -> URLComponents {
         var components = URLComponents()
         components.scheme = "minna"
         components.host = "doc"
@@ -141,8 +141,7 @@ private extension String {
             }
                         
             // Create a citation that is just the piece this exact citation referenced.
-            let tmpCitation = Citation(id: citation.id, title: citation.title, pieces: [piece])
-            return "[\(citationNumber)s\(pieceIndex + 1)](\(tmpCitation.urlComponents.string ?? tmpCitation.backupURL))"
+            return "[\(citationNumber)s\(pieceIndex + 1)](\(citation.urlComponents(pieces: [piece]).string ?? citation.backup(pieces: [piece])))"
         }
                 
         return (output, citations)

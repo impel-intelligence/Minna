@@ -17,6 +17,8 @@ struct CitationColumnView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
+    @Environment(\.router) private var router
+    @Environment(\.openWindow) private var openWindow
     
     @Binding var citations: OrderedSet<Citation>
     @State var files: [File] = []
@@ -102,24 +104,34 @@ struct CitationColumnView: View {
                 VStack {
                     ForEach(citation.pieces.enumerated(), id: \.offset) { (offset, piece) in
                         if let embeddable = citationLocations[citation.id]?[piece] {
-                            HStack(spacing: 0) {
-                                Text("s\(offset + 1)")
-                                if let text = embeddable.textContent {
-                                    Text(": \(text)")
-                                        .lineLimit(1)
-                                        .truncationMode(.tail)
-                                        .foregroundStyle(.secondary)
+                            Button {
+                                guard let url = citation.urlComponents(pieces: [piece]).url else { return }
+                                do {
+                                    try URLHandler.handle(url, context: modelContext, router: router, openWindow: openWindow)
+                                } catch {
+                                    print("Failed to open citation \(url)")
                                 }
-                                Spacer()
-                                Image(systemSymbol: .arrowUpRight)
-                                    .accessibilityLabel("Open Location")
+                            } label: {
+                                HStack(spacing: 0) {
+                                    Text("s\(offset + 1)")
+                                    if let text = embeddable.textContent {
+                                        Text(": \(text)")
+                                            .lineLimit(1)
+                                            .truncationMode(.tail)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    Spacer()
+                                    Image(systemSymbol: .arrowUpRight)
+                                        .accessibilityLabel("Open Location")
+                                }
+                                .padding(5)
+                                .frame(maxWidth: .infinity)
+                                .background {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .foregroundStyle(Color.accentColor.opacity(0.2))
+                                }
                             }
-                            .padding(5)
-                            .frame(maxWidth: .infinity)
-                            .background {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .foregroundStyle(Color.accentColor.opacity(0.2))
-                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
