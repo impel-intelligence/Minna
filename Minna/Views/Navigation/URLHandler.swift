@@ -53,13 +53,15 @@ struct URLHandler {
         descriptor.fetchLimit = 1
         let folders = try context.fetch(descriptor)
         guard let fileToOpen = folders.first else { throw OpenDocumentActionError.noDocumentWithUUID(uuid: uuid) }
+        let openAction = OpenFileAction(id: fileToOpen.id)
         
         if let rawExcerpts = components.queryItems?.first(where: {$0.name == "excerpts"})?.value {
             let excerpts = rawExcerpts.split(separator: ",").map(String.init).compactMap(Int.init)
-            
-            openWindow(id: FileWindow.windowID, value: OpenFileParameters(id: fileToOpen.id, excerpts: excerpts))
-        } else {
-            openWindow(id: FileWindow.windowID, value: OpenFileParameters(id: fileToOpen.id))
+            print("Setting excerpts \(excerpts)")
+            FileWindowParameterStore.shared.setParameters(for: openAction, to: OpenFileParameters(excertps: excerpts))
         }
+        
+        openWindow(id: FileWindow.windowID, value: openAction)
+
     }
 }

@@ -20,6 +20,7 @@ struct FileViewer: View {
     @State var previewURL: URL?
     @State private var failedToScopeErorr: Error?
     
+    @Binding var highlightedExcerpts: [Int]
     @State private var sidebarOpen: Bool = false
     
     var body: some View {
@@ -99,6 +100,6 @@ struct FileViewer: View {
 }
 
 #Preview {
-    FileViewer(file: SampleDatabase.shared.sampleFiles[0])
+    FileViewer(file: SampleDatabase.shared.sampleFiles[0], highlightedExcerpts: .constant([]))
         .modelContainer(SampleDatabase.shared.modelContainer)
 }

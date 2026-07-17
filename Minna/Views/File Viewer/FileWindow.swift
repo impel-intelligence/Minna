@@ -9,15 +9,6 @@ import SwiftUI
 import SwiftData
 import DatabaseSchema
 
-struct OpenFileParameters: Identifiable, Codable, Hashable {
-    let id: PersistentIdentifier
-    let excerpts: [Int]
-    
-    init(id: PersistentIdentifier, excerpts: [Int] = []) {
-        self.id = id
-        self.excerpts = excerpts
-    }
-}
 
 /// A small conversion layer between a URL and a File from the frontend database.
 struct FileWindow: View {
@@ -27,8 +18,11 @@ struct FileWindow: View {
     
     var file: File?
     @State var fileLoadError: Error?
+    @State var windowParameters: OpenFileParameters?
     
-    init(parameters: OpenFileParameters, context: ModelContext) {
+    @State var highlightedExcerpts: [Int] = []
+    
+    init(parameters: OpenFileAction, context: ModelContext) {
         let id = parameters.id
         var descriptor = FetchDescriptor<File>(predicate: #Predicate { $0.id == id })
         descriptor.fetchLimit = 1
@@ -42,7 +36,13 @@ struct FileWindow: View {
     
     var body: some View {
         if let file {
-            FileViewer(file: file)
+            FileViewer(file: file, highlightedExcerpts: $highlightedExcerpts)
+                .onReceive(NotificationCenter.default.publisher(for: FileWindowParameterStore.parametersChanged)) { notification in
+                    guard let action = notification.object as? OpenFileAction else { return }
+                    guard action.id == file.id else { return }
+                    windowParameters = FileWindowParameterStore.shared.consumeParameters(for: action)
+                    highlightedExcerpts = windowParameters?.excertps ?? []
+                }
                 .onReceive(NotificationCenter.default.publisher(for: ModelContext.didSave)) { notification in
                     guard let userInfo = notification.userInfo else { return }
                     

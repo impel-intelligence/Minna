@@ -68,7 +68,7 @@ struct MinnaApp: App {
         .database(frontendDatabase)
         .irisContext(irisDBController.mainContext)
 
-        WindowGroup(id: FileWindow.windowID, for: OpenFileParameters.self) { $parameters in
+        WindowGroup(id: FileWindow.windowID, for: OpenFileAction.self) { $parameters in
             if let parameters = parameters {
                 FileWindow(parameters: parameters, context: frontendDatabase.modelContainer.mainContext)
                     .modelContainer(frontendDatabase.modelContainer)
