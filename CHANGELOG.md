@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.9.0] - Preview Window - 2026-07-17
+
+### Added
+- Added a Preview Window for documents that have been added to Minna.
+- The preview window is now the default action when you double click on a document.
+
+#### Preview Window
+- Shows PDF & Text Document content
+- A simplified chat experience, where you can chat with just the open document.
+
+### Changed
+- Citations now open in the Preview Windo
+
 ### Fixed
 - Fixed an issue where citation locations would not always appear.
 
