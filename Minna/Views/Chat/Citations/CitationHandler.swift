@@ -17,6 +17,14 @@ struct Citation: Hashable, Identifiable {
     let pieces: [Int]
     
     var urlComponents: URLComponents {
+        return Citation.urlComponents(id: id, title: title, pieces: pieces)
+    }
+        
+    var backupURL: String {
+        "minna://doc/\(id)?excerpts=\(pieces.map(String.init).joined(separator: ","))"
+    }
+    
+    private static func urlComponents(id: UUID, title: String, pieces: [Int]) -> URLComponents {
         var components = URLComponents()
         components.scheme = "minna"
         components.host = "doc"
@@ -29,6 +37,7 @@ struct Citation: Hashable, Identifiable {
         
         return components
     }
+
 }
 
 /// A ``MarkupParser`` that understands `<cite doc_id="…" title="…"/>` markup.
@@ -84,7 +93,7 @@ private extension String {
     func replaceCitations(existing existingCitations: OrderedSet<Citation>) -> (text: String, citations: OrderedSet<Citation>) {
         var citations: OrderedSet<Citation> = existingCitations
 
-        let output = self.replacing(/<cite\s+([^>]*?)\s*\/>/) { match in
+        var output = self.replacing(/<cite\s+([^>]*?)\s*\/>/) { match in
             let attributes = String(match.output.1)
             guard let docID = attributes.htmlAttribute("doc_id") else {
                 return self[match.range]
@@ -131,9 +140,11 @@ private extension String {
                 citationNumber = citations.distance(from: citations.startIndex, to: docIndex) + 1
             }
                         
-            return "[\(citationNumber)s\(pieceIndex + 1)](\(citation.urlComponents.string ?? "minna://doc/\(docID)?excerpts=\(piece)"))"
+            // Create a citation that is just the piece this exact citation referenced.
+            let tmpCitation = Citation(id: citation.id, title: citation.title, pieces: [piece])
+            return "[\(citationNumber)s\(pieceIndex + 1)](\(tmpCitation.urlComponents.string ?? tmpCitation.backupURL))"
         }
-        
+                
         return (output, citations)
     }
 }
