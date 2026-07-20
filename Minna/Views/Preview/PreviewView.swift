@@ -30,7 +30,6 @@ struct PreviewView: View {
             ScrollView { } // A scroll view just existing toggles the toolbar to be transparent.
 
             content
-                .ignoresSafeArea(.container, edges: .top)
                 .inspector(isPresented: $sidebarOpen) {
                     sidebar
                         .inspectorColumnWidth(min: 250, ideal: 300, max: 600)

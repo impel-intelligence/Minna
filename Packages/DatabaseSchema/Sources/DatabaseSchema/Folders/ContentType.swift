@@ -12,6 +12,7 @@ public enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable
     case recording
 
     case pdf
+    case slides
     case image
     case video
     case text
@@ -37,11 +38,16 @@ public enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable
             return "Webpage"
         case .audio:
             return "Audio"
+        case .slides:
+            return "Slides"
         }
     }
     
     public init?(uniformType: UTType) {
         switch uniformType {
+        case let type where type.conforms(to: .html):
+            self = .webpage
+        
         case let type where type.conforms(to: .image):
             self = .image
         case let type where type.conforms(to: .audio):
