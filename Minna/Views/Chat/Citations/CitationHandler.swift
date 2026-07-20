@@ -2,7 +2,8 @@
 //  CitationMarkupParser.swift
 //  Minna
 //
-//  Created by Claude Opus 4.8 (Anthropic) on 2026-07-05
+//  Created by Taylor Lineman on 7/5/26.
+//  Ideas from: Claude Opus 4.8 (Anthropic)
 //
 
 import Foundation
@@ -16,6 +17,14 @@ struct Citation: Hashable, Identifiable {
     let pieces: [Int]
     
     var urlComponents: URLComponents {
+        return urlComponents(pieces: pieces)
+    }
+        
+    func backup(pieces: [Int]) -> String {
+        "minna://doc/\(id)?excerpts=\(pieces.map(String.init).joined(separator: ","))"
+    }
+    
+    func urlComponents(pieces: [Int]) -> URLComponents {
         var components = URLComponents()
         components.scheme = "minna"
         components.host = "doc"
@@ -23,11 +32,12 @@ struct Citation: Hashable, Identifiable {
         
         components.queryItems = [
             URLQueryItem(name: "title", value: title),
-            URLQueryItem(name: "pieces", value: pieces.map(String.init).joined(separator: ","))
+            URLQueryItem(name: "excerpts", value: pieces.map(String.init).joined(separator: ","))
         ]
         
         return components
     }
+
 }
 
 /// A ``MarkupParser`` that understands `<cite doc_id="…" title="…"/>` markup.
@@ -57,7 +67,6 @@ class CitationHandler: MarkupParser {
             hasOpenedCitationsOnce = true
         }
         
-        /// - Authored by: Claude Opus 4.8 (Anthropic)
         var attributed = try base.attributedString(for: citedText.text)
         
         // Collect the ranges first: mutating attributes below would otherwise interfere with
@@ -84,7 +93,7 @@ private extension String {
     func replaceCitations(existing existingCitations: OrderedSet<Citation>) -> (text: String, citations: OrderedSet<Citation>) {
         var citations: OrderedSet<Citation> = existingCitations
 
-        let output = self.replacing(/<cite\s+([^>]*?)\s*\/>/) { match in
+        var output = self.replacing(/<cite\s+([^>]*?)\s*\/>/) { match in
             let attributes = String(match.output.1)
             guard let docID = attributes.htmlAttribute("doc_id") else {
                 return self[match.range]
@@ -95,7 +104,7 @@ private extension String {
             guard let title = attributes.htmlAttribute("title") else {
                 return self[match.range]
             }
-            guard let rawPiece = attributes.htmlAttribute("piece") else {
+            guard let rawPiece = attributes.htmlAttribute("excerpt") else {
                 return self[match.range]
             }
             guard let piece = Int(rawPiece) else {
@@ -131,9 +140,10 @@ private extension String {
                 citationNumber = citations.distance(from: citations.startIndex, to: docIndex) + 1
             }
                         
-            return "[\(citationNumber)s\(pieceIndex + 1)](\(citation.urlComponents.string ?? "minna://doc/\(docID)"))"
+            // Create a citation that is just the piece this exact citation referenced.
+            return "[\(citationNumber)s\(pieceIndex + 1)](\(citation.urlComponents(pieces: [piece]).string ?? citation.backup(pieces: [piece])))"
         }
-        
+                
         return (output, citations)
     }
 }

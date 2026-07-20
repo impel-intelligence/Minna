@@ -92,7 +92,7 @@ extension File {
 
 extension File {
     @MainActor
-    public func open(openURL: OpenURLAction) throws {
+    public func openOriginal(openURL: OpenURLAction) throws {
         guard self.url.isFileURL, self.bookmark != nil else {
             openURL(url)
             return

@@ -67,6 +67,15 @@ struct MinnaApp: App {
         .modelContainer(frontendDatabase.modelContainer)
         .database(frontendDatabase)
         .irisContext(irisDBController.mainContext)
+
+        WindowGroup(id: FileWindow.windowID, for: OpenFileAction.self) { $parameters in
+            if let parameters = parameters {
+                FileWindow(parameters: parameters, context: frontendDatabase.modelContainer.mainContext)
+                    .modelContainer(frontendDatabase.modelContainer)
+                    .irisContext(irisDBController.mainContext)
+            }
+        }
+
         ModernSettings {
             SettingsController()
         }

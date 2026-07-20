@@ -8,5 +8,5 @@
 import AnyLanguageModel
 
 public protocol ModelInstruction {
-    static func getPrompt() -> Instructions
+    func getPrompt() -> Instructions
 }

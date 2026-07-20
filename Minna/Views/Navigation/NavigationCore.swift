@@ -16,7 +16,8 @@ public struct NavigationCore: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
     @Environment(\.database) private var database
-
+    @Environment(\.openWindow) var openWindow
+    
     @Query(filter: #Predicate<Folder> { $0.parent == nil }, sort: \.order) private var folders: [Folder]
 
     @AppStorage("knowledgeExpanded") var knowledgeExpanded: Bool = true
@@ -112,11 +113,10 @@ public struct NavigationCore: View {
         }
         .onOpenURL { url in
             do {
-                try URLHandler.handle(url, context: modelContext, router: navigationRouter)
+                try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
             } catch {
                 print("Failed to handle \(url): \(error)")
             }
-    
         }
     }
 

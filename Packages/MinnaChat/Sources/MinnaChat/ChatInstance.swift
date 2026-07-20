@@ -35,7 +35,7 @@ public final class ChatInstance {
     
     public var waitingForResponse: Bool = false
         
-    public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: AskMinnaInstructions.Type) throws {
+    public init(irisDB: IrisDB, databaseContext: ModelContext, model: ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: any ModelInstruction, tools: [AvailableTool]) throws {
         self.databaseContext = databaseContext
         self.model = model
         self.irisDB = irisDB
@@ -46,11 +46,7 @@ public final class ChatInstance {
         self.provider = provider
         self.languageModel = provider.getModel(id: model.id)
         
-        let tools: [any Tool] = [
-            SearchTool(database: irisDB),
-            GetDocumentTool(database: irisDB),
-            DocumentContextTool(database: irisDB)
-        ]
+        let tools: [any Tool] = tools.map({$0.getTool(irisDB: irisDB)})
         
         if chat.transcript.isEmpty {
             self.session = LanguageModelSession(model: languageModel, tools: tools, instructions: instructions.getPrompt())

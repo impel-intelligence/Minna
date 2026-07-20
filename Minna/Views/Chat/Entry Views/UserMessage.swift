@@ -15,6 +15,7 @@ struct UserMessage: View {
 
     let prompt: Transcript.Prompt
     let proxy: GeometryProxy
+    let limitSize: Bool
     
     var body: some View {
         ForEach(prompt.segments) { segment in
@@ -31,7 +32,7 @@ struct UserMessage: View {
                                 .stroke(Color.border, lineWidth: 1)
                                 .shadow(color: theme.background.opacity(0.35), radius: 10, x: 0, y: 0)
                         }
-                        .frame(maxWidth: proxy.size.width * 2/3, alignment: .trailing)
+                        .frame(maxWidth: limitSize ? proxy.size.width * 2/3 : nil, alignment: .trailing)
                 }
             }
         }
@@ -40,6 +41,6 @@ struct UserMessage: View {
 
 #Preview {
     GeometryReader { reader in
-        UserMessage(prompt: .init(segments: [.text(.init(content: "What was the."))]), proxy: reader)
+        UserMessage(prompt: .init(segments: [.text(.init(content: "What was the."))]), proxy: reader, limitSize: true)
     }
 }

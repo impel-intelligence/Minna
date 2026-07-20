@@ -12,7 +12,6 @@ import AnyLanguageModel
 
 struct AssistantMessage: View {
     let response: Transcript.Response
-    let proxy: GeometryProxy
     let isStreaming: Bool
     
     var body: some View {

@@ -34,10 +34,9 @@ struct SearchTool: Tool {
         do {
             let searchResults = try await self.database.search(query: .init(text: arguments.query), nItems: arguments.nItems)
             
-            var toolOutput: [String] = ["The following documents are the result of searching '\(arguments.query)'. Each document is separated by a markdown header. Only partial documents are included, the pieces that are included have been deemed as 'important' based on the search query. Document pieces are separated by a new line. Use the getDocument tool to retrieve the full document context."]
+            var toolOutput: [String] = ["The following documents are the result of searching '\(arguments.query)'. Each document is separated by a markdown header. Only partial documents are included, the excerpts that are included have been deemed as 'important' based on the search query. Document excerpts are separated by a markdown header. Use the getDocument tool to retrieve the full document context, to retreive partial context use the getExcerptContext tool."]
             
             for result in searchResults {
-                // TODO: Fetch the number of pages. Really need to embed document positions into the data that is retrieved for better LLM tool calling.
                 if result.importantPieces.isEmpty {
                     let documentPrompt = """
                 # Document: \(result.document.title) uuid: {\(result.document.uuid)}

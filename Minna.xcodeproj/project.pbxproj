@@ -16,6 +16,7 @@
 		DB2BB96130052C7D00900E62 /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96030052C7D00900E62 /* Digester */; };
 		DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96230052C7D00900E62 /* IrisCommon */; };
 		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
+		DB7982C13009439A00B18E72 /* LookAtMe in Frameworks */ = {isa = PBXBuildFile; productRef = DB7982C03009439A00B18E72 /* LookAtMe */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
@@ -45,8 +46,9 @@
 		DB0CF4D02FEDCA6B0036306B /* Minna.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minna.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB2BB95F30052C4D00900E62 /* IrisSearch */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = IrisSearch; sourceTree = "<group>"; };
 		DB3F89CE30005AA4003FE515 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		DB4BC3B6300AA8C3009C20A3 /* LookAtMe */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = LookAtMe; sourceTree = "<group>"; };
+		DB4BC3B7300AA8CC009C20A3 /* IrisSearch */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = IrisSearch; sourceTree = "<group>"; };
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
 		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -108,6 +110,7 @@
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
 				DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */,
+				DB7982C13009439A00B18E72 /* LookAtMe in Frameworks */,
 				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
 				DB9695562FF440F200CB037A /* Textual in Frameworks */,
 				DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */,
@@ -181,7 +184,8 @@
 		DB9696A82FF4929600CB037A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				DB2BB95F30052C4D00900E62 /* IrisSearch */,
+				DB4BC3B7300AA8CC009C20A3 /* IrisSearch */,
+				DB4BC3B6300AA8C3009C20A3 /* LookAtMe */,
 				DB9696A62FF4929600CB037A /* DatabaseSchema */,
 				DB9696A72FF4929600CB037A /* MinnaChat */,
 			);
@@ -226,6 +230,7 @@
 				DB2BB96030052C7D00900E62 /* Digester */,
 				DB2BB96230052C7D00900E62 /* IrisCommon */,
 				DB2BB96430052C7D00900E62 /* IrisSearch */,
+				DB7982C03009439A00B18E72 /* LookAtMe */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -320,6 +325,7 @@
 				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
 				DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */,
+				DB7982BF3009439900B18E72 /* XCLocalSwiftPackageReference "Packages/LookAtMe" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -551,7 +557,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.8.1;
+				CURRENT_PROJECT_VERSION = 0.9.0;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -584,7 +590,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.8.1;
+				MARKETING_VERSION = 0.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -615,7 +621,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.8.1;
+				CURRENT_PROJECT_VERSION = 0.9.0;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -648,7 +654,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.8.1;
+				MARKETING_VERSION = 0.9.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -824,7 +830,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.8.1;
+				CURRENT_PROJECT_VERSION = 0.9.0;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -857,7 +863,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.8.1;
+				MARKETING_VERSION = 0.9.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
@@ -990,7 +996,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.8.1;
+				CURRENT_PROJECT_VERSION = 0.9.0;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1023,7 +1029,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.8.1;
+				MARKETING_VERSION = 0.9.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
@@ -1137,6 +1143,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		DB7982BF3009439900B18E72 /* XCLocalSwiftPackageReference "Packages/LookAtMe" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/LookAtMe;
+		};
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */ = {
@@ -1257,6 +1270,10 @@
 		DB2BB96430052C7D00900E62 /* IrisSearch */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = IrisSearch;
+		};
+		DB7982C03009439A00B18E72 /* LookAtMe */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LookAtMe;
 		};
 		DB9695552FF440F200CB037A /* Textual */ = {
 			isa = XCSwiftPackageProductDependency;

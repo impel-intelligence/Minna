@@ -46,9 +46,9 @@ class SampleDatabase: Database {
             title: "Syllabus Discussion",
             shortDescription: "A discussion about course requirements and syllabus details.",
             color: .random,
-            url: URL(string: "https://example.com/images/api-architecture.png")!,
-            source: "ask minna",
-            type: .askMinna
+            url: URL(fileURLWithPath: "/Users/taylorlineman/Developer/impel/minna-router/Papers/Open Research Knowledge Graph.pdf") ,
+            source: "pdf",
+            type: .pdf
         ),
         SampleFile(
             createdAt: Date().addingTimeInterval(-60*60*1),
