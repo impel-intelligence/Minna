@@ -102,7 +102,7 @@ struct FolderView: View {
     
     // SwiftData does not support filtering by custom enums within a query. This in-memory filtering is required. Swift Data also does not support dynamic sorts... So we are doing that in memory as well.
     var filteredFiles: [File] {
-        files.filter { contentTypes.contains($0.type) }.sorted(by: sortMode.sortFunction(lhs:rhs:))
+        sortMode.sort(files.filter { contentTypes.contains($0.type) })
     }
     
     // WARN: Do not edit this query, its actual value is set in the initializer
