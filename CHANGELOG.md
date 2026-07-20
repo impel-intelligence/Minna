@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- You can now press enter to open a file you have selected.
+
+### Fixed
+- Keyboard navigation no longer dings everytime a key is pressed.
+- Keyboard navigation now scrolls the list to the file you have selected.
+- Minor speed improvements to loading folders
+
 ## [v0.9.0] - Preview Window - 2026-07-17
 
 ### Added
