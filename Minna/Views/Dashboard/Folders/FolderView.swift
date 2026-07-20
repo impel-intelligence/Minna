@@ -35,6 +35,58 @@ enum ArrowDirection {
     }
 }
 
+private struct FolderViewToolbar: ToolbarContent {
+    @Binding var viewMode: FolderViewMode
+    @Binding var contentTypes: Set<ContentType>
+    @Binding var sortMode: FolderViewSort
+    
+    @Binding var standardFileImporterPresented: Bool
+    
+    var body: some ToolbarContent {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Menu {
+                AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
+            } label: {
+                Label("Add Content", systemSymbol: .plus)
+            }
+            
+            Menu("Filter & Sorting", systemImage: SFSymbol.line3HorizontalDecrease.rawValue) {
+                Picker(selection: $viewMode) {
+                    ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                        
+                    }
+                } label: {
+                    EmptyView() // Quick hack to remove the section header that gets added for this entry.
+                }
+                .pickerStyle(.inline)
+                Divider()
+                MultiPicker(elements: ContentType.allCases, selection: $contentTypes) { type in
+                    Text(type.description)
+                }
+//                MultiPicker(selection: $contentTypes) {
+//                    ForEach(ContentType.allCases, id: \.rawValue) { mode in
+//                        Text(mode.description)
+//                            .tag(mode)
+//                    }
+//                }
+                .pickerStyle(.inline)
+                Divider()
+                Picker(selection: $sortMode) {
+                    ForEach(FolderViewSort.allCases, id: \.rawValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                    }
+                } label: {
+                    EmptyView() // Quick hack to remove the section header that gets added for this entry.
+                }
+                .pickerStyle(.inline)
+            }
+        }
+    }
+}
+
 // TODO: Investigate Focus States
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
@@ -42,9 +94,6 @@ struct FolderView: View {
     @Environment(\.database) var database
     @Environment(\.openURL) private var openURL
     @Environment(\.router) private var navigationRouter
-
-    static let cardWidth: CGFloat = 150
-    static let gridSpacing: CGFloat = 12
     
     let folder: Folder
 
@@ -64,19 +113,6 @@ struct FolderView: View {
     @ViewStorage("sortMode", path: \Self.folder.uuid.uuidString) var sortMode: FolderViewSort = .mostRecent
     
     @State var standardFileImporterPresented: Bool = false
-    @State var selectedFiles: OrderedSet<File> = []
-    @State var selectionAnchor: File? = nil
-    @State var frame: CGRect = .zero
-    
-    @State var editingFileText: Bool = false
-
-    @State var showDeleteConfirmation: Bool = false
-
-    @FocusState private var isFocused: Bool
-
-    let columns = [
-        GridItem(.adaptive(minimum: FolderView.cardWidth, maximum: FolderView.cardWidth), spacing: FolderView.gridSpacing)
-    ]
     
     init(folder: Folder) {
         self.folder = folder
@@ -91,6 +127,61 @@ struct FolderView: View {
             return folder.parent?.persistentModelID == id
         }, sort: \.name)
     }
+    
+    var body: some View {
+        let filteredFiles = filteredFiles
+        let folders = folders
+        FolderViewContent(
+            files: filteredFiles,
+            folders: folders,
+            viewMode: $viewMode,
+            contentTypes: $contentTypes,
+            sortMode: $sortMode
+        )
+        .standardFileImporter(
+            presented: $standardFileImporterPresented,
+            selectedFolder: folder,
+            modelContext: modelContext,
+            irisContext: irisContext,
+            database: database
+        )
+        .toolbar {
+            FolderViewToolbar(viewMode: $viewMode, contentTypes: $contentTypes, sortMode: $sortMode, standardFileImporterPresented: $standardFileImporterPresented)
+        }
+        .navigationTitle(folder.name, image: folder.icon.image())
+    }
+}
+
+private struct FolderViewContent: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.irisContext) private var irisContext
+    @Environment(\.database) private var database
+    @Environment(\.openURL) private var openURL
+    @Environment(\.router) private var navigationRouter
+
+    static let cardWidth: CGFloat = 150
+    static let gridSpacing: CGFloat = 12
+
+    @State var files: [File]
+    @State var folders: [Folder]
+    
+    @Binding var viewMode: FolderViewMode
+    @Binding var contentTypes: Set<ContentType>
+    @Binding var sortMode: FolderViewSort
+    
+    @State private var selectedFiles: OrderedSet<File> = []
+    @State private var selectionAnchor: File?
+    @State private var frame: CGRect = .zero
+    
+    @State private var editingFileText: Bool = false
+
+    @State private var showDeleteConfirmation: Bool = false
+
+    @FocusState private var isFocused: Bool
+
+    let columns = [
+        GridItem(.adaptive(minimum: FolderViewContent.cardWidth, maximum: FolderViewContent.cardWidth), spacing: FolderViewContent.gridSpacing)
+    ]
     
     var body: some View {
         ScrollView {
@@ -119,84 +210,22 @@ struct FolderView: View {
                 .padding(.vertical, 8)
             }
             
+            let filteredFiles = files
             switch viewMode {
             case .grid:
-                gridBody
+                gridBody(filteredFiles: filteredFiles)
             case .list:
-                listBody
+                listBody(filteredFiles: filteredFiles)
             }
         }
-        .frameReader { self.frame = $0 }
-        .standardFileImporter(
-            presented: $standardFileImporterPresented,
-            selectedFolder: folder,
-            modelContext: modelContext,
-            irisContext: irisContext,
-            database: database
-        )
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                Menu {
-                    AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
-                } label: {
-                    Label {
-                        Text("Add Content")
-                    } icon: {
-                        Image(systemSymbol: .plus)
-                    }
-                }
-                
-                Menu("Filter & Sorting", systemImage: SFSymbol.line3HorizontalDecrease.rawValue) {
-                    Picker(selection: $viewMode) {
-                        ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                            
-                        }
-                    } label: {
-                        EmptyView() // Quick hack to remove the section header that gets added for this entry.
-                    }
-                    .pickerStyle(.inline)
-                    Divider()
-                    MultiPicker(selection: $contentTypes) {
-                        ForEach(ContentType.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                        }
-                    }
-                    .pickerStyle(.inline)
-                    Divider()
-                    Picker(selection: $sortMode) {
-                        ForEach(FolderViewSort.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                        }
-                    } label: {
-                        EmptyView() // Quick hack to remove the section header that gets added for this entry.
-                    }
-                    .pickerStyle(.inline)
-                }
-            }
-        }
-        .navigationTitle(folder.name, image: folder.icon.image())
+        .frameReader(in: .local) { self.frame = $0 }
         .focusable()
         .focused($isFocused)
-        .focusEffectDisabled()
-//        .onChange(of: isFocused) { _, focused in
-//            // When focus moves to this view, check to see if a mouse button was pressed. If that is the case, this view was opened by the mouse so we don't need to start focus tracking.
-//            guard NSEvent.pressedMouseButtons == 0 else { return }
-//
-//            // If the focus was gained through the keyboard (e.g. tab from the navigation list), select the first item to allow for instant keyboard navigation.s
-//            if focused, selectedFiles.isEmpty, let firstFile = filteredFiles.first {
-//                selectedFiles.append(firstFile)
-//                selectionAnchor = firstFile
-//            }
-//        }
         .onKeyPress { keyPress in
             guard !self.editingFileText else { return .ignored }
             
             if keyPress.characters == "a" && keyPress.modifiers == .command {
-                selectedFiles.append(contentsOf: filteredFiles)
+                selectedFiles.append(contentsOf: files)
                 return .handled
             } else if keyPress.key == .escape {
                 selectedFiles.removeAll()
@@ -223,7 +252,8 @@ struct FolderView: View {
         }
     }
     
-    var listBody: some View {
+    @ViewBuilder
+    func listBody(filteredFiles: [File]) -> some View {
         VStack {
             ForEach(filteredFiles) { file in
                 OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
@@ -236,7 +266,8 @@ struct FolderView: View {
         .padding(.horizontal, 10)
     }
     
-    var gridBody: some View {
+    @ViewBuilder
+    func gridBody(filteredFiles: [File]) -> some View {
         LazyVGrid(columns: columns) {
             ForEach(filteredFiles) { file in
                 OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
@@ -250,16 +281,16 @@ struct FolderView: View {
     
     
     private func moveCursor(direction: ArrowDirection, modifiers: EventModifiers) -> KeyPress.Result {
-        if selectedFiles.isEmpty, let firstFile = filteredFiles.first {
+        if selectedFiles.isEmpty, let firstFile = files.first {
             selectedFiles.append(firstFile)
             selectionAnchor = firstFile
             return .handled
         } else if let currentAnchor = selectionAnchor,
-                  let currentIndex = filteredFiles.firstIndex(of: currentAnchor) {
+                  let currentIndex = files.firstIndex(of: currentAnchor) {
             func moveSelection(by offset: Int) -> KeyPress.Result {
                 let nextIndex = currentIndex + offset
-                guard filteredFiles.indices.contains(nextIndex) else { return .ignored }
-                let nextFile = filteredFiles[nextIndex]
+                guard files.indices.contains(nextIndex) else { return .ignored }
+                let nextFile = files[nextIndex]
 
                 // If we are not holding command, clear the previous selection
                 if !(NSEvent.modifierFlags.contains(.command) || NSEvent.modifierFlags.contains(.shift)) {
@@ -272,7 +303,7 @@ struct FolderView: View {
                 return .ignored
             }
 
-            let itemsInGrid = Int(frame.width / (FolderView.cardWidth + (FolderView.gridSpacing / 2)))
+            let itemsInGrid = Int(frame.width / (FolderViewContent.cardWidth + (FolderViewContent.gridSpacing / 2)))
 
             switch direction {
             case .up:
@@ -294,11 +325,11 @@ struct FolderView: View {
         
         // Select multiple items that are adjacent
         if NSEvent.modifierFlags.contains(.shift), let selectionAnchor,
-           let currentIndex = filteredFiles.firstIndex(of: file),
-           let anchorIndex = filteredFiles.firstIndex(of: selectionAnchor) {
+           let currentIndex = files.firstIndex(of: file),
+           let anchorIndex = files.firstIndex(of: selectionAnchor) {
             let range: ClosedRange<Int> = currentIndex < anchorIndex ? currentIndex...anchorIndex : anchorIndex...currentIndex
 
-            for file in filteredFiles[range] {
+            for file in files[range] {
                 selectedFiles.append(file)
             }
         } else {

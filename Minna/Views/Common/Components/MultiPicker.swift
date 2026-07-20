@@ -7,30 +7,41 @@
 
 import SwiftUI
 
-struct MultiPicker<Content: View, Element: Hashable>: View {
-    var content: Content
+struct MultiPicker<Content: View, Element: Hashable & Identifiable>: View {
+    var content: (Element) -> Content
+    var elements: [Element]
     @Binding var selection: Set<Element>
     
-    init(selection: Binding<Set<Element>>, @ViewBuilder content: () -> Content) {
-        self.content = content()
+    init(elements: [Element], selection: Binding<Set<Element>>, @ViewBuilder content: @escaping (Element) -> Content) {
         self._selection = selection
+        self.content = content
+        self.elements = elements
     }
     
     var body: some View {
-        ForEach(subviews: content) { subview in
-            if let tag = subview.containerValues.tag(for: Element.self) {
-                // Use a toggle so we can use the default macOS checkmark gutter built into the menu view.is 
-                Toggle(isOn: Binding(
-                    get: { getState(for: tag) },
-                    set: { setState(for: tag, isOn: $0)}
-                )) {
-                    subview
-                }
-            } else {
-                subview
-                    .disabled(true)
+        ForEach(elements) { element in
+            Toggle(isOn: Binding(
+                get: { getState(for: element) },
+                set: { setState(for: element, isOn: $0)}
+            )) {
+                content(element)
             }
+            .tag(element)
         }
+//        ForEach(subviews: content) { subview in
+//            if let tag = subview.containerValues.tag(for: Element.self) {
+//                // Use a toggle so we can use the default macOS checkmark gutter built into the menu view.is 
+//                Toggle(isOn: Binding(
+//                    get: { getState(for: tag) },
+//                    set: { setState(for: tag, isOn: $0)}
+//                )) {
+//                    subview
+//                }
+//            } else {
+//                subview
+//                    .disabled(true)
+//            }
+//        }
     }
     
     func getState(for tag: Element) -> Bool {
@@ -60,12 +71,12 @@ struct MultiPicker<Content: View, Element: Hashable>: View {
         }
         .pickerStyle(.inline)
         Divider()
-        MultiPicker(selection: $selection) {
-            Text("Hello")
-                .tag("hello")
-            Text("Hi")
-                .tag("hi")
-        }
+//        MultiPicker(selection: $selection) {
+//            Text("Hello")
+//                .tag("hello")
+//            Text("Hi")
+//                .tag("hi")
+//        }
     } label: {
         
     }

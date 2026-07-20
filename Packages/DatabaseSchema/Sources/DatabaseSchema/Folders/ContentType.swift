@@ -7,7 +7,9 @@
 
 import UniformTypeIdentifiers
 
-public enum ContentType: Int, RawRepresentable, CustomStringConvertible, Codable, CaseIterable {
+public enum ContentType: Int, Identifiable, RawRepresentable, CustomStringConvertible, Codable, CaseIterable {
+    public var id: Int { rawValue }
+    
     case askMinna
     case recording
 
