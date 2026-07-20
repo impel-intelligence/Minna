@@ -1,5 +1,5 @@
 //
-//  FileWindow.swift
+//  PreviewWindow.swift
 //  Minna
 //
 //  Created by Taylor Lineman on 7/16/26.
@@ -9,9 +9,8 @@ import SwiftUI
 import SwiftData
 import DatabaseSchema
 
-
 /// A small conversion layer between a URL and a File from the frontend database.
-struct FileWindow: View {
+struct PreviewWindow: View {
     static let windowID = "file-details"
     
     @Environment(\.dismissWindow) var dismissWindow
@@ -36,11 +35,11 @@ struct FileWindow: View {
     
     var body: some View {
         if let file {
-            FileViewer(file: file, highlightedExcerpts: $highlightedExcerpts)
-                .onReceive(NotificationCenter.default.publisher(for: FileWindowParameterStore.parametersChanged)) { notification in
+            PreviewView(file: file, highlightedExcerpts: $highlightedExcerpts)
+                .onReceive(NotificationCenter.default.publisher(for: PreviewWindowParameterStore.parametersChanged)) { notification in
                     guard let action = notification.object as? OpenFileAction else { return }
                     guard action.id == file.id else { return }
-                    windowParameters = FileWindowParameterStore.shared.consumeParameters(for: action)
+                    windowParameters = PreviewWindowParameterStore.shared.consumeParameters(for: action)
                     highlightedExcerpts = windowParameters?.excertps ?? []
                 }
                 .onReceive(NotificationCenter.default.publisher(for: ModelContext.didSave)) { notification in

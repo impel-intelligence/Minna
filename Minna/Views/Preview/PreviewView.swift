@@ -1,5 +1,5 @@
 //
-//  FileViewer.swift
+//  PreviewView.swift
 //  Minna
 //
 //  Created by Taylor Lineman on 7/16/26.
@@ -13,7 +13,7 @@ import QuickLookUI
 import LookAtMe
 import SFSafeSymbols
 
-struct FileViewer: View {
+struct PreviewView: View {
     @Environment(\.openURL) var openURL
     
     let file: File
@@ -100,6 +100,6 @@ struct FileViewer: View {
 }
 
 #Preview {
-    FileViewer(file: SampleDatabase.shared.sampleFiles[0], highlightedExcerpts: .constant([]))
+    PreviewView(file: SampleDatabase.shared.sampleFiles[0], highlightedExcerpts: .constant([]))
         .modelContainer(SampleDatabase.shared.modelContainer)
 }

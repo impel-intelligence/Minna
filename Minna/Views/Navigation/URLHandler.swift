@@ -58,10 +58,10 @@ struct URLHandler {
         if let rawExcerpts = components.queryItems?.first(where: {$0.name == "excerpts"})?.value {
             let excerpts = rawExcerpts.split(separator: ",").map(String.init).compactMap(Int.init)
             print("Setting excerpts \(excerpts)")
-            FileWindowParameterStore.shared.setParameters(for: openAction, to: OpenFileParameters(excertps: excerpts))
+            PreviewWindowParameterStore.shared.setParameters(for: openAction, to: OpenFileParameters(excertps: excerpts))
         }
         
-        openWindow(id: FileWindow.windowID, value: openAction)
+        openWindow(id: PreviewWindow.windowID, value: openAction)
 
     }
 }
