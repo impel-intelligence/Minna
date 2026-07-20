@@ -57,11 +57,19 @@ struct MultiPicker<Content: View, Element: Hashable & Identifiable>: View {
     }
 }
 
+fileprivate enum Test: String, Identifiable, CaseIterable {
+    var id: Self { self }
+    
+    case hello
+    case hi
+}
+
 #Preview {
-    @Previewable @State var selection: Set<String> = ["hello"]
+    
+    @Previewable @State var selection: Set<Test> = [.hello]
     @Previewable @State var int: Int = 0
 
-    Text(selection.joined(separator: " "))
+    Text(selection.map(\.rawValue).joined(separator: " "))
         .frame(width: 100)
     
     Menu {
@@ -71,12 +79,10 @@ struct MultiPicker<Content: View, Element: Hashable & Identifiable>: View {
         }
         .pickerStyle(.inline)
         Divider()
-//        MultiPicker(selection: $selection) {
-//            Text("Hello")
-//                .tag("hello")
-//            Text("Hi")
-//                .tag("hi")
-//        }
+        
+        MultiPicker(elements: Test.allCases, selection: $selection) { option in
+            Text(option.rawValue)
+        }
     } label: {
         
     }

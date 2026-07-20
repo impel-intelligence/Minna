@@ -65,12 +65,6 @@ private struct FolderViewToolbar: ToolbarContent {
                 MultiPicker(elements: ContentType.allCases, selection: $contentTypes) { type in
                     Text(type.description)
                 }
-//                MultiPicker(selection: $contentTypes) {
-//                    ForEach(ContentType.allCases, id: \.rawValue) { mode in
-//                        Text(mode.description)
-//                            .tag(mode)
-//                    }
-//                }
                 .pickerStyle(.inline)
                 Divider()
                 Picker(selection: $sortMode) {
@@ -87,7 +81,6 @@ private struct FolderViewToolbar: ToolbarContent {
     }
 }
 
-// TODO: Investigate Focus States
 struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
@@ -177,8 +170,6 @@ private struct FolderViewContent: View {
 
     @State private var showDeleteConfirmation: Bool = false
 
-    @FocusState private var isFocused: Bool
-
     let columns = [
         GridItem(.adaptive(minimum: FolderViewContent.cardWidth, maximum: FolderViewContent.cardWidth), spacing: FolderViewContent.gridSpacing)
     ]
@@ -219,8 +210,6 @@ private struct FolderViewContent: View {
             }
         }
         .frameReader(in: .local) { self.frame = $0 }
-        .focusable()
-        .focused($isFocused)
         .onKeyPress { keyPress in
             guard !self.editingFileText else { return .ignored }
             
@@ -278,7 +267,6 @@ private struct FolderViewContent: View {
         }
         .padding(.vertical, 8)
     }
-    
     
     private func moveCursor(direction: ArrowDirection, modifiers: EventModifiers) -> KeyPress.Result {
         if selectedFiles.isEmpty, let firstFile = files.first {
