@@ -328,7 +328,7 @@ if ! grep -qF "$UPDATER_PUSH_PROGRESS_MARKER" $PROGRESS_FILE; then
     # Change directory into the updater, commit, tag then push.
     cd $UPDATER_LOCATION
     git add .
-    git commit -m "v$APP_VERSION"
+    git commit -a -m "v$APP_VERSION"
     git tag  -s "v$APP_VERSION" -m "Version $APP_VERSION"
     git push
     git push origin "v$APP_VERSION"
