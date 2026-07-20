@@ -126,7 +126,7 @@ struct FolderView: View {
                 listBody
             }
         }
-        .frameReader { self.frame = $0 }
+        .frameReader(in: .local) { self.frame = $0 }
         .standardFileImporter(
             presented: $standardFileImporterPresented,
             selectedFolder: folder,
@@ -135,48 +135,12 @@ struct FolderView: View {
             database: database
         )
         .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                Menu {
-                    AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
-                } label: {
-                    Label {
-                        Text("Add Content")
-                    } icon: {
-                        Image(systemSymbol: .plus)
-                    }
-                }
-                
-                Menu("Filter & Sorting", systemImage: SFSymbol.line3HorizontalDecrease.rawValue) {
-                    Picker(selection: $viewMode) {
-                        ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                            
-                        }
-                    } label: {
-                        EmptyView() // Quick hack to remove the section header that gets added for this entry.
-                    }
-                    .pickerStyle(.inline)
-                    Divider()
-                    MultiPicker(selection: $contentTypes) {
-                        ForEach(ContentType.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                        }
-                    }
-                    .pickerStyle(.inline)
-                    Divider()
-                    Picker(selection: $sortMode) {
-                        ForEach(FolderViewSort.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                        }
-                    } label: {
-                        EmptyView() // Quick hack to remove the section header that gets added for this entry.
-                    }
-                    .pickerStyle(.inline)
-                }
-            }
+            FolderViewToolbar(
+                viewMode: $viewMode,
+                contentTypes: $contentTypes,
+                sortMode: $sortMode,
+                standardFileImporterPresented: $standardFileImporterPresented
+            )
         }
         .navigationTitle(folder.name, image: folder.icon.image())
         .focusable()
@@ -338,6 +302,55 @@ struct FolderView: View {
         } catch {
             SentrySDK.capture(error: error)
             print("Failed to delete Iris Document \(error)")
+        }
+    }
+}
+
+private struct FolderViewToolbar: ToolbarContent {
+    @Binding var viewMode: FolderViewMode
+    @Binding var contentTypes: Set<ContentType>
+    @Binding var sortMode: FolderViewSort
+    
+    @Binding var standardFileImporterPresented: Bool
+    
+    var body: some ToolbarContent {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Menu {
+                AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
+            } label: {
+                Label("Add Content", systemSymbol: .plus)
+            }
+            
+            Menu("Filter & Sorting", systemImage: SFSymbol.line3HorizontalDecrease.rawValue) {
+                Picker(selection: $viewMode) {
+                    ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                        
+                    }
+                } label: {
+                    EmptyView() // Quick hack to remove the section header that gets added for this entry.
+                }
+                .pickerStyle(.inline)
+                Divider()
+                MultiPicker(selection: $contentTypes) {
+                    ForEach(ContentType.allCases, id: \.rawValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                    }
+                }
+                .pickerStyle(.inline)
+                Divider()
+                Picker(selection: $sortMode) {
+                    ForEach(FolderViewSort.allCases, id: \.rawValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                    }
+                } label: {
+                    EmptyView() // Quick hack to remove the section header that gets added for this entry.
+                }
+                .pickerStyle(.inline)
+            }
         }
     }
 }
