@@ -3,16 +3,22 @@ All notable changes to Minna will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format has been adjusted to include a release Title. This has been inserted between the [version] and date.
 
 ## [Unreleased]
 
 ### Added
 - You can now press enter to open a file you have selected.
+- Markdown can now be viewed in the preview window
+- HTML can now be viewed in the preview window
+- HTML documents are now supported in the search index
+- XML documents are now supported in the search index
 
 ### Fixed
 - Keyboard navigation no longer dings everytime a key is pressed.
 - Keyboard navigation now scrolls the list to the file you have selected.
 - Minor speed improvements to loading folders
+- Text display in the Preview Window
 
 ## [v0.9.0] - Preview Window - 2026-07-17
 

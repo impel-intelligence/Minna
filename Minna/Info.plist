@@ -60,6 +60,8 @@
 			<dict/>
 			<key>UTTypeIdentifier</key>
 			<string>net.daringfireball.markdown</string>
+			<key>UTTypeReferenceURL</key>
+			<string>https://daringfireball.net/projects/markdown/</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
