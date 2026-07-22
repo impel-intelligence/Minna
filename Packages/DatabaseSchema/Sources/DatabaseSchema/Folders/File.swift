@@ -79,7 +79,6 @@ extension File {
             
             // Save the updated model in the frontend database.
             guard let modelContext = self.modelContext else {
-                print("Failed to get file model context \(uuid)")
                 return url
             }
             

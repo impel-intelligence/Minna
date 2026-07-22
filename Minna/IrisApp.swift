@@ -10,6 +10,11 @@ import SwiftData
 import SentrySwift
 import ModelManager
 import ModernSettingsWindow
+import Logging
+
+#if canImport(Darwin)
+import LoggingOSLog
+#endif
 
 #if SPARKLE
 import Sparkle
@@ -34,6 +39,10 @@ struct MinnaApp: App {
         updaterController = SPUStandardUpdaterController(startingUpdater: !isRunningTests, updaterDelegate: nil, userDriverDelegate: nil)
         #endif
         
+        #if canImport(Darwin)
+        LoggingSystem.bootstrap(LoggingOSLog.init)
+        #endif
+
         SentrySDK.start { options in
             options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"
             options.sendDefaultPii = false

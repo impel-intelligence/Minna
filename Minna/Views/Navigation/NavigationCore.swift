@@ -10,6 +10,7 @@ import SwiftUI
 import SFSafeSymbols
 import SentrySwift
 import DatabaseSchema
+import Logging
 
 public struct NavigationCore: View {
     @Environment(\.undoManager) private var undoManager
@@ -103,6 +104,7 @@ public struct NavigationCore: View {
                     try irisContext.reIndex(file)
                 } catch {
                     SentrySDK.capture(error: error)
+                    Log.logger.error("Failed to re-index file", error: error, metadata: ["title": "\(file.title)", "uuid": "\(file.uuid.uuidString)"])
                     print("Failed to re-index file \(file.title) \(error)")
                 }
             }
@@ -115,13 +117,12 @@ public struct NavigationCore: View {
             do {
                 try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
             } catch {
-                print("Failed to handle \(url): \(error)")
+                Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
             }
         }
     }
 
     func addFolder(in folder: Folder?) {
-        print("Adding folder with parent \(folder?.name ?? "No parent")")
         addFolderRequest = AddFolderRequest(parent: folder)
     }
     

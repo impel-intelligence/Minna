@@ -11,6 +11,7 @@ import Digester
 import SentrySwift
 import UniformTypeIdentifiers
 import DatabaseSchema
+import Logging
 
 extension View {
     func standardFileImporter(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext, database: Database) -> some View {
@@ -21,7 +22,7 @@ extension View {
                 // TODO: Move this off of the main thread to improve import performance.
                 do {
                     guard irisContext.isConnected() else {
-                        print("You must connect an IrisDB instance on the view!")
+                        Log.logger.error("You must connect an IrisDB instance on the view!")
                         SentrySDK.capture(message: "IrisDB instance was not connected.")
                         return
                     }
@@ -76,7 +77,7 @@ extension View {
                             }
                         } catch {
                             SentrySDK.capture(error: error)
-                            print("Failed to create file for \(url): \(error)")
+                            Log.logger.error("Failed to create file", error: error, metadata: ["url": "\(url)"])
                         }
                         
                         url.stopAccessingSecurityScopedResource()
@@ -92,7 +93,7 @@ extension View {
                     }
                 } catch {
                     SentrySDK.capture(error: error)
-                    print(error)
+                    Log.logger.error("Failed to import files", error: error)
                 }
             }
     }

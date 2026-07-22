@@ -81,7 +81,6 @@ struct AddFolderForm: View {
             }
             ToolbarItem(placement: .primaryAction) {
                 Button("Submit", role: .confirm) {
-                    print("Parent \(parentFolder?.name ?? "No Folder")")
                     parentFolder?.children.append(folder)
                     folder.parent = parentFolder
                     modelContext.insert(folder)

@@ -12,6 +12,7 @@ import SwiftData
 import SFSafeSymbols
 import IrisSearch
 import IrisCommon
+import Logging
 
 struct CitationColumnView: View {
     @Environment(\.openURL) private var openURL
@@ -109,7 +110,7 @@ struct CitationColumnView: View {
                                 do {
                                     try URLHandler.handle(url, context: modelContext, router: router, openWindow: openWindow)
                                 } catch {
-                                    print("Failed to open citation \(url)")
+                                    Log.logger.error("Failed to open citation", error: error, metadata: ["url": "\(url)"])
                                 }
                             } label: {
                                 HStack(spacing: 0) {

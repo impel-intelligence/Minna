@@ -15,6 +15,7 @@ import ModelManager
 import ModernSettingsWindow
 import OrderedCollections
 import AnyLanguageModel
+import Logging
 
 struct AskMinnaView: View {
     enum ViewMode {
@@ -66,7 +67,7 @@ struct AskMinnaView: View {
                             try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
                             return .handled
                         } catch {
-                            print("Failed to handle url: \(url), \(error)")
+                            Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
                             return .systemAction
                         }
                     })
@@ -79,7 +80,7 @@ struct AskMinnaView: View {
             do {
                 try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
             } catch {
-                print("Failed to gather providers \(error)")
+                Log.logger.error("Failed to gather providers", error: error)
             }
         }
         .toolbar {

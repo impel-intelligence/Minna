@@ -61,7 +61,6 @@ struct FolderRow: View {
         .contextMenu {
             if !folder.protected {
                 Button {
-                    print("Add folder \(folder.name)")
                     addFolder(folder)
                 } label: {
                     Label("Create Subfolder", systemSymbol: .plus)

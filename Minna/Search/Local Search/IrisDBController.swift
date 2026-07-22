@@ -12,6 +12,7 @@ import SwiftData
 import SentrySwift
 import UniformTypeIdentifiers
 import DatabaseSchema
+import Logging
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
@@ -119,7 +120,7 @@ final class IrisDBController {
 
                 await self?.completeIndexing(uuid: uuid)
             } catch {
-                print("Failed to index file \(uuid): \(error)")
+                Log.logger.error("Failed to index file", error: error, metadata: ["uuid": "\(uuid.uuidString)"])
                 SentrySDK.capture(error: error)
                 // Clear progress even on failure so the indexing indicator never hangs.
                 await self?.completeIndexing(uuid: uuid)

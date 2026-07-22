@@ -11,6 +11,7 @@ import OrderedCollections
 import ModelManager
 import MinnaChat
 import SwiftData
+import Logging
 
 @Observable
 final class Chatter {
@@ -76,7 +77,7 @@ final class Chatter {
 
                 providerDatabase[configuration] = models
             } catch {
-                print("Failed to fetch available models for \(configuration.name): \(error)")
+                Log.logger.error("Failed to fetch available models", error: error, metadata: ["configuration": "\(configuration.name)"])
             }
         }
         
@@ -99,7 +100,7 @@ final class Chatter {
                 
                 chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat, instructions: instructions, tools: availableTools)
             } catch {
-                print("Failed to get database \(error)")
+                Log.logger.error("Failed to create chat instance.", error: error)
             }
         } else {
             chatInstance = nil

@@ -10,6 +10,7 @@ import SwiftData
 import BlurbKit
 import UniformTypeIdentifiers
 import DatabaseSchema
+import Logging
 
 struct FileFactory {
     enum FileFactoryError: Error {
@@ -49,7 +50,7 @@ struct FileFactory {
         guard let contentType = resourceValues.contentType else { return nil }
         
         guard let fileContentType = ContentType(uniformType: contentType) else {
-            print("Unsupported type: \(contentType)")
+            Log.logger.error("Unsupported file type", metadata: ["contentType": "\(contentType)"])
             throw FileFactoryError.unsupportedType
         }
         

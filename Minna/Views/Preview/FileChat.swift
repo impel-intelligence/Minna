@@ -10,6 +10,7 @@ import MinnaChat
 import SwiftData
 import DatabaseSchema
 import SFSafeSymbols
+import Logging
 
 struct FileChat: View {
     @Environment(\.modelContext) var modelContext
@@ -59,7 +60,7 @@ struct FileChat: View {
                 do {
                     try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
                 } catch {
-                    print("Failed to gather providers: \(error)")
+                    Log.logger.error("Failed to gather providers", error: error)
                 }
             }
             .environment(\.openURL, OpenURLAction { url in
@@ -67,7 +68,7 @@ struct FileChat: View {
                     try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
                     return .handled
                 } catch {
-                    print("Failed to handle url: \(url), \(error)")
+                    Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
                     return .systemAction
                 }
             })
@@ -103,7 +104,7 @@ struct FileChat: View {
                     do {
                         try await chatter.submit()
                     } catch {
-                        print("Failed to send chat: \(error)")
+                        Log.logger.error("Failed to send chat", error: error)
                     }
                 }
             }

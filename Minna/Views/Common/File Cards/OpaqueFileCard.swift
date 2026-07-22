@@ -11,6 +11,7 @@ import SFSafeSymbols
 import SentrySwift
 import SwiftData
 import DatabaseSchema
+import Logging
 
 enum CardEditField: Hashable {
     case title
@@ -154,7 +155,7 @@ struct OpaqueFileCard: View {
                             }
                         }
                     } catch {
-                        print("Failed to delete files \(error)")
+                        Log.logger.error("Failed to delete files", error: error)
                     }
                 }
             } label: {
@@ -188,7 +189,7 @@ struct OpaqueFileCard: View {
             try irisContext.delete(file)
         } catch {
             SentrySDK.capture(error: error)
-            print("Failed to delete Iris Document \(error)")
+            Log.logger.error("Failed to delete Iris Document \(file.uuid)", error: error)
         }
     }
     
@@ -205,7 +206,7 @@ struct OpaqueFileCard: View {
             try file.openOriginal(openURL: openURL)
         } catch {
             SentrySDK.capture(error: error)
-            print("Failed to open url: \(error) - \(file.url)")
+            Log.logger.error("Failed to open url \(file.url)", error: error)
         }
     }
 }

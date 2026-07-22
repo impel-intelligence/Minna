@@ -10,6 +10,7 @@ import SwiftData
 import BlurbKit
 import UniformTypeIdentifiers
 import DatabaseSchema
+import Logging
 
 @ModelActor
 actor FileDescriptionWriter {
@@ -20,7 +21,7 @@ actor FileDescriptionWriter {
         let url = try file.securityScopedURL()
 
         guard let contentType = try url.resourceValues(forKeys: [.contentTypeKey]).contentType else {
-            print("Failed to get content type for file \(file)")
+            Log.logger.error("Failed to get content type", metadata: ["url": "\(url)"])
             return
         }
         
@@ -28,7 +29,7 @@ actor FileDescriptionWriter {
         defer { url.stopAccessingSecurityScopedResource() }
         
         guard hasAccess else {
-            print("Unable to obtain security scope")
+            Log.logger.error("Unable to obtain security scope while generating description.", metadata: ["url": "\(url)"])
             return
         }
         

@@ -12,6 +12,7 @@ import SwiftData
 import QuickLookUI
 import LookAtMe
 import SFSafeSymbols
+import Logging
 
 struct PreviewView: View {
     @Environment(\.openURL) var openURL
@@ -45,7 +46,7 @@ struct PreviewView: View {
                 previewURL = try file.securityScopedURL()
             } catch {
                 failedToScopeErorr = error
-                print("Failed to create scoped url: \(error)")
+                Log.logger.error("Failed to create scoped url", error: error, metadata: ["file": "\(file.uuid)"])
             }
         }
         .toolbar {
@@ -54,7 +55,7 @@ struct PreviewView: View {
                     do {
                         try file.openOriginal(openURL: openURL)
                     } catch {
-                        print("Failed to open file: \(error)")
+                        Log.logger.error("Failed to open original file", error: error, metadata: ["url": "\(file.url)"])
                     }
                 } label: {
                     Label("Open Original", systemSymbol: .arrowUpForward)

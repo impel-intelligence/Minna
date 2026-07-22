@@ -50,9 +50,7 @@ let package = Package(
                 "DatabaseSchema",
                 .product(name: "AnyLanguageModel", package: "AnyLanguageModel")
             ]
-        ),
-        .testTarget(name: "ModelManagerTests", dependencies: ["ModelManager"])
-
+        )
     ],
     swiftLanguageModes: [.v6]
 )

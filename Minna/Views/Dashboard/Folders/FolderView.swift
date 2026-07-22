@@ -12,6 +12,7 @@ import OrderedCollections
 import SFSafeSymbols
 import SentrySwift
 import DatabaseSchema
+import Logging
 
 enum ArrowDirection {
     case up
@@ -318,7 +319,7 @@ struct FolderView: View {
             try irisContext.delete(file)
         } catch {
             SentrySDK.capture(error: error)
-            print("Failed to delete Iris Document \(error)")
+            Log.logger.error("Failed to delete Iris Document", error: error, metadata: ["uuid": "\(file.uuid.uuidString)"])
         }
     }
 }
