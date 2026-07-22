@@ -7,6 +7,8 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.10.0] - HTML & XML Support (The Building Blocks) - 2026-07-22
+
 ### Added
 - You can now press enter to open a file you have selected.
 - Markdown can now be viewed in the preview window
