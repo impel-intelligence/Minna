@@ -40,8 +40,8 @@ struct FolderView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.irisContext) private var irisContext
     @Environment(\.database) var database
-    @Environment(\.openURL) private var openURL
     @Environment(\.router) private var navigationRouter
+    @Environment(\.openWindow) private var openWindow
 
     static let cardWidth: CGFloat = 150
     static let gridSpacing: CGFloat = 12
@@ -93,40 +93,71 @@ struct FolderView: View {
     }
     
     var body: some View {
-        ScrollView {
-            if !folders.isEmpty {
-                VStack {
-                    HStack {
-                        Text("Folders")
-                        Spacer()
-                    }
-                    .font(.headline)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal)
-                    ScrollView(.horizontal, showsIndicators: false) {
+        ScrollViewReader { proxy in
+            ScrollView {
+                if !folders.isEmpty {
+                    VStack {
                         HStack {
-                            ForEach(folders) { folder in
-                                FolderCard(folder: folder)
-                                    .accessibilityAddTraits(.isLink)
-                                    .onTapGesture {
-                                        navigationRouter.push(folder)
-                                    }
-                            }
+                            Text("Folders")
+                            Spacer()
                         }
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
                         .padding(.horizontal)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(folders) { folder in
+                                    FolderCard(folder: folder)
+                                        .accessibilityAddTraits(.isLink)
+                                        .onTapGesture {
+                                            navigationRouter.push(folder)
+                                        }
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
                     }
+                    .padding(.vertical, 8)
                 }
-                .padding(.vertical, 8)
+                
+                switch viewMode {
+                case .grid:
+                    gridBody
+                case .list:
+                    listBody
+                }
             }
-            
-            switch viewMode {
-            case .grid:
-                gridBody
-            case .list:
-                listBody
+            .focusable()
+            .focused($isFocused)
+            .focusEffectDisabled()
+            .onKeyPress { keyPress in
+                guard !self.editingFileText else { return .ignored }
+                
+                if keyPress.characters == "a" && keyPress.modifiers == .command {
+                    selectedFiles.append(contentsOf: filteredFiles)
+                    return .handled
+                } else if keyPress.key == .escape {
+                    selectedFiles.removeAll()
+                    return .handled
+                } else if keyPress.key == .return {
+                    for file in selectedFiles {
+                        if file.type == .askMinna, let chat = file.chat {
+                            navigationRouter.push(chat)
+                        } else {
+                            openWindow(id: PreviewWindow.windowID, value: OpenFileAction(id: file.id))
+                        }
+                    }
+                    return .handled
+                } else if let direction = ArrowDirection(from: keyPress.key) {
+                    // If we were able to construct an arrow direction, the user moved using the arrow keys.
+                    return moveCursor(direction: direction, modifiers: keyPress.modifiers, proxy: proxy)
+                }
+                            
+                return .ignored
             }
+
         }
-        .frameReader { self.frame = $0 }
+        .frameReader(in: .local) { self.frame = $0 }
         .standardFileImporter(
             presented: $standardFileImporterPresented,
             selectedFolder: folder,
@@ -135,53 +166,14 @@ struct FolderView: View {
             database: database
         )
         .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                Menu {
-                    AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
-                } label: {
-                    Label {
-                        Text("Add Content")
-                    } icon: {
-                        Image(systemSymbol: .plus)
-                    }
-                }
-                
-                Menu("Filter & Sorting", systemImage: SFSymbol.line3HorizontalDecrease.rawValue) {
-                    Picker(selection: $viewMode) {
-                        ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                            
-                        }
-                    } label: {
-                        EmptyView() // Quick hack to remove the section header that gets added for this entry.
-                    }
-                    .pickerStyle(.inline)
-                    Divider()
-                    MultiPicker(selection: $contentTypes) {
-                        ForEach(ContentType.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                        }
-                    }
-                    .pickerStyle(.inline)
-                    Divider()
-                    Picker(selection: $sortMode) {
-                        ForEach(FolderViewSort.allCases, id: \.rawValue) { mode in
-                            Text(mode.description)
-                                .tag(mode)
-                        }
-                    } label: {
-                        EmptyView() // Quick hack to remove the section header that gets added for this entry.
-                    }
-                    .pickerStyle(.inline)
-                }
-            }
+            FolderViewToolbar(
+                viewMode: $viewMode,
+                contentTypes: $contentTypes,
+                sortMode: $sortMode,
+                standardFileImporterPresented: $standardFileImporterPresented
+            )
         }
         .navigationTitle(folder.name, image: folder.icon.image())
-        .focusable()
-        .focused($isFocused)
-        .focusEffectDisabled()
 //        .onChange(of: isFocused) { _, focused in
 //            // When focus moves to this view, check to see if a mouse button was pressed. If that is the case, this view was opened by the mouse so we don't need to start focus tracking.
 //            guard NSEvent.pressedMouseButtons == 0 else { return }
@@ -192,22 +184,6 @@ struct FolderView: View {
 //                selectionAnchor = firstFile
 //            }
 //        }
-        .onKeyPress { keyPress in
-            guard !self.editingFileText else { return .ignored }
-            
-            if keyPress.characters == "a" && keyPress.modifiers == .command {
-                selectedFiles.append(contentsOf: filteredFiles)
-                return .handled
-            } else if keyPress.key == .escape {
-                selectedFiles.removeAll()
-                return .handled
-            } else if let direction = ArrowDirection(from: keyPress.key) {
-                // If we were able to construct an arrow direction, the user moved using the arrow keys.
-                return moveCursor(direction: direction, modifiers: keyPress.modifiers)
-            }
-                        
-            return .ignored
-        }
         .onDeleteCommand {
             guard !self.editingFileText else { return }
             guard !selectedFiles.isEmpty else { return }
@@ -230,10 +206,12 @@ struct FolderView: View {
                     .simultaneousGesture(TapGesture(count: 1).onEnded {
                         tapGesture(for: file)
                     })
+                    .id(file)
             }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 10)
+        .scrollTargetLayout()
     }
     
     var gridBody: some View {
@@ -243,13 +221,15 @@ struct FolderView: View {
                     .simultaneousGesture(TapGesture(count: 1).onEnded {
                         tapGesture(for: file)
                     })
+                    .id(file)
             }
         }
         .padding(.vertical, 8)
+        .scrollTargetLayout()
     }
     
     
-    private func moveCursor(direction: ArrowDirection, modifiers: EventModifiers) -> KeyPress.Result {
+    private func moveCursor(direction: ArrowDirection, modifiers: EventModifiers, proxy: ScrollViewProxy) -> KeyPress.Result {
         if selectedFiles.isEmpty, let firstFile = filteredFiles.first {
             selectedFiles.append(firstFile)
             selectionAnchor = firstFile
@@ -268,8 +248,9 @@ struct FolderView: View {
 
                 selectionAnchor = nextFile
                 selectedFiles.append(nextFile)
+                proxy.scrollTo(nextFile)
 
-                return .ignored
+                return .handled
             }
 
             let itemsInGrid = Int(frame.width / (FolderView.cardWidth + (FolderView.gridSpacing / 2)))
@@ -338,6 +319,55 @@ struct FolderView: View {
         } catch {
             SentrySDK.capture(error: error)
             print("Failed to delete Iris Document \(error)")
+        }
+    }
+}
+
+private struct FolderViewToolbar: ToolbarContent {
+    @Binding var viewMode: FolderViewMode
+    @Binding var contentTypes: Set<ContentType>
+    @Binding var sortMode: FolderViewSort
+    
+    @Binding var standardFileImporterPresented: Bool
+    
+    var body: some ToolbarContent {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Menu {
+                AddItemMenuButtons(presentLocalFilePicker: $standardFileImporterPresented)
+            } label: {
+                Label("Add Content", systemSymbol: .plus)
+            }
+            
+            Menu("Filter & Sorting", systemImage: SFSymbol.line3HorizontalDecrease.rawValue) {
+                Picker(selection: $viewMode) {
+                    ForEach(FolderViewMode.allCases, id: \.rawValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                        
+                    }
+                } label: {
+                    EmptyView() // Quick hack to remove the section header that gets added for this entry.
+                }
+                .pickerStyle(.inline)
+                Divider()
+                MultiPicker(selection: $contentTypes) {
+                    ForEach(ContentType.allCases, id: \.rawValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                    }
+                }
+                .pickerStyle(.inline)
+                Divider()
+                Picker(selection: $sortMode) {
+                    ForEach(FolderViewSort.allCases, id: \.rawValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                    }
+                } label: {
+                    EmptyView() // Quick hack to remove the section header that gets added for this entry.
+                }
+                .pickerStyle(.inline)
+            }
         }
     }
 }

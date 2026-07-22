@@ -16,13 +16,13 @@
 		DB2BB96130052C7D00900E62 /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96030052C7D00900E62 /* Digester */; };
 		DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96230052C7D00900E62 /* IrisCommon */; };
 		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
-		DB7982C13009439A00B18E72 /* LookAtMe in Frameworks */ = {isa = PBXBuildFile; productRef = DB7982C03009439A00B18E72 /* LookAtMe */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
 		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
 		DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */; };
 		DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */; };
+		DBFD0AA8300EA44F0060744B /* LookAtMe in Frameworks */ = {isa = PBXBuildFile; productRef = DBFD0AA7300EA44F0060744B /* LookAtMe */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,7 +110,7 @@
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
 				DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */,
-				DB7982C13009439A00B18E72 /* LookAtMe in Frameworks */,
+				DBFD0AA8300EA44F0060744B /* LookAtMe in Frameworks */,
 				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
 				DB9695562FF440F200CB037A /* Textual in Frameworks */,
 				DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */,
@@ -230,7 +230,7 @@
 				DB2BB96030052C7D00900E62 /* Digester */,
 				DB2BB96230052C7D00900E62 /* IrisCommon */,
 				DB2BB96430052C7D00900E62 /* IrisSearch */,
-				DB7982C03009439A00B18E72 /* LookAtMe */,
+				DBFD0AA7300EA44F0060744B /* LookAtMe */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -325,7 +325,6 @@
 				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
 				DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */,
-				DB7982BF3009439900B18E72 /* XCLocalSwiftPackageReference "Packages/LookAtMe" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -557,7 +556,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.9.0;
+				CURRENT_PROJECT_VERSION = 0.10.0;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -590,7 +589,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.9.0;
+				MARKETING_VERSION = 0.10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -621,7 +620,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.9.0;
+				CURRENT_PROJECT_VERSION = 0.10.0;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -654,7 +653,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.9.0;
+				MARKETING_VERSION = 0.10.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -830,7 +829,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.9.0;
+				CURRENT_PROJECT_VERSION = 0.10.0;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -863,7 +862,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.9.0;
+				MARKETING_VERSION = 0.10.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
@@ -996,7 +995,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.9.0;
+				CURRENT_PROJECT_VERSION = 0.10.0;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1029,7 +1028,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.9.0;
+				MARKETING_VERSION = 0.10.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
@@ -1143,13 +1142,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		DB7982BF3009439900B18E72 /* XCLocalSwiftPackageReference "Packages/LookAtMe" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/LookAtMe;
-		};
-/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
 		DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */ = {
@@ -1271,10 +1263,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = IrisSearch;
 		};
-		DB7982C03009439A00B18E72 /* LookAtMe */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LookAtMe;
-		};
 		DB9695552FF440F200CB037A /* Textual */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */;
@@ -1306,6 +1294,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		DBFD0AA7300EA44F0060744B /* LookAtMe */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LookAtMe;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

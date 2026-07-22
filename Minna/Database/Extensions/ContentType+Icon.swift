@@ -28,6 +28,8 @@ extension ContentType {
             return .sparkles
         case .text:
             return .document
+        case .slides:
+            return .rectangleStack
         }
     }
 }
