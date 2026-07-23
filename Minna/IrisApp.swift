@@ -47,6 +47,22 @@ struct MinnaApp: App {
             options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"
             options.sendDefaultPii = false
             options.enableUncaughtNSExceptionReporting = true
+                        
+            #if SPARKLE
+            options.dist = "sparkle"
+            #if DEBUG
+            options.environment = "sparkle_debug"
+            #else
+            options.environment = "sparkle_release"
+            #endif // DEBUG
+            #else
+            options.dist = "app_store"
+            #if DEBUG
+            options.environment = "app_store_debug"
+            #else
+            options.environment = "app_store_release"
+            #endif // DEBUG
+            #endif // SPARKLE
         }
     }
     

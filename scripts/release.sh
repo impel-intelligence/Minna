@@ -269,6 +269,23 @@ else
     printf "⏩ Not stapling sparkle app dmg because the progress file states it has already been done.\n"
 fi
 
+### Upload Debug Symbols ###
+UPLOAD_SYMBOLS_MARKER="upload-symbols"
+if ! grep -qF "$UPLOAD_SYMBOLS_MARKER" $PROGRESS_FILE; then
+    printf "⚙️ Uploading debug files for App Store.\n"
+    sentry-cli debug-files upload --org iris-h0 --project iris-mac --include-sources $APP_STORE_ARCHIVE
+    printf "✅ Finished upload debug files for App Store"
+
+    printf "⚙️ Uploading debug files for Sparkle.\n"
+    sentry-cli debug-files upload --org iris-h0 --project iris-mac --include-sources $SPARKLE_ARCHIVE
+    printf "✅ Finished upload debug files for Sparkle"
+
+    # Save the github release progress
+    echo "$UPLOAD_SYMBOLS_MARKER" >> "$PROGRESS_FILE"
+else
+    printf "⏩ Not creating GitHub release because the progress file states it has already been done.\n"
+fi
+
 ### Upload to GitHub Release ###
 GITHUB_RELEASE_PROGRESS_MARKER="github-release"
 if ! grep -qF "$GITHUB_RELEASE_PROGRESS_MARKER" $PROGRESS_FILE; then
