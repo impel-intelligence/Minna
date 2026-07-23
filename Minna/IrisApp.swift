@@ -11,6 +11,7 @@ import SentrySwift
 import ModelManager
 import ModernSettingsWindow
 import Logging
+import SFSafeSymbols
 
 #if canImport(Darwin)
 import LoggingOSLog
@@ -23,8 +24,8 @@ import Sparkle
 @main
 struct MinnaApp: App {
     // MARK: Databases
-    @State var irisDBController: IrisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
-    @State var frontendDatabase: FrontendDatabase = FrontendDatabase.shared
+    @State var irisDBContext: IrisContext
+    @State var frontendDatabase: FrontendDatabase
         
     @State var standardFileImporterPresented: Bool = false
         
@@ -64,11 +65,17 @@ struct MinnaApp: App {
             #endif // DEBUG
             #endif // SPARKLE
         }
+        
+        frontendDatabase = FrontendDatabase.shared
+        irisDBContext = IrisContext(modelContainer: FrontendDatabase.shared.modelContainer)
     }
     
     var body: some Scene {
         WindowGroup {
             NavigationCore()
+                .modelContainer(frontendDatabase.modelContainer)
+                .database(frontendDatabase)
+                .irisContext(irisDBContext)
         }
         .commands {
             SidebarCommands()
@@ -79,7 +86,7 @@ struct MinnaApp: App {
                         presented: $standardFileImporterPresented,
                         selectedFolder: nil,
                         modelContext: frontendDatabase.modelContainer.mainContext,
-                        irisContext: irisDBController.mainContext,
+                        irisContext: irisDBContext,
                         database: frontendDatabase
                     )
             }
@@ -89,22 +96,19 @@ struct MinnaApp: App {
             }
             #endif
         }
-        .modelContainer(frontendDatabase.modelContainer)
-        .database(frontendDatabase)
-        .irisContext(irisDBController.mainContext)
 
         WindowGroup(id: PreviewWindow.windowID, for: OpenFileAction.self) { $parameters in
             if let parameters = parameters {
                 PreviewWindow(parameters: parameters, context: frontendDatabase.modelContainer.mainContext)
                     .modelContainer(frontendDatabase.modelContainer)
-                    .irisContext(irisDBController.mainContext)
+                    .irisContext(irisDBContext)
             }
         }
 
         ModernSettings {
             SettingsController()
+                .modelContainer(frontendDatabase.modelContainer)
+                .irisContext(irisDBContext)
         }
-        .modelContainer(frontendDatabase.modelContainer)
-        .irisContext(irisDBController.mainContext)
     }
 }

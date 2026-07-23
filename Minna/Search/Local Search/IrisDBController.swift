@@ -19,6 +19,10 @@ enum IrisDBControllerError: Error {
     case unableToGetContentType
 }
 
+enum IrisDBControllerInitializationError: Error {
+    case noAppleIntelligence
+}
+
 struct IndexingProgress {
     var completed: Set<UUID> = []
     var inProgress: Set<UUID> = []
@@ -60,10 +64,8 @@ struct IndexingProgress {
 
 @MainActor @Observable
 final class IrisDBController {
-    @MainActor public private(set) var mainContext: IrisContext!
-    
     @ObservationIgnored let irisDB: IrisDB
-    @ObservationIgnored private let textEmbedder: EmbeddingProvider
+    @ObservationIgnored private var textEmbedder: EmbeddingProvider
     
     var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter
@@ -71,18 +73,29 @@ final class IrisDBController {
     /// An indexing queue to bound the total number of running import jobs. Stops task fanning on massive imports.
     @ObservationIgnored private let indexingQueue: RateLimitedQueue = RateLimitedQueue(maxConcurrency: 3)
 
-    init(modelContainer: ModelContainer) {
+    init(modelContainer: ModelContainer) throws {
+        fileIndexedWriter = FileIndexedWriter(modelContainer: modelContainer)
+        
+        var embedder: EmbeddingProvider
+        // Try and create the embedder, if we can't it is because Apple Intelligence is not available
         do {
-            let searchDirectory = Utilities.irisDBDirectory()
-            textEmbedder = try NLContextualEmbedder(language: .english)
-            irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder)
+            embedder = try NLContextualEmbedder(language: .english)
         } catch {
-            SentrySDK.capture(error: error)
-            fatalError("Could not create SearchController: \(error)")
+            Log.logger.debug("Failed to load NLContextualEmbedder", error: error)
+            
+            // Load the backup embedder, if we can't load it, Apple Intelligence is not enabled and we wont be able to do on-device intelligence.
+            do {
+                embedder = try NLEmbedder(language: .english)
+            } catch {
+                Log.logger.debug("Failed to load NLEmbedder", error: error)
+                throw IrisDBControllerInitializationError.noAppleIntelligence
+            }
         }
         
-        fileIndexedWriter = FileIndexedWriter(modelContainer: modelContainer)
-        mainContext = IrisContext(controllerResult: .success(self))
+        self.textEmbedder = embedder
+        
+        let searchDirectory = Utilities.irisDBDirectory()
+        irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder)
     }
         
     public func insert(_ file: File) throws {
@@ -132,9 +145,10 @@ final class IrisDBController {
         indexingProgress.complete(id: uuid)
     }
         
-    public func delete(_ file: File) {
-        let uuid = file.uuid
+    public func delete(_ file: File) throws {
+//        guard let irisDB = irisDB else { throw IrisDBControllerError.notConnectedToDatabase }
         let irisDB = irisDB
+        let uuid = file.uuid
         
         Task(name: "Delete Search Index for: \(file)", priority: .userInitiated) {
             try await irisDB.deleteDocument(uuid: uuid)

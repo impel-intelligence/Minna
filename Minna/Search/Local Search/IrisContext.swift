@@ -12,16 +12,36 @@ import DatabaseSchema
 
 enum IrisContextError: Error {
     case notConnected
+    case noAppleIntelligence
+    case unknown
 }
+
+import SwiftData
 
 /// A wrapper for IrisDBController that allows for easy insertion into SwiftUI's environment.
 public struct IrisContext {
     private let controllerResult: Result<IrisDBController, IrisContextError>
-        
-    init(controllerResult: Result<IrisDBController, IrisContextError>) {
-        self.controllerResult = controllerResult
+    
+    init() {
+        controllerResult = .failure(.notConnected)
     }
     
+    init(modelContainer: ModelContainer) {
+        do {
+            let controller = try IrisDBController(modelContainer: modelContainer)
+            controllerResult = .success(controller)
+        } catch let error as IrisDBControllerInitializationError {
+            // This is an error directly from the controller
+            switch error {
+            case .noAppleIntelligence:
+                controllerResult = .failure(.noAppleIntelligence)
+            }
+        } catch {
+            // Unknown Error, these will most likely be disk-based errors from the FileManager APIs
+            controllerResult = .failure(.unknown)
+        }
+    }
+
     private var controller: IrisDBController {
         get throws {
             try controllerResult.get()
@@ -79,7 +99,7 @@ extension IrisContext {
     ///
     /// A user must replace `@Environment(\.irisContext)` with their own ``IrisContext`` to remove this instance.
     public static var notConnected: IrisContext {
-        self.init(controllerResult: .failure(IrisContextError.notConnected))
+        self.init()
     }
 }
 

@@ -28,6 +28,9 @@ public struct NavigationCore: View {
     
     @State var addFolderRequest: AddFolderRequest?
     
+    @State var presentAppleIntelligenceAlert: Bool = false
+    @State var presentUnknownErrorAlert: Bool = false
+    
     public var body: some View {
         NavigationSplitView {
             List(selection: $navigationRouter.selectedTab) {
@@ -88,6 +91,19 @@ public struct NavigationCore: View {
         .router(navigationRouter)
         .onAppear {
             modelContext.undoManager = undoManager
+            
+            do {
+                try irisContext.database
+            } catch let error as IrisContextError {
+                switch error {
+                case .notConnected, .unknown:
+                    presentUnknownErrorAlert = true
+                case .noAppleIntelligence:
+                    presentAppleIntelligenceAlert = true
+                }
+            } catch {
+                presentUnknownErrorAlert = true
+            }
         }
         .sheet(item: $addFolderRequest) { request in
             AddFolderForm(parentFolder: request.parent)
@@ -119,6 +135,15 @@ public struct NavigationCore: View {
             } catch {
                 Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
             }
+        }
+        .alert("Apple Intelligence is not Enabled", isPresented: $presentAppleIntelligenceAlert) {
+            
+        } message: {
+            // TODO: Add better setup instructions.
+            Text("Please enable Apple Intelligence in your device's settings to use Minna. After enabling Apple Intelligence in settings you will need to restart the application.")
+        }
+        .alert("An unknown error occurred while creating the Search Database", isPresented: $presentUnknownErrorAlert) {
+            
         }
     }
 
