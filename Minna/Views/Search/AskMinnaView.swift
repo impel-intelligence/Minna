@@ -36,6 +36,8 @@ struct AskMinnaView: View {
     
     @State var chatter: Chatter
     @State var viewMode: ViewMode
+    
+    @State var searchRouter: RouterCore?
 
     /// Invoked by the New Chat toolbar button. `nil` hides the button (e.g. when viewing an existing chat pushed from a folder).
     var newChat: (() -> Void)?
@@ -83,6 +85,13 @@ struct AskMinnaView: View {
                 Log.logger.error("Failed to gather providers", error: error)
             }
         }
+        .onAppear {
+            do {
+                searchRouter = try RouterCore()
+            } catch {
+                Log.logger.error("Failed to create search router", error: error)
+            }
+        }
         .toolbar {
             if let newChat {
                 ToolbarItem(id: "newChat") {
@@ -102,7 +111,6 @@ struct AskMinnaView: View {
             }
         }
     }
-
     
     // MARK: Startup State
     private func startup() -> some View {
@@ -154,9 +162,25 @@ struct AskMinnaView: View {
             modelContext.insert(chatter.chat.file)
             viewMode = .chat // Start animations
         }
-
-        Task {
-            try await chatter.submit()
+        
+        do {
+            let destination = try searchRouter?.predict(chatter.chatMessage)
+            
+            switch destination {
+            case .search:
+                break
+            case .aiAssistant, nil:
+                Task {
+                    do {
+                        try await chatter.submit()
+                    } catch {
+                        Log.logger.error("Failed to submit chat message", error: error)
+                    }
+                }
+            }
+            
+        } catch {
+            
         }
     }
 }

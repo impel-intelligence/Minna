@@ -13,6 +13,7 @@ import SentrySwift
 import UniformTypeIdentifiers
 import DatabaseSchema
 import Logging
+import IrisCommon
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
@@ -163,7 +164,11 @@ final class IrisDBController {
 
 extension IrisDBController: Searchable {
     public func search(query: String) async throws -> [UUID] {
+        #if DEBUG
+        let query = IrisQuery(text: query, debug: true)
+        #else
         let query = IrisQuery(text: query)
+        #endif
         let documents = try await irisDB.search(query: query, ranking: .relativeScoreFusion)
 
         return documents.map { $0.document.uuid }

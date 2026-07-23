@@ -67,7 +67,7 @@ public struct NavigationCore: View {
                 Group {
                     switch navigationRouter.selectedTab {
                     case .search, nil:
-                        SearchStartupView()
+                        SearchView()
                     case .recents:
                         RecentsView()
                     case .folder(let folder):
