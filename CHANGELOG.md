@@ -7,6 +7,11 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.10.1] - Fix Startup Crash - 2026-07-23
+
+### Fixed
+- Fixed a crash on app startup when the user did not have Apple Intelligence enabled.
+
 ## [0.10.0] - HTML & XML Support (The Building Blocks) - 2026-07-22
 
 ### Added

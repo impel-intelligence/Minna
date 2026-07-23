@@ -42,7 +42,11 @@ class FrontendDatabase: Database {
         let modelConfiguration = ModelConfiguration(schema: Schema.minnaSchema)
         
         do {
-            modelContainer = try ModelContainer(for: Schema.minnaSchema, configurations: [modelConfiguration])
+            modelContainer = try ModelContainer(
+                for: Schema.minnaSchema,
+                migrationPlan: DatabaseMigrationPlan.self,
+                configurations: modelConfiguration
+            )
             fileDescriptionWriter = FileDescriptionWriter(modelContainer: modelContainer)
             try populateStartupData()
         } catch {

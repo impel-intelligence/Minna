@@ -25,16 +25,7 @@ struct ProviderWrapper: Identifiable {
 
 struct ModelsSettingsView: View {
     @Query var providers: [ConfiguredProvider]
-    @Query var models: [ChatModel]
 
-    private var onDeviceModels: [ChatModel] {
-        models.filter { $0.location == .device }
-    }
-
-    private var cloudModels: [ChatModel] {
-        models.filter { $0.location == .cloud }
-    }
-    
     @State var providerWrapper: ProviderWrapper?
     
     var body: some View {

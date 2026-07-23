@@ -62,5 +62,5 @@ extension SearchStartupView: Navigable {
         .navigationTitle("Ask Minna")
         .modelContainer(SampleDatabase.shared.modelContainer)
         .database(SampleDatabase.shared)
-        .irisContext(IrisDBController(modelContainer: SampleDatabase.shared.modelContainer).mainContext)
+        .irisContext(IrisContext(modelContainer: SampleDatabase.shared.modelContainer))
 }

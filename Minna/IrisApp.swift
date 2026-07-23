@@ -11,6 +11,7 @@ import SentrySwift
 import ModelManager
 import ModernSettingsWindow
 import Logging
+import SFSafeSymbols
 
 #if canImport(Darwin)
 import LoggingOSLog
@@ -23,8 +24,8 @@ import Sparkle
 @main
 struct MinnaApp: App {
     // MARK: Databases
-    @State var irisDBController: IrisDBController = IrisDBController(modelContainer: FrontendDatabase.shared.modelContainer)
-    @State var frontendDatabase: FrontendDatabase = FrontendDatabase.shared
+    @State var irisDBContext: IrisContext
+    @State var frontendDatabase: FrontendDatabase
         
     @State var standardFileImporterPresented: Bool = false
         
@@ -47,12 +48,34 @@ struct MinnaApp: App {
             options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"
             options.sendDefaultPii = false
             options.enableUncaughtNSExceptionReporting = true
+                        
+            #if SPARKLE
+            options.dist = "sparkle"
+            #if DEBUG
+            options.environment = "sparkle_debug"
+            #else
+            options.environment = "sparkle_release"
+            #endif // DEBUG
+            #else
+            options.dist = "app_store"
+            #if DEBUG
+            options.environment = "app_store_debug"
+            #else
+            options.environment = "app_store_release"
+            #endif // DEBUG
+            #endif // SPARKLE
         }
+        
+        frontendDatabase = FrontendDatabase.shared
+        irisDBContext = IrisContext(modelContainer: FrontendDatabase.shared.modelContainer)
     }
     
     var body: some Scene {
         WindowGroup {
             NavigationCore()
+                .modelContainer(frontendDatabase.modelContainer)
+                .database(frontendDatabase)
+                .irisContext(irisDBContext)
         }
         .commands {
             SidebarCommands()
@@ -63,7 +86,7 @@ struct MinnaApp: App {
                         presented: $standardFileImporterPresented,
                         selectedFolder: nil,
                         modelContext: frontendDatabase.modelContainer.mainContext,
-                        irisContext: irisDBController.mainContext,
+                        irisContext: irisDBContext,
                         database: frontendDatabase
                     )
             }
@@ -73,22 +96,19 @@ struct MinnaApp: App {
             }
             #endif
         }
-        .modelContainer(frontendDatabase.modelContainer)
-        .database(frontendDatabase)
-        .irisContext(irisDBController.mainContext)
 
         WindowGroup(id: PreviewWindow.windowID, for: OpenFileAction.self) { $parameters in
             if let parameters = parameters {
                 PreviewWindow(parameters: parameters, context: frontendDatabase.modelContainer.mainContext)
                     .modelContainer(frontendDatabase.modelContainer)
-                    .irisContext(irisDBController.mainContext)
+                    .irisContext(irisDBContext)
             }
         }
 
         ModernSettings {
             SettingsController()
+                .modelContainer(frontendDatabase.modelContainer)
+                .irisContext(irisDBContext)
         }
-        .modelContainer(frontendDatabase.modelContainer)
-        .irisContext(irisDBController.mainContext)
     }
 }

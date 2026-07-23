@@ -162,11 +162,9 @@ struct AskMinnaView: View {
 }
 
 #Preview {
-    @Previewable var controller = IrisDBController(modelContainer: SampleDatabase.shared.modelContainer)
-    
     AskMinnaView(chat: Chat.make(in: SampleDatabase.shared.sampleFolders.first!), viewMode: .chat) {
         
     }
-    .irisContext(controller.mainContext)
+    .irisContext(IrisContext(modelContainer: SampleDatabase.shared.modelContainer))
     .modelContext(SampleDatabase.shared.context)
 }

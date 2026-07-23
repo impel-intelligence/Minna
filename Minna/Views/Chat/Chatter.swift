@@ -94,6 +94,7 @@ final class Chatter {
     
     private func initializeChatInstance(modelContext: ModelContext, irisContext: IrisContext) {
         if let model = selectedModel, let config = selectedProvider {
+            // TODO: Propagate this catch all the way out to UI
             do {
                 // Update the chat so it will open with the model you last used.
                 chat.lastUsedModel = model.id

@@ -160,5 +160,5 @@ struct CitationColumnView: View {
         }
     })
     .modelContext(SampleDatabase.shared.context)
-    .irisContext(IrisDBController(modelContainer: SampleDatabase.shared.modelContainer).mainContext)
+    .irisContext(IrisContext(modelContainer: SampleDatabase.shared.modelContainer))
 }
