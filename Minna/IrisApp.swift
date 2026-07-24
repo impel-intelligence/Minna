@@ -104,7 +104,7 @@ struct MinnaApp: App {
                     .irisContext(irisDBContext)
             }
         }
-
+        
         ModernSettings {
             SettingsController()
                 .modelContainer(frontendDatabase.modelContainer)

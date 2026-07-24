@@ -100,6 +100,9 @@ public struct NavigationCore: View {
                     presentUnknownErrorAlert = true
                 case .noAppleIntelligence:
                     presentAppleIntelligenceAlert = true
+                case .noCoreML:
+                    // TODO: Restart a download of the model
+                    presentAppleIntelligenceAlert = true
                 }
             } catch {
                 presentUnknownErrorAlert = true

@@ -13,6 +13,7 @@ import DatabaseSchema
 enum IrisContextError: Error {
     case notConnected
     case noAppleIntelligence
+    case noCoreML
     case unknown
 }
 
@@ -35,6 +36,8 @@ public struct IrisContext {
             switch error {
             case .noAppleIntelligence:
                 controllerResult = .failure(.noAppleIntelligence)
+            case .noCoreMLModel:
+                controllerResult = .failure(.noCoreML)
             }
         } catch {
             // Unknown Error, these will most likely be disk-based errors from the FileManager APIs

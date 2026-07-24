@@ -16,6 +16,8 @@
 		DB2BB96130052C7D00900E62 /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96030052C7D00900E62 /* Digester */; };
 		DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96230052C7D00900E62 /* IrisCommon */; };
 		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
+		DB6E4A823013CB6F00487D86 /* AppleIntelligenceEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */; };
+		DB6E4A843013CB6F00487D86 /* CoreMLEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
@@ -44,6 +46,29 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		DB6E487D3012D12300487D86 /* Embed ExtensionKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed ExtensionKit Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB6E4C773013CC3B00487D86 /* Copy Embedding FIle */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			name = "Copy Embedding FIle";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		DB0CF4D02FEDCA6B0036306B /* Minna.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minna.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,6 +84,9 @@
 		DB0CF5842FEDCADC0036306B /* Exceptions for "Minna" folder in "Minna" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Embeddings/bge/bge_small_en_v1.5.mlmodelc,
+				Embeddings/bge/config.json,
+				Embeddings/bge/vocab.txt,
 				Info.plist,
 			);
 			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
@@ -74,11 +102,27 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		DB6E4C7F3013CCDF00487D86 /* Exceptions for "Minna" folder in "Copy Embedding FIle" phase from "Minna" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			attributesByRelativePath = {
+				Embeddings/bge/bge_small_en_v1.5.mlmodelc = (CodeSignOnCopy, );
+			};
+			buildPhase = DB6E4C773013CC3B00487D86 /* Copy Embedding FIle */;
+			membershipExceptions = (
+				Embeddings/bge/bge_small_en_v1.5.mlmodelc,
+				Embeddings/bge/config.json,
+				Embeddings/bge/vocab.txt,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DB0CF4D22FEDCA6B0036306B /* Minna */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				DB0CF5842FEDCADC0036306B /* Exceptions for "Minna" folder in "Minna" target */,
+				DB6E4C7F3013CCDF00487D86 /* Exceptions for "Minna" folder in "Copy Embedding FIle" phase from "Minna" target */,
 			);
 			path = Minna;
 			sourceTree = "<group>";
@@ -108,6 +152,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB6E4A843013CB6F00487D86 /* CoreMLEmbedder in Frameworks */,
 				DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */,
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
@@ -119,6 +164,7 @@
 				DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */,
 				DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */,
 				DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */,
+				DB6E4A823013CB6F00487D86 /* AppleIntelligenceEmbedder in Frameworks */,
 				DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */,
 				DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */,
 				DB2BB96130052C7D00900E62 /* Digester in Frameworks */,
@@ -207,6 +253,8 @@
 				DB0CF4CD2FEDCA6B0036306B /* Frameworks */,
 				DB0CF4CE2FEDCA6B0036306B /* Resources */,
 				DB3F89D930005AF1003FE515 /* Clean Sparkle */,
+				DB6E487D3012D12300487D86 /* Embed ExtensionKit Extensions */,
+				DB6E4C773013CC3B00487D86 /* Copy Embedding FIle */,
 			);
 			buildRules = (
 			);
@@ -237,6 +285,8 @@
 				DBFD0AA7300EA44F0060744B /* LookAtMe */,
 				DBBCAF8F30111ED000B49AB2 /* Logging */,
 				DBBCB07F3011233000B49AB2 /* LoggingOSLog */,
+				DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */,
+				DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -1286,6 +1336,14 @@
 		DB2BB96430052C7D00900E62 /* IrisSearch */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = IrisSearch;
+		};
+		DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppleIntelligenceEmbedder;
+		};
+		DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreMLEmbedder;
 		};
 		DB9695552FF440F200CB037A /* Textual */ = {
 			isa = XCSwiftPackageProductDependency;

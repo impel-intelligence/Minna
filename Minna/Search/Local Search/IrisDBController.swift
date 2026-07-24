@@ -14,6 +14,8 @@ import UniformTypeIdentifiers
 import DatabaseSchema
 import Logging
 import IrisCommon
+import AppleIntelligenceEmbedder
+import CoreMLEmbedder
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
@@ -22,6 +24,7 @@ enum IrisDBControllerError: Error {
 
 enum IrisDBControllerInitializationError: Error {
     case noAppleIntelligence
+    case noCoreMLModel
 }
 
 struct IndexingProgress {
@@ -77,21 +80,7 @@ final class IrisDBController {
     init(modelContainer: ModelContainer) throws {
         fileIndexedWriter = FileIndexedWriter(modelContainer: modelContainer)
         
-        var embedder: EmbeddingProvider
-        // Try and create the embedder, if we can't it is because Apple Intelligence is not available
-        do {
-            embedder = try NLContextualEmbedder(language: .english)
-        } catch {
-            Log.logger.debug("Failed to load NLContextualEmbedder", error: error)
-            
-            // Load the backup embedder, if we can't load it, Apple Intelligence is not enabled and we wont be able to do on-device intelligence.
-            do {
-                embedder = try NLEmbedder(language: .english)
-            } catch {
-                Log.logger.debug("Failed to load NLEmbedder", error: error)
-                throw IrisDBControllerInitializationError.noAppleIntelligence
-            }
-        }
+        let embedder: EmbeddingProvider = try IrisDBController.getEmbedder()
         
         self.textEmbedder = embedder
         
@@ -99,6 +88,52 @@ final class IrisDBController {
         irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder)
     }
         
+    private static func getEmbedder() throws -> EmbeddingProvider {
+        do {
+            guard let model = Bundle.main.url(forResource: "bge_small_en_v1.5", withExtension: "mlmodelc") else {
+                throw IrisDBControllerInitializationError.noCoreMLModel
+            }
+            let modelDirectory = model.deletingLastPathComponent()
+            return try CoreMLEmbedder(modelDirectory: modelDirectory)
+        } catch {
+            Log.logger.debug("Failed to load CoreMLEmbedder", error: error)
+            
+            // Try and create the embedder, if we can't it is because Apple Intelligence is not available
+            do {
+                return try NLContextualEmbedder(language: .english)
+            } catch {
+                Log.logger.debug("Failed to load NLContextualEmbedder", error: error)
+                
+                // Load the backup embedder, if we can't load it, Apple Intelligence is not enabled and we wont be able to do on-device intelligence.
+                do {
+                    return try NLEmbedder(language: .english)
+                } catch {
+                    Log.logger.debug("Failed to load NLEmbedder", error: error)
+                    throw IrisDBControllerInitializationError.noAppleIntelligence
+                }
+            }
+        }
+    }
+    
+    public func reEmbedDatabase() async throws {
+        let documents = try await irisDB.readAllDocuments()
+        
+        let irisDB = irisDB
+        
+        for document in documents {
+            indexingProgress.add(id: document.uuid)
+
+            indexingQueue.enqueue { [ weak self] in
+                do {
+                    try await irisDB.updateDocument(uuid: document.uuid, title: document.title, description: document.description, embeddableContent: document.pieces.map(\.content))
+                    await self?.completeIndexing(uuid: document.uuid)
+                } catch {
+                    Log.logger.error("Failed to re-embed entire database", error: error)
+                }
+            }
+        }
+    }
+
     public func insert(_ file: File) throws {
         let irisDB = irisDB
         let persistentID = file.persistentModelID
@@ -155,10 +190,6 @@ final class IrisDBController {
             try await irisDB.deleteDocument(uuid: uuid)
             indexingProgress.cancel(id: uuid)
         }
-    }
-    
-    private func markFileIndexed(file: File) {
-        
     }
 }
 
