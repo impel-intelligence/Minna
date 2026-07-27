@@ -13,7 +13,7 @@ public enum Platform: String, Codable, Sendable {
 }
 
 public struct Manifest: Codable {
-    public struct File: Codable, Sendable {
+    public struct File: Codable, Sendable, Hashable {
         public let identifier: String
         public let fileSize: Int
         public let url: URL

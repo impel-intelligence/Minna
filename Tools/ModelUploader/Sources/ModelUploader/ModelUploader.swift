@@ -27,12 +27,6 @@ struct ModelUploader: AsyncParsableCommand {
         case missingVocab
         case missingConfig
         
-        case couldNotCreateFileStream
-        case couldNotCreateCompressionStream
-        case couldNotCreateEncodingStream
-        case couldNotCreateKeySet
-        case couldNotFetchManifest
-        
         case couldNotGetFileSize
     }
     
@@ -100,48 +94,14 @@ struct ModelUploader: AsyncParsableCommand {
         print("Copying vocab")
         // Move the vocabulary file
         try FileManager.default.copyItem(at: vocabURL, to: packageDirectory.appending(path: "vocab.txt"))
-                
-        print("Creating Archive Streams")
-        let archiveFile = temporaryDirectory.appendingPathComponent(name, conformingTo: .appleArchive)
-        let archiveFilePath = FilePath(stringLiteral: archiveFile.path(percentEncoded: false))
-        
-        guard let writeFileStream = ArchiveByteStream.fileStream(
-            path: archiveFilePath,
-            mode: .writeOnly,
-            options: [ .create ],
-            permissions: FilePermissions(rawValue: 0o644)) else {
-            throw UploadError.couldNotCreateFileStream
-        }
-        
-        defer { try? writeFileStream.close() }
-
-        guard let compressStream = ArchiveByteStream.compressionStream(using: .lzfse, writingTo: writeFileStream) else {
-            throw UploadError.couldNotCreateCompressionStream
-        }
-        
-        defer { try? compressStream.close() }
-        
-        guard let encodeStream = ArchiveStream.encodeStream(writingTo: compressStream) else {
-            throw UploadError.couldNotCreateCompressionStream
-        }
-        
-        defer { try? encodeStream.close() }
-
-        // Create a key set with the defaults, except UID or GID
-        guard let keySet = ArchiveHeader.FieldKeySet("TYP,PAT,LNK,DEV,DAT,MOD,FLG,MTM,BTM,CTM") else {
-            throw UploadError.couldNotCreateKeySet
-        }
-        
+            
         print("Archiving Model")
-        let packagePath = FilePath(packageDirectory.path(percentEncoded: false))
-        try encodeStream.writeDirectoryContents(archiveFrom: packagePath, keySet: keySet)
+        let archiveFile = temporaryDirectory.appendingPathComponent(name, conformingTo: .appleArchive)
+        try Archive.write(file: packageDirectory, to: archiveFile)
         
-        print("Calculating SHA256 hash")
-        
-        let archiveData = try Data(contentsOf: archiveFile)
-        let hash = SHA256.hash(data: archiveData)
-        let hashString = hash.compactMap { String(format: "%02x", $0) }.joined()
-        
+        let sha = try Archive.hash(file: archiveFile)
+        let hashString = sha.compactMap { String(format: "%02x", $0) }.joined()
+                
         print("Retrieving Existing Manifest")
         let manifestFile = temporaryDirectory.appending(path: ModelUploader.manifest)
         try await downloadFromCDN(file: ModelUploader.manifest, to: manifestFile)
@@ -162,7 +122,7 @@ struct ModelUploader: AsyncParsableCommand {
 
         if manifest.files.contains(where: { $0.identifier == identifier }) {
             manifest.files.removeAll(where: { $0.identifier == identifier })
-            try? await deleteFromCDN(file: identifier)
+            try? await deleteFromCDN(file: identifier + ".aar")
         }
         
         let fileURL = ModelUploader.cdnDomain.appendingPathComponent(name, conformingTo: .appleArchive)
@@ -176,6 +136,8 @@ struct ModelUploader: AsyncParsableCommand {
         )
         
         manifest.files.append(file)
+                
+        print(archiveFile)
         
         print("Saving manifest file")
         try manifest.save(to: manifestFile)
@@ -188,10 +150,11 @@ struct ModelUploader: AsyncParsableCommand {
     }
     
     func deleteFromCDN(file: String) async throws {
-        let arguments: Arguments = ["storage", "rm", file]
+        let deleteURL = ModelUploader.googleBucket + "/" + file
+        let arguments: Arguments = ["storage", "rm", deleteURL]
         let config: Subprocess.Configuration = .init(.path("/opt/homebrew/bin/gcloud"), arguments: arguments)
         
-        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
+//        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
     }
     
     func downloadFromCDN(file: String, to url: URL) async throws {
@@ -199,7 +162,7 @@ struct ModelUploader: AsyncParsableCommand {
         let arguments: Arguments = ["storage", "cp", downloadURL, url.absoluteString]
         let config: Subprocess.Configuration = .init(.path("/opt/homebrew/bin/gcloud"), arguments: arguments)
         
-        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
+//        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
     }
     
     func uploadToCDN(file: URL) async throws {

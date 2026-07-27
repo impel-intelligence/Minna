@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ModelUploader",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v26)
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),

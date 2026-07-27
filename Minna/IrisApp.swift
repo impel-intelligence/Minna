@@ -77,6 +77,7 @@ struct MinnaApp: App {
                 .modelContainer(frontendDatabase.modelContainer)
                 .database(frontendDatabase)
                 .irisContext(irisDBContext)
+                .environment(modelManager)
         }
         .commands {
             SidebarCommands()

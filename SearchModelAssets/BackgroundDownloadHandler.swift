@@ -9,6 +9,7 @@ import BackgroundAssets
 import ExtensionFoundation
 import ModelCDN
 import Logging
+import UniformTypeIdentifiers
 
 @main
 struct BackgroundDownloadHandler: BADownloaderExtension {
@@ -52,10 +53,7 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
             // Essential downloads will be started by the system while your app is installing/updating,
             // and the user cannot launch the app until they complete or fail.
             // To mark a download as Essential, pass `true` for the `essential` initializer argument.
-
-            let requiredFiles = manifest.files.filter(\.required)
-
-            for asset in requiredFiles {
+            for asset in manifest.files {
                 Log.logger.info("Adding \(asset.identifier) to download list!")
                 // TODO: Only download a file if the platform matches
                 
@@ -113,8 +111,23 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
         // Extension was woken because a download finished.
         // It is strongly advised to keep files in `Library/Caches` so that they may be
         // deleted when the device becomes low on storage.
-        Log.logger.error("Finished downloading \(finishedDownload.identifier) to \(fileURL)")
+        Log.logger.info("Finished downloading \(finishedDownload.identifier) to \(fileURL)")
         
+        do {
+            let archiveURL = ManifestSharedSettings.modelStorageURL.appendingPathComponent(finishedDownload.identifier, conformingTo: .appleArchive)
+            try FileManager.default.moveItem(at: fileURL, to: archiveURL)
+            
+//            guard try Archive.validateSHA(expectedHash: downloadingFile.file.hash, file: archiveURL) else {
+//                Log.logger.error("SHA256 hash of downloaded archive does not match manifest")
+//                return
+//            }
+            
+            let outputURL = ManifestSharedSettings.modelStorageURL.appendingPathComponent(finishedDownload.identifier, conformingTo: .directory)
+            try Archive.extract(file: archiveURL, to: outputURL)
+
+        } catch {
+            
+        }
 //        FileManager.default.moveItem(at: fileURL, to: <#T##URL#>)
     }
 }
