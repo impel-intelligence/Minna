@@ -18,6 +18,10 @@
 		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
 		DB6E4A823013CB6F00487D86 /* AppleIntelligenceEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */; };
 		DB6E4A843013CB6F00487D86 /* CoreMLEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */; };
+		DB6E4C8C3013E9F800487D86 /* SearchModelAssets.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DB6E4FA9301415DD00487D86 /* ModelCDN in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4FA8301415DD00487D86 /* ModelCDN */; };
+		DB6E4FAB301415E300487D86 /* ModelCDN in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4FAA301415E300487D86 /* ModelCDN */; };
+		DB83DD0330179D9B00019767 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = DB83DD0230179D9B00019767 /* Logging */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
@@ -44,6 +48,13 @@
 			remoteGlobalIDString = DB0CF4CF2FEDCA6B0036306B;
 			remoteInfo = Minna;
 		};
+		DB6E4C8A3013E9F800487D86 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB0CF4C82FEDCA6B0036306B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB6E4C833013E9F800487D86;
+			remoteInfo = SearchModelAssets;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -53,6 +64,7 @@
 			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
 			dstSubfolderSpec = 16;
 			files = (
+				DB6E4C8C3013E9F800487D86 /* SearchModelAssets.appex in Embed ExtensionKit Extensions */,
 			);
 			name = "Embed ExtensionKit Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,8 +86,10 @@
 		DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB3F89CE30005AA4003FE515 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		DB4AB8863017A062007E4CF7 /* ModelCDN */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ModelCDN; sourceTree = "<group>"; };
 		DB4BC3B6300AA8C3009C20A3 /* LookAtMe */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = LookAtMe; sourceTree = "<group>"; };
 		DB4BC3B7300AA8CC009C20A3 /* IrisSearch */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = IrisSearch; sourceTree = "<group>"; };
+		DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = SearchModelAssets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
 		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -99,6 +113,13 @@
 				plugins.json,
 			);
 			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
+		};
+		DB6E4C923013E9F800487D86 /* Exceptions for "SearchModelAssets" folder in "SearchModelAssets" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DB6E4C833013E9F800487D86 /* SearchModelAssets */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -145,6 +166,14 @@
 			path = ci_scripts;
 			sourceTree = "<group>";
 		};
+		DB6E4C853013E9F800487D86 /* SearchModelAssets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DB6E4C923013E9F800487D86 /* Exceptions for "SearchModelAssets" folder in "SearchModelAssets" target */,
+			);
+			path = SearchModelAssets;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,6 +199,7 @@
 				DB2BB96130052C7D00900E62 /* Digester in Frameworks */,
 				DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */,
 				DBBCB0803011233000B49AB2 /* LoggingOSLog in Frameworks */,
+				DB6E4FAB301415E300487D86 /* ModelCDN in Frameworks */,
 				DBBCAF9030111ED000B49AB2 /* Logging in Frameworks */,
 				DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */,
 			);
@@ -189,6 +219,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DB6E4C813013E9F800487D86 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DB83DD0330179D9B00019767 /* Logging in Frameworks */,
+				DB6E4FA9301415DD00487D86 /* ModelCDN in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -199,6 +238,7 @@
 				DB0CF4D22FEDCA6B0036306B /* Minna */,
 				DB0CF4E22FEDCA6D0036306B /* MinnaTests */,
 				DB0CF4EC2FEDCA6D0036306B /* MinnaUITests */,
+				DB6E4C853013E9F800487D86 /* SearchModelAssets */,
 				DB9695E82FF4718400CB037A /* Frameworks */,
 				DB0CF4D12FEDCA6B0036306B /* Products */,
 				DB9696A82FF4929600CB037A /* Packages */,
@@ -212,6 +252,7 @@
 				DB0CF4D02FEDCA6B0036306B /* Minna.app */,
 				DB0CF4DF2FEDCA6D0036306B /* MinnaTests.xctest */,
 				DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */,
+				DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -234,6 +275,7 @@
 		DB9696A82FF4929600CB037A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				DB4AB8863017A062007E4CF7 /* ModelCDN */,
 				DB4BC3B7300AA8CC009C20A3 /* IrisSearch */,
 				DB4BC3B6300AA8C3009C20A3 /* LookAtMe */,
 				DB9696A62FF4929600CB037A /* DatabaseSchema */,
@@ -260,6 +302,7 @@
 			);
 			dependencies = (
 				DBDCAF2D30013DAD00CAB9BC /* PBXTargetDependency */,
+				DB6E4C8B3013E9F800487D86 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				DB0CF4D22FEDCA6B0036306B /* Minna */,
@@ -287,6 +330,7 @@
 				DBBCB07F3011233000B49AB2 /* LoggingOSLog */,
 				DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */,
 				DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */,
+				DB6E4FAA301415E300487D86 /* ModelCDN */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -338,6 +382,30 @@
 			productReference = DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		DB6E4C833013E9F800487D86 /* SearchModelAssets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DB6E4C8D3013E9F800487D86 /* Build configuration list for PBXNativeTarget "SearchModelAssets" */;
+			buildPhases = (
+				DB6E4C803013E9F800487D86 /* Sources */,
+				DB6E4C813013E9F800487D86 /* Frameworks */,
+				DB6E4C823013E9F800487D86 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DB6E4C853013E9F800487D86 /* SearchModelAssets */,
+			);
+			name = SearchModelAssets;
+			packageProductDependencies = (
+				DB6E4FA8301415DD00487D86 /* ModelCDN */,
+				DB83DD0230179D9B00019767 /* Logging */,
+			);
+			productName = SearchModelAssets;
+			productReference = DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -359,6 +427,9 @@
 					DB0CF4E82FEDCA6D0036306B = {
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = DB0CF4CF2FEDCA6B0036306B;
+					};
+					DB6E4C833013E9F800487D86 = {
+						CreatedOnToolsVersion = 26.6;
 					};
 				};
 			};
@@ -392,6 +463,7 @@
 				DB0CF4CF2FEDCA6B0036306B /* Minna */,
 				DB0CF4DE2FEDCA6D0036306B /* MinnaTests */,
 				DB0CF4E82FEDCA6D0036306B /* MinnaUITests */,
+				DB6E4C833013E9F800487D86 /* SearchModelAssets */,
 			);
 		};
 /* End PBXProject section */
@@ -412,6 +484,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		DB0CF4E72FEDCA6D0036306B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DB6E4C823013E9F800487D86 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -464,6 +543,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DB6E4C803013E9F800487D86 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -476,6 +562,11 @@
 			isa = PBXTargetDependency;
 			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
 			targetProxy = DB0CF4EA2FEDCA6D0036306B /* PBXContainerItemProxy */;
+		};
+		DB6E4C8B3013E9F800487D86 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB6E4C833013E9F800487D86 /* SearchModelAssets */;
+			targetProxy = DB6E4C8A3013E9F800487D86 /* PBXContainerItemProxy */;
 		};
 		DBDCAF2D30013DAD00CAB9BC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1152,6 +1243,134 @@
 			};
 			name = "Release Sparkle";
 		};
+		DB6E4C8E3013E9F800487D86 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SearchModelAssets/SearchModelAssets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SearchModelAssets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SearchModelAssets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna.SearchModelAssets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		DB6E4C8F3013E9F800487D86 /* Debug Sparkle */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SearchModelAssets/SearchModelAssets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SearchModelAssets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SearchModelAssets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna.SearchModelAssets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Debug Sparkle";
+		};
+		DB6E4C903013E9F800487D86 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SearchModelAssets/SearchModelAssets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SearchModelAssets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SearchModelAssets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna.SearchModelAssets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		DB6E4C913013E9F800487D86 /* Release Sparkle */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SearchModelAssets/SearchModelAssets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = VV548YNZL3;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SearchModelAssets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SearchModelAssets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna.SearchModelAssets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = "Release Sparkle";
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1195,6 +1414,17 @@
 				DB3F89D430005AB7003FE515 /* Debug Sparkle */,
 				DB0CF4FB2FEDCA6D0036306B /* Release */,
 				DB3F89D830005ABC003FE515 /* Release Sparkle */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DB6E4C8D3013E9F800487D86 /* Build configuration list for PBXNativeTarget "SearchModelAssets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB6E4C8E3013E9F800487D86 /* Debug */,
+				DB6E4C8F3013E9F800487D86 /* Debug Sparkle */,
+				DB6E4C903013E9F800487D86 /* Release */,
+				DB6E4C913013E9F800487D86 /* Release Sparkle */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1344,6 +1574,19 @@
 		DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CoreMLEmbedder;
+		};
+		DB6E4FA8301415DD00487D86 /* ModelCDN */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ModelCDN;
+		};
+		DB6E4FAA301415E300487D86 /* ModelCDN */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ModelCDN;
+		};
+		DB83DD0230179D9B00019767 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DBBCAF8E30111ED000B49AB2 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
 		};
 		DB9695552FF440F200CB037A /* Textual */ = {
 			isa = XCSwiftPackageProductDependency;
