@@ -26,7 +26,8 @@ struct MinnaApp: App {
     // MARK: Databases
     @State var irisDBContext: IrisContext
     @State var frontendDatabase: FrontendDatabase
-        
+    @State var modelManager: ModelManager = ModelManager()
+    
     @State var standardFileImporterPresented: Bool = false
         
     #if SPARKLE

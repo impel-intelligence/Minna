@@ -6,13 +6,14 @@
 //
 
 import Foundation
+import BackgroundAssets
 
-public enum Platform: String, Codable {
+public enum Platform: String, Codable, Sendable {
     case macOS
 }
 
 public struct Manifest: Codable {
-    public struct File: Codable {
+    public struct File: Codable, Sendable {
         public let identifier: String
         public let fileSize: Int
         public let url: URL

@@ -15,6 +15,8 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
     func downloads(for request: BAContentRequest,
                    manifestURL: URL,
                    extensionInfo: BAAppExtensionInfo) -> Set<BADownload> {
+        Log.logger.info("Starting download request \(request)")
+
         // Invoked by the system to request downloads from your extension.
         // The BAContentRequest argument will contain the reason downloads are requested.
         // The system will pre-download the contents of the URL specified in the `BAManifestURL`
@@ -22,24 +24,24 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
         // argument will point to a read-only file containing those contents. You are encouraged
         // to use this file to determine what assets need to be downloaded.
         
-        let appGroupIdentifier = "group.com.tryminna"
+        let appGroupIdentifier = ManifestSharedSettings.appGroupIdentifier
         
         guard let manifest = try? Manifest.load(from: manifestURL) else {
             Log.logger.error("Unable to decode manifest.")
             return []
         }
         
-        for download in manifest.files {
-            
+        do {
+            try manifest.save(to: ManifestSharedSettings.localManifestURL)
+            Log.logger.info("Saved local copy of manifest to \(ManifestSharedSettings.localManifestURL)!")
+        } catch {
+            Log.logger.error("Failed to save local copy of manifest", error: error)
         }
-
+        
         // Parse the file at `manifestURL` to determine what assets are available
         // that might need to be scheduled for download.
         // Note: A downloads's identifier should be unique. It is what is used to track your
         // download between the extension and app.
-        let assetURL = URL(string: "https://example.com/large-asset.bin")!
-        let oneMB = 1024 * 1024
-        let assetSize = oneMB * 4
 
         // Then, create a set of downloads to return to the system.
         var downloadsToSchedule: Set<BADownload> = []
@@ -50,33 +52,49 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
             // Essential downloads will be started by the system while your app is installing/updating,
             // and the user cannot launch the app until they complete or fail.
             // To mark a download as Essential, pass `true` for the `essential` initializer argument.
-            let essentialDownload = BAURLDownload(
-                identifier: "Unique-Asset-Identifier",
-                request: URLRequest(url: assetURL),
-                essential: true,
-                fileSize: assetSize,
-                applicationGroupIdentifier: appGroupIdentifier,
-                priority: .default)
 
-            downloadsToSchedule.insert(essentialDownload)
-            break;
+            let requiredFiles = manifest.files.filter(\.required)
 
+            for asset in requiredFiles {
+                Log.logger.info("Adding \(asset.identifier) to download list!")
+                // TODO: Only download a file if the platform matches
+                
+                let download = BAURLDownload(
+                    identifier: asset.identifier,
+                    request: URLRequest(url: asset.url),
+                    essential: asset.required,
+                    fileSize: asset.fileSize,
+                    applicationGroupIdentifier: appGroupIdentifier,
+                    priority: .default
+                )
+
+                downloadsToSchedule.insert(download)
+            }
+            
+            break
         case .periodic:
             // In a periodic request, you can only return Non-Essential downloads.
             // Non-Essential downloads occur in the background and will not prevent the
             // user from launching your app.
             // To mark a download as Non-Essential, pass `false` for the `essential` initializer argument.
-            let nonEssentialDownload = BAURLDownload(
-                identifier: "Unique-Asset-Identifier",
-                request: URLRequest(url: assetURL),
-                essential: false,
-                fileSize: assetSize,
-                applicationGroupIdentifier: appGroupIdentifier,
-                priority: .default)
+            
+            for asset in manifest.files {
+                Log.logger.info("Adding \(asset.identifier) to download list!")
+                // TODO: Only download a file if the platform matches
+                
+                let download = BAURLDownload(
+                    identifier: asset.identifier,
+                    request: URLRequest(url: asset.url),
+                    essential: false,
+                    fileSize: asset.fileSize,
+                    applicationGroupIdentifier: appGroupIdentifier,
+                    priority: .default
+                )
 
-            downloadsToSchedule.insert(nonEssentialDownload)
-            break;
+                downloadsToSchedule.insert(download)
+            }
 
+            break
         @unknown default:
             return Set()
         }
@@ -88,11 +106,15 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
     func backgroundDownload(_ failedDownload: BADownload, failedWithError error: Error) {
         // Extension was woken because a download failed.
         // A download can be rescheduled with BADownloadManager if necessary.
+        Log.logger.error("Failed to download \(failedDownload.identifier)", error: error)
     }
 
     func backgroundDownload(_ finishedDownload: BADownload, finishedWithFileURL fileURL: URL) {
         // Extension was woken because a download finished.
         // It is strongly advised to keep files in `Library/Caches` so that they may be
         // deleted when the device becomes low on storage.
+        Log.logger.error("Finished downloading \(finishedDownload.identifier) to \(fileURL)")
+        
+//        FileManager.default.moveItem(at: fileURL, to: <#T##URL#>)
     }
 }

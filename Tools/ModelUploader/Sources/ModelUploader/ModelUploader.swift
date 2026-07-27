@@ -165,7 +165,7 @@ struct ModelUploader: AsyncParsableCommand {
             try? await deleteFromCDN(file: identifier)
         }
         
-        let fileURL = ModelUploader.cdnDomain.appending(path: name)
+        let fileURL = ModelUploader.cdnDomain.appendingPathComponent(name, conformingTo: .appleArchive)
         let file = Manifest.File(
             identifier: identifier,
             fileSize: fileSize,
