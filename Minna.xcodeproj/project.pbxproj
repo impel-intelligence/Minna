@@ -98,9 +98,6 @@
 		DB0CF5842FEDCADC0036306B /* Exceptions for "Minna" folder in "Minna" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Embeddings/bge/bge_small_en_v1.5.mlmodelc,
-				Embeddings/bge/config.json,
-				Embeddings/bge/vocab.txt,
 				Info.plist,
 			);
 			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
@@ -123,27 +120,11 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		DB6E4C7F3013CCDF00487D86 /* Exceptions for "Minna" folder in "Copy Embedding FIle" phase from "Minna" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				Embeddings/bge/bge_small_en_v1.5.mlmodelc = (CodeSignOnCopy, );
-			};
-			buildPhase = DB6E4C773013CC3B00487D86 /* Copy Embedding FIle */;
-			membershipExceptions = (
-				Embeddings/bge/bge_small_en_v1.5.mlmodelc,
-				Embeddings/bge/config.json,
-				Embeddings/bge/vocab.txt,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DB0CF4D22FEDCA6B0036306B /* Minna */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				DB0CF5842FEDCADC0036306B /* Exceptions for "Minna" folder in "Minna" target */,
-				DB6E4C7F3013CCDF00487D86 /* Exceptions for "Minna" folder in "Copy Embedding FIle" phase from "Minna" target */,
 			);
 			path = Minna;
 			sourceTree = "<group>";

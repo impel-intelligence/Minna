@@ -115,16 +115,20 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
         
         do {
             let archiveURL = ManifestSharedSettings.modelStorageURL.appendingPathComponent(finishedDownload.identifier, conformingTo: .appleArchive)
+
+            // Remove any existing archive
+            if FileManager.default.fileExists(atPath: archiveURL.path(percentEncoded: false)) {
+                try FileManager.default.removeItem(at: archiveURL)
+            }
+
+            // Write the new archive
             try FileManager.default.moveItem(at: fileURL, to: archiveURL)
-            
-//            guard try Archive.validateSHA(expectedHash: downloadingFile.file.hash, file: archiveURL) else {
-//                Log.logger.error("SHA256 hash of downloaded archive does not match manifest")
-//                return
-//            }
-            
+
             let outputURL = ManifestSharedSettings.modelStorageURL.appendingPathComponent(finishedDownload.identifier, conformingTo: .directory)
             try Archive.extract(file: archiveURL, to: outputURL)
 
+            // Remove the archive now that we are done with it.
+            try FileManager.default.removeItem(at: archiveURL)
         } catch {
             
         }

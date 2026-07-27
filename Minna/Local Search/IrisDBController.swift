@@ -16,6 +16,7 @@ import Logging
 import IrisCommon
 import AppleIntelligenceEmbedder
 import CoreMLEmbedder
+import ModelCDN
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
@@ -27,49 +28,14 @@ enum IrisDBControllerInitializationError: Error {
     case noCoreMLModel
 }
 
-struct IndexingProgress {
-    var completed: Set<UUID> = []
-    var inProgress: Set<UUID> = []
-    
-    var total: Int { completed.count + inProgress.count }
-    
-    var fractionCompleted: Double { total == 0 ? 1 : Double(completed.count) / Double(total) }
-    var isIndexing: Bool { !inProgress.isEmpty }
-    
-    mutating func add(id: UUID) {
-        inProgress.insert(id)
-    }
-    
-    mutating func complete(id: UUID) {
-        // If this id does not exist in the inProgress array, it has been canceled and we don't want to set it to be true.
-        guard inProgress.contains(id) else { return }
-        
-        inProgress.remove(id)
-        completed.insert(id)
-        
-        // Reset the indexing
-        if inProgress.isEmpty {
-            completed.removeAll()
-            inProgress.removeAll()
-        }
-    }
-    
-    mutating func cancel(id: UUID) {
-        inProgress.remove(id)
-        completed.remove(id)
-        
-        // Reset the indexing
-        if inProgress.isEmpty {
-            completed.removeAll()
-            inProgress.removeAll()
-        }
-    }
-}
-
 @MainActor @Observable
 final class IrisDBController {
+    // TODO: This should be adjustable.
+    static let searchEmbedderID: String = "bge_small_en_v1.5"
+    
     @ObservationIgnored let irisDB: IrisDB
     @ObservationIgnored private var textEmbedder: EmbeddingProvider
+    @ObservationIgnored private var downloadObservationToken:  NotificationCenter.ObservationToken?
     
     var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter
@@ -86,15 +52,29 @@ final class IrisDBController {
         
         let searchDirectory = Utilities.irisDBDirectory()
         irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder)
+        
+        watchForDownloads()
+    }
+    
+    deinit {
+        if let downloadObservationToken {
+            NotificationCenter.default.removeObserver(downloadObservationToken)
+        }
+    }
+    
+    private func watchForDownloads() {
+        downloadObservationToken = NotificationCenter.default.addObserver(for: DownloadDidFinish.self) { message in
+            guard message.identifier == IrisDBController.searchEmbedderID else { return }
+
+            // TODO: Swap embedders
+            
+        }
     }
         
     private static func getEmbedder() throws -> EmbeddingProvider {
         do {
-            guard let model = Bundle.main.url(forResource: "bge_small_en_v1.5", withExtension: "mlmodelc") else {
-                throw IrisDBControllerInitializationError.noCoreMLModel
-            }
-            let modelDirectory = model.deletingLastPathComponent()
-            return try CoreMLEmbedder(modelDirectory: modelDirectory)
+            let bgeDirectory = ManifestSharedSettings.modelStorageURL.appendingPathComponent(searchEmbedderID, conformingTo: .directory)
+            return try CoreMLEmbedder(modelDirectory: bgeDirectory)
         } catch {
             Log.logger.debug("Failed to load CoreMLEmbedder", error: error)
             
@@ -191,9 +171,7 @@ final class IrisDBController {
             indexingProgress.cancel(id: uuid)
         }
     }
-}
-
-extension IrisDBController: Searchable {
+    
     public func search(query: String) async throws -> [UUID] {
         #if DEBUG
         let query = IrisQuery(text: query, debug: true)

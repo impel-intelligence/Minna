@@ -79,7 +79,7 @@ struct ModelUploader: AsyncParsableCommand {
         let temporaryDirectory = FileManager.default.temporaryDirectory.appending(path: "model_uploader")
         defer { try? FileManager.default.removeItem(at: temporaryDirectory) }
 
-        let packageDirectory = temporaryDirectory.appending(path: name)
+        let packageDirectory = temporaryDirectory.appending(path: identifier)
         try FileManager.default.createDirectory(at: packageDirectory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: packageDirectory) }
         
@@ -96,7 +96,7 @@ struct ModelUploader: AsyncParsableCommand {
         try FileManager.default.copyItem(at: vocabURL, to: packageDirectory.appending(path: "vocab.txt"))
             
         print("Archiving Model")
-        let archiveFile = temporaryDirectory.appendingPathComponent(name, conformingTo: .appleArchive)
+        let archiveFile = temporaryDirectory.appendingPathComponent(identifier, conformingTo: .appleArchive)
         try Archive.write(file: packageDirectory, to: archiveFile)
         
         let sha = try Archive.hash(file: archiveFile)
@@ -125,9 +125,10 @@ struct ModelUploader: AsyncParsableCommand {
             try? await deleteFromCDN(file: identifier + ".aar")
         }
         
-        let fileURL = ModelUploader.cdnDomain.appendingPathComponent(name, conformingTo: .appleArchive)
+        let fileURL = ModelUploader.cdnDomain.appendingPathComponent(identifier, conformingTo: .appleArchive)
         let file = Manifest.File(
             identifier: identifier,
+            name: name,
             fileSize: fileSize,
             url: fileURL,
             platforms: [.macOS],
@@ -136,9 +137,7 @@ struct ModelUploader: AsyncParsableCommand {
         )
         
         manifest.files.append(file)
-                
-        print(archiveFile)
-        
+                        
         print("Saving manifest file")
         try manifest.save(to: manifestFile)
         

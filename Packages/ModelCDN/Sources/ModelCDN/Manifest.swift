@@ -15,19 +15,21 @@ public enum Platform: String, Codable, Sendable {
 public struct Manifest: Codable {
     public struct File: Codable, Sendable, Hashable {
         public let identifier: String
+        public let name: String
         public let fileSize: Int
         public let url: URL
         public let platforms: [Platform]
         public let required: Bool
         public let hash: String
         
-        public init(identifier: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String) {
+        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String) {
             self.identifier = identifier
             self.fileSize = fileSize
             self.url = url
             self.platforms = platforms
             self.required = required
             self.hash = hash
+            self.name = name
         }
     }
     

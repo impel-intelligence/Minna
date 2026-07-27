@@ -3,6 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 7/27/26.
+//  Edited by Claude Sonnet 4.6 (Anthropic) on 2026-07-27
 //
 
 import Foundation
@@ -12,19 +13,37 @@ import Synchronization
 import ModelCDN
 import UniformTypeIdentifiers
 
-struct DownloadingFile {
+struct DownloadDidFinish : NotificationCenter.MainActorMessage {
+    public typealias Subject = ModelManager
+    
+    public static var name: Notification.Name {
+        .init("ModelManager.DownloadDidFinish")
+    }
+
+    public let identifier: String
+}
+
+extension NotificationCenter.MessageIdentifier where Self == NotificationCenter.BaseMessageIdentifier<DownloadDidFinish> {
+    static var downloadDidFinish: Self { .init() }
+}
+
+struct DownloadingFile: Identifiable {
+    var id: String { file.identifier }
+    
     let file: Manifest.File
     var progress: Progress
 }
 
 @Observable
-final class ModelManager: NSObject {
+final class ModelManager: NSObject, @unchecked Sendable {
     
     @ObservationIgnored
     private let manifest: Mutex<Manifest> = Mutex(Manifest(files: []))
     
-    public let inFlightDownloads: Mutex<[DownloadingFile]> = Mutex([])
+    public var inFlightDownloads: [DownloadingFile] = []
     
+    private let stateLock = NSLock()
+
     override init() {
         super.init()
         BADownloadManager.shared.delegate = self
@@ -116,8 +135,10 @@ final class ModelManager: NSObject {
                     )
                 }
                 
-                self.inFlightDownloads.withLock { inFlightDownloads in
-                    inFlightDownloads.append(DownloadingFile(file: file, progress: Progress()))
+                Task { @MainActor in
+                    self.stateLock.withLock {
+                        self.inFlightDownloads.append(DownloadingFile(file: file, progress: Progress()))
+                    }
                 }
                                 
                 guard download.state != .failed else {
@@ -146,12 +167,12 @@ extension ModelManager: BADownloadManagerDelegate {
         
         Task { @MainActor [weak self] in
             print("Updating progress", progress.fractionCompleted)
-            self?.inFlightDownloads.withLock { inFlightDownloads in
-                guard let currentFileIndex = inFlightDownloads.firstIndex(where: { $0.file.identifier == download.identifier }) else {
+            self?.stateLock.withLock {
+                guard let currentFileIndex = self?.inFlightDownloads.firstIndex(where: { $0.file.identifier == download.identifier }) else {
                     return
                 }
                 
-                inFlightDownloads[currentFileIndex].progress = progress
+                self?.inFlightDownloads[currentFileIndex].progress = progress
             }
         }
     }
@@ -171,30 +192,29 @@ extension ModelManager: BADownloadManagerDelegate {
     nonisolated func download(_ download: BADownload, finishedWithFileURL fileURL: URL) {
         Log.logger.info("Finished download \(download.identifier) to \(fileURL)")
         do {
-            guard let downloadingFile = inFlightDownloads.withLock({ inFlightDownloads in
-                return inFlightDownloads.first { $0.file.identifier == download.identifier }
-            }) else {
-                Log.logger.error("Failed to find download file for \(download.identifier)")
-                return
-            }
-
             let archiveURL = ManifestSharedSettings.modelStorageURL.appendingPathComponent(download.identifier, conformingTo: .appleArchive)
-            
+
             // Remove any existing archive
             if FileManager.default.fileExists(atPath: archiveURL.path(percentEncoded: false)) {
                 try FileManager.default.removeItem(at: archiveURL)
             }
-            
+
             // Write the new archive
             try FileManager.default.moveItem(at: fileURL, to: archiveURL)
-            
-//            guard try Archive.validateSHA(expectedHash: downloadingFile.file.hash, file: archiveURL) else {
-//                Log.logger.error("SHA256 hash of downloaded archive does not match manifest")
-//                return
-//            }
-            
+
             let outputURL = ManifestSharedSettings.modelStorageURL.appendingPathComponent(download.identifier, conformingTo: .directory)
             try Archive.extract(file: archiveURL, to: outputURL)
+
+            // Remove the archive now that we are done with it.
+            try FileManager.default.removeItem(at: archiveURL)
+            
+            Task { @MainActor in
+                NotificationCenter.default.post(DownloadDidFinish(identifier: download.identifier))
+
+                self.stateLock.withLock {
+                    inFlightDownloads.removeAll { $0.id == download.identifier }
+                }
+            }
         } catch {
             Log.logger.error("Failed to finish download for \(download.identifier), \(error)")
         }
