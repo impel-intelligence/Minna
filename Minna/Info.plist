@@ -2,6 +2,27 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BAHasManagedAssetPacks</key>
+	<false/>
+    <key>BAMaxInstallSize</key>
+    <integer>70000000</integer>
+    <key>BAEssentialMaxInstallSize</key>
+    <integer>70000000</integer>
+	<key>BAInitialDownloadRestrictions</key>
+	<dict>
+		<key>BADownloadAllowance</key>
+		<integer>70000000</integer>
+		<key>BADownloadDomainAllowList</key>
+		<array>
+			<string>cdn.tryminna.com</string>
+		</array>
+		<key>BAEssentialDownloadAllowance</key>
+		<integer>70000000</integer>
+	</dict>
+	<key>BAManifestURL</key>
+	<string>https://cdn.tryminna.com/manifest.json</string>
+	<key>BAUsesAppleHosting</key>
+	<false/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

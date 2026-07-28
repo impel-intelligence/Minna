@@ -3,7 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 6/29/26.
-//
+//  Edited by Claude Sonnet 4.6 (Anthropic) on 2026-07-28
 
 import SwiftUI
 import MinnaChat
@@ -21,13 +21,14 @@ struct AskMinnaView: View {
     enum ViewMode {
         case startup
         case chat
+        case searching
     }
     
     @Environment(\.modelContext) var modelContext
     @Environment(\.irisContext) var irisContext
     @Environment(\.router) var navigationRouter
     @Environment(\.openWindow) var openWindow
-    
+        
     @Namespace private var searchContainerTransitions
 
     @State private var presentModelPicker: Bool = false
@@ -36,7 +37,10 @@ struct AskMinnaView: View {
     
     @State var chatter: Chatter
     @State var viewMode: ViewMode
+    @State var searchTask: Task<Void, Never>?
 
+    @State var searchResults: [File] = []
+    
     /// Invoked by the New Chat toolbar button. `nil` hides the button (e.g. when viewing an existing chat pushed from a folder).
     var newChat: (() -> Void)?
     
@@ -47,35 +51,47 @@ struct AskMinnaView: View {
     }
 
     var body: some View {
-        Group {
-            switch viewMode {
-            case .startup:
-                startup()
-            case .chat:
-                TranscriptView(chatter: chatter, limitSize: true)
-                    .safeAreaInset(edge: .bottom) {
-                        if viewMode == .chat {
-                            searchCluster
-                        }
+        GeometryReader { reader in
+            ScrollView {
+                switch viewMode {
+                case .startup:
+                    Color.clear
+                case .searching:
+                    searching()
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                case .chat:
+                    TranscriptView(chatter: chatter, limitSize: true, reader: reader)
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack {
+                    if viewMode == .startup {
+                        startup()
+                            .transition(.move(edge: .top).combined(with: .opacity))
                     }
-                    .environment(citationHandler)
-                    .inspector(isPresented: $citationHandler.citationSidebarOpen) {
-                        CitationColumnView(citations: $citationHandler.citations)
-                    }
-                    .environment(\.openURL, OpenURLAction { url in
-                        do {
-                            try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
-                            return .handled
-                        } catch {
-                            Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
-                            return .systemAction
-                        }
-                    })
+                    searchCluster
+                        .padding(.bottom, viewMode == .startup ? reader.size.height / 3 : 0)
+                }
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .environment(citationHandler)
         .theme(chatter.chat.theme)
         .navigationTitle(chatter.chat.title())
+        .animation(.default, value: viewMode)
+        .defaultScrollAnchor(viewMode == .searching ? .top : .bottom)
+        .scrollDisabled(viewMode == .startup)
+        .inspector(isPresented: $citationHandler.citationSidebarOpen) {
+            CitationColumnView(citations: $citationHandler.citations)
+        }
+        .environment(\.openURL, OpenURLAction { url in
+            do {
+                try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
+                return .handled
+            } catch {
+                Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
+                return .systemAction
+            }
+        })
         .task {
             do {
                 try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
@@ -101,24 +117,64 @@ struct AskMinnaView: View {
                 }
             }
         }
-    }
-
-    
-    // MARK: Startup State
-    private func startup() -> some View {
-        VStack(spacing: 16) {
-            Spacer()
-            VStack(spacing: 5) {
-                Image("impel_logo")
-                    .resizable()
-                    .frame(width: 45, height: 45)
-                    .accessibilityLabel("Minna Logo")
-                Text("Hey \(NSUserFirstName())!")
-                    .font(.system(size: 36, design: .serif))
+        .onChange(of: chatter.chatMessage) { _, newValue in
+            searchTask?.cancel()
+            
+            guard viewMode == .searching || viewMode == .startup else { return }
+            
+            searchTask = Task {
+                // Debounce: wait 20ms before searching
+                try? await Task.sleep(for: Duration.milliseconds(50))
+                
+                // Check if cancelled during wait
+                guard !Task.isCancelled else { return }
+                
+                do {
+                    if !newValue.isEmpty {
+                        try await searchIris(query: newValue)
+                    } else {
+                        // If search results are empty move back to the original starting view.
+                        viewMode = .startup
+                    }
+                } catch is CancellationError {
+                    
+                } catch {
+                    print("Failed to search iris \(newValue) \(error)")
+                }
             }
-            .transition(.opacity.combined(with: .scale(scale: 0.9)))
-            searchCluster
-            Spacer()
+        }
+
+    }
+    
+    @ViewBuilder
+    private func searching() -> some View {
+        VStack {
+            ForEach(searchResults) { file in
+                ListFileCard(file: file, editingTitle: .constant(false), editingDescription: .constant(false))
+                    .id(file)
+                    .simultaneousGesture(TapGesture(count: 1).onEnded {
+                        if file.type == .askMinna, let chat = file.chat {
+                            navigationRouter.push(chat)
+                        } else {
+                            openWindow(id: PreviewWindow.windowID, value: OpenFileAction(id: file.id))
+                        }
+                    })
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
+        .scrollTargetLayout()
+    }
+    
+    @ViewBuilder
+    private func startup() -> some View {
+        VStack(spacing: 5) {
+            Image("impel_logo")
+                .resizable()
+                .frame(width: 45, height: 45)
+                .accessibilityLabel("Minna Logo")
+            Text("Hey \(NSUserFirstName())!")
+                .font(.system(size: 36, design: .serif))
         }
     }
 
@@ -137,28 +193,60 @@ struct AskMinnaView: View {
                 ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel, selectedProvider: $chatter.selectedProvider)
             }
             .buttonStyle(.glass)
-
             IndexingSearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatter.chatMessage) {
                 submit()
             }
             .disabled(chatter.selectedModel == nil || chatter.chatInstance == nil)
         }
         .frame(maxWidth: 640)
-        .padding(.bottom, viewMode == .chat ? 20 : 0)
+        .padding(.bottom, 20)
         .id("search")
         .matchedGeometryEffect(id: "search", in: searchContainerTransitions)
     }
 
     private func submit() {
-        if viewMode == .startup {
+        if viewMode == .startup || viewMode == .searching {
             modelContext.insert(chatter.chat.file)
             viewMode = .chat // Start animations
         }
-
+        
         Task {
-            try await chatter.submit()
+            do {
+                try await chatter.submit()
+            } catch {
+                Log.logger.error("Failed to submit chat message", error: error)
+            }
         }
     }
+    
+    private func searchIris(query: String) async throws {
+        // Only allow searching during the startup or searching mode
+        guard viewMode == .startup || viewMode == .searching else { return }
+        
+        let fileUUIDs = try await irisContext.search(query: query)
+        
+        let descriptor = FetchDescriptor<File>(predicate: #Predicate { fileUUIDs.contains($0.uuid) })
+        let unsorted = try modelContext.fetch(descriptor)
+        
+        let searchRanking = fileUUIDs.enumerated().reduce(into: [:]) { partialResult, element in
+            partialResult[element.element] = element.offset
+        }
+        var orderedByRank = [File?](repeating: nil, count: fileUUIDs.count)
+        
+        // O(n) loop over the retrieved documents, placing each document into the array at its rank position.
+        for file in unsorted {
+            if let rank = searchRanking[file.uuid] {
+                orderedByRank[rank] = file
+            }
+        }
+        
+        searchResults = orderedByRank.compactMap { $0 }
+        
+        if !searchResults.isEmpty {
+            viewMode = .searching
+        }
+    }
+
 }
 
 #Preview {
@@ -166,5 +254,6 @@ struct AskMinnaView: View {
         
     }
     .irisContext(IrisContext(modelContainer: SampleDatabase.shared.modelContainer))
-    .modelContext(SampleDatabase.shared.context)
+    .database(SampleDatabase.shared)
+    .router(NavigationRouter())
 }

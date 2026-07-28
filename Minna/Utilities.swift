@@ -12,13 +12,6 @@ struct Utilities {
     enum ASError: Error {
         case supportDirectoryDoesNotExist
     }
-        
-    public static func chatDirectory() throws -> URL {        
-        let chatFolder = URL.applicationSupportDirectory.appending(path: "chats")
-        try FileManager.default.createDirectory(at: chatFolder, withIntermediateDirectories: true)
-        
-        return chatFolder
-    }
     
     public static func tmp() throws -> URL {
         let tmpDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(Bundle.main.bundleIdentifier!)
@@ -28,10 +21,7 @@ struct Utilities {
     }
     
     public static func crashLogs() -> URL {
-        return FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Library")
-            .appendingPathComponent("Logs")
-            .appendingPathComponent("DiagnosticReports")
+        return FileManager.default.homeDirectoryForCurrentUser.appending(components: "Library", "Logs", "DiagnosticReports")
     }
     
     public static func irisDBDirectory() -> URL {

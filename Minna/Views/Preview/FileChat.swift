@@ -45,33 +45,36 @@ struct FileChat: View {
     }
     
     var body: some View {
-        TranscriptView(chatter: chatter, limitSize: false)
-            .safeAreaInset(edge: .bottom) {
-                chatBox
+        GeometryReader { reader in
+            ScrollView {
+                TranscriptView(chatter: chatter, limitSize: false, reader: reader)
             }
-            .environment(citationHandler)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .theme(chatter.chat.theme)
-            .task {
-                if didMakeNewChat {
-                    modelContext.insert(chatter.chat)
-                }
-                
-                do {
-                    try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
-                } catch {
-                    Log.logger.error("Failed to gather providers", error: error)
-                }
+        }
+        .safeAreaInset(edge: .bottom) {
+            chatBox
+        }
+        .environment(citationHandler)
+        .theme(chatter.chat.theme)
+        .task {
+            if didMakeNewChat {
+                modelContext.insert(chatter.chat)
             }
-            .environment(\.openURL, OpenURLAction { url in
-                do {
-                    try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
-                    return .handled
-                } catch {
-                    Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
-                    return .systemAction
-                }
-            })
+            
+            do {
+                try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+            } catch {
+                Log.logger.error("Failed to gather providers", error: error)
+            }
+        }
+        .environment(\.openURL, OpenURLAction { url in
+            do {
+                try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
+                return .handled
+            } catch {
+                Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
+                return .systemAction
+            }
+        })
     }
     
     var chatBox: some View {
@@ -99,6 +102,7 @@ struct FileChat: View {
 //                .buttonStyle(.glass)
 
             }
+            // TODO: Put back
             SearchBar(placeHolder: "Ask anything about \(file.title)", searchQuery: $chatter.chatMessage) {
                 Task {
                     do {

@@ -17,6 +17,7 @@ struct FolderCard: View {
             folder.icon.image()
             Text(folder.name)
         }
+        .foregroundStyle(folder.icon.color.text)
         .font(.headline)
         .padding(.horizontal, 10)
         .frame(width: 150, height: 50, alignment: .leading)

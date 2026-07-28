@@ -46,6 +46,7 @@ public struct AskMinnaInstructions: ModelInstruction {
         
         Rules:
         - Place the tag at the end of the sentence.  
+        - Do not respond only in Markdown blockquotes
         - Never omit `doc_id` or `excerpt`, even if you have already cited both before.
         - Never nest or modify the tag format — no markdown, no extra attributes, no line breaks inside it.
         - If a paragraph cites multiple documents, place a separate tag after each claim from a different document; do not merge tags

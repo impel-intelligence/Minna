@@ -13,6 +13,10 @@ import SentrySwift
 import UniformTypeIdentifiers
 import DatabaseSchema
 import Logging
+import IrisCommon
+import AppleIntelligenceEmbedder
+import CoreMLEmbedder
+import ModelCDN
 
 enum IrisDBControllerError: Error {
     case unableToObtainSecurityAccess
@@ -21,51 +25,17 @@ enum IrisDBControllerError: Error {
 
 enum IrisDBControllerInitializationError: Error {
     case noAppleIntelligence
-}
-
-struct IndexingProgress {
-    var completed: Set<UUID> = []
-    var inProgress: Set<UUID> = []
-    
-    var total: Int { completed.count + inProgress.count }
-    
-    var fractionCompleted: Double { total == 0 ? 1 : Double(completed.count) / Double(total) }
-    var isIndexing: Bool { !inProgress.isEmpty }
-    
-    mutating func add(id: UUID) {
-        inProgress.insert(id)
-    }
-    
-    mutating func complete(id: UUID) {
-        // If this id does not exist in the inProgress array, it has been canceled and we don't want to set it to be true.
-        guard inProgress.contains(id) else { return }
-        
-        inProgress.remove(id)
-        completed.insert(id)
-        
-        // Reset the indexing
-        if inProgress.isEmpty {
-            completed.removeAll()
-            inProgress.removeAll()
-        }
-    }
-    
-    mutating func cancel(id: UUID) {
-        inProgress.remove(id)
-        completed.remove(id)
-        
-        // Reset the indexing
-        if inProgress.isEmpty {
-            completed.removeAll()
-            inProgress.removeAll()
-        }
-    }
+    case noCoreMLModel
 }
 
 @MainActor @Observable
 final class IrisDBController {
+    // TODO: This should be adjustable.
+    static let searchEmbedderID: String = "bge_small_en_v1.5"
+    
     @ObservationIgnored let irisDB: IrisDB
     @ObservationIgnored private var textEmbedder: EmbeddingProvider
+    @ObservationIgnored private var downloadObservationToken:  NotificationCenter.ObservationToken?
     
     var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter
@@ -76,28 +46,74 @@ final class IrisDBController {
     init(modelContainer: ModelContainer) throws {
         fileIndexedWriter = FileIndexedWriter(modelContainer: modelContainer)
         
-        var embedder: EmbeddingProvider
-        // Try and create the embedder, if we can't it is because Apple Intelligence is not available
-        do {
-            embedder = try NLContextualEmbedder(language: .english)
-        } catch {
-            Log.logger.debug("Failed to load NLContextualEmbedder", error: error)
-            
-            // Load the backup embedder, if we can't load it, Apple Intelligence is not enabled and we wont be able to do on-device intelligence.
-            do {
-                embedder = try NLEmbedder(language: .english)
-            } catch {
-                Log.logger.debug("Failed to load NLEmbedder", error: error)
-                throw IrisDBControllerInitializationError.noAppleIntelligence
-            }
-        }
+        let embedder: EmbeddingProvider = try IrisDBController.getEmbedder()
         
         self.textEmbedder = embedder
         
         let searchDirectory = Utilities.irisDBDirectory()
         irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder)
+        
+        watchForDownloads()
+    }
+    
+    deinit {
+        if let downloadObservationToken {
+            NotificationCenter.default.removeObserver(downloadObservationToken)
+        }
+    }
+    
+    private func watchForDownloads() {
+        downloadObservationToken = NotificationCenter.default.addObserver(for: DownloadDidFinish.self) { message in
+            guard message.identifier == IrisDBController.searchEmbedderID else { return }
+
+            // TODO: Swap embedders
+            
+        }
     }
         
+    private static func getEmbedder() throws -> EmbeddingProvider {
+        do {
+            let bgeDirectory = ManifestSharedSettings.modelStorageURL.appendingPathComponent(searchEmbedderID, conformingTo: .directory)
+            return try CoreMLEmbedder(modelDirectory: bgeDirectory)
+        } catch {
+            Log.logger.debug("Failed to load CoreMLEmbedder", error: error)
+            
+            // Try and create the embedder, if we can't it is because Apple Intelligence is not available
+            do {
+                return try NLContextualEmbedder(language: .english)
+            } catch {
+                Log.logger.debug("Failed to load NLContextualEmbedder", error: error)
+                
+                // Load the backup embedder, if we can't load it, Apple Intelligence is not enabled and we wont be able to do on-device intelligence.
+                do {
+                    return try NLEmbedder(language: .english)
+                } catch {
+                    Log.logger.debug("Failed to load NLEmbedder", error: error)
+                    throw IrisDBControllerInitializationError.noAppleIntelligence
+                }
+            }
+        }
+    }
+    
+    public func reEmbedDatabase() async throws {
+        let documents = try await irisDB.readAllDocuments()
+        
+        let irisDB = irisDB
+        
+        for document in documents {
+            indexingProgress.add(id: document.uuid)
+
+            indexingQueue.enqueue { [ weak self] in
+                do {
+                    try await irisDB.updateDocument(uuid: document.uuid, title: document.title, description: document.description, embeddableContent: document.pieces.map(\.content))
+                    await self?.completeIndexing(uuid: document.uuid)
+                } catch {
+                    Log.logger.error("Failed to re-embed entire database", error: error)
+                }
+            }
+        }
+    }
+
     public func insert(_ file: File) throws {
         let irisDB = irisDB
         let persistentID = file.persistentModelID
@@ -156,14 +172,12 @@ final class IrisDBController {
         }
     }
     
-    private func markFileIndexed(file: File) {
-        
-    }
-}
-
-extension IrisDBController: Searchable {
     public func search(query: String) async throws -> [UUID] {
+        #if DEBUG
+        let query = IrisQuery(text: query, debug: true)
+        #else
         let query = IrisQuery(text: query)
+        #endif
         let documents = try await irisDB.search(query: query, ranking: .relativeScoreFusion)
 
         return documents.map { $0.document.uuid }

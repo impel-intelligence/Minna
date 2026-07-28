@@ -26,7 +26,8 @@ struct MinnaApp: App {
     // MARK: Databases
     @State var irisDBContext: IrisContext
     @State var frontendDatabase: FrontendDatabase
-        
+    @State var modelManager: ModelManager = ModelManager()
+    
     @State var standardFileImporterPresented: Bool = false
         
     #if SPARKLE
@@ -76,6 +77,7 @@ struct MinnaApp: App {
                 .modelContainer(frontendDatabase.modelContainer)
                 .database(frontendDatabase)
                 .irisContext(irisDBContext)
+                .environment(modelManager)
         }
         .commands {
             SidebarCommands()
@@ -104,7 +106,7 @@ struct MinnaApp: App {
                     .irisContext(irisDBContext)
             }
         }
-
+        
         ModernSettings {
             SettingsController()
                 .modelContainer(frontendDatabase.modelContainer)
