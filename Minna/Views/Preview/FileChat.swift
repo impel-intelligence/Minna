@@ -17,6 +17,7 @@ struct FileChat: View {
     @Environment(\.irisContext) var irisContext
     @Environment(\.router) var navigationRouter
     @Environment(\.openWindow) var openWindow
+    @Environment(\.database) var database
 
     @State private var presentModelPicker: Bool = false
     
@@ -68,7 +69,7 @@ struct FileChat: View {
         }
         .environment(\.openURL, OpenURLAction { url in
             do {
-                try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
+                try URLHandler.handle(url, database: database, router: navigationRouter, openWindow: openWindow, irisContext: irisContext)
                 return .handled
             } catch {
                 Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])

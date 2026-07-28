@@ -134,7 +134,7 @@ public struct NavigationCore: View {
         }
         .onOpenURL { url in
             do {
-                try URLHandler.handle(url, context: modelContext, router: navigationRouter, openWindow: openWindow)
+                try URLHandler.handle(url, database: database, router: navigationRouter, openWindow: openWindow, irisContext: irisContext)
             } catch {
                 Log.logger.error("Failed to handle url", error: error, metadata: ["url": "\(url)"])
             }

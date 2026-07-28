@@ -7,9 +7,11 @@
 
 import Foundation
 import DatabaseSchema
+import SwiftData
 
 protocol Database {
     var unfilledFolderUUID: UUID { get }
+    var context: ModelContext { get }
     
     func unfilledFolder() -> Folder
     func queueDescriptionUpdate(for file: File)

@@ -20,6 +20,7 @@ struct CitationColumnView: View {
     @Environment(\.irisContext) private var irisContext
     @Environment(\.router) private var router
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.database) var database
     
     @Binding var citations: OrderedSet<Citation>
     @State var files: [File] = []
@@ -108,7 +109,7 @@ struct CitationColumnView: View {
                             Button {
                                 guard let url = citation.urlComponents(pieces: [piece]).url else { return }
                                 do {
-                                    try URLHandler.handle(url, context: modelContext, router: router, openWindow: openWindow)
+                                    try URLHandler.handle(url, database: database, router: router, openWindow: openWindow, irisContext: irisContext)
                                 } catch {
                                     Log.logger.error("Failed to open citation", error: error, metadata: ["url": "\(url)"])
                                 }
