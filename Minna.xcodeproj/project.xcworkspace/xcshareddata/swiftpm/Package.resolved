@@ -1,5 +1,5 @@
 {
-  "originHash" : "b71616b3002a4d9d944ee336e7581a510c74adef54c1a297bcdcf3b7ee28f946",
+  "originHash" : "d7103976b16dea9f6e0eabef846dd063c1d8ff54b352f01842632cdc0e38a931",
   "pins" : [
     {
       "identity" : "anylanguagemodel",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/BlurbKit",
       "state" : {
-        "revision" : "e4e6e7b109dcc65c060b92adbbdb455cf70e6ea3",
-        "version" : "0.1.2"
+        "revision" : "b9587205c21725ca9bab466bf2a0645fc460f24b",
+        "version" : "0.1.3"
       }
     },
     {

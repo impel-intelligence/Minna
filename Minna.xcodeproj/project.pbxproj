@@ -564,7 +564,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.10.1;
+				CURRENT_PROJECT_VERSION = 0.10.2;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -597,7 +597,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.10.1;
+				MARKETING_VERSION = 0.10.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -628,7 +628,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.10.1;
+				CURRENT_PROJECT_VERSION = 0.10.2;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -661,7 +661,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.10.1;
+				MARKETING_VERSION = 0.10.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -837,7 +837,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.10.1;
+				CURRENT_PROJECT_VERSION = 0.10.2;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -870,7 +870,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.10.1;
+				MARKETING_VERSION = 0.10.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
@@ -1003,7 +1003,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.10.1;
+				CURRENT_PROJECT_VERSION = 0.10.2;
 				DEVELOPMENT_TEAM = VV548YNZL3;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1036,7 +1036,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.10.1;
+				MARKETING_VERSION = 0.10.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
@@ -1165,7 +1165,7 @@
 			repositoryURL = "https://github.com/impel-intelligence/BlurbKit";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.2;
+				minimumVersion = 0.1.3;
 			};
 		};
 		DB0CF5942FEDCBF80036306B /* XCRemoteSwiftPackageReference "swift-collections" */ = {
