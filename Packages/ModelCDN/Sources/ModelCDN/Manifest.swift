@@ -10,6 +10,30 @@ import BackgroundAssets
 
 public enum Platform: String, Codable, Sendable {
     case macOS
+    case iOS
+    case tvOS
+    case watchOS
+    case visionOS
+    case linux
+    case windows
+    
+    public func matches() -> Bool {
+        #if os(iOS)
+        return self == .iOS
+        #elseif os(macOS)
+        return self == .macOS
+        #elseif os(tvOS)
+        return self == .tvOS
+        #elseif os(watchOS)
+        return self == .watchOS
+        #elseif os(visionOS)
+        return self == .visionOS
+        #elseif os(Linux)
+        return self == .linux
+        #elseif os(Windows)
+        return self == .windows
+        #endif
+    }
 }
 
 public struct Manifest: Codable {
