@@ -93,7 +93,7 @@ private extension String {
     func replaceCitations(existing existingCitations: OrderedSet<Citation>) -> (text: String, citations: OrderedSet<Citation>) {
         var citations: OrderedSet<Citation> = existingCitations
 
-        var output = self.replacing(/<cite\s+([^>]*?)\s*\/>/) { match in
+        let output = self.replacing(/<cite\s+([^>]*?)\s*\/>/) { match in
             let attributes = String(match.output.1)
             guard let docID = attributes.htmlAttribute("doc_id") else {
                 return self[match.range]
@@ -141,7 +141,8 @@ private extension String {
             }
                         
             // Create a citation that is just the piece this exact citation referenced.
-            return "[\(citationNumber)s\(pieceIndex + 1)](\(citation.urlComponents(pieces: [piece]).string ?? citation.backup(pieces: [piece])))"
+            let url = citation.urlComponents(pieces: [piece]).string ?? citation.backup(pieces: [piece])
+            return "[\(citationNumber)s\(pieceIndex + 1)](\(url))"
         }
                 
         return (output, citations)

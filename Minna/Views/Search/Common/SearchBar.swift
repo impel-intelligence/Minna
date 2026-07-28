@@ -48,6 +48,8 @@ struct SearchBar: View {
 
 #Preview {
     @Previewable @State var searchQuery: String = "Hello"
+    @FocusState var hello: Bool
+
     SearchBar(placeHolder: "Hello World", searchQuery: $searchQuery) {
         print("Hello")
     }

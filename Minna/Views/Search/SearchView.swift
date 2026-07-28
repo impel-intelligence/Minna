@@ -27,7 +27,8 @@ struct SearchView: View {
             VStack {
                 ForEach(searchResults) { file in
                     ListFileCard(file: file, editingTitle: .constant(false), editingDescription: .constant(false))
-                        .id(file)                }
+                        .id(file)
+                }
             }
             .padding(.vertical, 8)
             .padding(.horizontal, 10)
