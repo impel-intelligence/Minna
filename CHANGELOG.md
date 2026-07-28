@@ -9,6 +9,11 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [0.10.2] - Fix Upload Crash - 2026-07-27
 
+### Added
+- Search results are now shown before any LLM chat is entered.
+- IrisDB has been upgrade with a better offline-embedding model. Search results are much more accurate now.
+- On-device models can now download in the background.
+
 ### Fixed
 - Fixed a bug where the app would crash when loading files because of an unkown Type Identifier.
 
