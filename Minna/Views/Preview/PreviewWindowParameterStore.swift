@@ -43,7 +43,7 @@ struct OpenFileParameters: Codable, Hashable {
 struct OpenFileAction: Identifiable, Codable, Hashable {
     let id: PersistentIdentifier
     
-    init(id: PersistentIdentifier,) {
+    init(id: PersistentIdentifier) {
         self.id = id
     }
 }

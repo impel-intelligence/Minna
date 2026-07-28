@@ -23,7 +23,7 @@ struct PreviewWindow: View {
     
     init(parameters: OpenFileAction, context: ModelContext) {
         let id = parameters.id
-        var descriptor = FetchDescriptor<File>(predicate: #Predicate { $0.id == id })
+        var descriptor = FetchDescriptor<File>(predicate: #Predicate { $0.persistentModelID == id })
         descriptor.fetchLimit = 1
         
         do {
