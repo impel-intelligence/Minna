@@ -12,6 +12,7 @@ import AnyLanguageModel
 
 struct UserMessage: View {
     @Environment(\.theme) var theme: ThemeColor
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     let prompt: Transcript.Prompt
     let proxy: GeometryProxy
@@ -28,7 +29,7 @@ struct UserMessage: View {
                         .padding(5)
                         .background {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.white)
+                                .fill(colorScheme == .light ? .white : .black)
                                 .stroke(Color.border, lineWidth: 1)
                                 .shadow(color: theme.background.opacity(0.35), radius: 10, x: 0, y: 0)
                         }
