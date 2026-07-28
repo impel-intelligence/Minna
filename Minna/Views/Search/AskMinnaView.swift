@@ -37,13 +37,10 @@ struct AskMinnaView: View {
     
     @State var chatter: Chatter
     @State var viewMode: ViewMode
-    
-    @State var searchRouter: RouterCore?
-    
     @State var searchTask: Task<Void, Never>?
 
     @State var searchResults: [File] = []
-
+    
     /// Invoked by the New Chat toolbar button. `nil` hides the button (e.g. when viewing an existing chat pushed from a folder).
     var newChat: (() -> Void)?
     
@@ -58,23 +55,31 @@ struct AskMinnaView: View {
             ScrollView {
                 switch viewMode {
                 case .startup:
-                    startup()
-                        .frame(width: reader.size.width, height: reader.size.height)
+                    Color.clear
                 case .searching:
                     searching()
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                 case .chat:
                     TranscriptView(chatter: chatter, limitSize: true, reader: reader)
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack {
+                    if viewMode == .startup {
+                        startup()
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    searchCluster
+                        .padding(.bottom, viewMode == .startup ? reader.size.height / 3 : 0)
                 }
             }
         }
         .environment(citationHandler)
         .theme(chatter.chat.theme)
         .navigationTitle(chatter.chat.title())
-        .defaultScrollAnchor(viewMode == .chat ? .bottom : .top)
+        .animation(.default, value: viewMode)
+        .defaultScrollAnchor(viewMode == .searching ? .top : .bottom)
         .scrollDisabled(viewMode == .startup)
-        .safeAreaInset(edge: .bottom) {
-            searchCluster
-        }
         .inspector(isPresented: $citationHandler.citationSidebarOpen) {
             CitationColumnView(citations: $citationHandler.citations)
         }
@@ -92,13 +97,6 @@ struct AskMinnaView: View {
                 try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
             } catch {
                 Log.logger.error("Failed to gather providers", error: error)
-            }
-        }
-        .onAppear {
-            do {
-                searchRouter = try RouterCore()
-            } catch {
-                Log.logger.error("Failed to create search router", error: error)
             }
         }
         .toolbar {
@@ -121,7 +119,9 @@ struct AskMinnaView: View {
         }
         .onChange(of: chatter.chatMessage) { _, newValue in
             searchTask?.cancel()
-
+            
+            guard viewMode == .searching || viewMode == .startup else { return }
+            
             searchTask = Task {
                 // Debounce: wait 20ms before searching
                 try? await Task.sleep(for: Duration.milliseconds(50))
@@ -130,7 +130,12 @@ struct AskMinnaView: View {
                 guard !Task.isCancelled else { return }
                 
                 do {
-                    try await searchIris(query: newValue)
+                    if !newValue.isEmpty {
+                        try await searchIris(query: newValue)
+                    } else {
+                        // If search results are empty move back to the original starting view.
+                        viewMode = .startup
+                    }
                 } catch is CancellationError {
                     
                 } catch {
@@ -147,17 +152,18 @@ struct AskMinnaView: View {
             ForEach(searchResults) { file in
                 ListFileCard(file: file, editingTitle: .constant(false), editingDescription: .constant(false))
                     .id(file)
+                    .simultaneousGesture(TapGesture(count: 1).onEnded {
+                        if file.type == .askMinna, let chat = file.chat {
+                            navigationRouter.push(chat)
+                        } else {
+                            openWindow(id: PreviewWindow.windowID, value: OpenFileAction(id: file.id))
+                        }
+                    })
             }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 10)
         .scrollTargetLayout()
-        .transition(.move(edge: .bottom).combined(with: .opacity))
-//        .safeAreaInset(edge: .bottom) {
-//            if viewMode == .searching {
-//                searchCluster
-//            }
-//        }
     }
     
     @ViewBuilder
@@ -170,7 +176,6 @@ struct AskMinnaView: View {
             Text("Hey \(NSUserFirstName())!")
                 .font(.system(size: 36, design: .serif))
         }
-        .transition(.move(edge: .top).combined(with: .opacity))
     }
 
     private var searchCluster: some View {
@@ -249,5 +254,6 @@ struct AskMinnaView: View {
         
     }
     .irisContext(IrisContext(modelContainer: SampleDatabase.shared.modelContainer))
-    .modelContext(SampleDatabase.shared.context)
+    .database(SampleDatabase.shared)
+    .router(NavigationRouter())
 }
