@@ -166,7 +166,7 @@ SPARKLE_APP_EXPORT_DIRECTORY="$OUTPUT_DIRECTORY/sparkle"
 # Upload the App Store archive to App Store Connect
 APP_STORE_UPLOAD_PROGRESS_MARKER="app-store-upload"
 if ! grep -qF "$APP_STORE_UPLOAD_PROGRESS_MARKER" $PROGRESS_FILE; then
-    xcodebuild -exportArchive -archivePath "$APP_STORE_ARCHIVE" -exportOptionsPlist "$APP_STORE_EXPORT_OPTIONS"  | xcbeautify
+    xcodebuild -exportArchive -allowProvisioningUpdates -archivePath "$APP_STORE_ARCHIVE" -exportOptionsPlist "$APP_STORE_EXPORT_OPTIONS"  | xcbeautify
 
     # Save the build progress
     echo "$APP_STORE_UPLOAD_PROGRESS_MARKER" >> "$PROGRESS_FILE"
@@ -179,7 +179,7 @@ fi
 SPARKLE_EXPORT_PROGRESS_MARKER="sparkle-export"
 if ! grep -qF "$SPARKLE_EXPORT_PROGRESS_MARKER" $PROGRESS_FILE; then
     printf "⚙️ Exporting archive for direct distribution"
-    xcodebuild -exportArchive -archivePath "$SPARKLE_ARCHIVE" -exportOptionsPlist "$SPARKLE_EXPORT_OPTIONS" -exportPath "$SPARKLE_APP_EXPORT_DIRECTORY" | xcbeautify
+    xcodebuild -exportArchive -allowProvisioningUpdates -archivePath "$SPARKLE_ARCHIVE" -exportOptionsPlist "$SPARKLE_EXPORT_OPTIONS" -exportPath "$SPARKLE_APP_EXPORT_DIRECTORY" | xcbeautify
 
     # Save the build progress
     echo "$SPARKLE_EXPORT_PROGRESS_MARKER" >> "$PROGRESS_FILE"
