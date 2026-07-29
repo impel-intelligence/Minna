@@ -59,7 +59,7 @@ class CitationHandler: MarkupParser {
 
     func attributedString(for input: String) throws -> AttributedString {
         let citedText = input.replaceCitations(existing: self.citations)
-        self.citations.formUnion(citedText.citations)
+        self.citations = citedText.citations
         
         // Only pop the citations open once. If the user closes it manually we don't want to re-open it.
         if !citations.isEmpty && !citationSidebarOpen && !hasOpenedCitationsOnce {
@@ -88,6 +88,20 @@ class CitationHandler: MarkupParser {
 }
 
 private extension String {
+    func deletingSuffix(_ suffix: String) -> String {
+        // Check if the string actually ends with the specified suffix
+        guard self.hasSuffix(suffix) else { return self }
+        // Drop the count of characters and convert the Substring back to a String
+        return String(self.dropLast(suffix.count))
+    }
+    
+    func deletingPrefix(_ prefix: String) -> String {
+        // Check if the string actually ends with the specified prefix
+        guard self.hasPrefix(prefix) else { return self }
+        // Drop the count of characters and convert the Substring back to a String
+        return String(self.dropFirst(prefix.count))
+    }
+    
     /// Rewrites `<cite doc_id="…" title="…"/>` markup into numbered Markdown links
     /// (`[N](cite://doc_id?title=…)`), numbering citations by order of appearance.
     func replaceCitations(existing existingCitations: OrderedSet<Citation>) -> (text: String, citations: OrderedSet<Citation>) {
@@ -95,9 +109,12 @@ private extension String {
 
         let output = self.replacing(/<cite\s+([^>]*?)\s*\/>/) { match in
             let attributes = String(match.output.1)
-            guard let docID = attributes.htmlAttribute("doc_id") else {
+            guard var docID = attributes.htmlAttribute("doc_id") else {
                 return self[match.range]
             }
+            // Remove any { } that the AI may have included.
+            docID = docID.deletingPrefix("{").deletingSuffix("}")
+            
             guard let docUUID = UUID(uuidString: docID) else {
                 return self[match.range]
             }

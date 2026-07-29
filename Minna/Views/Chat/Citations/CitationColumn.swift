@@ -25,6 +25,8 @@ struct CitationColumnView: View {
     @State var files: [File] = []
     @State var citationLocations: [UUID: [Int: EmbeddableContent]] = [:]
 
+    @State var pieceResolutionTask: Task<Void, Never>?
+
     var body: some View {
         List {
             Section("References") {
@@ -43,6 +45,7 @@ struct CitationColumnView: View {
                         }
                         if let citation = citations.first(where: {$0.id == file.uuid}), !citation.pieces.isEmpty {
                             referenceSnippet(for: citation, offset: offset)
+                                .id(citation)
                         }
                     }
                     .listRowSeparator(.hidden)
@@ -76,7 +79,15 @@ struct CitationColumnView: View {
             
             self.files = sortedFiles
             
-            Task(priority: .high) {
+            pieceResolutionTask?.cancel()
+                        
+            pieceResolutionTask = Task(priority: .high) {
+                // Debounce: wait 20ms before searching
+                try? await Task.sleep(for: Duration.milliseconds(50))
+                
+                // Check if cancelled during wait
+                guard !Task.isCancelled else { return }
+                
                 var localCitationLocations: [UUID: [Int: EmbeddableContent]] = [:]
 
                 for citation in citations {
@@ -87,8 +98,15 @@ struct CitationColumnView: View {
                     }
                 }
                 
-                citationLocations = localCitationLocations
+                Task { @MainActor in
+                    citationLocations.merge(localCitationLocations, uniquingKeysWith: { first, last in
+                        return first.merging(last) { _, content in
+                            return content
+                        }
+                    })
+                }
             }
+
         }
     }
     

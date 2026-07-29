@@ -42,7 +42,8 @@ struct MinnaApp: App {
         #endif
         
         #if canImport(Darwin)
-        LoggingSystem.bootstrap(LoggingOSLog.init)
+        // TODO: Find an OSLog implementation that handles the Swift-log error types
+//        LoggingSystem.bootstrap(LoggingOSLog.init)
         #endif
 
         SentrySDK.start { options in

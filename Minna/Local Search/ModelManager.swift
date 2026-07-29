@@ -166,7 +166,7 @@ extension ModelManager: BADownloadManagerDelegate {
         progress.completedUnitCount = totalBytesWritten
         
         Task { @MainActor [weak self] in
-            print("Updating progress", progress.fractionCompleted)
+            Log.logger.info("\(download.identifier) (\(progress.fractionCompleted.formatted(.percent)))")
             self?.stateLock.withLock {
                 guard let currentFileIndex = self?.inFlightDownloads.firstIndex(where: { $0.file.identifier == download.identifier }) else {
                     return
