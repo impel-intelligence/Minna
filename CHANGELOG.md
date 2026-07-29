@@ -15,7 +15,7 @@ The format has been adjusted to include a release Title. This has been inserted 
 - On-device models can now download in the background.
 
 ### Fixed
-- Fixed a bug where the app would crash when loading files because of an unkown Type Identifier.
+- Fixed a bug where the app would crash when loading files because of an unknown Type Identifier.
 - Fixed User Message text color in Dark Mode.
 - Subfolders now use a more readable text color for their background.
 - Citation sections now properly update in real-time.

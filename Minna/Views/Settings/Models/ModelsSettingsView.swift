@@ -56,19 +56,8 @@ struct ModelsSettingsView: View {
             }
             
             Section("Add a new provider") {
-                Button {
-                    providerWrapper = ProviderWrapper(provider: AnthropicProvider.self, existingConfiguration: nil)
-                } label: {
-                    HStack {
-                        Image(AnthropicProvider.image)
-                            .resizable()
-                            .frame(width: 15, height: 15)
-                        Text(AnthropicProvider.marketingName)
-                    }
-                }
-                .contentShape(.rect)
-                .buttonStyle(NavigationLinkButtonStyle())
-                .accessibilityLabel("Add \(AnthropicProvider.marketingName) as a model provider.")
+                buttonFor(provider: AnthropicProvider.self)
+                buttonFor(provider: OllamaProvider.self)
             }
         }
         .formStyle(.grouped)
@@ -76,6 +65,23 @@ struct ModelsSettingsView: View {
         .sheet(item: $providerWrapper) { wrapper in
             ProviderConfigurationForm(wrapper: wrapper)
         }
+    }
+    
+    @ViewBuilder
+    func buttonFor<Provider: ModelProvider & AssetProvider>(provider: Provider.Type) -> some View {
+        Button {
+            providerWrapper = ProviderWrapper(provider: provider, existingConfiguration: nil)
+        } label: {
+            HStack {
+                Image(provider.image)
+                    .resizable()
+                    .frame(width: 15, height: 15)
+                Text(provider.marketingName)
+            }
+        }
+        .contentShape(.rect)
+        .buttonStyle(NavigationLinkButtonStyle())
+        .accessibilityLabel("Add \(provider.marketingName) as a model provider.")
     }
     
     @ViewBuilder

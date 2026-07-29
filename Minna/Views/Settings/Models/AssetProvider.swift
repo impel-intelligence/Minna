@@ -24,5 +24,10 @@ extension AppleProvider: AssetProvider {
     static var marketingName: String { "Apple Intelligence" }
     static var image: ImageResource { .Providers.Apple.logo }
     static var background: Color { .primary }
+}
 
+extension OllamaProvider: AssetProvider {
+    static var marketingName: String { "Ollama" }
+    static var image: ImageResource { .Providers.Ollama.logo }
+    static var background: Color { .primary }
 }

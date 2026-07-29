@@ -16,6 +16,8 @@ public struct ProviderFactory {
         switch id {
         case AnthropicProvider.id:
             return AnthropicProvider.self
+        case OllamaProvider.id:
+            return OllamaProvider.self
         default:
             return nil
         }
@@ -29,6 +31,8 @@ public struct ProviderFactory {
         switch configuration.providerID {
         case AnthropicProvider.id:
             return try AnthropicProvider.make(from: configuration)
+        case OllamaProvider.id:
+            return try OllamaProvider.make(from: configuration)
         default:
             return nil
         }
