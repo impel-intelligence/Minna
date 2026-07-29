@@ -16,7 +16,9 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ### Fixed
 - Fixed a bug where the app would crash when loading files because of an unkown Type Identifier.
-- Fixed User Message text color in Dark Mode
+- Fixed User Message text color in Dark Mode.
+- Subfolders now use a more readable text color for their background.
+- Citation sections now properly update in real-time.
 
 ## [0.10.1] - Fix Startup Crash - 2026-07-23
 
