@@ -92,11 +92,11 @@ public struct OllamaProvider: ModelProvider, Sendable {
 fileprivate struct OllamaModelList: Decodable {
     struct Model: Decodable {
         struct Details: Decodable {
-            let format: String
-            let family: String
-            let families: [String]
-            let parameterSize: String
-            let quantizationLevel: String
+            let format: String?
+            let family: String?
+            let families: [String]?
+            let parameterSize: String?
+            let quantizationLevel: String?
             
             enum CodingKeys: String, CodingKey {
                 case format

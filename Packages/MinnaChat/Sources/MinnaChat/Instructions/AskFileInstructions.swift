@@ -52,6 +52,7 @@ public struct AskFileInstructions: ModelInstruction {
         Rules:
         - Place the tag at the end of the sentence.  
         - Never omit `doc_id` or `excerpt`, even if you have already cited both before.
+        - Never include text in `excerpt`, only include the integer id for the excerpt.
         - Never nest or modify the tag format — no markdown, no extra attributes, no line breaks inside it.
         - Before finalizing an answer, validate that each citation’s doc_id and excerpt correspond to a retrieved item present in the conversation state.
         """)
