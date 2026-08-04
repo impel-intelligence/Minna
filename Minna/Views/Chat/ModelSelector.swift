@@ -17,8 +17,8 @@ struct ModelSelector: View {
     
     @AppStorage(AppStorageKeys.preferredModel) var preferredModel: String = ""
 
-    @Binding var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]>
-    @Binding var selectedModel: Model?
+    @Binding var providerDatabase: OrderedDictionary<ConfiguredProvider, [any Model]>
+    @Binding var selectedModel: (any Model)?
     @Binding var selectedProvider: ConfiguredProvider?
 
     var body: some View {
@@ -27,7 +27,7 @@ struct ModelSelector: View {
             List {
                 ForEach(Array(providerDatabase.keys)) { provider in
                     Section(provider.name) {
-                        ForEach(providerDatabase[provider] ?? []) { model in
+                        ForEach(providerDatabase[provider] ?? [], id: \.id) { model in
                             cellFor(model: model, provider: provider)
                         }
                     }
@@ -68,7 +68,7 @@ struct ModelSelector: View {
     }
     
     @ViewBuilder
-    func cellFor(model: Model, provider: ConfiguredProvider) -> some View {
+    func cellFor(model: any Model, provider: ConfiguredProvider) -> some View {
         Button {
             selectedModel = model
             selectedProvider = provider
@@ -77,9 +77,9 @@ struct ModelSelector: View {
             HStack {
                 Image(systemSymbol: .checkmark)
                     .fontWeight(.semibold)
-                    .symbolEffect(.bounce, value: selectedModel == model)
-                    .opacity(selectedModel == model ? 1 : 0)
-                    .accessibilityLabel("Model Selected", isEnabled: selectedModel == model)
+                    .symbolEffect(.bounce, value: selectedModel?.id == model.id)
+                    .opacity(selectedModel?.id == model.id ? 1 : 0)
+                    .accessibilityLabel("Model Selected", isEnabled: selectedModel?.id == model.id)
                 
                 ModelName(model: model)
             }
@@ -89,14 +89,15 @@ struct ModelSelector: View {
 }
 
 #Preview {
-    @Previewable @State var selectedModel: Model?
+    @Previewable @State var selectedModel: (any Model)?
     @Previewable @State var selectedProvider: ConfiguredProvider?
-    
-    @Previewable @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [
+
+    @Previewable @State var providerDatabase: OrderedDictionary<ConfiguredProvider, [any Model]> = [
         ConfiguredProvider(name: "Apple Intelligence", providerID: "apple"): [
-            Model(id: "foundation", displayName: "Apple Foundation", provider: AppleProvider.self)
+            SimpleModel(id: "foundation", displayName: "Apple Foundation", provider: AppleProvider.self)
         ]
     ]
     
     ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
 }
+ 

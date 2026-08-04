@@ -29,9 +29,14 @@ public struct AppleProvider: ModelProvider, Sendable {
         return SystemLanguageModel()
     }
     
-    public func availableModels() async throws -> [Model] {
+    public func availableModels() async throws -> [any Model] {
         return [
-            Model(id: "foundation", displayName: "Apple Foundation Model", provider: AppleProvider.self)
+            SimpleModel(id: "foundation", displayName: "Apple Foundation Model", provider: AppleProvider.self)
         ]
     }
+    
+    public func generationOptions(model: any Model) -> AnyLanguageModel.GenerationOptions {
+        return GenerationOptions()
+    }
+    
 }

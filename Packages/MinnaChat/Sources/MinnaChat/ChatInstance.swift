@@ -70,11 +70,7 @@ public final class ChatInstance {
         waitingForResponse = true
         defer { waitingForResponse = false }
         
-        var generationOptions = GenerationOptions(maximumResponseTokens: 4096)
-        generationOptions[custom: AnthropicLanguageModel.self] = .init(
-            thinking: AnthropicLanguageModel.CustomGenerationOptions.Thinking.adaptive(display: .summarized),
-            effort: .high
-        )
+        let generationOptions = provider.generationOptions(model: model)
         
         // Start the stream response
         let stream = session.streamResponse(to: Prompt(message), options: generationOptions)

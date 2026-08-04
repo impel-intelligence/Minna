@@ -16,6 +16,12 @@ public struct ProviderFactory {
         switch id {
         case AnthropicProvider.id:
             return AnthropicProvider.self
+        case OllamaProvider.id:
+            return OllamaProvider.self
+        case GeminiProvider.id:
+            return GeminiProvider.self
+        case OpenAIProvider.id:
+            return OpenAIProvider.self
         default:
             return nil
         }
@@ -29,6 +35,12 @@ public struct ProviderFactory {
         switch configuration.providerID {
         case AnthropicProvider.id:
             return try AnthropicProvider.make(from: configuration)
+        case OllamaProvider.id:
+            return try OllamaProvider.make(from: configuration)
+        case GeminiProvider.id:
+            return try GeminiProvider.make(from: configuration)
+        case OpenAIProvider.id:
+            return try OpenAIProvider.make(from: configuration)
         default:
             return nil
         }

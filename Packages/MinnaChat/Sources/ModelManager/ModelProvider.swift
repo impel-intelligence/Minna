@@ -19,7 +19,7 @@ public protocol ModelProvider: Sendable {
     /// The fields the user must fill in to configure this provider. The settings
     /// form renders these dynamically and collects input keyed by ``ProviderField/key``.
     static var fields: [ProviderField] { get }
-
+    
     /// Builds a configured provider from the values the user entered in the form.
     ///
     /// - Parameter values: Field input keyed by ``ProviderField/key``.
@@ -40,5 +40,7 @@ public protocol ModelProvider: Sendable {
     
     /// List all models that this provider offers.
     /// - Returns: A list of model ids  that are available.
-    func availableModels() async throws -> [ModelManager.Model]
+    func availableModels() async throws -> [any Model]
+    
+    func generationOptions(model: any Model) -> GenerationOptions
 }

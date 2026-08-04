@@ -24,5 +24,22 @@ extension AppleProvider: AssetProvider {
     static var marketingName: String { "Apple Intelligence" }
     static var image: ImageResource { .Providers.Apple.logo }
     static var background: Color { .primary }
+}
 
+extension OllamaProvider: AssetProvider {
+    static var marketingName: String { "Ollama" }
+    static var image: ImageResource { .Providers.Ollama.logo }
+    static var background: Color { .primary }
+}
+
+extension GeminiProvider: AssetProvider {
+    static var marketingName: String { "Gemini" }
+    static var image: ImageResource { .Providers.Gemini.logo }
+    static var background: Color { .primary }
+}
+
+extension OpenAIProvider: AssetProvider {
+    static var marketingName: String { "OpenAI" }
+    static var image: ImageResource { .Providers.OpenAI.logo }
+    static var background: Color { .primary }
 }
