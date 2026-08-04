@@ -7,6 +7,11 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.11.0] - Support for Ollama, OpenAI & Gemini - 2026-08-04
+- Added support for OpenAI as a provider.
+- Added support for local and remote Ollama servers as a provider.
+- Added support for Gemini as a provider.
+
 ## [0.10.2] - Fix Upload Crash - 2026-07-27
 
 ### Added

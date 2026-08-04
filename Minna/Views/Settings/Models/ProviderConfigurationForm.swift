@@ -185,7 +185,6 @@ struct ProviderConfigurationForm: View {
         } catch {
             self.errorMessage = error.localizedDescription
         }
-        
     }
 }
 
