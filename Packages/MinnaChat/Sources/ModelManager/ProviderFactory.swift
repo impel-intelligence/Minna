@@ -18,6 +18,8 @@ public struct ProviderFactory {
             return AnthropicProvider.self
         case OllamaProvider.id:
             return OllamaProvider.self
+        case GeminiProvider.id:
+            return GeminiProvider.self
         default:
             return nil
         }
@@ -33,6 +35,8 @@ public struct ProviderFactory {
             return try AnthropicProvider.make(from: configuration)
         case OllamaProvider.id:
             return try OllamaProvider.make(from: configuration)
+        case GeminiProvider.id:
+            return try GeminiProvider.make(from: configuration)
         default:
             return nil
         }

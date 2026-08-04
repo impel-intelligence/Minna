@@ -9,11 +9,12 @@ import Foundation
 import AnyLanguageModel
 import DatabaseSchema
 
-public struct AnthropicProvider: ModelProvider, Sendable {
+public struct GeminiProvider: ModelProvider, Sendable {
     let baseURL: URL
     let apiKey: String
+    let apiVersion: String
     
-    public static let id: String = "claude"
+    public static let id: String = "gemini"
     public static let editable: Bool = true
 
     public static let fields: [ProviderField] = [
@@ -21,30 +22,39 @@ public struct AnthropicProvider: ModelProvider, Sendable {
             key: "apiKey",
             name: "API Key",
             kind: .secure,
-            placeholder: "sk-ant-..."
+            placeholder: "AQ..."
         ),
         ProviderField(
             key: "baseURL",
             name: "Base URL",
             kind: .text,
-            placeholder: AnthropicLanguageModel.defaultBaseURL.absoluteString,
+            placeholder: GeminiLanguageModel.defaultBaseURL.absoluteString,
             isAdvanced: true,
-            defaultValue: AnthropicLanguageModel.defaultBaseURL.absoluteString
+            defaultValue: GeminiLanguageModel.defaultBaseURL.absoluteString
+        ),
+        ProviderField(
+            key: "apiVersion",
+            name: "API Version",
+            kind: .text,
+            placeholder: GeminiLanguageModel.defaultAPIVersion,
+            isAdvanced: true,
+            defaultValue: GeminiLanguageModel.defaultAPIVersion
         )
     ]
 
-    public init(baseURL: URL = AnthropicLanguageModel.defaultBaseURL , apiKey: String) {
+    public init(baseURL: URL = GeminiLanguageModel.defaultBaseURL , apiKey: String, version: String = GeminiLanguageModel.defaultAPIVersion) {
         self.baseURL = baseURL
         self.apiKey = apiKey
+        self.apiVersion = version
     }
 
-    /// Builds an `AnthropicProvider` from collected form input.
+    /// Builds an `GeminiProvider` from collected form input.
     ///
     /// - Parameter values: Field input keyed by ``ProviderField/key``.
     /// - Returns: A configured provider.
     /// - Throws: ``ProviderConfigurationError`` when the API key is missing or the base URL is malformed.
     /// - Authored by: Claude Opus 4.8 (Anthropic)
-    public static func make(from values: [String: String]) throws -> AnthropicProvider {
+    public static func make(from values: [String: String]) throws -> GeminiProvider {
         guard let apiKey = values["apiKey"]?.trimmingCharacters(in: .whitespacesAndNewlines),
               !apiKey.isEmpty else {
             throw ProviderConfigurationError.missingField("API Key")
@@ -59,11 +69,16 @@ public struct AnthropicProvider: ModelProvider, Sendable {
         } else {
             baseURL = AnthropicLanguageModel.defaultBaseURL
         }
+        
+        guard let apiVersion = values["apiVersion"]?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !apiKey.isEmpty else {
+            throw ProviderConfigurationError.missingField("API Version")
+        }
 
-        return AnthropicProvider(baseURL: baseURL, apiKey: apiKey)
+        return GeminiProvider(baseURL: baseURL, apiKey: apiKey, version: apiVersion)
     }
     
-    public static func make(from configuration: ConfiguredProvider) throws -> AnthropicProvider {
+    public static func make(from configuration: ConfiguredProvider) throws -> GeminiProvider {
         guard let apiKey = configuration.getConfigurationValue(for: "apiKey") else {
             throw ProviderConfigurationError.missingField("API Key")
         }
@@ -72,15 +87,19 @@ public struct AnthropicProvider: ModelProvider, Sendable {
             throw ProviderConfigurationError.missingField("Base URL")
         }
         
-        guard let parsed = URL(string: raw) else {
+        guard let baseURL = URL(string: raw) else {
             throw ProviderConfigurationError.invalidValue(field: "Base URL", value: raw)
         }
         
-        return AnthropicProvider(baseURL: parsed, apiKey: apiKey)
+        guard let apiVersion = configuration.getConfigurationValue(for: "apiVersion") else {
+            throw ProviderConfigurationError.missingField("API Version")
+        }
+        
+        return GeminiProvider(baseURL: baseURL, apiKey: apiKey, version: apiVersion)
     }
     
     public func getModel(id: String) -> any AnyLanguageModel.LanguageModel {
-        return AnthropicLanguageModel(baseURL: baseURL, apiKey: apiKey, model: id)
+        return GeminiLanguageModel(baseURL: baseURL, apiKey: apiKey, apiVersion: apiVersion, model: id)
     }
     
     /// Fetches the list of model identifiers available from the Anthropic API.
@@ -88,10 +107,9 @@ public struct AnthropicProvider: ModelProvider, Sendable {
     /// - Returns: The `id` of every model returned by the endpoint.
     /// - Authored by: Claude Opus 4.8 (Anthropic)
     public func availableModels() async throws -> [Model] {
-        var request = URLRequest(url: baseURL.appendingPathComponent("v1/models"))
+        var request = URLRequest(url: baseURL.appendingPathComponent("\(apiVersion)/models"))
         request.httpMethod = "GET"
-        request.setValue(AnthropicLanguageModel.defaultAPIVersion, forHTTPHeaderField: "anthropic-version")
-        request.setValue(apiKey, forHTTPHeaderField: "X-Api-Key")
+        request.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
 
         let (data, response) = try await URLSession.shared.data(for: request)
 
@@ -102,27 +120,35 @@ public struct AnthropicProvider: ModelProvider, Sendable {
         guard (200..<300).contains(httpResponse.statusCode) else {
             throw URLError(.badServerResponse)
         }
-
-        let modelList = try JSONDecoder().decode(AnthropicModelList.self, from: data)
-        return modelList.data.map { item in
-            Model(id: item.id, displayName: item.displayName ?? item.id, provider: AnthropicProvider.self)
+        
+        let modelList = try JSONDecoder().decode(GeminiModelList.self, from: data)
+        return modelList.models.filter({ model in
+            // Filter to models that support content generation
+            return model.supportedGenerationMethods?.contains("generateContent") ?? false
+        }).map { item in
+            SimpleModel(id: item.name, displayName: item.displayName ?? item.name, provider: GeminiProvider.self)
         }
     }
 }
 
-/// The response payload returned by Anthropic's `GET /v1/models` endpoint.
+/// The response payload returned by Gemini's `GET /v1/models` endpoint.
 ///
 /// - Authored by: Claude Opus 4.8 (Anthropic)
-fileprivate struct AnthropicModelList: Decodable {
+fileprivate struct GeminiModelList: Decodable {
     struct Model: Decodable {
-        let id: String
+        let name: String
+        let version: String
         let displayName: String?
-
-        enum CodingKeys: String, CodingKey {
-            case id
-            case displayName = "display_name"
-        }
+        let description: String?
+        let inputTokenLimit: Int?
+        let outputTokenLimit: Int?
+        let supportedGenerationMethods: [String]?
+        let temperature: Double?
+        let topP: Double?
+        let topK: Int?
+        let maxTemperature: Double?
+        let thinking: Bool?
     }
 
-    let data: [Model]
+    let models: [Model]
 }

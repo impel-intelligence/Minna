@@ -83,7 +83,7 @@ public struct OllamaProvider: ModelProvider, Sendable {
 
         let modelList = try JSONDecoder().decode(OllamaModelList.self, from: data)
         return modelList.models.map { item in
-            Model(id: item.model, displayName: item.name, provider: OllamaProvider.self)
+            SimpleModel(id: item.model, displayName: item.name, provider: OllamaProvider.self)
         }
     }
 }

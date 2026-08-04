@@ -10,13 +10,50 @@ import Foundation
 import AnyLanguageModel
 import DatabaseSchema
 
+public struct AnthropicModel: Model {
+    public struct Capabilities {
+        enum ThinkingType {
+            case adaptive
+            case enabled
+        }
+        
+        var thinking: Set<ThinkingType>
+    }
+    
+    public let id: String
+    public let displayName: String
+    public let provider: any ModelProvider.Type = AnthropicProvider.self
+    
+    let capabilities: Capabilities
+    
+    init(id: String, displayName: String, capabilities: Capabilities) {
+        self.id = id
+        self.displayName = displayName
+        self.capabilities = capabilities
+    }
+    
+    public var hashValue: Int {
+        return id.hashValue + displayName.hashValue + provider.id.hashValue
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(displayName)
+        hasher.combine(provider.id)
+    }
+
+    public static func == (lhs: AnthropicModel, rhs: AnthropicModel) -> Bool {
+        return lhs.id == rhs.id && rhs.displayName == rhs.displayName && lhs.provider.id == rhs.provider.id
+    }
+}
+
 public struct AnthropicProvider: ModelProvider, Sendable {
     let baseURL: URL
     let apiKey: String
     
     public static let id: String = "claude"
     public static let editable: Bool = true
-
+    
     public static let fields: [ProviderField] = [
         ProviderField(
             key: "apiKey",
@@ -88,7 +125,7 @@ public struct AnthropicProvider: ModelProvider, Sendable {
     ///
     /// - Returns: The `id` of every model returned by the endpoint.
     /// - Authored by: Claude Opus 4.8 (Anthropic)
-    public func availableModels() async throws -> [Model] {
+    public func availableModels() async throws -> [any Model] {
         var request = URLRequest(url: baseURL.appendingPathComponent("v1/models"))
         request.httpMethod = "GET"
         request.setValue(AnthropicLanguageModel.defaultAPIVersion, forHTTPHeaderField: "anthropic-version")
@@ -105,9 +142,44 @@ public struct AnthropicProvider: ModelProvider, Sendable {
         }
 
         let modelList = try JSONDecoder().decode(AnthropicModelList.self, from: data)
+        
         return modelList.data.map { item in
-            Model(id: item.id, displayName: item.displayName ?? item.id, provider: AnthropicProvider.self)
+            var supportedThinking: Set<AnthropicModel.Capabilities.ThinkingType> = []
+            
+            if let thinkingCapabilities = item.capabilities.thinking {
+                if thinkingCapabilities.types.adaptive.supported {
+                    supportedThinking.insert(.adaptive)
+                }
+                
+                if thinkingCapabilities.types.enabled.supported {
+                    supportedThinking.insert(.enabled)
+                }
+            }
+            
+            let capabilities = AnthropicModel.Capabilities(thinking: supportedThinking)
+            
+            return AnthropicModel(id: item.id, displayName: item.displayName ?? item.id, capabilities: capabilities)
         }
+    }
+    
+    public func generationOptions(model: any Model) -> GenerationOptions {
+        var options = GenerationOptions(maximumResponseTokens: 4096)
+
+        if let model = model as? AnthropicModel {
+            if model.capabilities.thinking.contains(.adaptive) {
+                options[custom: AnthropicLanguageModel.self] = .init(
+                    thinking: AnthropicLanguageModel.CustomGenerationOptions.Thinking.adaptive(display: .summarized),
+                    effort: .high
+                )
+            } else if model.capabilities.thinking.contains(.enabled) {
+                options[custom: AnthropicLanguageModel.self] = .init(
+                    thinking: AnthropicLanguageModel.CustomGenerationOptions.Thinking.enabled(budgetTokens: 1024, display: .summarized),
+                    effort: .high
+                )
+            }
+        }
+        
+        return options
     }
 }
 
@@ -115,13 +187,46 @@ public struct AnthropicProvider: ModelProvider, Sendable {
 ///
 /// - Authored by: Claude Opus 4.8 (Anthropic)
 fileprivate struct AnthropicModelList: Decodable {
+    struct Supported: Codable {
+        let supported: Bool
+
+        enum CodingKeys: String, CodingKey {
+            case supported = "supported"
+        }
+    }
+
+    struct Types: Codable {
+        let adaptive: Supported
+        let enabled: Supported
+
+        enum CodingKeys: String, CodingKey {
+            case adaptive = "adaptive"
+            case enabled = "enabled"
+        }
+    }
+    struct Thinking: Codable {
+        let supported: Bool
+        let types: Types
+
+        enum CodingKeys: String, CodingKey {
+            case supported = "supported"
+            case types = "types"
+        }
+    }
+
+    struct ModelCapabilities: Decodable {
+        let thinking: Thinking?
+    }
+
     struct Model: Decodable {
         let id: String
         let displayName: String?
+        let capabilities: ModelCapabilities
 
         enum CodingKeys: String, CodingKey {
             case id
             case displayName = "display_name"
+            case capabilities
         }
     }
 
