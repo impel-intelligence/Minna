@@ -9,6 +9,37 @@ import Foundation
 import AnyLanguageModel
 import DatabaseSchema
 
+public struct GeminiModel: Model {
+    public let id: String
+    public let displayName: String
+    public let provider: any ModelProvider.Type = AnthropicProvider.self
+
+    let temperature: Double?
+    let outputTokenLimit: Int?
+
+    init(id: String, displayName: String, temperature: Double?, outputTokenLimit: Int?) {
+        self.id = id
+        self.displayName = displayName
+        self.temperature = temperature
+        self.outputTokenLimit = outputTokenLimit
+    }
+    
+    public var hashValue: Int {
+        return id.hashValue + displayName.hashValue + provider.id.hashValue + (temperature?.hashValue ?? 0)
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(displayName)
+        hasher.combine(provider.id)
+        hasher.combine(temperature)
+    }
+
+    public static func == (lhs: GeminiModel, rhs: GeminiModel) -> Bool {
+        return lhs.id == rhs.id && rhs.displayName == rhs.displayName && lhs.provider.id == rhs.provider.id
+    }
+}
+
 public struct GeminiProvider: ModelProvider, Sendable {
     let baseURL: URL
     let apiKey: String
@@ -106,7 +137,7 @@ public struct GeminiProvider: ModelProvider, Sendable {
     ///
     /// - Returns: The `id` of every model returned by the endpoint.
     /// - Authored by: Claude Opus 4.8 (Anthropic)
-    public func availableModels() async throws -> [Model] {
+    public func availableModels() async throws -> [any Model] {
         var request = URLRequest(url: baseURL.appendingPathComponent("\(apiVersion)/models"))
         request.httpMethod = "GET"
         request.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
@@ -126,8 +157,19 @@ public struct GeminiProvider: ModelProvider, Sendable {
             // Filter to models that support content generation
             return model.supportedGenerationMethods?.contains("generateContent") ?? false
         }).map { item in
-            SimpleModel(id: item.name, displayName: item.displayName ?? item.name, provider: GeminiProvider.self)
+            GeminiModel(id: item.name, displayName: item.displayName ?? item.name, temperature: item.temperature, outputTokenLimit: item.outputTokenLimit)
         }
+    }
+    
+    public func generationOptions(model: any Model) -> AnyLanguageModel.GenerationOptions {
+        var options = GenerationOptions(maximumResponseTokens: 4096)
+
+        if let model = model as? GeminiModel {
+            options.temperature = model.temperature
+            options.maximumResponseTokens = model.outputTokenLimit
+        }
+        
+        return options
     }
 }
 

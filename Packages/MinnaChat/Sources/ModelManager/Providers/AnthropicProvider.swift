@@ -11,7 +11,7 @@ import AnyLanguageModel
 import DatabaseSchema
 
 public struct AnthropicModel: Model {
-    public struct Capabilities {
+    public struct Capabilities: Hashable {
         enum ThinkingType {
             case adaptive
             case enabled
@@ -33,13 +33,14 @@ public struct AnthropicModel: Model {
     }
     
     public var hashValue: Int {
-        return id.hashValue + displayName.hashValue + provider.id.hashValue
+        return id.hashValue + displayName.hashValue + provider.id.hashValue + capabilities.hashValue
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(displayName)
         hasher.combine(provider.id)
+        hasher.combine(capabilities)
     }
 
     public static func == (lhs: AnthropicModel, rhs: AnthropicModel) -> Bool {

@@ -67,7 +67,7 @@ public struct OllamaProvider: ModelProvider, Sendable {
     ///
     /// - Returns: The `id` of every model returned by the endpoint.
     /// - Authored by: Claude Opus 4.8 (Anthropic)
-    public func availableModels() async throws -> [Model] {
+    public func availableModels() async throws -> [any Model] {
         var request = URLRequest(url: endpoint.appendingPathComponent("api/tags"))
         request.httpMethod = "GET"
 
@@ -86,6 +86,11 @@ public struct OllamaProvider: ModelProvider, Sendable {
             SimpleModel(id: item.model, displayName: item.name, provider: OllamaProvider.self)
         }
     }
+    
+    public func generationOptions(model: any Model) -> AnyLanguageModel.GenerationOptions {
+        return GenerationOptions(maximumResponseTokens: 4096)
+    }
+
 }
 
 /// The response payload returned by Ollama's `GET /api/tag` endpoint.
