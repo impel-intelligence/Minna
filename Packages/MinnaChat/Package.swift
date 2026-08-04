@@ -24,7 +24,7 @@ let package = Package(
     dependencies: [
         .package(path: "../DatabaseSchema"),
         .package(path: "../IrisSearch"),
-        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.0.0")
+        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.2.0"),
 //        .package(path: "/Users/taylorlineman/Developer/git/AnyLanguageModel"),
 //        .package(
 //            url: "https://github.com/huggingface/AnyLanguageModel",

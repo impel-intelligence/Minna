@@ -12,7 +12,7 @@ import DatabaseSchema
 public struct GeminiModel: Model {
     public let id: String
     public let displayName: String
-    public let provider: any ModelProvider.Type = AnthropicProvider.self
+    public let provider: any ModelProvider.Type = GeminiProvider.self
 
     let temperature: Double?
     let outputTokenLimit: Int?
@@ -84,7 +84,6 @@ public struct GeminiProvider: ModelProvider, Sendable {
     /// - Parameter values: Field input keyed by ``ProviderField/key``.
     /// - Returns: A configured provider.
     /// - Throws: ``ProviderConfigurationError`` when the API key is missing or the base URL is malformed.
-    /// - Authored by: Claude Opus 4.8 (Anthropic)
     public static func make(from values: [String: String]) throws -> GeminiProvider {
         guard let apiKey = values["apiKey"]?.trimmingCharacters(in: .whitespacesAndNewlines),
               !apiKey.isEmpty else {
@@ -136,7 +135,6 @@ public struct GeminiProvider: ModelProvider, Sendable {
     /// Fetches the list of model identifiers available from the Anthropic API.
     ///
     /// - Returns: The `id` of every model returned by the endpoint.
-    /// - Authored by: Claude Opus 4.8 (Anthropic)
     public func availableModels() async throws -> [any Model] {
         var request = URLRequest(url: baseURL.appendingPathComponent("\(apiVersion)/models"))
         request.httpMethod = "GET"

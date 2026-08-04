@@ -1,13 +1,13 @@
 {
-  "originHash" : "3cc34472bf0a415ffbda3e0bbeaaf19e7f0b2599cf86d8bb0da1d4e5d5baf5f7",
+  "originHash" : "e844e6bdda2e4e747f9569ef67351a96f9a73f4b1bafe49988afdaad352d9230",
   "pins" : [
     {
       "identity" : "anylanguagemodel",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/AnyLanguageModel",
       "state" : {
-        "revision" : "ac63db38673ed725b781fd43040b0ad667cade1d",
-        "version" : "2.0.0"
+        "revision" : "fe363a31b70f6879f1b53537a2e38d5210751d1f",
+        "version" : "2.2.0"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
       "state" : {
-        "revision" : "cd3e1152083706d77b223fb29110e590efcc70c0",
-        "version" : "2.101.2"
+        "revision" : "0b18836bd8b0162e7e17a995a3fbee20ed8f3b2b",
+        "version" : "2.101.3"
       }
     },
     {
@@ -159,8 +159,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-system.git",
       "state" : {
-        "revision" : "b5544ba79a70a0cb3563e75bf26dc198d6b40ed3",
-        "version" : "1.7.4"
+        "revision" : "50688cacbd41d547e9eb9f7a213542340b7c442b",
+        "version" : "1.7.5"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup",
       "state" : {
-        "revision" : "ead56133a693d0184d8c2db1a6d6394410cacfd6",
-        "version" : "2.13.6"
+        "revision" : "8d6ad267714cac3ae747cefdd21f7a6665006e1f",
+        "version" : "2.13.7"
       }
     },
     {

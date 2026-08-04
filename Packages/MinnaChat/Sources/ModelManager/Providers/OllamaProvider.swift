@@ -63,10 +63,9 @@ public struct OllamaProvider: ModelProvider, Sendable {
         return OllamaLanguageModel(baseURL: endpoint, model: id)
     }
     
-    /// Fetches the list of model identifiers available from the Anthropic API.
+    /// Fetches the list of model identifiers available from the Ollama API.
     ///
     /// - Returns: The `id` of every model returned by the endpoint.
-    /// - Authored by: Claude Opus 4.8 (Anthropic)
     public func availableModels() async throws -> [any Model] {
         var request = URLRequest(url: endpoint.appendingPathComponent("api/tags"))
         request.httpMethod = "GET"

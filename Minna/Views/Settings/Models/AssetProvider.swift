@@ -37,3 +37,9 @@ extension GeminiProvider: AssetProvider {
     static var image: ImageResource { .Providers.Gemini.logo }
     static var background: Color { .primary }
 }
+
+extension OpenAIProvider: AssetProvider {
+    static var marketingName: String { "OpenAI" }
+    static var image: ImageResource { .Providers.OpenAI.logo }
+    static var background: Color { .primary }
+}

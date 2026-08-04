@@ -19,7 +19,7 @@ let package = Package(
         .package(url: "https://github.com/evgenyneu/keychain-swift.git", from: "24.0.0"),
 //        .package(url: "https://github.com/huggingface/AnyLanguageModel", from: "0.8.0"),
 //        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.0.0")
-        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", branch: "main"),
+            .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.2.0"),
 //        .package(path: "/Users/taylorlineman/Developer/git/AnyLanguageModel"),
     ],
     targets: [
