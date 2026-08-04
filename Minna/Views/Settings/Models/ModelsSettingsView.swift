@@ -57,6 +57,7 @@ struct ModelsSettingsView: View {
             
             Section("Add a new provider") {
                 buttonFor(provider: AnthropicProvider.self)
+                buttonFor(provider: GeminiProvider.self)
                 buttonFor(provider: OllamaProvider.self)
             }
         }

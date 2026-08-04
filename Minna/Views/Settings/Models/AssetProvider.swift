@@ -31,3 +31,9 @@ extension OllamaProvider: AssetProvider {
     static var image: ImageResource { .Providers.Ollama.logo }
     static var background: Color { .primary }
 }
+
+extension GeminiProvider: AssetProvider {
+    static var marketingName: String { "Gemini" }
+    static var image: ImageResource { .Providers.Gemini.logo }
+    static var background: Color { .primary }
+}
