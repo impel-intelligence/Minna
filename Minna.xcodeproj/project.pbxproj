@@ -106,8 +106,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ci_post_clone.sh,
-				macros.json,
-				plugins.json,
 			);
 			target = DB0CF4CF2FEDCA6B0036306B /* Minna */;
 		};
