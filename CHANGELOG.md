@@ -7,7 +7,12 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Added
+- Added direct support for markdown with proper chunking.
+
 ## [0.11.0] - Support for Ollama, OpenAI & Gemini - 2026-08-04
+
+### Added
 - Added support for OpenAI as a provider.
 - Added support for local and remote Ollama servers as a provider.
 - Added support for Gemini as a provider.
