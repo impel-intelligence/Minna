@@ -49,10 +49,17 @@ class FrontendDatabase: Database {
             )
             fileDescriptionWriter = FileDescriptionWriter(modelContainer: modelContainer)
             try populateStartupData()
+            try? sendAnalytics()
         } catch {
             SentrySDK.capture(error: error)
             fatalError("Could not create ModelContainer: \(error)")
         }
+    }
+    
+    private func sendAnalytics() throws {
+        let fileCount = (try? context.fetchCount(FetchDescriptor<File>())) ?? 0
+        let askMinnaCount = (try? context.fetchCount(FetchDescriptor<Chat>())) ?? 0
+        TelemetryWrapper.startup(fileCount: fileCount, askMinnaCount: askMinnaCount)
     }
 
     private func populateStartupData() throws {

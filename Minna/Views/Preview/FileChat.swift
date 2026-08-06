@@ -11,6 +11,7 @@ import SwiftData
 import DatabaseSchema
 import SFSafeSymbols
 import Logging
+import ModelManager
 
 struct FileChat: View {
     @Environment(\.modelContext) var modelContext
@@ -106,6 +107,12 @@ struct FileChat: View {
             SearchBar(placeHolder: "Ask anything about \(file.title)", searchQuery: $chatter.chatMessage) {
                 Task {
                     do {
+                        if let model = chatter.selectedModel {
+                            TelemetryWrapper.chat(model: model.id, location: .askDoc)
+                        } else {
+                            TelemetryWrapper.chat(model: "unknown", location: .askDoc)
+                        }
+                        
                         try await chatter.submit()
                     } catch {
                         Log.logger.error("Failed to send chat", error: error)

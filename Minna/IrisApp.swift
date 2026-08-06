@@ -12,6 +12,7 @@ import ModelManager
 import ModernSettingsWindow
 import Logging
 import SFSafeSymbols
+import PostHog
 
 #if canImport(Darwin)
 import LoggingOSLog
@@ -47,6 +48,12 @@ struct MinnaApp: App {
         // TODO: Find an OSLog implementation that handles the Swift-log error types
 //        LoggingSystem.bootstrap(LoggingOSLog.init)
         #endif
+
+        let POSTHOG_PROJECT_TOKEN = "phc_nZHzNbtLBtLumJz9Yi6MvnzK2GDcMpt3MLCv6vDJxcSb"
+        let POSTHOG_HOST = "https://us.i.posthog.com"
+
+        let config = PostHogConfig(projectToken: POSTHOG_PROJECT_TOKEN, host: POSTHOG_HOST)
+        PostHogSDK.shared.setup(config)
 
         SentrySDK.start { options in
             options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"

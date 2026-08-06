@@ -215,6 +215,12 @@ struct AskMinnaView: View {
         
         Task {
             do {
+                if let model = chatter.selectedModel {
+                    TelemetryWrapper.chat(model: model.id, location: .askMinna)
+                } else {
+                    TelemetryWrapper.chat(model: "unknown", location: .askMinna)
+                }
+
                 try await chatter.submit()
             } catch {
                 Log.logger.error("Failed to submit chat message", error: error)

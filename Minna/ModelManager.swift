@@ -155,6 +155,7 @@ final class ModelManager: NSObject, @unchecked Sendable {
                 
                 try BADownloadManager.shared.startForegroundDownload(download)
             } catch {
+                
                 Log.logger.warning("Failed to start download for session \(file.identifier)", error: error)
             }
         }
