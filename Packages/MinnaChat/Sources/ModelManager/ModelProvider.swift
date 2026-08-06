@@ -35,7 +35,7 @@ public protocol ModelProvider: Sendable {
     /// Creates a LanguageModel instance for the model with the given `id`.
     /// - Parameter id: The `id` of the model (ex: sonnet-5)
     /// - Returns: A ``LanguageModel``
-    func getModel(id: String) -> any LanguageModel
+    func getModel(id: String) throws -> any LanguageModel
     
     
     /// List all models that this provider offers.

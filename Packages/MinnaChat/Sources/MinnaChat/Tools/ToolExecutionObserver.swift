@@ -14,6 +14,9 @@ actor ToolExecutionObserver: ToolExecutionDelegate {
     
     func didGenerateToolCalls(_ toolCalls: [Transcript.ToolCall], in session: LanguageModelSession) async {
         print("Generated tool calls: \(toolCalls)")
+        for toolCall in toolCalls {
+            print(toolCall.arguments)
+        }
     }
 
     func toolCallDecision(for toolCall: Transcript.ToolCall, in session: LanguageModelSession) async -> ToolExecutionDecision {

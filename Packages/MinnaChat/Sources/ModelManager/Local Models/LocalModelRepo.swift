@@ -8,6 +8,7 @@
 import Foundation
 import HuggingFace
 import ModelCDN
+import Hub
 
 protocol Downloader: Sendable {
     func downloadModel(id: String) throws -> AsyncThrowingStream<Progress, Error>
@@ -20,37 +21,47 @@ public final class LocalModelRepo: Sendable {
     }
     
     public static let shared: LocalModelRepo = LocalModelRepo()
-    let huggingFaceDownloader = HuggingFaceDownloader()
+    let modelCDNDownloader = ModelCDNDownloader()
     
     private init() { }
     
-    public func getModel(id: String) -> DownloadedModel {
-        return DownloadedModel(id: "", displayName: "", runner: .mlx, directory: URL(filePath: "/"))
+    public func getModel(id: String) throws -> DownloadedModel {
+        guard let model = try modelCDNDownloader.listModels().first(where: { $0.id == id }) else {
+            throw RepoError.modelDoesNotExistOnDisk
+        }
+        
+        return model
     }
     
-    public func availableModels() -> [DownloadedModel] {
-        return [
-            DownloadedModel(id: "qwen3.5-9b", displayName: "Qwen3.5 9B", runner: .mlx, directory: URL(filePath: "/Users/taylorlineman/Library/Containers/com.tryminna.minna/Data/Library/Application Support/models/Qwen3.5-9B-MLX-4bit"))
-        ]
-    }
-    
-    public func download(id: String) throws -> AsyncThrowingStream<Progress, Error> {
-        return try huggingFaceDownloader.downloadModel(id: id)
+    public func availableModels() throws -> [DownloadedModel] {
+        return try modelCDNDownloader.listModels()
     }
 }
 
-//public final class ModelCDNDownloader: /*Downloader,*/ Sendable {
-//    public init() { }
-//    
-//    public func listModels() throws -> [DownloadedModel] {
-//        let contents = try FileManager.default.contentsOfDirectory(at: ManifestSharedSettings.modelStorageURL, includingPropertiesForKeys: [.isDirectoryKey])
+public final class ModelCDNDownloader: /*Downloader,*/ Sendable {
+    public init() { }
+    
+    public func listModels() throws -> [DownloadedModel] {
+        var downloadedModels: [DownloadedModel] = []
+                
+        let contents = try FileManager.default.contentsOfDirectory(at: ManifestSharedSettings.modelStorageURL, includingPropertiesForKeys: [.isDirectoryKey])
+        
+        // Loop over every directory
+        for directory in contents where ((try? directory.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false) {
+            let directoryID = directory.lastPathComponent
+            let directoryContents = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: [])
+            
+            // If there is .safetensors, and a jinja chat template this is a valid chat model.
+            guard directoryContents.contains(where: { $0.pathExtension == "safetensors" }) else { continue }
+            guard directoryContents.contains(where: { $0.pathExtension == "jinja" }) else { continue }
+
+            downloadedModels.append(DownloadedModel(id: directoryID, displayName: directoryID, runner: .mlx, directory: directory))
+        }
+        
+        return downloadedModels
+    }
+    
+//    public func downloadModel(id: String) throws -> AsyncThrowingStream<Progress, Error> {
 //        
-//        print(contents)
-//        
-//        return []
 //    }
-//    
-////    public func downloadModel(id: String) throws -> AsyncThrowingStream<Progress, Error> {
-////        
-////    }
-//}
+}

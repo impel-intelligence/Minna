@@ -2,12 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BAEssentialMaxInstallSize</key>
+	<integer>70000000</integer>
 	<key>BAHasManagedAssetPacks</key>
 	<false/>
-    <key>BAMaxInstallSize</key>
-    <integer>70000000</integer>
-    <key>BAEssentialMaxInstallSize</key>
-    <integer>70000000</integer>
 	<key>BAInitialDownloadRestrictions</key>
 	<dict>
 		<key>BADownloadAllowance</key>
@@ -21,6 +19,8 @@
 	</dict>
 	<key>BAManifestURL</key>
 	<string>https://cdn.tryminna.com/manifest.json</string>
+	<key>BAMaxInstallSize</key>
+	<integer>70000000</integer>
 	<key>BAUsesAppleHosting</key>
 	<false/>
 	<key>CFBundleURLTypes</key>
@@ -36,6 +36,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
 	<key>SUFeedURL</key>
 	<string>https://impel-intelligence.github.io/minna-sparkle-updater/appcast.xml</string>
 	<key>SUPublicEDKey</key>

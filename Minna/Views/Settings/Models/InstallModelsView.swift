@@ -17,12 +17,9 @@ struct InstallModelsView: View {
         }
         .formStyle(.grouped)
         .navigationTitle("Install a Model")
-        .onAppear {
-            print(LocalModelRepo.shared.availableModels())
-        }
         .task {
             do {
-//                ModelCDNDownloader().listModels()
+                try ModelCDNDownloader().listModels()
                 
 //                let progressStream = try LocalModelRepo.shared.download(id: "mlx-community/Qwen3.5-9B-MLX-4bit")
 //
