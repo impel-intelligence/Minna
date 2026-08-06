@@ -48,6 +48,7 @@ struct BouncingBubbles: View {
             .mask {
                 content
             }
+            .geometryGroup()
         .onReceive(timer) { _ in
             withAnimation {
                 currentIndex += 1
