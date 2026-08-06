@@ -43,39 +43,6 @@ struct ModelUploader: AsyncParsableCommand {
     var required: Bool
 
     mutating func run() async throws {
-        let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-        
-        guard var modelURL = URL(string: modelPath, relativeTo: currentDirectory) else {
-            throw UploadError.modelURLDoesNotExist
-        }
-        
-        guard ModelUploader.coreMLExtensions.contains(modelURL.pathExtension) else {
-            throw UploadError.unknownModelFormat
-        }
-        
-        let modelDirectory = modelURL.deletingLastPathComponent()
-        
-        let vocabURL = modelDirectory.appendingPathComponent("vocab", conformingTo: .plainText)
-        
-        guard FileManager.default.fileExists(atPath: vocabURL.path(percentEncoded: false)) else {
-            throw UploadError.missingVocab
-        }
-        
-        let configURL = modelDirectory.appendingPathComponent("config", conformingTo: .json)
-        
-        guard FileManager.default.fileExists(atPath: configURL.path(percentEncoded: false)) else {
-            throw UploadError.missingConfig
-        }
-        
-        print("Resolved Config and Vocab files.")
-        
-        // If the package is not a compiled CoreML model, compile it.
-        if modelURL.pathExtension == "mlpackage" || modelURL.pathExtension == "mlmodel" {
-            print("Compiling \(modelURL.pathExtension)...")
-            modelURL = try await MLModel.compileModel(at: modelURL)
-            print("Done compiling \(modelURL.pathExtension)!")
-        }
-        
         let temporaryDirectory = FileManager.default.temporaryDirectory.appending(path: "model_uploader")
         defer { try? FileManager.default.removeItem(at: temporaryDirectory) }
 
@@ -83,17 +50,65 @@ struct ModelUploader: AsyncParsableCommand {
         try FileManager.default.createDirectory(at: packageDirectory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: packageDirectory) }
         
-        print("Copying model")
-        // Move the model into the temp directory
-        try FileManager.default.copyItem(at: modelURL, to: packageDirectory.appending(path: "model.mlmodelc"))
+        let currentDirectory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         
-        print("Copying config")
-        // Move the configuration file
-        try FileManager.default.copyItem(at: configURL, to: packageDirectory.appending(path: "config.json"))
+        var isDirectory: ObjCBool = false
         
-        print("Copying vocab")
-        // Move the vocabulary file
-        try FileManager.default.copyItem(at: vocabURL, to: packageDirectory.appending(path: "vocab.txt"))
+        guard FileManager.default.fileExists(atPath: modelPath, isDirectory: &isDirectory) else {
+            throw UploadError.modelURLDoesNotExist
+        }
+
+        guard var modelURL = URL(string: modelPath, relativeTo: currentDirectory) else {
+            throw UploadError.modelURLDoesNotExist
+        }
+        
+        if isDirectory.boolValue == true {
+            let contents = try FileManager.default.contentsOfDirectory(at: modelURL, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+
+            for file in contents {
+                let newURL = packageDirectory.appending(path: file.lastPathComponent)
+                
+                // Move the model into the temp directory
+                try FileManager.default.copyItem(at: file, to: newURL)
+            }
+        } else if ModelUploader.coreMLExtensions.contains(modelURL.pathExtension) {
+            let modelDirectory = modelURL.deletingLastPathComponent()
+            
+            let vocabURL = modelDirectory.appendingPathComponent("vocab", conformingTo: .plainText)
+            
+            guard FileManager.default.fileExists(atPath: vocabURL.path(percentEncoded: false)) else {
+                throw UploadError.missingVocab
+            }
+            
+            let configURL = modelDirectory.appendingPathComponent("config", conformingTo: .json)
+            
+            guard FileManager.default.fileExists(atPath: configURL.path(percentEncoded: false)) else {
+                throw UploadError.missingConfig
+            }
+            
+            print("Resolved Config and Vocab files.")
+            
+            // If the package is not a compiled CoreML model, compile it.
+            if modelURL.pathExtension == "mlpackage" || modelURL.pathExtension == "mlmodel" {
+                print("Compiling \(modelURL.pathExtension)...")
+                modelURL = try await MLModel.compileModel(at: modelURL)
+                print("Done compiling \(modelURL.pathExtension)!")
+            }
+            
+            print("Copying model")
+            // Move the model into the temp directory
+            try FileManager.default.copyItem(at: modelURL, to: packageDirectory.appending(path: "model.mlmodelc"))
+    
+            print("Copying config")
+            // Move the configuration file
+            try FileManager.default.copyItem(at: configURL, to: packageDirectory.appending(path: "config.json"))
+    
+            print("Copying vocab")
+            // Move the vocabulary file
+            try FileManager.default.copyItem(at: vocabURL, to: packageDirectory.appending(path: "vocab.txt"))
+        } else {
+            throw UploadError.unknownModelFormat
+        }
             
         print("Archiving Model")
         let archiveFile = temporaryDirectory.appendingPathComponent(identifier, conformingTo: .appleArchive)
@@ -153,7 +168,7 @@ struct ModelUploader: AsyncParsableCommand {
         let arguments: Arguments = ["storage", "rm", deleteURL]
         let config: Subprocess.Configuration = .init(.path("/opt/homebrew/bin/gcloud"), arguments: arguments)
         
-//        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
+        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
     }
     
     func downloadFromCDN(file: String, to url: URL) async throws {
@@ -161,7 +176,7 @@ struct ModelUploader: AsyncParsableCommand {
         let arguments: Arguments = ["storage", "cp", downloadURL, url.absoluteString]
         let config: Subprocess.Configuration = .init(.path("/opt/homebrew/bin/gcloud"), arguments: arguments)
         
-//        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
+        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
     }
     
     func uploadToCDN(file: URL) async throws {

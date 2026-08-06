@@ -22,6 +22,8 @@ public struct ProviderFactory {
             return GeminiProvider.self
         case OpenAIProvider.id:
             return OpenAIProvider.self
+        case MLXProvider.id:
+            return MLXProvider.self
         default:
             return nil
         }
@@ -41,6 +43,8 @@ public struct ProviderFactory {
             return try GeminiProvider.make(from: configuration)
         case OpenAIProvider.id:
             return try OpenAIProvider.make(from: configuration)
+        case MLXProvider.id:
+            return try MLXProvider.make(from: configuration)
         default:
             return nil
         }

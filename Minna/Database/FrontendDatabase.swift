@@ -58,6 +58,7 @@ class FrontendDatabase: Database {
     private func populateStartupData() throws {
         try populateUnfilledFolder()
         try populateAppleProvider()
+        try populateMLXProvider()
         
         try context.save()
     }
@@ -100,6 +101,19 @@ class FrontendDatabase: Database {
         // Add the model
         let appleProvider = ConfiguredProvider(name: "Apple Foundation Models", providerID: "apple")
         context.insert(appleProvider)
+    }
+    
+    private func populateMLXProvider() throws {
+        // Check to see if we have already inserted it into the models.
+        var descriptor = FetchDescriptor<ConfiguredProvider>(predicate: #Predicate { provider in
+            provider.providerID == "mlx"
+        })
+        descriptor.fetchLimit = 1
+        guard try context.fetch(descriptor).isEmpty else { return }
+        
+        // Add the model
+        let mlxProvider = ConfiguredProvider(name: "On-device MLX", providerID: "mlx")
+        context.insert(mlxProvider)
     }
     
     public func queueDescriptionUpdate(for file: File) {

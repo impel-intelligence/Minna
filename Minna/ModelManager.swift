@@ -97,14 +97,21 @@ final class ModelManager: NSObject, @unchecked Sendable {
             // We always need the required files, so instruct them to download
             for file in manifest.files.filter(\.required) {
                 // Only download files that are not on the disk already.
-                guard !doesManifestFileExist(identifier: file.identifier) else { continue }
+                guard !doesModelExistOnDisk(identifier: file.identifier) else { continue }
                 
                 self.startDownload(of: file)
+            }
+            
+            // TODO: This should not be hard coded
+            if let qwen = manifest.files.filter({ $0.identifier == "Qwen3.5-9B-MLX-4bit" }).first,
+               !doesModelExistOnDisk(identifier: qwen.identifier) {
+                print("Downloading QWEN Model!")
+                self.startDownload(of: qwen)
             }
         }
     }
     
-    private func doesManifestFileExist(identifier: String) -> Bool {
+    private func doesModelExistOnDisk(identifier: String) -> Bool {
         let url = ManifestSharedSettings.modelStorageURL.appendingPathComponent(identifier, conformingTo: .directory)
         return FileManager.default.fileExists(atPath: url.path(percentEncoded: false))
     }

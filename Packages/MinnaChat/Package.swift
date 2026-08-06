@@ -24,13 +24,12 @@ let package = Package(
     dependencies: [
         .package(path: "../DatabaseSchema"),
         .package(path: "../IrisSearch"),
-        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.2.0"),
-//        .package(path: "/Users/taylorlineman/Developer/git/AnyLanguageModel"),
-//        .package(
-//            url: "https://github.com/huggingface/AnyLanguageModel",
-//            from: "0.8.0",
-//            traits: ["MLX"]
-//        ),
+        .package(path: "../ModelCDN"),
+        .package(url: "https://github.com/huggingface/swift-transformers", from: "1.0.0"),
+        .package(url: "https://github.com/huggingface/swift-huggingface", from: "0.9.0"),
+        .package(url: "https://github.com/ml-explore/mlx-swift-lm", from: "3.0.0"),
+        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.2.0", traits: ["MLX"]),
+//        .package(path: "/Users/taylorlineman/Developer/git/AnyLanguageModel", traits: ["MLX"]),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -48,6 +47,7 @@ let package = Package(
             name: "ModelManager",
             dependencies: [
                 "DatabaseSchema",
+                "ModelCDN",
                 .product(name: "AnyLanguageModel", package: "AnyLanguageModel")
             ]
         )
