@@ -54,6 +54,6 @@ public struct MLXProvider: ModelProvider, Sendable {
             repetitionPenalty: 1.0
         )
 
-        return GenerationOptions()
+        return generationOptions
     }
 }
