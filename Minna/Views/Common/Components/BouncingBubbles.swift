@@ -3,7 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 7/8/26.
-//
+//  Edited by Claude Sonnet 4.6 (Anthropic) on 2026-08-06
 
 import SwiftUI
 import Combine
@@ -16,7 +16,6 @@ struct BouncingBubbles: View {
     let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
     let text: String
 
-    @State private var animate = false
     @State private var colors: [Color] = [
         .red.opacity(colorOpacity),
         .orange.opacity(colorOpacity),
@@ -29,26 +28,26 @@ struct BouncingBubbles: View {
 
     var body: some View {
         content
+            .id("bubble")
             .overlay {
                 GeometryReader { geometry in
-                    // Double the colors and lay them out across twice the width, then slide by exactly one width.
-                    LinearGradient(
-                        colors: colors + colors,
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                    .frame(width: geometry.size.width * 2)
-                    .offset(x: animate ? 0 : -geometry.size.width)
+                    // Drive the gradient offset from wall-clock time so re-renders can never interrupt it.
+                    TimelineView(.animation) { context in
+                        let elapsed = context.date.timeIntervalSinceReferenceDate
+                        let progress = elapsed.truncatingRemainder(dividingBy: 5.0) / 5.0
+                        LinearGradient(
+                            colors: colors + colors,
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                        .frame(width: geometry.size.width * 2)
+                        .offset(x: -geometry.size.width * (1.0 - progress))
+                    }
                 }
             }
             .mask {
                 content
             }
-        .onAppear {
-            withAnimation(.linear(duration: 5).repeatForever(autoreverses: false)) {
-                animate = true
-            }
-        }
         .onReceive(timer) { _ in
             withAnimation {
                 currentIndex += 1
@@ -58,7 +57,7 @@ struct BouncingBubbles: View {
             }
         }
     }
-    
+
     var content: some View {
         HStack(alignment: .bottom) {
             Text(text)
@@ -80,5 +79,5 @@ struct BouncingBubbles: View {
 }
 
 #Preview {
-    BouncingBubbles(text: "Calculating")
+    BouncingBubbles(text: "Sifting through really long information")
 }

@@ -198,7 +198,6 @@ struct AskMinnaView: View {
             IndexingSearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatter.chatMessage) {
                 submit()
             }
-            .disabled(chatter.selectedModel == nil || chatter.chatInstance == nil)
         }
         .frame(maxWidth: 640)
         .padding(.bottom, 20)
