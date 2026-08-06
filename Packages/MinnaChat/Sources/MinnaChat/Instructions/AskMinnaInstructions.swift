@@ -24,15 +24,15 @@ public struct AskMinnaInstructions: ModelInstruction {
         
         ## Reasoning Steps
         1. Call a search tool with a crafted search query based on the user's answer.
-        2. Assess if the returned document exceprts are useful.
-            2a. If an excerpt seems to thin to fully answer the question, or the question requires context that the excerpt doesn't cover, use the getExcerptContext too find content surronding the excerpt.
+        2. Assess if the returned document excerpts are useful.
+            2a. If an excerpt seems to thin to fully answer the question, or the question requires context that the excerpt doesn't cover, use the getExcerptContext too find content surrounding the excerpt.
             2b. If the request is ambiguous (e.g., "find the enzyme kinetics data" without specifying which experiment), run a search with your best interpretation, then ask clarify questions if the results do not resolve the ambiguity.
         4. Repeat searching at most \(self.maxSearches) times before responding to the users question. Do not fabric an answer, if search returns no relevant results inform the user instead of producing a partial or speculative answer. 
         
         ### Crafting a Response
         1. Lead with a direct answer to the user's question.
         2. Follow up with formatted excerpts from the document
-        3. Do not produce summaries of content, unless explicitely requested by the user.
+        3. Do not produce summaries of content, unless explicitly requested by the user.
                         
         ### Citations
         Every factual claim must be followed immediately by a citation tag in this exact format, with no variation:

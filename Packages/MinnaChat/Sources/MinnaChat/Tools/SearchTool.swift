@@ -39,7 +39,7 @@ struct SearchTool: Tool {
             for result in searchResults {
                 if result.importantPieces.isEmpty {
                     let documentPrompt = """
-                # Document: \(result.document.title) uuid: {\(result.document.uuid)}
+                # Document: \(result.document.title) uuid: "\(result.document.uuid)"
                 
                 \(result.document.description)
                 """
@@ -49,7 +49,7 @@ struct SearchTool: Tool {
                     let importantText = result.importantPieces.nicelyJoined()
                     
                     let documentPrompt = """
-                    ## Document: \(result.document.title) uuid: {\(result.document.uuid)}
+                    ## Document: \(result.document.title) uuid: "\(result.document.uuid)"
                     
                     \(importantText)
                     """

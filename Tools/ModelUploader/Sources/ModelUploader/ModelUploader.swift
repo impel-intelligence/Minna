@@ -63,6 +63,32 @@ struct ModelUploader: AsyncParsableCommand {
         }
         
         if isDirectory.boolValue == true {
+            let configurationURL = modelURL.appendingPathComponent("minna-config", conformingTo: .json)
+            
+            if !FileManager.default.fileExists(atPath: configurationURL.path(percentEncoded: false)) {
+                print("Creating Minna Configuration")
+                
+                let rawTemperature = ask(question: "Temperature")
+                let rawTopP = ask(question: "Top P")
+                let rawTopK = ask(question: "Top K")
+                let rawMinP = ask(question: "Min P")
+                let rawPresencePenalty = ask(question: "Presence Penalty")
+                let rawRepetitionPenalty = ask(question: "Repetition Penalty")
+
+                let configuration: LLMModelConfig = LLMModelConfig(
+                    identifier: identifier,
+                    displayName: name,
+                    temperature: Double(rawTemperature ?? ""),
+                    topP: Double(rawTopP ?? ""),
+                    topK: Double(rawTopK ?? ""),
+                    minP: Double(rawMinP ?? ""),
+                    presencePenalty: Double(rawPresencePenalty ?? ""),
+                    repetitionPenalty: Double(rawRepetitionPenalty ?? "")
+                )
+
+                try configuration.save(to: configurationURL)
+            }
+
             let contents = try FileManager.default.contentsOfDirectory(at: modelURL, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
 
             for file in contents {
@@ -184,5 +210,16 @@ struct ModelUploader: AsyncParsableCommand {
         let config: Subprocess.Configuration = .init(.path("/opt/homebrew/bin/gcloud"), arguments: arguments)
         
         _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
+    }
+    
+    func ask(question: String) -> String? {
+        print("\(question): ", terminator: "")
+
+        // 2. Read the standard input
+        guard let value = readLine(), !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return nil
+        }
+
+        return value
     }
 }

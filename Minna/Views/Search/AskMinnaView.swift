@@ -61,8 +61,10 @@ struct AskMinnaView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 case .chat:
                     TranscriptView(chatter: chatter, limitSize: true, reader: reader)
+                        .frame(width: reader.size.width) // Pin to the reader width to prevent jumping
                 }
             }
+            .frame(width: reader.size.width) // Pin to the reader width to prevent jumping
             .safeAreaInset(edge: .bottom) {
                 VStack {
                     if viewMode == .startup {
@@ -205,6 +207,8 @@ struct AskMinnaView: View {
     }
 
     private func submit() {
+        guard !chatter.chatMessage.isEmpty else { return }
+        
         if viewMode == .startup || viewMode == .searching {
             modelContext.insert(chatter.chat.file)
             viewMode = .chat // Start animations

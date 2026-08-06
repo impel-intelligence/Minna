@@ -13,6 +13,7 @@ struct TranscriptView: View {
     @State var chatter: Chatter
     let limitSize: Bool
     let reader: GeometryProxy
+    let randomQuip = Wordlists.generatingContentQuips.randomElement() ?? "Generating"
     
     var body: some View {
         if let chatInstance = chatter.chatInstance {
@@ -37,7 +38,7 @@ struct TranscriptView: View {
                 
                 if chatInstance.waitingForResponse {
                     HStack {
-                        BouncingBubbles(text: Wordlists.generatingContentQuips.randomElement() ?? "Generating")
+                        BouncingBubbles(text: randomQuip)
                         Spacer()
                     }
                 }

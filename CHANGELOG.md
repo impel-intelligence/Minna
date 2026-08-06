@@ -9,6 +9,11 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ### Added
 - Added direct support for markdown with proper chunking.
+- Added on-device models through MLX.
+
+### Fixed
+- You can now open the dashboard from the menu bar.
+- Fixed a bug where the search tool would return UUIDs in the wrong format, confusing on-device models.
 
 ## [0.11.0] - Support for Ollama, OpenAI & Gemini - 2026-08-04
 

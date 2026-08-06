@@ -23,6 +23,8 @@ import Sparkle
 
 @main
 struct MinnaApp: App {
+    @Environment(\.openWindow) var openWindow
+    
     // MARK: Databases
     @State var irisDBContext: IrisContext
     @State var frontendDatabase: FrontendDatabase
@@ -73,7 +75,7 @@ struct MinnaApp: App {
     }
     
     var body: some Scene {
-        WindowGroup {
+        WindowGroup("Dashboard", id: "dashboard") {
             NavigationCore()
                 .modelContainer(frontendDatabase.modelContainer)
                 .database(frontendDatabase)
@@ -98,6 +100,12 @@ struct MinnaApp: App {
                 CheckForUpdatesView(updater: updaterController.updater)
             }
             #endif
+            
+            CommandGroup(after: .singleWindowList) {
+                Button("Dashboard") {
+                    openWindow(id: "dashboard")
+                }
+            }
         }
 
         WindowGroup(id: PreviewWindow.windowID, for: OpenFileAction.self) { $parameters in
