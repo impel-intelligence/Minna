@@ -18,11 +18,16 @@ git submodule update --init --recursive
 
 # 2. MLX's Metal kernels are compiled by Xcode, not SwiftPM. Build Minna in Xcode once (⌘B),
 #    then copy the shader bundle next to the ModelBench binary.
-./scripts/prepare-metal.sh
+swift build                    # create the build directory first
+./scripts/prepare-metal.sh     # installs into debug and release
 ```
 
 Without step 2 every run dies with `MLX error: Failed to load the default metallib`. See the
 script's header for why.
+
+The bundle must sit beside the binary that loads it, and debug and release have separate build
+directories — so `prepare-metal.sh` installs into both by default. If you build a configuration
+*after* running it, run it again.
 
 ## Usage
 

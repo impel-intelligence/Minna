@@ -71,6 +71,11 @@ echo "Building ModelBench..."
 swift build --package-path "${PACKAGE_DIR}" --configuration release
 BINARY="$(swift build --package-path "${PACKAGE_DIR}" --configuration release --show-bin-path)/ModelBench"
 
+# Downloading does not touch MLX, but the benchmark that follows does, and the metallib has to
+# sit beside whichever binary loads it. Install it now so `run` does not fail hours later.
+"${PACKAGE_DIR}/scripts/prepare-metal.sh" release || \
+    echo 'warning: metallib not installed; downloads will still work but the benchmark will not' >&2
+
 # Smallest first, so an interrupted run still leaves the most models usable.
 FAILED=()
 for entry in "${MODELS[@]}"; do
