@@ -34,15 +34,5 @@ extension SchemaV1 {
             self.theme = file.color
             self.file = file
         }
-        
-        public func apply(_ transcript: Transcript) {
-            self.transcript = transcript
-            self.lastMessage = .now
-            //        self.lastMessagePreview = transcript.last.flatMap(\.plainTextPreview)
-        }
-        
-        public func setModel(modelID: String) {
-            self.lastUsedModel = modelID
-        }
     }
 }

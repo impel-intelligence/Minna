@@ -10,17 +10,17 @@ import os
 internal import SwiftSoup
 
 struct LoggingBackend: LogHandler {
-    var logLevel: Logging.Logger.Level = .debug
-    var metadata: Logging.Logger.Metadata = [:]
+    public var logLevel: Logging.Logger.Level = .debug
+    public var metadata: Logging.Logger.Metadata = [:]
 
-    var logger: os.Logger
+    private var logger: os.Logger
     
-    subscript(metadataKey key: String) -> Logging.Logger.Metadata.Value? {
+    public subscript(metadataKey key: String) -> Logging.Logger.Metadata.Value? {
         get { metadata[key] }
         set { metadata[key] = newValue }
     }
     
-    init(label: String) {
+    public init(label: String) {
         if let dotPosition = label.lastIndex(of: ".") {
             let subsystemDotPosition = label.index(before: dotPosition)
             let categoryDotPosition = label.index(after: dotPosition)
@@ -34,18 +34,18 @@ struct LoggingBackend: LogHandler {
         }
     }
     
-    init(subsystem: String, category: String) {
+    public init(subsystem: String, category: String) {
         self.logger = os.Logger(subsystem: subsystem, category: category)
     }
 
-    func log(event: LogEvent) {
+    public func log(event: LogEvent) {
         let logLine = makeLogLine(event: event)
         let level = OSLogType.from(level: event.level)
         
         logger.log(level: level, "\(logLine, privacy: .auto)")
     }
     
-    func makeLogLine(event: LogEvent) -> String {
+    private func makeLogLine(event: LogEvent) -> String {
         var logLine: String = ""
         
         let timestamp = ISO8601DateFormatter().string(from: Date())
@@ -80,7 +80,7 @@ struct LoggingBackend: LogHandler {
         
         var metadata = base
         metadata.merge(explicit, uniquingKeysWith: { _, explicit in explicit })
-
+        
         return metadata
     }
 }

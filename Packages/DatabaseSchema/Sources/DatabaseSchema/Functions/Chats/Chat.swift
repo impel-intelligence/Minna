@@ -10,6 +10,18 @@ import SwiftData
 import AnyLanguageModel
 
 extension Chat {
+    public func apply(_ transcript: Transcript) {
+        self.transcript = transcript
+        self.lastMessage = .now
+        //        self.lastMessagePreview = transcript.last.flatMap(\.plainTextPreview)
+    }
+    
+    public func setModel(modelID: String) {
+        self.lastUsedModel = modelID
+    }
+}
+
+extension Chat {
     /// Builds a chat and its backing ``File`` entirely in memory, without inserting
     /// into a `ModelContext`. Insertion is the caller's responsibility and should
     /// happen only once the chat has real content (e.g. the first message), so an

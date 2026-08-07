@@ -116,6 +116,7 @@ struct OpaqueFileCard: View {
                         
                         for file in filesToChange {
                             file.color = theme
+                            file.chat?.theme = theme
                         }
                     } label: {
                         Label(theme.description, systemSymbol: .circleFill)

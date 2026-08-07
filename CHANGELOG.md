@@ -7,6 +7,8 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.12.0] - Support for MLX & many bug fixes - 2026-08-07
+
 ### Added
 - Added direct support for markdown with proper chunking.
 - Added on-device models through MLX.
@@ -18,6 +20,8 @@ The format has been adjusted to include a release Title. This has been inserted 
 - Hopefully fixed a bug where the Sparkle app would update in a sandbox.
 - Fixed generating text jumping across the chat view.
 - Fixed long load times for saved Minna Chats.
+- Fixed a bug where chats would not match their file theme if you changed the file's theme.
+- Logs are logged into `Console.app`
 
 ## [0.11.0] - Support for Ollama, OpenAI & Gemini - 2026-08-04
 
