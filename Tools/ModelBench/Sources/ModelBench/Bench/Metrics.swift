@@ -150,6 +150,29 @@ struct PowerUsage: Codable, Sendable {
     /// How many readings the averages are based on.
     let sampleCount: Int
 
+    // MARK: - On-die counters
+    //
+    // Read from IOReport, so these work on a desktop and while plugged in, unlike everything
+    // above. This is the only energy measurement available on a Mac mini.
+
+    /// Mean CPU + GPU + ANE power over the task, in watts.
+    var packageWatts: Double = 0
+    var cpuWatts: Double = 0
+    var gpuWatts: Double = 0
+    var aneWatts: Double = 0
+    var dramWatts: Double = 0
+    /// CPU + GPU + ANE energy consumed, in watt-hours.
+    var packageWattHours: Double = 0
+    /// Whether the on-die counters were readable at all.
+    var packageMeasured: Bool = false
+
+    /// The counter deltas exactly as IOReport reported them, units included, so no precision is
+    /// lost to the watt conversion above.
+    var cpuEnergy = EnergyChannelReading()
+    var gpuEnergy = EnergyChannelReading()
+    var aneEnergy = EnergyChannelReading()
+    var dramEnergy = EnergyChannelReading()
+
     /// Energy per minute of wall-clock time, in watt-hours. This is what "watts per minute"
     /// means as an energy rate; `averageWatts` is the power figure.
     var wattHoursPerMinute: Double {
@@ -181,8 +204,12 @@ actor PowerRecorder {
     private var startedAt: ContinuousClock.Instant = .now
     private var task: Task<Void, Never>?
 
+    private let energyProbe = EnergyProbe()
+    private var energyStart: CFDictionary?
+
     func start() {
         startedAt = .now
+        energyStart = energyProbe?.sample()
         first = PowerProbe.sample()
         last = first
         wattSamples = []
@@ -206,19 +233,41 @@ actor PowerRecorder {
 
         sample()
 
-        guard let first, let last, first.maxCapacity > 0 else { return .unavailable }
+        let elapsedSeconds = (ContinuousClock.now - startedAt).seconds
+        let elapsedHours = elapsedSeconds / 3600
 
-        let elapsedHours = (ContinuousClock.now - startedAt).seconds / 3600
-        let averageWatts = wattSamples.isEmpty ? 0 : wattSamples.reduce(0, +) / Double(wattSamples.count)
+        var usage = PowerUsage.unavailable
 
-        return PowerUsage(
-            percentageDrop: first.percentage - last.percentage,
-            milliampHours: Double(first.currentCapacity - last.currentCapacity),
-            averageWatts: averageWatts,
-            wattHours: averageWatts * elapsedHours,
-            onACPower: sawACPower,
-            sampleCount: wattSamples.count
-        )
+        if let first, let last, first.maxCapacity > 0 {
+            let averageWatts = wattSamples.isEmpty ? 0 : wattSamples.reduce(0, +) / Double(wattSamples.count)
+
+            usage = PowerUsage(
+                percentageDrop: first.percentage - last.percentage,
+                milliampHours: Double(first.currentCapacity - last.currentCapacity),
+                averageWatts: averageWatts,
+                wattHours: averageWatts * elapsedHours,
+                onACPower: sawACPower,
+                sampleCount: wattSamples.count
+            )
+        }
+
+        // On-die counters, which unlike the battery work on a desktop and while charging.
+        if let energyProbe, let energyStart, let energyEnd = energyProbe.sample(),
+           let energy = energyProbe.energy(from: energyStart, to: energyEnd), elapsedSeconds > 0 {
+            usage.cpuWatts = energy.cpuJoules / elapsedSeconds
+            usage.gpuWatts = energy.gpuJoules / elapsedSeconds
+            usage.aneWatts = energy.aneJoules / elapsedSeconds
+            usage.dramWatts = energy.dramJoules / elapsedSeconds
+            usage.packageWatts = energy.packageJoules / elapsedSeconds
+            usage.packageWattHours = energy.packageJoules / 3600
+            usage.packageMeasured = energy.packageJoules > 0
+            usage.cpuEnergy = energy.cpu
+            usage.gpuEnergy = energy.gpu
+            usage.aneEnergy = energy.ane
+            usage.dramEnergy = energy.dram
+        }
+
+        return usage
     }
 
     private func sample() {

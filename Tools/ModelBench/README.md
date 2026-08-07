@@ -78,32 +78,49 @@ across tasks. The composite is `0.35·prompt + 0.35·tools + 0.20·speed + 0.10�
 
 ## Energy
 
-Battery cost is measured per task and reported raw, but is **not** part of the composite score,
-because it cannot be measured on wall power and a zero would corrupt the ranking.
+Energy cost is measured per task and reported raw, but is **not** part of the composite score,
+because it is not measurable in every configuration and a zero would corrupt the ranking.
 
-Readings come from `AppleSmartBattery` in the IORegistry rather than
-`IOPSCopyPowerSourcesInfo`, which only reports whole percentage points — too coarse to resolve a
-single task. The raw mAh keys give roughly 0.02% resolution on a ~4900 mAh pack:
+There are two independent sources, and the harness records whichever are available.
 
-| Measurement | Derivation |
-|-------------|------------|
-| `battery_percent_drop` | `AppleRawCurrentCapacity / AppleRawMaxCapacity × 100`, sampled at start and end |
-| `battery_mah` | Raw capacity delta in mAh |
-| `avg_watts` | Mean of `Voltage × InstantAmperage` sampled once a second |
-| `watt_hours` | `avg_watts × elapsed_hours` |
-| `watt_hours_per_minute` | `avg_watts / 60` |
-| `on_ac_power` | `ExternalConnected` — when true, all of the above are meaningless |
+### On-die counters (works everywhere, including a Mac mini)
 
-Energy is integrated from power samples rather than inferred from the capacity delta, because a
-short task may not move the capacity gauge at all while its wattage is perfectly measurable.
+Read from the `Energy Model` group of the private IOReport framework — the same counters
+`powermetrics` reports, but without needing root, so an unattended run can use them. Available on
+any Apple Silicon Mac, on a desktop, and while plugged in.
 
-**Unplug the machine to get real numbers.** While charging, the battery current reflects the
-adapter rather than what the model costs, so the harness blanks the battery columns and prints a
-warning instead of reporting a misleading figure.
+| Column | Meaning |
+|--------|---------|
+| `package_watts` | CPU + GPU + ANE, matching powermetrics' combined power |
+| `cpu_watts`, `gpu_watts`, `ane_watts`, `dram_watts` | Per-block averages |
+| `package_watt_hours` | Energy over the task |
+| `cpu_energy_raw` + `cpu_energy_unit` (and gpu/ane/dram) | The counter delta exactly as IOReport reported it |
 
-The per-model summary also reports **Wh per 1000 generated tokens**, which is the figure that
-actually compares models: a faster model can draw more watts and still cost less energy overall
-because it finishes sooner.
+The raw counters are carried through in their native units because channels disagree — CPU
+reports millijoules while GPU reports nanojoules on the same machine — so nothing is lost to the
+watt conversion. Expect GPU to dominate: MLX inference measured about 19 W GPU against 5 W CPU.
+
+### Battery (laptops only, and only unplugged)
+
+Read from `AppleSmartBattery`. Gives whole-system draw rather than just the SoC, which is the
+better figure for "how much battery does this cost" — but it does not exist on a desktop, and
+while charging the current reflects the adapter rather than the model.
+
+| Column | Derivation |
+|--------|------------|
+| `battery_percent_drop` | `AppleRawCurrentCapacity / AppleRawMaxCapacity × 100` |
+| `battery_mah` | Raw capacity delta |
+| `avg_watts` | Mean of `Voltage × InstantAmperage`, sampled each second |
+| `watt_hours`, `watt_hours_per_minute` | Derived from the above |
+| `on_ac_power` | `ExternalConnected` — when 1, the battery columns are meaningless |
+
+`IOPSCopyPowerSourcesInfo` is deliberately not used: it reports only whole percentage points,
+too coarse to resolve a task lasting under a minute. The raw mAh keys give about 0.02%
+resolution on a 4900 mAh pack.
+
+The per-model summary reports **Wh per 1000 generated tokens**, which is the figure that actually
+compares models: a faster model can draw more watts and still cost less energy overall because it
+finishes sooner.
 
 Peak memory and cold-load time are recorded and reported but not scored.
 

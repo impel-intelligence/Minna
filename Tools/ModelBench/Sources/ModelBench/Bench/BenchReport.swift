@@ -114,6 +114,21 @@ struct ModelResult: Codable, Sendable {
     var energyWattHours: Double { tasks.reduce(0) { $0 + $1.power.wattHours } }
     var medianWatts: Double { tasks.map(\.power.averageWatts).filter { $0 > 0 }.median }
 
+    /// On-die power, which unlike the battery figures is available on a desktop and on wall power.
+    var packageMeasured: Bool { tasks.contains { $0.power.packageMeasured } }
+    var medianPackageWatts: Double { tasks.map(\.power.packageWatts).filter { $0 > 0 }.median }
+    var medianCPUWatts: Double { tasks.map(\.power.cpuWatts).filter { $0 > 0 }.median }
+    var medianGPUWatts: Double { tasks.map(\.power.gpuWatts).filter { $0 > 0 }.median }
+    var packageWattHours: Double { tasks.reduce(0) { $0 + $1.power.packageWattHours } }
+
+    /// Energy cost per 1000 generated tokens from the on-die counters — the desktop-safe
+    /// equivalent of `wattHoursPerThousandTokens`.
+    var packageWattHoursPerThousandTokens: Double {
+        let tokens = tasks.reduce(0) { $0 + $1.outputTokens }
+        guard tokens > 0 else { return 0 }
+        return packageWattHours / Double(tokens) * 1000
+    }
+
     /// Energy cost per 1000 generated tokens — the figure that actually compares models,
     /// since a faster model finishing sooner can draw more watts and still cost less.
     var wattHoursPerThousandTokens: Double {
@@ -200,36 +215,70 @@ struct BenchReport: Codable, Sendable {
                 "peak_memory_bytes", "model_bytes",
                 "avg_watts", "watt_hours", "watt_hours_per_minute",
                 "battery_percent_drop", "battery_mah", "power_samples", "on_ac_power",
+                "package_watts", "cpu_watts", "gpu_watts", "ane_watts", "dram_watts",
+                "package_watt_hours",
+                "cpu_energy_raw", "cpu_energy_unit",
+                "gpu_energy_raw", "gpu_energy_unit",
+                "ane_energy_raw", "ane_energy_unit",
+                "dram_energy_raw", "dram_energy_unit",
                 "failure"
             ].joined(separator: ",")
         ]
 
         for model in models {
             for task in model.tasks {
-                rows.append(
-                    [
-                        model.modelID.csvEscaped,
-                        task.taskID.csvEscaped,
-                        task.kind.rawValue,
-                        String(task.attempt + 1),
-                        String(task.promptPassed), String(task.promptTotal), String(format: "%.4f", task.promptScore),
-                        String(task.toolPassed), String(task.toolTotal), String(format: "%.4f", task.toolScore),
-                        String(task.toolCallCount), String(task.searchCount), String(task.citationCount),
-                        String(task.outputTokens), String(task.answerCharacters),
-                        String(format: "%.3f", task.timeToFirstToken),
-                        String(format: "%.3f", task.totalSeconds),
-                        String(format: "%.2f", task.tokensPerSecond),
-                        String(task.peakMemoryBytes), String(model.sizeBytes),
-                        String(format: "%.3f", task.power.averageWatts),
-                        String(format: "%.5f", task.power.wattHours),
-                        String(format: "%.5f", task.power.wattHoursPerMinute),
-                        String(format: "%.4f", task.power.percentageDrop),
-                        String(format: "%.1f", task.power.milliampHours),
-                        String(task.power.sampleCount),
-                        task.power.onACPower ? "1" : "0",
-                        (task.failure ?? "").csvEscaped
-                    ].joined(separator: ",")
-                )
+                // Built in stages: one expression this wide defeats the type checker.
+                let identity: [String] = [
+                    model.modelID.csvEscaped,
+                    task.taskID.csvEscaped,
+                    task.kind.rawValue,
+                    String(task.attempt + 1)
+                ]
+
+                let grading: [String] = [
+                    String(task.promptPassed), String(task.promptTotal), String(format: "%.4f", task.promptScore),
+                    String(task.toolPassed), String(task.toolTotal), String(format: "%.4f", task.toolScore),
+                    String(task.toolCallCount), String(task.searchCount), String(task.citationCount)
+                ]
+
+                let timings: [String] = [
+                    String(task.outputTokens), String(task.answerCharacters),
+                    String(format: "%.3f", task.timeToFirstToken),
+                    String(format: "%.3f", task.totalSeconds),
+                    String(format: "%.2f", task.tokensPerSecond),
+                    String(task.peakMemoryBytes), String(model.sizeBytes)
+                ]
+
+                let battery: [String] = [
+                    String(format: "%.3f", task.power.averageWatts),
+                    String(format: "%.5f", task.power.wattHours),
+                    String(format: "%.5f", task.power.wattHoursPerMinute),
+                    String(format: "%.4f", task.power.percentageDrop),
+                    String(format: "%.1f", task.power.milliampHours),
+                    String(task.power.sampleCount),
+                    task.power.onACPower ? "1" : "0"
+                ]
+
+                let onDie: [String] = [
+                    String(format: "%.3f", task.power.packageWatts),
+                    String(format: "%.3f", task.power.cpuWatts),
+                    String(format: "%.3f", task.power.gpuWatts),
+                    String(format: "%.3f", task.power.aneWatts),
+                    String(format: "%.3f", task.power.dramWatts),
+                    String(format: "%.5f", task.power.packageWattHours)
+                ]
+
+                // Raw counter deltas in the units IOReport reported them in, so nothing is lost
+                // to the watt conversion.
+                let counters: [String] = [
+                    String(task.power.cpuEnergy.rawValue), task.power.cpuEnergy.unit,
+                    String(task.power.gpuEnergy.rawValue), task.power.gpuEnergy.unit,
+                    String(task.power.aneEnergy.rawValue), task.power.aneEnergy.unit,
+                    String(task.power.dramEnergy.rawValue), task.power.dramEnergy.unit
+                ]
+
+                let fields = identity + grading + timings + battery + onDie + counters + [(task.failure ?? "").csvEscaped]
+                rows.append(fields.joined(separator: ","))
             }
         }
 
@@ -282,17 +331,17 @@ struct BenchReport: Codable, Sendable {
         lines.append("")
 
         if models.contains(where: \.anyOnACPower) {
-            lines.append("> Battery columns are blank because the machine was on wall power for part of")
-            lines.append("> the run. Unplug to measure energy use — while charging, the battery current")
-            lines.append("> reflects the adapter, not what the model costs.")
+            lines.append("> The battery column is blank because the machine was on wall power. Package,")
+            lines.append("> CPU and GPU watts come from the on-die counters and are unaffected — those work")
+            lines.append("> on a desktop and while charging.")
             lines.append("")
         }
-        lines.append("| Model | Prompt checks | Tool checks | tok/s | TTFT s | Load s | Peak RAM | On disk | Attempts | Errored | Wall clock | Watts | Wh | Battery % | Wh/1k tok |")
-        lines.append("|-------|---------------|-------------|-------|--------|--------|----------|---------|----------|---------|------------|-------|----|-----------|-----------|")
+        lines.append("| Model | Prompt checks | Tool checks | tok/s | TTFT s | Load s | Peak RAM | On disk | Attempts | Errored | Wall clock | Pkg W | CPU W | GPU W | Pkg Wh | Wh/1k tok | Battery % |")
+        lines.append("|-------|---------------|-------------|-------|--------|--------|----------|---------|----------|---------|------------|-------|-------|-------|--------|-----------|-----------|")
 
         for model in ranked {
             guard model.didLoad else {
-                lines.append("| `\(model.modelID)` | failed to load | | | | | | \(model.sizeBytes.formattedBytes) | | | | | | | |")
+                lines.append("| `\(model.modelID)` | failed to load | | | | | | \(model.sizeBytes.formattedBytes) | | | | | | | | | |")
                 continue
             }
 
@@ -308,10 +357,12 @@ struct BenchReport: Codable, Sendable {
                     + "| \(model.attemptCount) "
                     + "| \(model.erroredCount) "
                     + "| \(String(format: "%.0fs", model.totalSeconds)) "
-                    + "| \(model.batteryMeasured ? String(format: "%.1f", model.medianWatts) : "—") "
-                    + "| \(model.batteryMeasured ? String(format: "%.2f", model.energyWattHours) : "—") "
-                    + "| \(model.batteryMeasured ? String(format: "%.2f%%", model.batteryPercentageDrop) : "—") "
-                    + "| \(model.batteryMeasured ? String(format: "%.3f", model.wattHoursPerThousandTokens) : "—") |"
+                    + "| \(model.packageMeasured ? String(format: "%.1f", model.medianPackageWatts) : "—") "
+                    + "| \(model.packageMeasured ? String(format: "%.1f", model.medianCPUWatts) : "—") "
+                    + "| \(model.packageMeasured ? String(format: "%.1f", model.medianGPUWatts) : "—") "
+                    + "| \(model.packageMeasured ? String(format: "%.2f", model.packageWattHours) : "—") "
+                    + "| \(model.packageMeasured ? String(format: "%.3f", model.packageWattHoursPerThousandTokens) : "—") "
+                    + "| \(model.batteryMeasured ? String(format: "%.2f%%", model.batteryPercentageDrop) : "—") |"
             )
         }
 
