@@ -19,7 +19,7 @@ struct ModelSelector: View {
 
     @Binding var providerDatabase: OrderedDictionary<ConfiguredProvider, [any Model]>
     @Binding var selectedModel: (any Model)?
-    @Binding var selectedProvider: ConfiguredProvider?
+    let didSelect: ((any Model), ConfiguredProvider) -> ()
 
     var body: some View {
         VStack {
@@ -70,9 +70,8 @@ struct ModelSelector: View {
     @ViewBuilder
     func cellFor(model: any Model, provider: ConfiguredProvider) -> some View {
         Button {
-            selectedModel = model
-            selectedProvider = provider
             preferredModel = model.id
+            didSelect(model, provider)
         } label: {
             HStack {
                 Image(systemSymbol: .checkmark)
@@ -98,6 +97,6 @@ struct ModelSelector: View {
         ]
     ]
     
-    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel, selectedProvider: $selectedProvider)
+    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel) { _, _ in }
 }
  

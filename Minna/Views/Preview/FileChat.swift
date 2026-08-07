@@ -99,18 +99,16 @@ struct FileChat: View {
                     }
                 }
                 .popover(isPresented: $presentModelPicker) {
-                    ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel, selectedProvider: $chatter.selectedProvider)
+                    ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel) { model, provider in
+                        chatter.selectedModel = model
+                        chatter.selectedProvider = provider
+                        chatter.initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: provider, model: model)
+                    }
                 }
                 .buttonStyle(.glass)
                 Spacer()
-//                Button {
-//                    
-//                } label: {
-//                    Label("Clear Chat", systemSymbol: .xmark)
-//                }
-//                .buttonStyle(.glass)
-
             }
+            
             // TODO: Put back
             IndexingSearchBar(placeHolder: "Ask anything about \(file.title)", searchQuery: $chatter.chatMessage, isGenerating: $chatter.isGenerating) {
                 Task {

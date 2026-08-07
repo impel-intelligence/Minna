@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB00BADD30267E3700B94A32 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = DB00BADC30267E3700B94A32 /* LoggingOSLog */; };
 		DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5862FEDCB9E0036306B /* ViewStorage */; };
 		DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5882FEDCB9E0036306B /* ViewStorageClient */; };
 		DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */ = {isa = PBXBuildFile; productRef = DB0CF5922FEDCBE80036306B /* BlurbKit */; };
@@ -16,19 +17,16 @@
 		DB2BB96130052C7D00900E62 /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96030052C7D00900E62 /* Digester */; };
 		DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96230052C7D00900E62 /* IrisCommon */; };
 		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
-		DB3757E0301A3D2C00DD7766 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = DB3757DF301A3D2C00DD7766 /* LoggingOSLog */; };
 		DB6E4A823013CB6F00487D86 /* AppleIntelligenceEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */; };
 		DB6E4A843013CB6F00487D86 /* CoreMLEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */; };
 		DB6E4C8C3013E9F800487D86 /* SearchModelAssets.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		DB6E4FA9301415DD00487D86 /* ModelCDN in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4FA8301415DD00487D86 /* ModelCDN */; };
 		DB6E4FAB301415E300487D86 /* ModelCDN in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4FAA301415E300487D86 /* ModelCDN */; };
-		DB83DD0330179D9B00019767 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = DB83DD0230179D9B00019767 /* Logging */; };
 		DB9695562FF440F200CB037A /* Textual in Frameworks */ = {isa = PBXBuildFile; productRef = DB9695552FF440F200CB037A /* Textual */; };
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
 		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
 		DBA6E66130254545002A94F2 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = DBA6E66030254545002A94F2 /* PostHog */; };
-		DBBCAF9030111ED000B49AB2 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = DBBCAF8F30111ED000B49AB2 /* Logging */; };
 		DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */; };
 		DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */; };
 		DBFD0AA8300EA44F0060744B /* LookAtMe in Frameworks */ = {isa = PBXBuildFile; productRef = DBFD0AA7300EA44F0060744B /* LookAtMe */; };
@@ -176,14 +174,13 @@
 				DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */,
 				DB0CF5962FEDCBF80036306B /* OrderedCollections in Frameworks */,
 				DB0CF5992FEDCC040036306B /* SFSafeSymbols in Frameworks */,
-				DB3757E0301A3D2C00DD7766 /* LoggingOSLog in Frameworks */,
 				DB6E4A823013CB6F00487D86 /* AppleIntelligenceEmbedder in Frameworks */,
 				DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */,
+				DB00BADD30267E3700B94A32 /* LoggingOSLog in Frameworks */,
 				DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */,
 				DB2BB96130052C7D00900E62 /* Digester in Frameworks */,
 				DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */,
 				DB6E4FAB301415E300487D86 /* ModelCDN in Frameworks */,
-				DBBCAF9030111ED000B49AB2 /* Logging in Frameworks */,
 				DB0CF5932FEDCBE80036306B /* BlurbKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -206,7 +203,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DB83DD0330179D9B00019767 /* Logging in Frameworks */,
 				DB6E4FA9301415DD00487D86 /* ModelCDN in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -309,12 +305,11 @@
 				DB2BB96230052C7D00900E62 /* IrisCommon */,
 				DB2BB96430052C7D00900E62 /* IrisSearch */,
 				DBFD0AA7300EA44F0060744B /* LookAtMe */,
-				DBBCAF8F30111ED000B49AB2 /* Logging */,
 				DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */,
 				DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */,
 				DB6E4FAA301415E300487D86 /* ModelCDN */,
-				DB3757DF301A3D2C00DD7766 /* LoggingOSLog */,
 				DBA6E66030254545002A94F2 /* PostHog */,
+				DB00BADC30267E3700B94A32 /* LoggingOSLog */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -384,7 +379,6 @@
 			name = SearchModelAssets;
 			packageProductDependencies = (
 				DB6E4FA8301415DD00487D86 /* ModelCDN */,
-				DB83DD0230179D9B00019767 /* Logging */,
 			);
 			productName = SearchModelAssets;
 			productReference = DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */;
@@ -436,9 +430,8 @@
 				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
 				DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */,
-				DBBCAF8E30111ED000B49AB2 /* XCRemoteSwiftPackageReference "swift-log" */,
-				DB3757DE301A3D2C00DD7766 /* XCRemoteSwiftPackageReference "swift-log-oslog" */,
 				DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */,
+				DB00BADB30267E3700B94A32 /* XCRemoteSwiftPackageReference "swift-log-oslog" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -1457,6 +1450,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		DB00BADB30267E3700B94A32 /* XCRemoteSwiftPackageReference "swift-log-oslog" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/chrisaljoudi/swift-log-oslog.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.2;
+			};
+		};
 		DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/impel-intelligence/ViewStorage";
@@ -1507,14 +1508,6 @@
 				minimumVersion = 0.64.1;
 			};
 		};
-		DB3757DE301A3D2C00DD7766 /* XCRemoteSwiftPackageReference "swift-log-oslog" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/chrisaljoudi/swift-log-oslog.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.2;
-			};
-		};
 		DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gonzalezreal/textual";
@@ -1529,14 +1522,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.69.2;
-			};
-		};
-		DBBCAF8E30111ED000B49AB2 /* XCRemoteSwiftPackageReference "swift-log" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-log";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.14.0;
 			};
 		};
 		DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -1558,6 +1543,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DB00BADC30267E3700B94A32 /* LoggingOSLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB00BADB30267E3700B94A32 /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
+			productName = LoggingOSLog;
+		};
 		DB0CF5862FEDCB9E0036306B /* ViewStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DB0CF5852FEDCB9E0036306B /* XCRemoteSwiftPackageReference "ViewStorage" */;
@@ -1600,11 +1590,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = IrisSearch;
 		};
-		DB3757DF301A3D2C00DD7766 /* LoggingOSLog */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DB3757DE301A3D2C00DD7766 /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
-			productName = LoggingOSLog;
-		};
 		DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppleIntelligenceEmbedder;
@@ -1620,11 +1605,6 @@
 		DB6E4FAA301415E300487D86 /* ModelCDN */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ModelCDN;
-		};
-		DB83DD0230179D9B00019767 /* Logging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DBBCAF8E30111ED000B49AB2 /* XCRemoteSwiftPackageReference "swift-log" */;
-			productName = Logging;
 		};
 		DB9695552FF440F200CB037A /* Textual */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1647,11 +1627,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */;
 			productName = PostHog;
-		};
-		DBBCAF8F30111ED000B49AB2 /* Logging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DBBCAF8E30111ED000B49AB2 /* XCRemoteSwiftPackageReference "swift-log" */;
-			productName = Logging;
 		};
 		DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;

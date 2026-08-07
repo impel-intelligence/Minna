@@ -8,5 +8,5 @@
 import Logging
 
 enum Log {
-    nonisolated static let logger: Logger = Logger(label: "com.tryminna.minna")
+    nonisolated static let logger: Logger = Logger(label: "com.tryminna.minna.main")
 }

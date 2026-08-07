@@ -45,8 +45,7 @@ struct MinnaApp: App {
         #endif
         
         #if canImport(Darwin)
-        // TODO: Find an OSLog implementation that handles the Swift-log error types
-//        LoggingSystem.bootstrap(LoggingOSLog.init)
+        LoggingSystem.bootstrap(LoggingBackend.init)
         #endif
 
         let POSTHOG_PROJECT_TOKEN = "phc_nZHzNbtLBtLumJz9Yi6MvnzK2GDcMpt3MLCv6vDJxcSb"
@@ -119,7 +118,9 @@ struct MinnaApp: App {
             if let parameters = parameters {
                 PreviewWindow(parameters: parameters, context: frontendDatabase.modelContainer.mainContext)
                     .modelContainer(frontendDatabase.modelContainer)
+                    .database(frontendDatabase)
                     .irisContext(irisDBContext)
+                    .environment(modelManager)
             }
         }
         

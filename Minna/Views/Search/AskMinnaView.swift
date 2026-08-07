@@ -202,7 +202,11 @@ struct AskMinnaView: View {
                 }
             }
             .popover(isPresented: $presentModelPicker) {
-                ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel, selectedProvider: $chatter.selectedProvider)
+                ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel) { model, provider in
+                    chatter.selectedModel = model
+                    chatter.selectedProvider = provider
+                    chatter.initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: provider, model: model)
+                }
             }
             .buttonStyle(.glass)
             IndexingSearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatter.chatMessage,  isGenerating: $chatter.isGenerating) {

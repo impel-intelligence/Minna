@@ -111,21 +111,8 @@ final class Chatter {
             initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: firstConfig, model: firstModel)
         }
     }
-    
-    private func loadCachedProvider(providers: [ConfiguredProvider], modelContext: ModelContext, irisContext: IrisContext) async throws -> (any Model, ConfiguredProvider)? {
-        guard let lastUsedModel = chat.lastUsedModel else { return nil }
-        guard let cachedProvider = providers.first(where: {$0.cachedModelIDs.contains(lastUsedModel)}) else { return nil }
-        
-        guard let provider = try ProviderFactory.makeInstance(configuration: cachedProvider) else { return nil }
-        let models = try await provider.availableModels()
-        providerDatabase[cachedProvider] = models
 
-        guard let model = models.first(where: { $0.id == lastUsedModel }) else { return nil }        
-        
-        return (model, cachedProvider)
-    }
-
-    private func initializeChatInstance(modelContext: ModelContext, irisContext: IrisContext, provider: ConfiguredProvider, model: (any Model)) {
+    public func initializeChatInstance(modelContext: ModelContext, irisContext: IrisContext, provider: ConfiguredProvider, model: (any Model)) {
         do {
             // Update the chat so it will open with the model you last used.
             chat.lastUsedModel = model.id

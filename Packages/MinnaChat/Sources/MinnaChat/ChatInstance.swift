@@ -64,7 +64,6 @@ public final class ChatInstance {
             throw ChatError.alreadyResponding
         }
 
-        
         guard languageModel.isAvailable else {
             throw ChatError.modelNotLoaded
         }
