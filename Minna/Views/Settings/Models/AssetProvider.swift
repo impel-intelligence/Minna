@@ -46,6 +46,6 @@ extension OpenAIProvider: AssetProvider {
 
 extension MLXProvider: AssetProvider {
     static var marketingName: String { "MLX" }
-    static var image: ImageResource { .Providers.Apple.logo }
+    static var image: ImageResource { .Providers.MLX.logo }
     static var background: Color { .primary }
 }

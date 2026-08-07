@@ -34,6 +34,8 @@ public final class ChatInstance {
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
     
     public var waitingForResponse: Bool = false
+    
+    public var stopGeneration: Bool = false
         
     public init(irisDB: IrisDB, databaseContext: ModelContext, model: any ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: any ModelInstruction, tools: [AvailableTool]) throws {
         self.databaseContext = databaseContext
@@ -56,7 +58,6 @@ public final class ChatInstance {
         
         session.toolExecutionDelegate = toolObserver
         session.prewarm()
-        print("Loaded chat instance for \(configuration.providerID)")
     }
     
     public func sendMessage(_ message: String) async throws {
@@ -76,14 +77,34 @@ public final class ChatInstance {
         // Start the stream response
         let stream = session.streamResponse(to: Prompt(message), options: generationOptions)
         
-        // Loop over the stream to collect it, tossing out the values. We are doing this instead of `stream.collect()` so we can set waitingForResponse to false when we receive a packet.
-        for try await _ in stream {
-            waitingForResponse = false
+        do {
+            // Loop over the stream to collect it, tossing out the values. We are doing this instead of `stream.collect()` so we can set waitingForResponse to false when we receive a packet.
+            for try await _ in stream {
+                guard !stopGeneration else { break }
+                waitingForResponse = false
+            }
+            
+            // Save the transcript into persistence
+            chat.apply(session.transcript)
+            try databaseContext.save()
+        } catch {
+            if let last = session.transcript.last, last.plainText == message {
+                
+            }
+            
+            
+            throw error
         }
-        
-        // Save the transcript into persistence
-        chat.apply(session.transcript)
-        try databaseContext.save()
+    }
+    
+    public func cancel() {
+        stopGeneration = true
+    }
+    
+    public func clearCache() async {
+        if let mlxModel = languageModel as? MLXLanguageModel {
+            await mlxModel.removeFromCache()
+        }
     }
         
 //    /// Downloads the model weights with progress, then loads them into memory.

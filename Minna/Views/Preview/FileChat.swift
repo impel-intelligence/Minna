@@ -76,6 +76,14 @@ struct FileChat: View {
                 return .systemAction
             }
         })
+        .onDisappear {
+            // Once the view disappears from the hierarchy, stop the current chat then clear the MLX cache.
+            chatter.chatInstance?.cancel()
+            
+            Task {
+                await chatter.chatInstance?.clearCache()
+            }
+        }
     }
     
     var chatBox: some View {

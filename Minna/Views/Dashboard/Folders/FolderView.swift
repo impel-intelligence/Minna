@@ -104,7 +104,7 @@ struct FolderView: View {
                         }
                         .font(.headline)
                         .foregroundStyle(.secondary)
-                        .padding(.horizontal)
+                        .padding(.horizontal, 10)
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
                                 ForEach(folders) { folder in
@@ -115,7 +115,7 @@ struct FolderView: View {
                                         }
                                 }
                             }
-                            .padding(.horizontal)
+                            .padding(.horizontal, 10)
                         }
                     }
                     .padding(.vertical, 8)
@@ -228,7 +228,6 @@ struct FolderView: View {
         .padding(.vertical, 8)
         .scrollTargetLayout()
     }
-    
     
     private func moveCursor(direction: ArrowDirection, modifiers: EventModifiers, proxy: ScrollViewProxy) -> KeyPress.Result {
         if selectedFiles.isEmpty, let firstFile = filteredFiles.first {

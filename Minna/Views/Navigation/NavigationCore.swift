@@ -37,8 +37,8 @@ public struct NavigationCore: View {
                 SearchStartupView.label
                     .tag(NavigationDestination.search)
 
-                RecentsView.label
-                    .tag(NavigationDestination.recents)
+//                RecentsView.label
+//                    .tag(NavigationDestination.recents)
 
                 Section("Knowledge Base", isExpanded: $knowledgeExpanded) {
                     ForEach(folders) { folder in
@@ -49,7 +49,7 @@ public struct NavigationCore: View {
                     }
                 }
 
-                Section("Connections", isExpanded: $connectionsExpanded) {}
+//                Section("Connections", isExpanded: $connectionsExpanded) {}
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
             .toolbar {
@@ -68,8 +68,8 @@ public struct NavigationCore: View {
                     switch navigationRouter.selectedTab {
                     case .search, nil:
                         SearchStartupView()
-                    case .recents:
-                        RecentsView()
+//                    case .recents:
+//                        RecentsView()
                     case .folder(let folder):
                         FolderView(folder: folder)
                             .id(folder.uuid)

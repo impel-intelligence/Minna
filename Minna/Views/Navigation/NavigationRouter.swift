@@ -10,7 +10,7 @@ import DatabaseSchema
 
 enum NavigationDestination: Hashable {
     case search
-    case recents
+//    case recents
     case folder(Folder)
 }
 

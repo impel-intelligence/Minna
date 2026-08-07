@@ -28,7 +28,10 @@ struct AskMinnaView: View {
     @Environment(\.irisContext) var irisContext
     @Environment(\.router) var navigationRouter
     @Environment(\.openWindow) var openWindow
-        
+    
+    // TODO: Figure out when to load and unload on-device models to keep the ram usage down.
+//    @Environment(\.scenePhase) private var scenePhase
+
     @Namespace private var searchContainerTransitions
 
     @State private var presentModelPicker: Bool = false
@@ -145,7 +148,14 @@ struct AskMinnaView: View {
                 }
             }
         }
-
+        .onDisappear {
+            // Once the view disappears from the hierarchy, stop the current chat then clear the MLX cache.
+            chatter.chatInstance?.cancel()
+            
+            Task {
+                await chatter.chatInstance?.clearCache()
+            }
+        }
     }
     
     @ViewBuilder

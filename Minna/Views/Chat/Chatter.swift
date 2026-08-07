@@ -17,9 +17,9 @@ import Logging
 @Observable
 final class Chatter {
     var selectedProvider: ConfiguredProvider?
-    var selectedModel: Model?
+    var selectedModel: (any Model)?
     
-    var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [:]
+    var providerDatabase: OrderedDictionary<ConfiguredProvider, [any Model]> = [:]
 
     var chatInstance: ChatInstance?
     var chatMessage: String = ""
