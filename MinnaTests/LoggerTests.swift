@@ -9,13 +9,14 @@
 @testable import Minna
 import SwiftUI
 import Testing
+import Logging
 
 struct LoggerTests {
     /// Tests to make sure the logger uses value type semantics
     /// https://swiftpackageindex.com/apple/swift-log/main/documentation/logging/implementingaloghandler#Implement-with-value-type-semantics
     @Test
     func logHandlerValueSemantics() {
-        LoggingSystem.bootstrap(MyLogHandler.init)
+        LoggingSystem.bootstrap(LoggingBackend.init)
         var logger1 = Logger(label: "first logger")
         logger1.logLevel = .debug
         logger1[metadataKey: "only-on"] = "first"

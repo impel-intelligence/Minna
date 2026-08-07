@@ -7,6 +7,7 @@
 
 import Logging
 import os
+internal import SwiftSoup
 
 struct LoggingBackend: LogHandler {
     var logLevel: Logging.Logger.Level = .debug
@@ -21,11 +22,12 @@ struct LoggingBackend: LogHandler {
     
     init(label: String) {
         if let dotPosition = label.lastIndex(of: ".") {
-            let subsystem = String(label[...dotPosition])
-            let category = String(label[dotPosition...])
+            let subsystemDotPosition = label.index(before: dotPosition)
+            let categoryDotPosition = label.index(after: dotPosition)
             
-            print("GOT \(subsystem), \(category)")
-    
+            let subsystem = String(label[...subsystemDotPosition])
+            let category = String(label[categoryDotPosition...])
+                            
             self.init(subsystem: subsystem, category: category)
         } else {
             self.init(subsystem: label, category: "generic")
@@ -36,24 +38,41 @@ struct LoggingBackend: LogHandler {
         self.logger = os.Logger(subsystem: subsystem, category: category)
     }
 
-    func log(event: LogEvent) {        
+    func log(event: LogEvent) {
+        let logLine = makeLogLine(event: event)
+        let level = OSLogType.from(level: event.level)
+        
+        logger.log(level: level, "\(logLine, privacy: .auto)")
+    }
+    
+    func makeLogLine(event: LogEvent) -> String {
+        var logLine: String = ""
+        
         let timestamp = ISO8601DateFormatter().string(from: Date())
+        logLine.append("[\(timestamp)] ")
+        
         let levelString = event.level.rawValue.uppercased()
-
+        logLine.append("[\(levelString)] ")
+        
+        logLine.append(": \(event.message) ")
+        
         // Merge handler metadata with message metadata
-        let combinedMetadata = LoggerBackend.prepareMetadata(base: self.metadata, explicit: event.metadata)
+        let combinedMetadata = LoggingBackend.prepareMetadata(base: self.metadata, explicit: event.metadata)
 
         // Format metadata
         let metadataString = combinedMetadata?.compactMap { key, value in
             return "\(key): \(value)"
         }.joined(separator: ",") ?? "{ }"
 
-
-        // Create log line and print to console
-        let logLine = "[\(timestamp)] [\(levelString)] [\(metadataString)]: \(event.message)"
-        let level = OSLogType.from(level: event.level)
+        if !metadataString.isEmpty {
+            logLine.append("-- { \(metadataString) } ")
+        }
         
-        logger.log(level: level, "\(logLine, privacy: .auto)")
+        if let error = event.error {
+            logLine.append("-- \(error)")
+        }
+
+        return logLine.trim()
     }
 
     static func prepareMetadata(base: Logging.Logger.Metadata, explicit: Logging.Logger.Metadata?) -> Logging.Logger.Metadata? {

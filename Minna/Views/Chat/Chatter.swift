@@ -13,7 +13,6 @@ import MinnaChat
 import SwiftData
 import Logging
 
-
 @Observable
 final class Chatter {
     var selectedProvider: ConfiguredProvider?
