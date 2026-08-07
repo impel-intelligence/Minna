@@ -35,10 +35,11 @@ struct BenchRunner: Sendable {
     ///
     /// - Parameters:
     ///   - model: The model to run.
-    ///   - progress: Called as each task finishes, for console output.
+    ///   - progress: Called as each task finishes, with the results so far, so the caller
+    ///     can report progress and flush partial results to disk.
     /// - Returns: The model's complete result, including per-task detail.
     /// - Authored by: Claude Opus 5 (Anthropic)
-    func run(model: DownloadedModel, progress: @Sendable (TaskResult) -> Void) async -> ModelResult {
+    func run(model: DownloadedModel, progress: @Sendable (TaskResult, ModelResult) -> Void) async -> ModelResult {
         let sizeBytes = (try? ByteCount.ofDirectory(model.directory)) ?? 0
         let tokenizer = try? await AutoTokenizer.from(modelFolder: model.directory)
 
@@ -89,7 +90,19 @@ struct BenchRunner: Sendable {
                 )
                 result.attempt = attempt
                 results.append(result)
-                progress(result)
+
+                progress(
+                    result,
+                    ModelResult(
+                        modelID: model.id,
+                        sizeBytes: sizeBytes,
+                        loadSeconds: loadSeconds,
+                        loadFailure: nil,
+                        tasks: results,
+                        weights: suite.weights,
+                        budgets: suite.budgets
+                    )
+                )
             }
         }
 

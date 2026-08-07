@@ -71,11 +71,38 @@ struct Run: AsyncParsableCommand {
         let runner = BenchRunner(corpus: builtCorpus, suite: loadedSuite)
         var results: [ModelResult] = []
 
+        let outputDirectory = URL(fileURLWithPath: output)
+        try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+
+        let startedAt = Date()
+        let stamp = ISO8601DateFormatter.filenameSafe.string(from: startedAt)
+        let jsonURL = outputDirectory.appending(path: "run-\(stamp).json")
+        let markdownURL = outputDirectory.appending(path: "run-\(stamp).md")
+        let taskCSVURL = outputDirectory.appending(path: "run-\(stamp)-tasks.csv")
+        let checkCSVURL = outputDirectory.appending(path: "run-\(stamp)-checks.csv")
+
+        /// Writes everything gathered so far. Called after each task so an interrupted run —
+        /// a sweep of ten models takes hours — still leaves usable results on disk.
+        let writeArtifacts: @Sendable (BenchReport) throws -> Void = { report in
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            encoder.dateEncodingStrategy = .iso8601
+
+            try encoder.encode(report).write(to: jsonURL)
+            try Data(report.markdown().utf8).write(to: markdownURL)
+            try Data(report.taskCSV().utf8).write(to: taskCSVURL)
+            try Data(report.checkCSV().utf8).write(to: checkCSVURL)
+        }
+
         for model in selected {
+            // Immutable snapshot: the progress closure is @Sendable and cannot capture the
+            // mutable accumulator.
+            let completed = results
+
             print("")
             print("▶ \(model.id)")
 
-            let result = await runner.run(model: model) { task in
+            let result = await runner.run(model: model) { task, partial in
                 let status = task.failure == nil ? "" : "  ⚠︎ \(task.failure ?? "")"
                 print(
                     "  \(task.taskID.padding(toLength: 22, withPad: " ", startingAt: 0))"
@@ -92,6 +119,10 @@ struct Run: AsyncParsableCommand {
                 if verbose {
                     print("    → \(task.answer.replacingOccurrences(of: "\n", with: "\n      "))")
                 }
+
+                // Flush after every task. A sweep runs for hours, so an interruption must not
+                // discard everything measured so far.
+                try? writeArtifacts(BenchReport(generatedAt: startedAt, models: completed + [partial]))
             }
 
             if let failure = result.loadFailure {
@@ -101,26 +132,11 @@ struct Run: AsyncParsableCommand {
             }
 
             results.append(result)
+            try writeArtifacts(BenchReport(generatedAt: startedAt, models: results))
         }
 
-        let report = BenchReport(generatedAt: Date(), models: results)
-        let outputDirectory = URL(fileURLWithPath: output)
-        try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
-
-        let stamp = ISO8601DateFormatter.filenameSafe.string(from: report.generatedAt)
-        let jsonURL = outputDirectory.appending(path: "run-\(stamp).json")
-        let markdownURL = outputDirectory.appending(path: "run-\(stamp).md")
-
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        encoder.dateEncodingStrategy = .iso8601
-        let taskCSVURL = outputDirectory.appending(path: "run-\(stamp)-tasks.csv")
-        let checkCSVURL = outputDirectory.appending(path: "run-\(stamp)-checks.csv")
-
-        try encoder.encode(report).write(to: jsonURL)
-        try Data(report.markdown().utf8).write(to: markdownURL)
-        try Data(report.taskCSV().utf8).write(to: taskCSVURL)
-        try Data(report.checkCSV().utf8).write(to: checkCSVURL)
+        let report = BenchReport(generatedAt: startedAt, models: results)
+        try writeArtifacts(report)
 
         print("")
         print(report.markdown())
