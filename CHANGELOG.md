@@ -15,7 +15,7 @@ The format has been adjusted to include a release Title. This has been inserted 
 - You can now open the dashboard from the menu bar.
 - Fixed a bug where the search tool would return UUIDs in the wrong format, confusing on-device models.
 - Hopefully fixed a bug where the Sparkle app would update in a sandbox.
-- Fixed generating text jumping across teh view.
+- Fixed generating text jumping across the chat view.
 
 ## [0.11.0] - Support for Ollama, OpenAI & Gemini - 2026-08-04
 

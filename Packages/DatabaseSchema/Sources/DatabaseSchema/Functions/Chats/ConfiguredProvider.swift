@@ -9,28 +9,6 @@ import Foundation
 import SwiftData
 import KeychainSwift
 
-public typealias ConfiguredProvider = SchemaV1.ConfiguredProvider
-
-extension SchemaV1 {
-    @Model
-    public final class ConfiguredProvider: Identifiable {
-        @Attribute(.unique)
-        public var id: UUID
-        public var providerID: String
-        
-        @Attribute(.unique)
-        public var name: String
-        
-        public var savedKeys: Set<String> = []
-        
-        public init(id: UUID = UUID(), name: String, providerID: String) {
-            self.id = id
-            self.providerID = providerID
-            self.name = name
-        }
-    }
-}
-
 extension ConfiguredProvider {
     public func removeConfigurationValues() {
         let keychain = KeychainSwift()

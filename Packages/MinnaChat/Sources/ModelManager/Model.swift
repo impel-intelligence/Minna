@@ -5,13 +5,13 @@
 //  Created by Taylor Lineman on 7/1/26.
 //
 
-public protocol Model: Hashable, Identifiable, Equatable {
+public protocol Model: Sendable, Hashable, Identifiable, Equatable {
     var id: String { get }
     var displayName: String { get }
     var provider: any ModelProvider.Type { get }
 }
 
-public struct SimpleModel: Model, Hashable, Identifiable {
+public struct SimpleModel: Model, Sendable, Hashable, Identifiable {
     public let id: String
     public let displayName: String
     public let provider: any ModelProvider.Type

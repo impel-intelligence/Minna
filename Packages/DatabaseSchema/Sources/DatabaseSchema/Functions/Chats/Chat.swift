@@ -9,46 +9,6 @@ import Foundation
 import SwiftData
 import AnyLanguageModel
 
-public typealias Chat = SchemaV1.Chat
-
-extension SchemaV1 {
-    @Model
-    public final class Chat {
-        public static let defaultTitle: String = "New Chat"
-        
-        @Attribute(.unique)
-        public var uuid: UUID
-        public var createdAt: Date
-        public var lastMessage: Date?
-        public var transcript: Transcript = Transcript()
-        
-        public var theme: ThemeColor
-        
-        @Relationship(deleteRule: .nullify, inverse: \File.chat)
-        public var file: File
-        
-        public var lastUsedModel: String? = nil
-        
-        public init(uuid: UUID = UUID(), createdAt: Date = .now, file: File) {
-            self.uuid = uuid
-            self.createdAt = createdAt
-            self.lastMessage = nil
-            self.theme = file.color
-            self.file = file
-        }
-        
-        public func apply(_ transcript: Transcript) {
-            self.transcript = transcript
-            self.lastMessage = .now
-            //        self.lastMessagePreview = transcript.last.flatMap(\.plainTextPreview)
-        }
-        
-        public func setModel(modelID: String) {
-            self.lastUsedModel = modelID
-        }
-    }
-}
-
 extension Chat {
     /// Builds a chat and its backing ``File`` entirely in memory, without inserting
     /// into a `ModelContext`. Insertion is the caller's responsibility and should

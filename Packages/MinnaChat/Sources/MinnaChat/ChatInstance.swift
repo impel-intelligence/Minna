@@ -25,7 +25,7 @@ public final class ChatInstance {
     let irisDB: IrisDB
     let chat: Chat
     
-    let model: ModelManager.Model
+    let model: any ModelManager.Model
 
     let provider: any ModelProvider
     let languageModel: any LanguageModel
@@ -56,6 +56,7 @@ public final class ChatInstance {
         
         session.toolExecutionDelegate = toolObserver
         session.prewarm()
+        print("Loaded chat instance for \(configuration.providerID)")
     }
     
     public func sendMessage(_ message: String) async throws {

@@ -11,7 +11,7 @@ import AnyLanguageModel
 import DatabaseSchema
 
 public struct AnthropicModel: Model {
-    public struct Capabilities: Hashable {
+    public struct Capabilities: Hashable, Sendable {
         enum ThinkingType {
             case adaptive
             case enabled

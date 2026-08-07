@@ -13,10 +13,12 @@ import MinnaChat
 import SwiftData
 import Logging
 
+
 @Observable
 final class Chatter {
     var selectedProvider: ConfiguredProvider?
     var selectedModel: Model?
+    
     var providerDatabase: OrderedDictionary<ConfiguredProvider, [Model]> = [:]
 
     var chatInstance: ChatInstance?
@@ -56,11 +58,23 @@ final class Chatter {
             throw error
         }
     }
-    
+        
     func gatherProviders(modelContext: ModelContext, irisContext: IrisContext) async throws {
         let providers = try modelContext.fetch(FetchDescriptor<ConfiguredProvider>())
 
-        for configuration in providers {
+        var loadedCacheProvider: String? = nil
+        if let (model, provider) = try? await loadCachedProvider(providers: providers, modelContext: modelContext, irisContext: irisContext) {
+            loadedCacheProvider = provider.providerID
+            
+            selectedProvider = provider
+            selectedModel = model
+
+            // Jump start the initialization
+            initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: provider, model: model)
+        }
+
+        // Loop over all of the providers that were not the one we cached.
+        for configuration in providers where configuration.providerID != loadedCacheProvider {
             do {
                 guard let provider = try ProviderFactory.makeInstance(configuration: configuration) else { continue }
                 let models = try await provider.availableModels()
@@ -75,11 +89,14 @@ final class Chatter {
                     selectedProvider = configuration
                 }
 
+                configuration.cachedModelIDs = Set(models.map({$0.id}))
                 providerDatabase[configuration] = models
             } catch {
                 Log.logger.error("Failed to fetch available models", error: error, metadata: ["configuration": "\(configuration.name)"])
             }
         }
+        
+        try modelContext.save()
         
         // If no previously used model was found, pick the first available one
         if selectedModel == nil,
@@ -89,22 +106,33 @@ final class Chatter {
             selectedProvider = firstConfig
         }
         
-        initializeChatInstance(modelContext: modelContext, irisContext: irisContext)
+        // If we didn't load the chat instance from cache load it here. This stops chatInstance from being initialized twice
+        if loadedCacheProvider == nil, let selectedModel, let selectedProvider {
+            initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: selectedProvider, model: selectedModel)
+        }
     }
     
-    private func initializeChatInstance(modelContext: ModelContext, irisContext: IrisContext) {
-        if let model = selectedModel, let config = selectedProvider {
-            // TODO: Propagate this catch all the way out to UI
-            do {
-                // Update the chat so it will open with the model you last used.
-                chat.lastUsedModel = model.id
-                
-                chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: config, chat: chat, instructions: instructions, tools: availableTools)
-            } catch {
-                Log.logger.error("Failed to create chat instance.", error: error)
-            }
-        } else {
-            chatInstance = nil
+    private func loadCachedProvider(providers: [ConfiguredProvider], modelContext: ModelContext, irisContext: IrisContext) async throws -> (any Model, ConfiguredProvider)? {
+        guard let lastUsedModel = chat.lastUsedModel else { return nil }
+        guard let cachedProvider = providers.first(where: {$0.cachedModelIDs.contains(lastUsedModel)}) else { return nil }
+        
+        guard let provider = try ProviderFactory.makeInstance(configuration: cachedProvider) else { return nil }
+        let models = try await provider.availableModels()
+        providerDatabase[cachedProvider] = models
+
+        guard let model = models.first(where: { $0.id == lastUsedModel }) else { return nil }        
+        
+        return (model, cachedProvider)
+    }
+
+    private func initializeChatInstance(modelContext: ModelContext, irisContext: IrisContext, provider: ConfiguredProvider, model: (any Model)) {
+        do {
+            // Update the chat so it will open with the model you last used.
+            chat.lastUsedModel = model.id
+            
+            chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: provider, chat: chat, instructions: instructions, tools: availableTools)
+        } catch {
+            Log.logger.error("Failed to create chat instance.", error: error)
         }
     }
 }

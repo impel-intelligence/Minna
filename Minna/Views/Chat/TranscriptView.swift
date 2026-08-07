@@ -45,7 +45,7 @@ struct TranscriptView: View {
             }
             .padding(.horizontal)
         } else {
-            Text("No Model Selected")
+            ProgressView { Text("Loading Transcript") }
         }
     }
 }
