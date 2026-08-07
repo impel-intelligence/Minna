@@ -62,19 +62,13 @@ final class Chatter {
     func gatherProviders(modelContext: ModelContext, irisContext: IrisContext) async throws {
         let providers = try modelContext.fetch(FetchDescriptor<ConfiguredProvider>())
 
-        var loadedCacheProvider: String? = nil
-        if let (model, provider) = try? await loadCachedProvider(providers: providers, modelContext: modelContext, irisContext: irisContext) {
-            loadedCacheProvider = provider.providerID
-            
-            selectedProvider = provider
-            selectedModel = model
-
-            // Jump start the initialization
-            initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: provider, model: model)
+        let lastUsedModel = chat.lastUsedModel
+        let sorted = providers.sorted { a, _ in
+            guard let lastUsedModel else { return false }
+            return a.cachedModelIDs.contains(lastUsedModel)
         }
 
-        // Loop over all of the providers that were not the one we cached.
-        for configuration in providers where configuration.providerID != loadedCacheProvider {
+        for configuration in sorted {
             do {
                 guard let provider = try ProviderFactory.makeInstance(configuration: configuration) else { continue }
                 let models = try await provider.availableModels()
@@ -91,6 +85,11 @@ final class Chatter {
 
                 configuration.cachedModelIDs = Set(models.map({$0.id}))
                 providerDatabase[configuration] = models
+                
+                // Once we find a suitable model load it so the view can get rendering.
+                if chatInstance == nil, let selectedModel, let selectedProvider {
+                    initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: selectedProvider, model: selectedModel)
+                }
             } catch {
                 Log.logger.error("Failed to fetch available models", error: error, metadata: ["configuration": "\(configuration.name)"])
             }
@@ -99,16 +98,12 @@ final class Chatter {
         try modelContext.save()
         
         // If no previously used model was found, pick the first available one
-        if selectedModel == nil,
+        if chatInstance == nil,
             let firstConfig = providerDatabase.keys.first,
             let firstModel = providerDatabase[firstConfig]?.first {
             selectedModel = firstModel
             selectedProvider = firstConfig
-        }
-        
-        // If we didn't load the chat instance from cache load it here. This stops chatInstance from being initialized twice
-        if loadedCacheProvider == nil, let selectedModel, let selectedProvider {
-            initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: selectedProvider, model: selectedModel)
+            initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: firstConfig, model: firstModel)
         }
     }
     

@@ -30,9 +30,18 @@ public enum DatabaseMigrationPlan: SchemaMigrationPlan {
     public static let schemas: [any VersionedSchema.Type] = [SchemaV1.self, SchemaV2.self]
     public static let stages: [MigrationStage] = [v1ToV2]
     
-    static let v1ToV2 = MigrationStage.lightweight(
-      fromVersion: SchemaV1.self,
-      toVersion: SchemaV2.self
+    static let v1ToV2 = MigrationStage.custom(
+        fromVersion: SchemaV1.self,
+        toVersion: SchemaV2.self,
+        willMigrate: { _ in },
+        didMigrate: { context in
+            let providers = try context.fetch(FetchDescriptor<SchemaV2.ConfiguredProvider>())
+            for provider in providers {
+                provider.cachedModelIDs = []
+            }
+            try context.save()
+
+        }
     )
 }
 
