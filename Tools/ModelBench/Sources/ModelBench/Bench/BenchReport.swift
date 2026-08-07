@@ -27,12 +27,28 @@ struct TaskResult: Codable, Sendable {
     let outputTokens: Int
     let tokensPerSecond: Double
     let peakMemoryBytes: Int64
+    var power: PowerUsage = .unavailable
 
     var promptScore: Double { promptChecks.score }
     var toolScore: Double { toolChecks.score }
 
     /// The checks that failed, for the "what went wrong" section of the report.
     var failedChecks: [Check] { (promptChecks + toolChecks).filter { !$0.passed } }
+
+    // MARK: - Raw counts
+    //
+    // The percentage scores are weighted ratios, which makes them hard to reason about on their
+    // own. These are the underlying counts, reported alongside every score.
+
+    var promptPassed: Int { promptChecks.count(where: \.passed) }
+    var promptTotal: Int { promptChecks.count }
+    var toolPassed: Int { toolChecks.count(where: \.passed) }
+    var toolTotal: Int { toolChecks.count }
+
+    var toolCallCount: Int { invocations.count }
+    var searchCount: Int { invocations.count { ToolGrader.searchToolNames.contains($0.toolName) } }
+    var citationCount: Int { PromptGrader.citations(in: answer).count }
+    var answerCharacters: Int { answer.count }
 }
 
 /// Every task's outcome for one model, plus the aggregate scores.
@@ -77,6 +93,63 @@ struct ModelResult: Codable, Sendable {
     var medianTimeToFirstToken: Double { tasks.map(\.timeToFirstToken).median }
     var peakMemoryBytes: Int64 { tasks.map(\.peakMemoryBytes).max() ?? 0 }
 
+    // MARK: - Raw totals
+
+    var promptPassed: Int { tasks.reduce(0) { $0 + $1.promptPassed } }
+    var promptTotal: Int { tasks.reduce(0) { $0 + $1.promptTotal } }
+    var toolPassed: Int { tasks.reduce(0) { $0 + $1.toolPassed } }
+    var toolTotal: Int { tasks.reduce(0) { $0 + $1.toolTotal } }
+    var attemptCount: Int { tasks.count }
+    var timedOutCount: Int { tasks.count { ($0.failure?.contains("timed out")) == true } }
+    var erroredCount: Int { tasks.count { $0.failure != nil } }
+    var totalSeconds: Double { tasks.reduce(0) { $0 + $1.totalSeconds } }
+
+    /// True when any attempt ran on wall power, which invalidates the battery figures.
+    var anyOnACPower: Bool { tasks.contains { $0.power.onACPower } }
+    var batteryMeasured: Bool { !anyOnACPower && tasks.contains { $0.power.sampleCount > 0 } }
+
+    /// Total battery percentage consumed across the whole model run, fractional.
+    var batteryPercentageDrop: Double { tasks.reduce(0) { $0 + $1.power.percentageDrop } }
+    var batteryMilliampHours: Double { tasks.reduce(0) { $0 + $1.power.milliampHours } }
+    var energyWattHours: Double { tasks.reduce(0) { $0 + $1.power.wattHours } }
+    var medianWatts: Double { tasks.map(\.power.averageWatts).filter { $0 > 0 }.median }
+
+    /// Energy cost per 1000 generated tokens — the figure that actually compares models,
+    /// since a faster model finishing sooner can draw more watts and still cost less.
+    var wattHoursPerThousandTokens: Double {
+        let tokens = tasks.reduce(0) { $0 + $1.outputTokens }
+        guard tokens > 0 else { return 0 }
+        return energyWattHours / Double(tokens) * 1000
+    }
+
+    /// Every distinct check, with how often it passed across the whole model run.
+    ///
+    /// This is the most directly useful view: a check failing 36/36 is a systematic weakness,
+    /// one failing 4/36 is sampling noise.
+    ///
+    /// - Authored by: Claude Opus 5 (Anthropic)
+    var checkTally: [(name: String, axis: String, passed: Int, total: Int)] {
+        var order: [String] = []
+        var axes: [String: String] = [:]
+        var passed: [String: Int] = [:]
+        var total: [String: Int] = [:]
+
+        for task in tasks {
+            for (axis, checks) in [("prompt", task.promptChecks), ("tools", task.toolChecks)] {
+                for check in checks {
+                    if total[check.name] == nil {
+                        order.append(check.name)
+                        axes[check.name] = axis
+                    }
+                    total[check.name, default: 0] += 1
+                    passed[check.name, default: 0] += check.passed ? 1 : 0
+                }
+            }
+        }
+
+        return order.map { ($0, axes[$0] ?? "", passed[$0] ?? 0, total[$0] ?? 0) }
+    }
+
     var speedScore: Double {
         guard !tasks.isEmpty else { return 0 }
         return ResourceGrader.speedScore(
@@ -109,6 +182,90 @@ struct BenchReport: Codable, Sendable {
 
     var ranked: [ModelResult] { models.sorted { $0.overallScore > $1.overallScore } }
 
+    /// One row per task attempt, with every raw measurement taken.
+    ///
+    /// Emitted so scores can be recomputed, reweighted, or ignored entirely — the percentages
+    /// are a summary, not the data.
+    ///
+    /// - Authored by: Claude Opus 5 (Anthropic)
+    func taskCSV() -> String {
+        var rows = [
+            [
+                "model", "task", "kind", "attempt",
+                "prompt_checks_passed", "prompt_checks_total", "prompt_score",
+                "tool_checks_passed", "tool_checks_total", "tool_score",
+                "tool_calls", "searches", "citations",
+                "output_tokens", "answer_chars",
+                "ttft_seconds", "total_seconds", "tokens_per_second",
+                "peak_memory_bytes", "model_bytes",
+                "avg_watts", "watt_hours", "watt_hours_per_minute",
+                "battery_percent_drop", "battery_mah", "power_samples", "on_ac_power",
+                "failure"
+            ].joined(separator: ",")
+        ]
+
+        for model in models {
+            for task in model.tasks {
+                rows.append(
+                    [
+                        model.modelID.csvEscaped,
+                        task.taskID.csvEscaped,
+                        task.kind.rawValue,
+                        String(task.attempt + 1),
+                        String(task.promptPassed), String(task.promptTotal), String(format: "%.4f", task.promptScore),
+                        String(task.toolPassed), String(task.toolTotal), String(format: "%.4f", task.toolScore),
+                        String(task.toolCallCount), String(task.searchCount), String(task.citationCount),
+                        String(task.outputTokens), String(task.answerCharacters),
+                        String(format: "%.3f", task.timeToFirstToken),
+                        String(format: "%.3f", task.totalSeconds),
+                        String(format: "%.2f", task.tokensPerSecond),
+                        String(task.peakMemoryBytes), String(model.sizeBytes),
+                        String(format: "%.3f", task.power.averageWatts),
+                        String(format: "%.5f", task.power.wattHours),
+                        String(format: "%.5f", task.power.wattHoursPerMinute),
+                        String(format: "%.4f", task.power.percentageDrop),
+                        String(format: "%.1f", task.power.milliampHours),
+                        String(task.power.sampleCount),
+                        task.power.onACPower ? "1" : "0",
+                        (task.failure ?? "").csvEscaped
+                    ].joined(separator: ",")
+                )
+            }
+        }
+
+        return rows.joined(separator: "\n") + "\n"
+    }
+
+    /// One row per individual check per attempt — the rawest form of the grading.
+    ///
+    /// - Authored by: Claude Opus 5 (Anthropic)
+    func checkCSV() -> String {
+        var rows = ["model,task,attempt,axis,check,passed,weight,detail"]
+
+        for model in models {
+            for task in model.tasks {
+                for (axis, checks) in [("prompt", task.promptChecks), ("tools", task.toolChecks)] {
+                    for check in checks {
+                        rows.append(
+                            [
+                                model.modelID.csvEscaped,
+                                task.taskID.csvEscaped,
+                                String(task.attempt + 1),
+                                axis,
+                                check.name.csvEscaped,
+                                check.passed ? "1" : "0",
+                                String(format: "%.1f", check.weight),
+                                (check.detail ?? "").csvEscaped
+                            ].joined(separator: ",")
+                        )
+                    }
+                }
+            }
+        }
+
+        return rows.joined(separator: "\n") + "\n"
+    }
+
     /// Renders the leaderboard and per-model detail as markdown.
     ///
     /// - Authored by: Claude Opus 5 (Anthropic)
@@ -119,12 +276,56 @@ struct BenchReport: Codable, Sendable {
         lines.append("")
         lines.append("Generated \(ISO8601DateFormatter().string(from: generatedAt)).")
         lines.append("")
-        lines.append("| # | Model | Overall | Prompt | Tools | Speed | Size | tok/s | TTFT | Peak RAM | On disk |")
-        lines.append("|---|-------|---------|--------|-------|-------|------|-------|------|----------|---------|")
+        lines.append("## Raw measurements")
+        lines.append("")
+        lines.append("Counts are checks passed across every task attempt. Timings are medians.")
+        lines.append("")
+
+        if models.contains(where: \.anyOnACPower) {
+            lines.append("> Battery columns are blank because the machine was on wall power for part of")
+            lines.append("> the run. Unplug to measure energy use — while charging, the battery current")
+            lines.append("> reflects the adapter, not what the model costs.")
+            lines.append("")
+        }
+        lines.append("| Model | Prompt checks | Tool checks | tok/s | TTFT s | Load s | Peak RAM | On disk | Attempts | Errored | Wall clock | Watts | Wh | Battery % | Wh/1k tok |")
+        lines.append("|-------|---------------|-------------|-------|--------|--------|----------|---------|----------|---------|------------|-------|----|-----------|-----------|")
+
+        for model in ranked {
+            guard model.didLoad else {
+                lines.append("| `\(model.modelID)` | failed to load | | | | | | \(model.sizeBytes.formattedBytes) | | | | | | | |")
+                continue
+            }
+
+            lines.append(
+                "| `\(model.modelID)` "
+                    + "| \(model.promptPassed)/\(model.promptTotal) "
+                    + "| \(model.toolPassed)/\(model.toolTotal) "
+                    + "| \(String(format: "%.1f", model.medianTokensPerSecond)) "
+                    + "| \(String(format: "%.1f", model.medianTimeToFirstToken)) "
+                    + "| \(String(format: "%.1f", model.loadSeconds)) "
+                    + "| \(model.peakMemoryBytes.formattedBytes) "
+                    + "| \(model.sizeBytes.formattedBytes) "
+                    + "| \(model.attemptCount) "
+                    + "| \(model.erroredCount) "
+                    + "| \(String(format: "%.0fs", model.totalSeconds)) "
+                    + "| \(model.batteryMeasured ? String(format: "%.1f", model.medianWatts) : "—") "
+                    + "| \(model.batteryMeasured ? String(format: "%.2f", model.energyWattHours) : "—") "
+                    + "| \(model.batteryMeasured ? String(format: "%.2f%%", model.batteryPercentageDrop) : "—") "
+                    + "| \(model.batteryMeasured ? String(format: "%.3f", model.wattHoursPerThousandTokens) : "—") |"
+            )
+        }
+
+        lines.append("")
+        lines.append("## Weighted scores")
+        lines.append("")
+        lines.append("Derived from the table above. See README for the weighting; prefer the raw numbers.")
+        lines.append("")
+        lines.append("| # | Model | Overall | Prompt | Tools | Speed | Size |")
+        lines.append("|---|-------|---------|--------|-------|-------|------|")
 
         for (index, model) in ranked.enumerated() {
             guard model.didLoad else {
-                lines.append("| \(index + 1) | `\(model.modelID)` | — | | | | | | | | failed to load |")
+                lines.append("| \(index + 1) | `\(model.modelID)` | — | | | | |")
                 continue
             }
 
@@ -134,11 +335,7 @@ struct BenchReport: Codable, Sendable {
                     + "| \(model.promptScore.percent) "
                     + "| \(model.toolScore.percent) "
                     + "| \(model.speedScore.percent) "
-                    + "| \(model.sizeScore.percent) "
-                    + "| \(String(format: "%.1f", model.medianTokensPerSecond)) "
-                    + "| \(String(format: "%.1fs", model.medianTimeToFirstToken)) "
-                    + "| \(model.peakMemoryBytes.formattedBytes) "
-                    + "| \(model.sizeBytes.formattedBytes) |"
+                    + "| \(model.sizeScore.percent) |"
             )
         }
 
@@ -156,6 +353,18 @@ struct BenchReport: Codable, Sendable {
             }
 
             lines.append("Loaded in \(String(format: "%.1fs", model.loadSeconds)).")
+            lines.append("")
+            lines.append("#### Checks, tallied across every attempt")
+            lines.append("")
+            lines.append("| Axis | Check | Passed |")
+            lines.append("|------|-------|--------|")
+
+            for entry in model.checkTally.sorted(by: { ($0.passed * $1.total) < ($1.passed * $0.total) }) {
+                lines.append("| \(entry.axis) | \(entry.name) | \(entry.passed)/\(entry.total) |")
+            }
+
+            lines.append("")
+            lines.append("#### Per task")
             lines.append("")
             lines.append("| Task | Kind | Prompt | Tools | Spread | Tool calls | Most common failures |")
             lines.append("|------|------|--------|-------|--------|------------|----------------------|")
@@ -187,11 +396,14 @@ struct BenchReport: Codable, Sendable {
                     .map { $0.invocations.map { $0.toolName }.joined(separator: ", ") }
                     .max(by: { $0.count < $1.count }) ?? ""
 
+                let promptCounts = results.map { "\($0.promptPassed)/\($0.promptTotal)" }.joined(separator: " ")
+                let toolCounts = results.map { "\($0.toolPassed)/\($0.toolTotal)" }.joined(separator: " ")
+
                 lines.append(
                     "| \(taskID) "
                         + "| \(first.kind.rawValue) "
-                        + "| \(promptScores.median.percent) "
-                        + "| \(results.map(\.toolScore).median.percent) "
+                        + "| \(promptCounts) "
+                        + "| \(toolCounts) "
                         + "| \(spread) "
                         + "| \(toolNames.isEmpty ? "none" : toolNames) "
                         + "| \(failures.isEmpty ? "—" : failures) |"
@@ -208,6 +420,16 @@ extension Double {
     ///
     /// - Authored by: Claude Opus 5 (Anthropic)
     var percent: String { String(format: "%.0f%%", self * 100) }
+}
+
+extension String {
+    /// This string quoted for CSV when it contains a comma, quote, or newline.
+    ///
+    /// - Authored by: Claude Opus 5 (Anthropic)
+    var csvEscaped: String {
+        guard contains(",") || contains("\"") || contains("\n") else { return self }
+        return "\"\(replacingOccurrences(of: "\"", with: "\"\""))\""
+    }
 }
 
 extension Array where Element == Double {

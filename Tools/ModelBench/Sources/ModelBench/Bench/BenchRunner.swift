@@ -122,6 +122,7 @@ struct BenchRunner: Sendable {
     ) async -> TaskResult {
         let observer = BenchObserver()
         let memory = PeakMemoryRecorder()
+        let power = PowerRecorder()
 
         // Mirrors ChatInstance.init: same instructions, same tools, same provider options.
         let session = LanguageModelSession(
@@ -133,6 +134,7 @@ struct BenchRunner: Sendable {
 
         await observer.beginTurn()
         await memory.start()
+        await power.start()
 
         let options = provider.generationOptions(model: model)
         let start = ContinuousClock.now
@@ -171,6 +173,7 @@ struct BenchRunner: Sendable {
 
         let totalSeconds = (ContinuousClock.now - start).seconds
         let peakMemory = await memory.finish()
+        let powerUsage = await power.finish()
         let invocations = await observer.recordedInvocations()
 
         let outputTokens = tokenizer.map { $0.encode(text: answer).count } ?? (answer.count / 4)
@@ -212,7 +215,8 @@ struct BenchRunner: Sendable {
             totalSeconds: totalSeconds,
             outputTokens: outputTokens,
             tokensPerSecond: tokensPerSecond,
-            peakMemoryBytes: peakMemory
+            peakMemoryBytes: peakMemory,
+            power: powerUsage
         )
     }
 }

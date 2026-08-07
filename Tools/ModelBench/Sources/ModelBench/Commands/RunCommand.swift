@@ -80,9 +80,12 @@ struct Run: AsyncParsableCommand {
                 print(
                     "  \(task.taskID.padding(toLength: 22, withPad: " ", startingAt: 0))"
                         + " #\(task.attempt + 1)"
-                        + " prompt \(task.promptScore.percent.leftPadded(to: 4))"
-                        + "  tools \(task.toolScore.percent.leftPadded(to: 4))"
+                        + " prompt \("\(task.promptPassed)/\(task.promptTotal)".leftPadded(to: 6))"
+                        + " (\(task.promptScore.percent.leftPadded(to: 4)))"
+                        + "  tools \("\(task.toolPassed)/\(task.toolTotal)".leftPadded(to: 6))"
+                        + " (\(task.toolScore.percent.leftPadded(to: 4)))"
                         + "  \(String(format: "%5.1f", task.tokensPerSecond)) tok/s"
+                        + "  \(task.toolCallCount) calls"
                         + status
                 )
 
@@ -111,14 +114,21 @@ struct Run: AsyncParsableCommand {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         encoder.dateEncodingStrategy = .iso8601
+        let taskCSVURL = outputDirectory.appending(path: "run-\(stamp)-tasks.csv")
+        let checkCSVURL = outputDirectory.appending(path: "run-\(stamp)-checks.csv")
+
         try encoder.encode(report).write(to: jsonURL)
         try Data(report.markdown().utf8).write(to: markdownURL)
+        try Data(report.taskCSV().utf8).write(to: taskCSVURL)
+        try Data(report.checkCSV().utf8).write(to: checkCSVURL)
 
         print("")
         print(report.markdown())
         print("")
         print("Wrote \(jsonURL.path(percentEncoded: false))")
         print("Wrote \(markdownURL.path(percentEncoded: false))")
+        print("Wrote \(taskCSVURL.path(percentEncoded: false))    one row per task attempt")
+        print("Wrote \(checkCSVURL.path(percentEncoded: false))   one row per check")
     }
 }
 
