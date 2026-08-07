@@ -216,7 +216,7 @@ struct FolderView: View {
     }
     
     var gridBody: some View {
-        LazyVGrid(columns: columns) {
+        LazyVGrid(columns: columns, alignment: .leading) {
             ForEach(filteredFiles) { file in
                 OpaqueFileCard(file: file, isEditingText: $editingFileText, viewMode: $viewMode, selectedFiles: $selectedFiles)
                     .simultaneousGesture(TapGesture(count: 1).onEnded {
@@ -225,6 +225,7 @@ struct FolderView: View {
                     .id(file)
             }
         }
+        .padding(.horizontal, 10)
         .padding(.vertical, 8)
         .scrollTargetLayout()
     }
