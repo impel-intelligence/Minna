@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/AnyLanguageModel",
       "state" : {
-        "revision" : "9700e6ea1d7f19889a6ca4d2878d0453aeab5ea4",
-        "version" : "2.2.3"
+        "revision" : "3d99e555479a5707450f078a73269b4fbe84dc07",
+        "version" : "2.2.4"
       }
     },
     {

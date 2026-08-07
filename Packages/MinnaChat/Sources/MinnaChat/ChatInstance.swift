@@ -34,9 +34,8 @@ public final class ChatInstance {
     let toolObserver: ToolExecutionObserver = ToolExecutionObserver()
     
     public var waitingForResponse: Bool = false
-    
-    public var stopGeneration: Bool = false
-        
+    private var generationTask: Task<Void, any Error>?
+
     public init(irisDB: IrisDB, databaseContext: ModelContext, model: any ModelManager.Model, configuration: ConfiguredProvider, chat: Chat, instructions: any ModelInstruction, tools: [AvailableTool]) throws {
         self.databaseContext = databaseContext
         self.model = model
@@ -61,44 +60,52 @@ public final class ChatInstance {
     }
     
     public func sendMessage(_ message: String) async throws {
-        guard !session.isResponding else {
+        guard !session.isResponding, generationTask == nil else {
             throw ChatError.alreadyResponding
         }
+
         
         guard languageModel.isAvailable else {
             throw ChatError.modelNotLoaded
         }
-        
-        waitingForResponse = true
-        defer { waitingForResponse = false }
-        
+                
         let generationOptions = provider.generationOptions(model: model)
         
-        // Start the stream response
-        let stream = session.streamResponse(to: Prompt(message), options: generationOptions)
-        
-        do {
-            // Loop over the stream to collect it, tossing out the values. We are doing this instead of `stream.collect()` so we can set waitingForResponse to false when we receive a packet.
-            for try await _ in stream {
-                guard !stopGeneration else { break }
+        let task = Task { @MainActor in
+            waitingForResponse = true
+            defer { waitingForResponse = false }
+            
+            for try await _ in session.streamResponse(to: Prompt(message), options: generationOptions) {
                 waitingForResponse = false
             }
-            
-            // Save the transcript into persistence
-            chat.apply(session.transcript)
-            try databaseContext.save()
+        }
+        
+        generationTask = task
+        defer { generationTask = nil }
+
+        do {
+            try await task.value
+        } catch where error is CancellationError || Task.isCancelled {
+            /* keep partial */
+        } catch let urlError as URLError where urlError.code == .cancelled {
+            /* keep partial */
         } catch {
-            if let last = session.transcript.last, last.plainText == message {
-                
+            if let lastMessage = session.transcript.last,
+               lastMessage.plainText == message {
+                session.transcript.dropLast(1)
             }
-            
             
             throw error
         }
+
+        chat.apply(session.transcript)
+        try databaseContext.save()
+
     }
     
     public func cancel() {
-        stopGeneration = true
+        generationTask?.cancel()
+        generationTask = nil
     }
     
     public func clearCache() async {

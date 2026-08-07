@@ -205,8 +205,10 @@ struct AskMinnaView: View {
                 ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel, selectedProvider: $chatter.selectedProvider)
             }
             .buttonStyle(.glass)
-            IndexingSearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatter.chatMessage) {
+            IndexingSearchBar(placeHolder: "Search or Ask for Anything", searchQuery: $chatter.chatMessage,  isGenerating: $chatter.isGenerating) {
                 submit()
+            } cancel: {
+                chatter.chatInstance?.cancel()
             }
         }
         .frame(maxWidth: 640)

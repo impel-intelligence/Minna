@@ -112,7 +112,7 @@ struct FileChat: View {
 
             }
             // TODO: Put back
-            SearchBar(placeHolder: "Ask anything about \(file.title)", searchQuery: $chatter.chatMessage) {
+            IndexingSearchBar(placeHolder: "Ask anything about \(file.title)", searchQuery: $chatter.chatMessage, isGenerating: $chatter.isGenerating) {
                 Task {
                     do {
                         if let model = chatter.selectedModel {
@@ -126,6 +126,8 @@ struct FileChat: View {
                         Log.logger.error("Failed to send chat", error: error)
                     }
                 }
+            } cancel: {
+                chatter.chatInstance?.cancel()
             }
             .padding(.bottom, 20)
         }

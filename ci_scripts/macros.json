@@ -5,12 +5,12 @@
     "targetName" : "ViewStorageMacros"
   },
   {
-    "fingerprint" : "9700e6ea1d7f19889a6ca4d2878d0453aeab5ea4",
+    "fingerprint" : "3d99e555479a5707450f078a73269b4fbe84dc07",
     "packageIdentity" : "anylanguagemodel",
     "targetName" : "AnyLanguageModelMacros"
   },
   {
-    "fingerprint" : "bd4b7434e6bdb588c7ef55706ff8904cb7fd4c57",
+    "fingerprint" : "d07c1e30919314c908c1dd2d51e48f92d6768b9b",
     "packageIdentity" : "mlx-swift-lm",
     "targetName" : "MLXHuggingFaceMacros"
   }

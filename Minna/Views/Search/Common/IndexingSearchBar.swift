@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ModelCDN
+import DatabaseSchema
 
 struct IndexingSearchBar: View {
     @Environment(\.theme) var theme
@@ -15,7 +16,9 @@ struct IndexingSearchBar: View {
     
     var placeHolder: String
     @Binding var searchQuery: String
+    @Binding var isGenerating: Bool
     let submit: () -> Void
+    let cancel: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
@@ -49,4 +52,20 @@ struct IndexingSearchBar: View {
         .foregroundStyle(.secondary)
         .frame(maxWidth: 450)
     }
+}
+
+#Preview {
+    @Previewable @State var searchQuery = ""
+    @Previewable @State var isGenerating = false
+    @Previewable@State var modelManager: ModelManager = ModelManager()
+
+    IndexingSearchBar(placeHolder: "Hello World", searchQuery: $searchQuery, isGenerating: $isGenerating, submit: {
+        
+    }, cancel: {
+        
+    })
+    .environment(modelManager)
+    .irisContext(.notConnected)
+    .database(SampleDatabase.shared)
+    .theme(.champagne)
 }

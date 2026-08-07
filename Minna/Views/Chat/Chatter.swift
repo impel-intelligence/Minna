@@ -29,6 +29,8 @@ final class Chatter {
     let instructions: any ModelInstruction
     let availableTools: [AvailableTool]
     
+    var isGenerating: Bool = false
+    
     init(chat: Chat, instructions: any ModelInstruction, availableTools: [AvailableTool]) {
         self.chat = chat
         self.instructions = instructions
@@ -41,9 +43,12 @@ final class Chatter {
         guard !message.isEmpty else { return }
         chatMessage = ""
 
+        isGenerating = true
+        defer { isGenerating = false }
+        
         do {
             try await chatInstance?.sendMessage(message)
-
+            
             if chat.file.title == Chat.defaultTitle,
                let lastMessage = chat.transcript.last,
                case .response(let response) = lastMessage,

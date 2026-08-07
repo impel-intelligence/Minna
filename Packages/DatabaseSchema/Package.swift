@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/evgenyneu/keychain-swift.git", from: "24.0.0"),
-        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.2.3"),
+        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.2.4"),
 //        .package(path: "/Users/taylorlineman/Developer/git/AnyLanguageModel", traits: ["MLX"]),
     ],
     targets: [

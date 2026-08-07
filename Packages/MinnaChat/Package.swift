@@ -28,7 +28,7 @@ let package = Package(
         .package(url: "https://github.com/huggingface/swift-transformers", from: "1.0.0"),
         .package(url: "https://github.com/huggingface/swift-huggingface", from: "0.9.0"),
         .package(url: "https://github.com/impel-intelligence/mlx-swift-lm", from: "1.0.1"),
-        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.2.3", traits: ["MLX"]),
+        .package(url: "https://github.com/impel-intelligence/AnyLanguageModel", from: "2.2.4", traits: ["MLX"]),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
