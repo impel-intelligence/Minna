@@ -1,0 +1,258 @@
+{
+  "weights": {
+    "prompt": 0.35,
+    "tools": 0.35,
+    "speed": 0.2,
+    "size": 0.1
+  },
+  "budgets": {
+    "targetTokensPerSecond": 60,
+    "maximumTimeToFirstToken": 12,
+    "maximumBytes": 12000000000
+  },
+  "maximumSearches": 2,
+  "taskTimeoutSeconds": 180,
+  "repeats": 3,
+  "tasks": [
+    {
+      "id": "vent-temperature",
+      "kind": "retrieval",
+      "prompt": "At what temperature did the LFP prismatic cells vent?",
+      "expectedDocumentIDs": [
+        "f1227581-8454-4618-8a78-be5fdba318c3"
+      ],
+      "expectedFacts": [
+        [
+          "218"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "best-catalyst-yield",
+      "kind": "retrieval",
+      "prompt": "What was the highest isolated yield recorded for the Verrill coupling, and at what palladium loading?",
+      "expectedDocumentIDs": [
+        "c69e0e53-0f42-4562-b257-6f2c2830f6d4"
+      ],
+      "expectedFacts": [
+        [
+          "87"
+        ],
+        [
+          "0.5"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "bleaching-threshold",
+      "kind": "retrieval",
+      "prompt": "What sea surface temperature triggered bleaching onset at Marrow Reef?",
+      "expectedDocumentIDs": [
+        "84ceeebd-c30e-417a-bb9b-b2a08e4956eb"
+      ],
+      "expectedFacts": [
+        [
+          "29.4"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "palladium-supplier",
+      "kind": "multiHop",
+      "prompt": "Which supplier provided the palladium used in the batch that achieved the best Verrill coupling yield?",
+      "expectedDocumentIDs": [
+        "c69e0e53-0f42-4562-b257-6f2c2830f6d4",
+        "3fa66481-ef15-4110-a9a3-a48c987e7deb"
+      ],
+      "expectedFacts": [
+        [
+          "Thal Metallurgical",
+          "Thal"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "rollback-timing",
+      "kind": "multiHop",
+      "prompt": "How late was the migration rollback call relative to the agreed trigger, and how long was service degraded?",
+      "expectedDocumentIDs": [
+        "5df70c12-fcf5-44ed-a888-2b5d64f264de"
+      ],
+      "expectedFacts": [
+        [
+          "4 second",
+          "4 seconds",
+          "4-second"
+        ],
+        [
+          "51"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "exclusion-criteria",
+      "kind": "excerptContext",
+      "prompt": "How many cells were excluded from the thermal runaway analysis, and on what grounds?",
+      "expectedDocumentIDs": [
+        "f1227581-8454-4618-8a78-be5fdba318c3"
+      ],
+      "expectedFacts": [
+        [
+          "nine",
+          "9"
+        ],
+        [
+          "92 percent",
+          "92%"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "grant-second-tranche",
+      "kind": "retrieval",
+      "prompt": "What has to happen before the second Halloway tranche is released?",
+      "expectedDocumentIDs": [
+        "393c8572-443e-40d9-89a5-3edd23827a99"
+      ],
+      "expectedFacts": [
+        [
+          "500"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "embedding-latency",
+      "kind": "retrieval",
+      "prompt": "Which stage dominates the ingest latency budget, and by how much did the parser regression cost us?",
+      "expectedDocumentIDs": [
+        "a41f16e5-5621-45d4-b446-cbf87b62f33c"
+      ],
+      "expectedFacts": [
+        [
+          "embedding"
+        ],
+        [
+          "140"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "ozone-absent",
+      "kind": "refusal",
+      "prompt": "What do the Antarctic ozone column measurements in the database show about recovery trends?",
+      "expectedDocumentIDs": [],
+      "expectedFacts": [],
+      "forbiddenSubstrings": [
+        "Montreal Protocol",
+        "Dobson",
+        "ozone hole"
+      ],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": false,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "crispr-absent",
+      "kind": "refusal",
+      "prompt": "Summarise what the database says about CRISPR off-target effects in primary T cells.",
+      "expectedDocumentIDs": [],
+      "expectedFacts": [],
+      "forbiddenSubstrings": [
+        "Cas9",
+        "guide RNA",
+        "off-target rate"
+      ],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": false,
+      "requiresClarifyingQuestion": false
+    },
+    {
+      "id": "ambiguous-yield",
+      "kind": "ambiguous",
+      "prompt": "Find the yield data.",
+      "expectedDocumentIDs": [],
+      "expectedFacts": [],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": false,
+      "requiresClarifyingQuestion": true
+    },
+    {
+      "id": "temperature-thresholds",
+      "kind": "citationStress",
+      "prompt": "List every temperature threshold mentioned anywhere in the database, with what each one governs.",
+      "expectedDocumentIDs": [
+        "f1227581-8454-4618-8a78-be5fdba318c3",
+        "84ceeebd-c30e-417a-bb9b-b2a08e4956eb"
+      ],
+      "expectedFacts": [
+        [
+          "218"
+        ],
+        [
+          "29.4"
+        ]
+      ],
+      "forbiddenSubstrings": [],
+      "expectedTools": [
+        "searchDocuments"
+      ],
+      "requiresCitations": true,
+      "requiresClarifyingQuestion": false
+    }
+  ]
+}
