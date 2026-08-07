@@ -14,10 +14,6 @@ import Logging
 import SFSafeSymbols
 import PostHog
 
-#if canImport(Darwin)
-import LoggingOSLog
-#endif
-
 #if SPARKLE
 import Sparkle
 #endif
