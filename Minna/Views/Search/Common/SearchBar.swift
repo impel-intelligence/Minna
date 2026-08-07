@@ -21,8 +21,11 @@ struct SearchBar: View {
             Image(systemSymbol: .magnifyingglass)
                 .foregroundStyle(.secondary)
                 .accessibilityHidden(true)
-            TextField(placeHolder, text: $searchQuery)
+            TextField(placeHolder, text: $searchQuery, axis: .vertical)
                 .textFieldStyle(.plain)
+                .onSubmit {
+                    submit()
+                }
             if !searchQuery.isEmpty {
                 Button {
                     submit()
@@ -38,11 +41,8 @@ struct SearchBar: View {
         .padding(.horizontal)
         .padding(.vertical, 10)
         .frame(maxWidth: 500)
-        .glassEffect(.regular, in: .rect(cornerRadius: 100))
+        .glassEffect(.regular, in: .rect(cornerRadius: 20))
         .shadow(color: theme.background.opacity(0.18), radius: 18, x: 0, y: 8)
-        .onSubmit {
-            submit()
-        }
     }
 }
 
@@ -54,4 +54,5 @@ struct SearchBar: View {
         print("Hello")
     }
     .theme(.random)
+    .frame(width: 500, height: 500)
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 import ModelCDN
 import DatabaseSchema
+import SFSafeSymbols
 
 struct IndexingSearchBar: View {
     @Environment(\.theme) var theme
@@ -22,8 +23,6 @@ struct IndexingSearchBar: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            SearchBar(placeHolder: placeHolder, searchQuery: $searchQuery, submit: submit)
-
             if !manager.inFlightDownloads.isEmpty {
                 ForEach(manager.inFlightDownloads) { download in
                     progressView(for: download.progress, title: download.file.name)
@@ -39,7 +38,28 @@ struct IndexingSearchBar: View {
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: 450)
             }
+
+            GlassEffectContainer {
+                HStack(alignment: .center) {
+                    SearchBar(placeHolder: placeHolder, searchQuery: $searchQuery, submit: submit)
+
+                    if isGenerating {
+                        Button {
+                            cancel()
+                        } label: {
+                            Image(systemSymbol: .square)
+                                .bold()
+                                .frame(width: 25, height: 25)
+                        }
+                        .aspectRatio(1, contentMode: .fit)
+                        .buttonBorderShape(.circle)
+                        .buttonStyle(.glass)
+                    }
+                }
+            }
+
         }
+        .animation(.bouncy, value: isGenerating)
     }
     
     @ViewBuilder
@@ -59,13 +79,19 @@ struct IndexingSearchBar: View {
     @Previewable @State var isGenerating = false
     @Previewable@State var modelManager: ModelManager = ModelManager()
 
-    IndexingSearchBar(placeHolder: "Hello World", searchQuery: $searchQuery, isGenerating: $isGenerating, submit: {
+    VStack {
+        IndexingSearchBar(placeHolder: "Hello World", searchQuery: $searchQuery, isGenerating: $isGenerating, submit: {
+            
+        }, cancel: {
+            isGenerating = false
+        })
+        .environment(modelManager)
+        .irisContext(.notConnected)
+        .database(SampleDatabase.shared)
+        .theme(.champagne)
         
-    }, cancel: {
-        
-    })
-    .environment(modelManager)
-    .irisContext(.notConnected)
-    .database(SampleDatabase.shared)
-    .theme(.champagne)
+        Button("Generating") {
+            isGenerating.toggle()
+        }
+    }
 }

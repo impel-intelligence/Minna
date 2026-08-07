@@ -90,10 +90,10 @@ public final class ChatInstance {
         } catch let urlError as URLError where urlError.code == .cancelled {
             /* keep partial */
         } catch {
-            if let lastMessage = session.transcript.last,
-               lastMessage.plainText == message {
-                session.transcript.dropLast(1)
-            }
+//            if let lastMessage = session.transcript.last,
+//               lastMessage.plainText == message {
+//                session.transcript.dropLast(1)
+//            }
             
             throw error
         }

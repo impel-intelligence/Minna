@@ -224,7 +224,7 @@ struct AskMinnaView: View {
             modelContext.insert(chatter.chat.file)
             viewMode = .chat // Start animations
         }
-        
+    
         Task {
             do {
                 if let model = chatter.selectedModel {
@@ -263,7 +263,7 @@ struct AskMinnaView: View {
         
         searchResults = orderedByRank.compactMap { $0 }
         
-        if !searchResults.isEmpty {
+        if !searchResults.isEmpty && (viewMode == .startup || viewMode == .searching) {
             viewMode = .searching
         }
     }
