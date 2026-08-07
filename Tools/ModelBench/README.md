@@ -27,6 +27,7 @@ script's header for why.
 ## Usage
 
 ```bash
+./scripts/fetch-benchmark-models.sh            # download the whole 12-model slate (56 GB)
 swift run ModelBench list                      # models available on this machine
 swift run ModelBench discover --search qwen    # find candidates, screened for tool support
 swift run ModelBench fetch mlx-community/Qwen3-4B-Instruct-2507-4bit
