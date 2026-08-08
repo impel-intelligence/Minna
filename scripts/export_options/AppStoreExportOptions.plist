@@ -10,8 +10,6 @@
 	<string>automatic</string>
 	<key>uploadSymbols</key>
 	<true/>
-	<key>uploadSymbols</key>
-	<true/>
   <key>teamID</key>
   <string>VV548YNZL3</string>
 </dict>
