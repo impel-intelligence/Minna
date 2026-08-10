@@ -1,9 +1,3 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
-//
-// Swift Argument Parser
-// https://swiftpackageindex.com/apple/swift-argument-parser/documentation
-
 import ArgumentParser
 import Foundation
 import CoreML
@@ -13,12 +7,10 @@ import Subprocess
 import ModelCDN
 import CryptoKit
 
-@main
 struct ModelUploader: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(commandName: "upload", abstract: "Upload models to the ModelCDN.")
+    
     static let coreMLExtensions = ["mlpackage", "mlmodel", "mlmodelc"]
-    static let googleBucket = "gs://minna_embedding_models"
-    static let cdnDomain = URL(string: "https://cdn.tryminna.com")!
-    static let manifest = "manifest.json"
     
     enum UploadError: Error {
         case unknownModelFormat
@@ -144,8 +136,8 @@ struct ModelUploader: AsyncParsableCommand {
         let hashString = sha.compactMap { String(format: "%02x", $0) }.joined()
                 
         print("Retrieving Existing Manifest")
-        let manifestFile = temporaryDirectory.appending(path: ModelUploader.manifest)
-        try await downloadFromCDN(file: ModelUploader.manifest, to: manifestFile)
+        let manifestFile = temporaryDirectory.appending(path: CDN.manifest)
+        try await CDN.downloadFromCDN(file: CDN.manifest, to: manifestFile)
         
         var manifest: Manifest
         if FileManager.default.fileExists(atPath: manifestFile.path(percentEncoded: false)) {
@@ -163,10 +155,10 @@ struct ModelUploader: AsyncParsableCommand {
 
         if manifest.files.contains(where: { $0.identifier == identifier }) {
             manifest.files.removeAll(where: { $0.identifier == identifier })
-            try? await deleteFromCDN(file: identifier + ".aar")
+            try? await CDN.deleteFromCDN(file: identifier + ".aar")
         }
         
-        let fileURL = ModelUploader.cdnDomain.appendingPathComponent(identifier, conformingTo: .appleArchive)
+        let fileURL = CDN.cdnDomain.appendingPathComponent(identifier, conformingTo: .appleArchive)
         let file = Manifest.File(
             identifier: identifier,
             name: name,
@@ -183,33 +175,10 @@ struct ModelUploader: AsyncParsableCommand {
         try manifest.save(to: manifestFile)
         
         print("Uploading Manifest File")
-        try await uploadToCDN(file: manifestFile)
+        try await CDN.uploadToCDN(file: manifestFile)
         
         print("Uploading archive to google cloud")
-        try await uploadToCDN(file: archiveFile)
-    }
-    
-    func deleteFromCDN(file: String) async throws {
-        let deleteURL = ModelUploader.googleBucket + "/" + file
-        let arguments: Arguments = ["storage", "rm", deleteURL]
-        let config: Subprocess.Configuration = .init(.path("/opt/homebrew/bin/gcloud"), arguments: arguments)
-        
-        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
-    }
-    
-    func downloadFromCDN(file: String, to url: URL) async throws {
-        let downloadURL = ModelUploader.googleBucket + "/" + file
-        let arguments: Arguments = ["storage", "cp", downloadURL, url.absoluteString]
-        let config: Subprocess.Configuration = .init(.path("/opt/homebrew/bin/gcloud"), arguments: arguments)
-        
-        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
-    }
-    
-    func uploadToCDN(file: URL) async throws {
-        let arguments: Arguments = ["storage", "cp", file.absoluteString, ModelUploader.googleBucket]
-        let config: Subprocess.Configuration = .init(.path("/opt/homebrew/bin/gcloud"), arguments: arguments)
-        
-        _ = try await Subprocess.run(config, output: .currentStandardOutput, error: .combinedWithOutput)
+        try await CDN.uploadToCDN(file: archiveFile)
     }
     
     func ask(question: String) -> String? {

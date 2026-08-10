@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ModelCDN
 
 public struct DownloadedModel: Model, Sendable, Hashable, Equatable {
     public enum Runner: Int, Sendable {
@@ -20,17 +21,16 @@ public struct DownloadedModel: Model, Sendable, Hashable, Equatable {
     }
     
     public let id: String
-    public let displayName: String
+    public var displayName: String { configuration.displayName }
     public let runner: Runner
-    public var provider: any ModelProvider.Type {
-        return runner.provider
-    }
+    public var provider: any ModelProvider.Type { return runner.provider }
     
+    public let configuration: LLMModelConfig
     public let directory: URL
 
-    public init(id: String, displayName: String, runner: Runner, directory: URL) {
+    public init(id: String, configuration: LLMModelConfig, runner: Runner, directory: URL) {
         self.id = id
-        self.displayName = displayName
+        self.configuration = configuration
         self.runner = runner
         self.directory = directory
     }

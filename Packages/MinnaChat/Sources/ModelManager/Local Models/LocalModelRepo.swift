@@ -54,14 +54,15 @@ public final class ModelCDNDownloader: /*Downloader,*/ Sendable {
             // If there is .safetensors, and a jinja chat template this is a valid chat model.
             guard directoryContents.contains(where: { $0.pathExtension == "safetensors" }) else { continue }
             guard directoryContents.contains(where: { $0.pathExtension == "jinja" }) else { continue }
-
-            downloadedModels.append(DownloadedModel(id: directoryID, displayName: directoryID, runner: .mlx, directory: directory))
+            
+            let minnaConfigURL = directory.appendingPathComponent("minna-config", conformingTo: .json)
+            guard FileManager.default.fileExists(atPath: minnaConfigURL.path(percentEncoded: false)) else { continue }
+            
+            let llmConfig = try LLMModelConfig.load(from: minnaConfigURL)
+    
+            downloadedModels.append(DownloadedModel(id: directoryID, configuration: llmConfig, runner: .mlx, directory: directory))
         }
         
         return downloadedModels
     }
-    
-//    public func downloadModel(id: String) throws -> AsyncThrowingStream<Progress, Error> {
-//        
-//    }
 }

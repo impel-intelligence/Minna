@@ -13,7 +13,7 @@ import Synchronization
 import ModelCDN
 import UniformTypeIdentifiers
 
-struct DownloadDidFinish : NotificationCenter.MainActorMessage {
+struct DownloadDidFinish: NotificationCenter.MainActorMessage {
     public typealias Subject = ModelManager
     
     public static var name: Notification.Name {
@@ -101,13 +101,6 @@ final class ModelManager: NSObject, @unchecked Sendable {
                 
                 self.startDownload(of: file)
             }
-            
-            // TODO: This should not be hard coded
-            if let qwen = manifest.files.filter({ $0.identifier == "Qwen3.5-9B-MLX-4bit" }).first,
-               !doesModelExistOnDisk(identifier: qwen.identifier) {
-                print("Downloading QWEN Model!")
-                self.startDownload(of: qwen)
-            }
         }
     }
     
@@ -141,18 +134,18 @@ final class ModelManager: NSObject, @unchecked Sendable {
                         priority: .default
                     )
                 }
+                                                
+                guard download.state != .failed else {
+                    Log.logger.warning("Download for session \(file.identifier) is in the failed state.")
+                    return
+                }
                 
                 Task { @MainActor in
                     self.stateLock.withLock {
                         self.inFlightDownloads.append(DownloadingFile(file: file, progress: Progress()))
                     }
                 }
-                                
-                guard download.state != .failed else {
-                    Log.logger.warning("Download for session \(file.identifier) is in the failed state.")
-                    return
-                }
-                
+
                 try BADownloadManager.shared.startForegroundDownload(download)
             } catch {
                 
@@ -195,6 +188,12 @@ extension ModelManager: BADownloadManagerDelegate {
         }
         
         Log.logger.error("Download failed \(download.identifier) \(error)", error: error)
+        
+        Task { @MainActor in
+            self.stateLock.withLock {
+                self.inFlightDownloads.removeAll(where: {$0.id == download.identifier})
+            }
+        }
     }
     
     nonisolated func download(_ download: BADownload, finishedWithFileURL fileURL: URL) {
