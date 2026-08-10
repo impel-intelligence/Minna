@@ -14,10 +14,10 @@ import SFSafeSymbols
 struct OnboardingView: View {
     enum OnboardingPage: Int {
         case overview
-        case providers
+        case models
     }
 
-    @State var onboardingPage: OnboardingPage = .overview
+    @State var onboardingPage: OnboardingPage = .models
     
     var body: some View {
         VStack {
@@ -25,17 +25,22 @@ struct OnboardingView: View {
             case .overview:
                 FeatureOverview {
                     withAnimation {
-                        onboardingPage = .providers
+                        onboardingPage = .models
                     }
                 }
-            case .providers:
-                VStack {
-                    
-                }
+            case .models:
+                ModelSetupView()
             }
         }
+        .frame(width: 700, height: 450)
         .toolbar(removing: .title)
         .toolbarBackground(.hidden, for: .windowToolbar)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                MinnaLogo()   
+            }
+            .sharedBackgroundVisibility(.hidden)
+        }
     }
 }
 

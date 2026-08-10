@@ -30,11 +30,11 @@ struct ModelsSettingsView: View {
     
     var body: some View {
         Form {
-            Section("Local Models") {
-                NavigationLink("Install New Models") {
-                    InstallModelsView()
-                }
-            }
+//            Section("Local Models") {
+//                NavigationLink("Install New Models") {
+//                    InstallModelsView()
+//                }
+//            }
             
             Section("Configured Providers") {
                 ForEach(providers) { configuration in

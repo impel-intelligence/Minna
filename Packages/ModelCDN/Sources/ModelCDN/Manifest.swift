@@ -7,6 +7,7 @@
 
 import Foundation
 import BackgroundAssets
+import ArgumentParser
 
 public enum Platform: String, Codable, Sendable {
     case macOS
@@ -36,8 +37,13 @@ public enum Platform: String, Codable, Sendable {
     }
 }
 
+public enum ModelType: String, Codable, Sendable {
+    case embedding
+    case inference
+}
+
 public struct Manifest: Codable {
-    public struct File: Codable, Sendable, Hashable {
+    public struct File: Codable, Sendable, Hashable, Equatable {
         public let identifier: String
         public let name: String
         public let fileSize: Int
@@ -45,8 +51,9 @@ public struct Manifest: Codable {
         public let platforms: [Platform]
         public let required: Bool
         public let hash: String
+        public let type: ModelType
         
-        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String) {
+        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String, type: ModelType) {
             self.identifier = identifier
             self.fileSize = fileSize
             self.url = url
@@ -54,6 +61,7 @@ public struct Manifest: Codable {
             self.required = required
             self.hash = hash
             self.name = name
+            self.type = type
         }
     }
     

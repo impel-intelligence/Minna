@@ -77,7 +77,7 @@ struct IndexingSearchBar: View {
 #Preview {
     @Previewable @State var searchQuery = ""
     @Previewable @State var isGenerating = false
-    @Previewable@State var modelManager: ModelManager = ModelManager()
+    @Previewable @State var modelManager: ModelManager = ModelManager()
 
     VStack {
         IndexingSearchBar(placeHolder: "Hello World", searchQuery: $searchQuery, isGenerating: $isGenerating, submit: {

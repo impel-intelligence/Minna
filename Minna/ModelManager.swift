@@ -27,7 +27,7 @@ extension NotificationCenter.MessageIdentifier where Self == NotificationCenter.
     static var downloadDidFinish: Self { .init() }
 }
 
-struct DownloadingFile: Identifiable {
+struct DownloadingFile: Identifiable, Equatable {
     var id: String { file.identifier }
     
     let file: Manifest.File
@@ -36,9 +36,12 @@ struct DownloadingFile: Identifiable {
 
 @Observable
 final class ModelManager: NSObject, @unchecked Sendable {
+    static let maxDownloadAttempts: Int = 3
     
     @ObservationIgnored
     private let manifest: Mutex<Manifest> = Mutex(Manifest(files: []))
+    
+    public var standardInferenceModel: String? = nil
     
     public var inFlightDownloads: [DownloadingFile] = []
     
@@ -49,18 +52,29 @@ final class ModelManager: NSObject, @unchecked Sendable {
         BADownloadManager.shared.delegate = self
         
         do {
-            try self.loadLocalManifest()
+            try self.loadLocalManifest(attempts: 0)
         } catch {
             Log.logger.error("Failed to load local manifest", error: error)
         }
     }
 
-    private func refreshManifest() async throws {
+    private func refreshManifest(attempts: Int) async throws {
+        guard attempts <= ModelManager.maxDownloadAttempts else {
+            Log.logger.error("Failed to download ModelCDN manifest after \(attempts) attempts.")
+            return
+        }
+        
         guard let infoDictionary = Bundle.main.infoDictionary,
               let manifestURLString = infoDictionary["BAManifestURL"] as? String,
               let manifestURL = URL(string: manifestURLString) else {
             Log.logger.error("Failed to retrieve manifest URL.")
             return
+        }
+        
+        // Progressive backoff on the attempts
+        if attempts > 0 {
+            Log.logger.info("Waiting \(5 * attempts) seconds before trying to fetch the manifest")
+            try? await Task.sleep(for: .seconds(5 * attempts))
         }
         
         let request = URLRequest(url: manifestURL)
@@ -71,40 +85,54 @@ final class ModelManager: NSObject, @unchecked Sendable {
         try data.write(to: ManifestSharedSettings.localManifestURL)
         
         // Load the local manifest file if we have successfully wrote the new manifest.
-        try loadLocalManifest()
+        try loadLocalManifest(attempts: attempts)
     }
     
-    private func loadLocalManifest() throws {
+    private func loadLocalManifest(attempts: Int) throws {
         // Check to see if the Manifest file exists on disk. If it doesn't try and load it from the internet.
-        guard FileManager.default.fileExists(atPath: ManifestSharedSettings.localManifestURL.path(percentEncoded: false)) else {
+        if !FileManager.default.fileExists(atPath: ManifestSharedSettings.localManifestURL.path(percentEncoded: false)) {
             Log.logger.error("No remote manifest has been downloaded at \(ManifestSharedSettings.localManifestURL).")
             
             // Dispatch a metadata refresh.
-            Task {
-                do {
-                    try await refreshManifest()
-                } catch {
-                    Log.logger.error("Failed to manually refresh metadata", error: error)
-                }
-            }
-
+            startRefreshTask(attempts: attempts)
             return
         }
         
-        try manifest.withLock { manifest in
-            manifest = try Manifest.load(from: ManifestSharedSettings.localManifestURL)
+        do {
+            let manifest = try manifest.withLock { manifest in
+                manifest = try Manifest.load(from: ManifestSharedSettings.localManifestURL)
+                return manifest
+            }
             
-            // We always need the required files, so instruct them to download
+            // We always need the required files, so instruct them to download. We also only download embedding models since inference models are handled by the
             for file in manifest.files.filter(\.required) {
+                // Set the standard inference model to the model that is required and an inference model.
+                if file.required && file.type == .inference {
+                    standardInferenceModel = file.identifier
+                }
+                
                 // Only download files that are not on the disk already.
                 guard !doesModelExistOnDisk(identifier: file.identifier) else { continue }
                 
                 self.startDownload(of: file)
             }
+        } catch {
+            Log.logger.error("Failed to load manifest, redownloading.", error: error)
+            startRefreshTask(attempts: attempts)
         }
     }
     
-    private func doesModelExistOnDisk(identifier: String) -> Bool {
+    private func startRefreshTask(attempts: Int) {
+        Task {
+            do {
+                try await refreshManifest(attempts: attempts + 1)
+            } catch {
+                Log.logger.error("Failed to manually refresh metadata", error: error)
+            }
+        }
+    }
+    
+    public func doesModelExistOnDisk(identifier: String) -> Bool {
         let url = ManifestSharedSettings.modelStorageURL.appendingPathComponent(identifier, conformingTo: .directory)
         return FileManager.default.fileExists(atPath: url.path(percentEncoded: false))
     }
@@ -142,7 +170,9 @@ final class ModelManager: NSObject, @unchecked Sendable {
                 
                 Task { @MainActor in
                     self.stateLock.withLock {
-                        self.inFlightDownloads.append(DownloadingFile(file: file, progress: Progress()))
+                        let progress = Progress()
+                        progress.kind = .file
+                        self.inFlightDownloads.append(DownloadingFile(file: file, progress: progress))
                     }
                 }
 
@@ -165,6 +195,7 @@ extension ModelManager: BADownloadManagerDelegate {
         
         let progress = Progress(totalUnitCount: totalExpectedBytes)
         progress.completedUnitCount = totalBytesWritten
+        progress.kind = .file
         
         Task { @MainActor [weak self] in
             Log.logger.info("\(download.identifier) (\(progress.fractionCompleted.formatted(.percent)))")

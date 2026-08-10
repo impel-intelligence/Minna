@@ -15,7 +15,7 @@ protocol AssetProvider {
 }
 
 extension AnthropicProvider: AssetProvider {
-    static var marketingName: String { "Claude (Anthropic)" }
+    static var marketingName: String { "Claude" }
     static var image: ImageResource { .Providers.Claude.logo }
     static var background: Color { .Providers.Claude.background }
 }

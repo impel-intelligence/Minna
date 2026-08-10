@@ -98,7 +98,7 @@ struct OnboardingCard: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack() {
             if let contentURL {
                 LoopingVideoPlayer(url: contentURL)
                     .frame(width: 290, height: 150)
@@ -107,10 +107,13 @@ struct OnboardingCard: View {
                 ContentUnavailableView("No Video", systemSymbol: .videoSlash)
                     .frame(width: 290, height: 150)
             }
+            Spacer()
             Text(page.text)
                 .font(.title2)
                 .padding(.horizontal)
-            Spacer(minLength: 0)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer()
+
             HStack {
                 Button("Skip") {
                     skip()
@@ -144,5 +147,15 @@ struct OnboardingCard: View {
 #Preview {
     FeatureOverview {
         
+    }
+    .frame(width: 700, height: 450)
+    .toolbar(removing: .title)
+    .toolbarBackground(.hidden, for: .windowToolbar)
+    .toolbar {
+        ToolbarItem(placement: .principal) {
+            MinnaLogo()
+            
+        }
+        .sharedBackgroundVisibility(.hidden)
     }
 }

@@ -82,11 +82,11 @@ struct MinnaApp: App {
         WindowGroup("Dashboard", id: "dashboard") {
             if isOnboarding {
                 OnboardingView()
-                    .frame(minWidth: 350, minHeight: 375)
                     .modelContainer(frontendDatabase.modelContainer)
                     .database(frontendDatabase)
                     .irisContext(irisDBContext)
                     .environment(modelManager)
+                    .windowResizeBehavior(.disabled)
             } else {
                 NavigationCore()
                     .modelContainer(frontendDatabase.modelContainer)
