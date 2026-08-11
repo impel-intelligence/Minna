@@ -88,7 +88,7 @@ final class OnboardingNavigationRouter {
     func providersFinished(modelManager: ModelManager) {
         if let embeddingID = modelManager.standardEmbeddingModel {
             if modelManager.doesModelExistOnDisk(identifier: embeddingID) {
-                
+                path.append(OnboardingStage.finished)
             } else {
                 path.append(OnboardingStage.embeddingModel)
             }

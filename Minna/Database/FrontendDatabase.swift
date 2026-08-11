@@ -35,6 +35,7 @@ class FrontendDatabase: Database {
         if let uuidString = UserDefaults.standard.object(forKey: FrontendDatabase.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
             unfilledFolderUUID = uuid
         } else {
+            // TODO: Try and find an existing unfilled folder UUID in case the user defaults got wiped.
             unfilledFolderUUID = UUID()
             UserDefaults.standard.set(unfilledFolderUUID.uuidString, forKey: FrontendDatabase.unfilledFolderKey)
         }
