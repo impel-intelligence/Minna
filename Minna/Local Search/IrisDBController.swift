@@ -35,7 +35,7 @@ final class IrisDBController {
     
     @ObservationIgnored let irisDB: IrisDB
     @ObservationIgnored private var textEmbedder: EmbeddingProvider
-    @ObservationIgnored private var downloadObservationToken:  NotificationCenter.ObservationToken?
+    @ObservationIgnored private var downloadObservationToken: NotificationCenter.ObservationToken?
     
     var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter
@@ -66,8 +66,14 @@ final class IrisDBController {
         downloadObservationToken = NotificationCenter.default.addObserver(for: DownloadDidFinish.self) { message in
             guard message.identifier == IrisDBController.searchEmbedderID else { return }
 
-            // TODO: Swap embedders
-            
+            // TODO: Re-embed databsae
+//            Task {
+//                do {
+//                    try await self.reEmbedDatabase()
+//                } catch {
+//                    Log.logger.error("Failed to re-embed entire database after embedder download", error: error)
+//                }
+//            }
         }
     }
         

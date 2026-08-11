@@ -29,7 +29,19 @@ struct OnDeviceSetup: View {
             } else if let download = currentDownload {
                 downloading(file: download)
             } else {
-                ContentUnavailableView("No model can be downloaded at this time", systemSymbol: .exclamationmarkTriangle)
+                ContentUnavailableView {
+                    Label("Download Failed", systemSymbol: .exclamationmarkTriangle)
+                } description: {
+                    Text("The on-device model could not be downloaded at this time.")
+                } actions: {
+                    Button("Skip Downloading") {
+                        isOnboarding = false
+                    }
+
+                    NavigationLink("Set up off-device providers") {
+                        ProviderSetupView()
+                    }
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -43,7 +55,6 @@ struct OnDeviceSetup: View {
             }
         }
         .onAppear {
-            modelManager.standardInferenceModel = "qwen3-4b-4bit"
             if let inferenceModel = modelManager.standardInferenceModel,
                modelManager.doesModelExistOnDisk(identifier: inferenceModel) {
                 isDownloadComplete = true
@@ -82,10 +93,14 @@ struct OnDeviceSetup: View {
                 .buttonStyle(.borderedProminent)
             }
 
-            Text("\(Image(systemSymbol: .exclamationmarkCircle)) You will not be able to chat wth your content until the download is complete.")
-                .frame(width: 300)
-                .foregroundStyle(.red)
-                .font(.caption)
+            HStack {
+                Image(systemSymbol: .exclamationmarkCircle)
+                    .accessibilityLabel("Notice:")
+                Text("You will not be able to chat wth your content until the download is complete.")
+            }
+            .frame(width: 300)
+            .foregroundStyle(.red)
+            .font(.callout)
         }
     }
 
