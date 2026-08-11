@@ -60,13 +60,24 @@ struct ProviderConfigurationForm: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    HStack(spacing: 2) {
-                        Text("Configuration stored in Keychain")
-                        Image(systemSymbol: .lockFill)
-                            .accessibilityHidden(true)
+                    
+                    HStack(alignment: .center) {
+                        if let assetProvider = wrapper.provider as? AssetProvider.Type, let apiKeySupportURL = assetProvider.apiKeySupport {
+                            Link(destination: apiKeySupportURL) {
+                                Label("How to get an API Key", systemSymbol: .infoCircle)
+                            }
+                            Text("•")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack(spacing: 2) {
+                            Text("Configuration stored in Keychain")
+                            Image(systemSymbol: .lockFill)
+                                .accessibilityHidden(true)
+                        }
+                        .foregroundStyle(.secondary)
                     }
                     .font(.caption)
-                    .foregroundStyle(.secondary)
                 }
             }
 
