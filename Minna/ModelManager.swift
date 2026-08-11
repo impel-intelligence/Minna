@@ -28,7 +28,8 @@ final class ModelManager: NSObject, @unchecked Sendable {
     @ObservationIgnored
     private let manifest: Mutex<Manifest> = Mutex(Manifest(files: []))
     
-    public var standardInferenceModel: String? = nil
+    public var standardInferenceModel: String?
+    public var standardEmbeddingModel: String?
     
     public var inFlightDownloads: [DownloadingFile] = []
     
@@ -96,6 +97,8 @@ final class ModelManager: NSObject, @unchecked Sendable {
                 // Set the standard inference model to the model that is required and an inference model.
                 if file.required && file.type == .inference {
                     standardInferenceModel = file.identifier
+                } else if file.required && file.type == .embedding {
+                    standardEmbeddingModel = file.identifier
                 }
                 
                 // Only download files that are not on the disk already.

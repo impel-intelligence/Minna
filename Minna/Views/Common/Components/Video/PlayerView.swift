@@ -1,0 +1,85 @@
+//
+//  PlayerView.swift
+//  Minna
+//
+//  Created by Taylor Lineman on 8/11/26.
+//
+
+import Foundation
+import AppKit
+import AVKit
+
+@MainActor
+final class PlayerView: NSView {
+    private var player: AVPlayer?
+    private var playerLayer: AVPlayerLayer?
+    private var loadObserver: NSKeyValueObservation?
+    private var doneLoading: (() -> Void)?
+    private var done: (() -> Void)?
+    
+    private var looping: Bool
+    private var currentURL: URL?
+    
+    init(url: URL, looping: Bool, doneLoading: (() -> Void)?, done: (() -> Void)?) {
+        self.doneLoading = doneLoading
+        self.done = done
+        self.looping = looping
+        
+        super.init(frame: .zero)
+        setupPlayer(url: url)
+    }
+
+    required init?(coder: NSCoder) {
+        looping = false
+        super.init(coder: coder)
+    }
+    
+    public func reSetupPlayer(url: URL) {
+        guard currentURL != url else { return }
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
+        setupPlayer(url: url)
+    }
+
+    private func setupPlayer(url: URL) {
+        currentURL = url
+        
+        player = AVPlayer(url: url)
+        
+        playerLayer = AVPlayerLayer(player: player)
+        playerLayer?.videoGravity = .resizeAspectFill
+        layer = playerLayer
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
+        
+        loadObserver = player?.observe(\.currentItem?.status, changeHandler: { player, _ in
+            if player.currentItem?.status == .readyToPlay {
+                Task { @MainActor in
+                    self.doneLoading?()
+                }
+            }
+        })
+        
+        player?.play()
+    }
+
+    @objc private func playerDidFinishPlaying(note: NSNotification) {
+        Task { @MainActor in
+            self.done?()
+        }
+        
+        if looping {
+            player?.seek(to: .zero)
+            player?.play()
+        }
+    }
+
+    override func layout() {
+        super.layout()
+        playerLayer?.frame = bounds
+    }
+
+    deinit {
+        loadObserver?.invalidate()
+        NotificationCenter.default.removeObserver(self)
+    }
+}

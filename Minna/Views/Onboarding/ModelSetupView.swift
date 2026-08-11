@@ -1,9 +1,9 @@
 //
-//  ProvidersView.swift
+//  ModelSetupView.swift
 //  Minna
 //
 //  Created by Taylor Lineman on 8/10/26.
-//  Edited by Claude Sonnet 4.6 (Anthropic) on 2026-08-10
+//  Edited by Claude Sonnet 4.6 (Anthropic) on 2026-08-10, 2026-08-11
 
 import SwiftUI
 import ModelManager
@@ -12,9 +12,11 @@ import SFSafeSymbols
 import ModelCDN
 
 struct ModelSetupView: View {
+    @Environment(OnboardingNavigationRouter.self) var onboardingRouter
+    @Environment(ModelManager.self) var modelManager
+    
     var body: some View {
-        NavigationStack {
-            VStack(alignment: .center, spacing: 10) {
+        VStack(alignment: .center, spacing: 10) {
                 Image(systemSymbol: .cpu)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -26,26 +28,25 @@ struct ModelSetupView: View {
                     .multilineTextAlignment(.center)
                     .frame(width: 350)
                 HStack {
-                    NavigationLink("With my own AI Providers") {
-                        ProviderSetupView()
+                    Button("With my own AI Providers") {
+                        onboardingRouter.inferenceQuestionare(result: .providers, modelManager: modelManager)
                     }
                     .controlSize(.extraLarge)
                     
-                    NavigationLink("Completely On Device") {
-                        OnDeviceSetup()
+                    Button("Completely On Device") {
+                        onboardingRouter.inferenceQuestionare(result: .onDevice, modelManager: modelManager)
                     }
                     .controlSize(.extraLarge)
                     .buttonStyle(.borderedProminent)
 
                 }
                 .padding()
-            }
         }
     }
 }
 
 #Preview {
-    OnDeviceSetup()
+    ModelSetupView()
         .frame(width: 700, height: 450)
         .toolbar(removing: .title)
         .toolbarBackground(.hidden, for: .windowToolbar)

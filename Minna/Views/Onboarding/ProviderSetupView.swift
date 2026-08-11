@@ -5,15 +5,6 @@
 //  Created by Taylor Lineman on 8/11/26.
 //
 
-
-//
-//  ProviderSetupView.swift
-//  Minna
-//
-//  Created by Taylor Lineman on 8/11/26.
-//  Edited by Claude Opus 5 (Anthropic) on 2026-08-11
-//
-
 import SwiftUI
 import SwiftData
 import ModelManager
@@ -24,9 +15,10 @@ import ModelCDN
 struct ProviderSetupView: View {
     private typealias Provider = (ModelProvider & AssetProvider)
     
-    @AppStorage("onboarding") var isOnboarding: Bool = true
-
     @Environment(\.modelContext) private var modelContext
+    @Environment(OnboardingNavigationRouter.self) var onboardingRouter
+    @Environment(ModelManager.self) var modelManager
+    
     @State var providerWrapper: ProviderWrapper?
     @Query var providers: [ConfiguredProvider]
     @State var hasConfiguredAProvider: Bool = false
@@ -56,8 +48,8 @@ struct ProviderSetupView: View {
             }
             .padding(.vertical)
             
-            Button("Get Started") {
-                isOnboarding = false
+            Button("Next") {
+                onboardingRouter.providersFinished(modelManager: modelManager)
             }
             .controlSize(.extraLarge)
             .buttonStyle(.borderedProminent)

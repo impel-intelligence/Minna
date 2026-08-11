@@ -1,0 +1,97 @@
+//
+//  OnboardingNavigationRouter.swift
+//  Minna
+//
+//  Created by Taylor Lineman on 8/11/26.
+//
+
+import SwiftUI
+
+/*
+   ┌───────────┐
+   │Intro Video│
+   └─────┬─────┘
+         │
+ ┌───────▼────────┐
+ │Feature Overview│
+ └───────┬────────┘
+         │
+┌─────────▼───────────┐
+│Inference Questionare│
+└───┬────────────┬────┘
+    │            │
+┌───▼─────┐ ┌────▼──────────┐
+│Providers│ │Inference model│
+└───────┬─┘ └──┬────────────┘
+        │      │
+    ┌───▼──────▼────┐
+    │Embedding Model│
+    └───────────────┘
+ */
+
+@Observable
+final class OnboardingNavigationRouter {
+    enum OnboardingStage: Int, CaseIterable, Hashable {
+        case intro
+        case overview
+        case modelQuestionnaire
+        case providers
+        case inferenceModel
+        case embeddingModel
+        case finished
+    }
+    
+    enum InferenceQuestionareAnswer {
+        case onDevice
+        case providers
+    }
+    
+    var path: NavigationPath = NavigationPath()
+    
+    func introFinished() {
+        path.append(OnboardingStage.overview)
+    }
+    
+    func overviewFinished() {
+        path.append(OnboardingStage.modelQuestionnaire)
+    }
+    
+    func inferenceQuestionare(result: OnboardingNavigationRouter.InferenceQuestionareAnswer, modelManager: ModelManager) {
+        switch result {
+        case .onDevice:
+            if let inferenceId = modelManager.standardInferenceModel {
+                if modelManager.doesModelExistOnDisk(identifier: inferenceId) {
+                    path.append(OnboardingStage.finished)
+                } else {
+                    path.append(OnboardingStage.inferenceModel)
+                }
+            }
+        case .providers:
+            path.append(OnboardingStage.providers)
+        }
+    }
+    
+    func recoverTopProviders() {
+        path.append(OnboardingStage.providers)
+    }
+    
+    func inferenceFinished(modelManager: ModelManager) {
+        if let embeddingID = modelManager.standardEmbeddingModel {
+            if modelManager.doesModelExistOnDisk(identifier: embeddingID) {
+                path.append(OnboardingStage.finished)
+            } else {
+                path.append(OnboardingStage.embeddingModel)
+            }
+        }
+    }
+    
+    func providersFinished(modelManager: ModelManager) {
+        if let embeddingID = modelManager.standardEmbeddingModel {
+            if modelManager.doesModelExistOnDisk(identifier: embeddingID) {
+                
+            } else {
+                path.append(OnboardingStage.embeddingModel)
+            }
+        }
+    }
+}

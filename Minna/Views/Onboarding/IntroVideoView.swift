@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct IntroVideoView: View {
-    let done: () -> Void
+    @Environment(OnboardingNavigationRouter.self) var onboardingRouter
+    
     let url = Bundle.main.url(forResource: "intro", withExtension: "mp4")
     
     @State var showVideo: Bool = false
@@ -16,7 +17,9 @@ struct IntroVideoView: View {
     var body: some View {
         HStack {
             if let url {
-                EndAnnouncingVideoPlayer(url: url, done: done) {
+                EndAnnouncingVideoPlayer(url: url) {
+                    onboardingRouter.introFinished()
+                } doneLoading: {
                     showVideo = true
                 }
                 .opacity(showVideo ? 1 : 0)
@@ -24,7 +27,7 @@ struct IntroVideoView: View {
             } else {
                 EmptyView()
                     .onAppear {
-                        done()
+                        onboardingRouter.introFinished()
                     }
             }
         }
@@ -34,9 +37,7 @@ struct IntroVideoView: View {
 }
 
 #Preview {
-    IntroVideoView {
-        print("Done!")
-    }
+    IntroVideoView()
     .frame(width: 700, height: 450)
     .toolbar(removing: .title)
     .toolbarBackground(.hidden, for: .windowToolbar)

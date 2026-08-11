@@ -20,7 +20,7 @@ struct LoopingVideoPlayer: NSViewRepresentable {
         view.allowsPictureInPicturePlayback = false
         view.controlsStyle = .none
         view.videoGravity = .resizeAspectFill
-            
+        
         return view
     }
     

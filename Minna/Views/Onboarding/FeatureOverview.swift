@@ -23,7 +23,7 @@ struct FeatureOverview: View {
         OnboardingPage(text: "Chat with a single document.", video: "chat")
     ]
 
-    let done: () -> Void
+    @Environment(OnboardingNavigationRouter.self) var onboardingRouter
     @State var currentPage: OnboardingPage? = FeatureOverview.pages.first
 
     var body: some View {
@@ -33,7 +33,7 @@ struct FeatureOverview: View {
                     ForEach(FeatureOverview.pages) { page in
                         HStack {
                             OnboardingCard(page: page) {
-                                done()
+                                onboardingRouter.overviewFinished()
                             } next: {
                                 withAnimation {
                                     if let currentPage, let currentPageIndex = FeatureOverview.pages.firstIndex(of: currentPage) {
@@ -41,7 +41,7 @@ struct FeatureOverview: View {
                                         if nextIndex < FeatureOverview.pages.count {
                                             self.currentPage = FeatureOverview.pages[nextIndex]
                                         } else {
-                                            done()
+                                            onboardingRouter.overviewFinished()
                                         }
                                     }
                                 }
@@ -101,6 +101,7 @@ struct OnboardingCard: View {
         VStack {
             if let contentURL {
                 LoopingVideoPlayer(url: contentURL)
+                    .allowsHitTesting(false)
                     .frame(width: 290, height: 150)
                     .clipShape(UnevenRoundedRectangle(topLeadingRadius: 20, topTrailingRadius: 20))
             } else {
@@ -145,17 +146,15 @@ struct OnboardingCard: View {
 }
 
 #Preview {
-    FeatureOverview {
-        
-    }
-    .frame(width: 700, height: 450)
-    .toolbar(removing: .title)
-    .toolbarBackground(.hidden, for: .windowToolbar)
-    .toolbar {
-        ToolbarItem(placement: .principal) {
-            MinnaLogo()
-            
+    FeatureOverview()
+        .frame(width: 700, height: 450)
+        .toolbar(removing: .title)
+        .toolbarBackground(.hidden, for: .windowToolbar)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                MinnaLogo()
+                
+            }
+            .sharedBackgroundVisibility(.hidden)
         }
-        .sharedBackgroundVisibility(.hidden)
-    }
 }
