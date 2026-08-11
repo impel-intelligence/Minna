@@ -41,7 +41,6 @@ struct ModelSetupView: View {
                 .padding()
             }
         }
-        .navigationBarBackButtonHidden()
     }
 }
 

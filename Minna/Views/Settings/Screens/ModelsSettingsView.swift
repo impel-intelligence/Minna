@@ -67,7 +67,7 @@ struct ModelsSettingsView: View {
         .formStyle(.grouped)
         .navigationTitle("Models")
         .sheet(item: $providerWrapper) { wrapper in
-            ProviderConfigurationForm(wrapper: wrapper)
+            ProviderConfigurationForm(wrapper: wrapper, createdProvider: nil, deletedProvider: nil)
         }
     }
     

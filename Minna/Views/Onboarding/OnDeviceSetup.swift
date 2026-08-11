@@ -69,6 +69,7 @@ struct OnDeviceSetup: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 75, height: 75)
+                .accessibilityHidden(true)
 
             Text("Downloading \(file.file.name)")
                 .font(.title)

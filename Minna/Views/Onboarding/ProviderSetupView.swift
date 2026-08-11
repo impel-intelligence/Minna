@@ -31,6 +31,8 @@ struct ProviderSetupView: View {
     @Query var providers: [ConfiguredProvider]
     @State var hasConfiguredAProvider: Bool = false
     
+    @State var createdProviders: [String: ConfiguredProvider] = [:]
+    
     private let supportedProviders: [Provider.Type] = [
         AnthropicProvider.self,
         OpenAIProvider.self,
@@ -61,9 +63,15 @@ struct ProviderSetupView: View {
             .buttonStyle(.borderedProminent)
             .disabled(!hasConfiguredAProvider)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .multilineTextAlignment(.center)
         .sheet(item: $providerWrapper) { wrapper in
-            ProviderConfigurationForm(wrapper: wrapper)
+            ProviderConfigurationForm(wrapper: wrapper) { createdProvider in
+                createdProviders[createdProvider.providerID] = createdProvider
+                hasConfiguredAProvider = true
+            } deletedProvider: { deletedProvider in
+                createdProviders.removeValue(forKey: deletedProvider.providerID)
+            }
         }
         .onChange(of: providers, initial: true) { _, newValue in
             // Check if we have configured one of the providers this view supports.
@@ -80,7 +88,7 @@ struct ProviderSetupView: View {
     @ViewBuilder
     private func buttonFor(provider: Provider.Type) -> some View {
         Button {
-            providerWrapper = ProviderWrapper(provider: provider, existingConfiguration: nil)
+            providerWrapper = ProviderWrapper(provider: provider, existingConfiguration: createdProviders[provider.id])
         } label: {
             VStack {
                 Image(provider.image)

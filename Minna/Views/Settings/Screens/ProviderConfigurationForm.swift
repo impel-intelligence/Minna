@@ -16,6 +16,8 @@ struct ProviderConfigurationForm: View {
     @Environment(\.dismiss) var dismiss
 
     let wrapper: ProviderWrapper
+    let createdProvider: ((ConfiguredProvider) -> Void)?
+    let deletedProvider: ((ConfiguredProvider) -> Void)?
 
     /// The user's input, keyed by `ProviderField.key`. This dictionary is the
     /// single source of truth the form collects; on "Add" it is handed straight
@@ -119,6 +121,7 @@ struct ProviderConfigurationForm: View {
                     Button("Delete", role: .destructive) {
                         modelContext.delete(config)
                         NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
+                        deletedProvider?(config)
                         dismiss()
                     }
                 }
@@ -194,6 +197,7 @@ struct ProviderConfigurationForm: View {
             modelContext.insert(configuredProvider)
             try modelContext.save()
             NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
+            createdProvider?(configuredProvider)
             dismiss()
         } catch {
             self.errorMessage = error.localizedDescription
@@ -203,6 +207,6 @@ struct ProviderConfigurationForm: View {
 
 #Preview {
     NavigationStack {
-        ProviderConfigurationForm(wrapper: ProviderWrapper(provider: AnthropicProvider.self, existingConfiguration: nil))
+        ProviderConfigurationForm(wrapper: ProviderWrapper(provider: AnthropicProvider.self, existingConfiguration: nil), createdProvider: nil, deletedProvider: nil)
     }
 }

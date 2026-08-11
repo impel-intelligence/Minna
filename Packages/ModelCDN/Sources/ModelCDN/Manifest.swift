@@ -7,7 +7,6 @@
 
 import Foundation
 import BackgroundAssets
-import ArgumentParser
 
 public enum Platform: String, Codable, Sendable {
     case macOS

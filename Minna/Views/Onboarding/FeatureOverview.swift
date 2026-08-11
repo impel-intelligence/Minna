@@ -98,7 +98,7 @@ struct OnboardingCard: View {
     }
 
     var body: some View {
-        VStack() {
+        VStack {
             if let contentURL {
                 LoopingVideoPlayer(url: contentURL)
                     .frame(width: 290, height: 150)

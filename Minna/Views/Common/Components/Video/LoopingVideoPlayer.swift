@@ -1,5 +1,5 @@
 //
-//  CustomVideoPlayer.swift
+//  LoopingVideoPlayer.swift
 //  Minna
 //
 //  Created by Taylor Lineman on 8/10/26.
@@ -25,7 +25,7 @@ struct LoopingVideoPlayer: NSViewRepresentable {
     }
     
     func updateNSView(_ nsView: AVPlayerView, context: Context) {
-        context.coordinator.setPlayer(with: url, on: nsView)
+        context.coordinator.updatePlayerIfNeeded(with: url, on: nsView)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -34,11 +34,13 @@ struct LoopingVideoPlayer: NSViewRepresentable {
     
     class Coordinator: NSObject {
         private var observer: NSKeyValueObservation?
-        
+        private var currentURL: URL?
+
         var queuePlayer: AVQueuePlayer = AVQueuePlayer()
         var looper: AVPlayerLooper?
 
         func setPlayer(with url: URL, on view: AVPlayerView) {
+            currentURL = url
             let playerItem = AVPlayerItem(url: url)
             looper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
 
@@ -46,7 +48,12 @@ struct LoopingVideoPlayer: NSViewRepresentable {
 
             queuePlayer.play()
         }
-        
+
+        func updatePlayerIfNeeded(with url: URL, on view: AVPlayerView) {
+            guard url != currentURL else { return }
+            setPlayer(with: url, on: view)
+        }
+
         deinit {
             observer?.invalidate()
         }

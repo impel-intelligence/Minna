@@ -13,15 +13,20 @@ import SFSafeSymbols
 
 struct OnboardingView: View {
     enum OnboardingPage: Int {
+        case intro
         case overview
         case models
     }
 
-    @State var onboardingPage: OnboardingPage = .overview
+    @State var onboardingPage: OnboardingPage = .intro
     
     var body: some View {
         VStack {
             switch onboardingPage {
+            case .intro:
+                IntroVideoView {
+                    onboardingPage = .overview
+                }
             case .overview:
                 FeatureOverview {
                     withAnimation {
@@ -41,6 +46,7 @@ struct OnboardingView: View {
             }
             .sharedBackgroundVisibility(.hidden)
         }
+        .animation(.default, value: onboardingPage)
     }
 }
 

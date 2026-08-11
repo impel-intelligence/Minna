@@ -201,7 +201,7 @@ struct AskMinnaView: View {
     @ViewBuilder
     private func startup() -> some View {
         VStack(spacing: 5) {
-            Image("impel_logo")
+            Image(.owl)
                 .resizable()
                 .frame(width: 45, height: 45)
                 .accessibilityLabel("Minna Logo")
