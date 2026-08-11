@@ -17,7 +17,7 @@ struct OnboardingView: View {
         case models
     }
 
-    @State var onboardingPage: OnboardingPage = .models
+    @State var onboardingPage: OnboardingPage = .overview
     
     var body: some View {
         VStack {

@@ -107,6 +107,7 @@ struct ProviderConfigurationForm: View {
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Delete", role: .destructive) {
                         modelContext.delete(config)
+                        NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
                         dismiss()
                     }
                 }
@@ -181,6 +182,7 @@ struct ProviderConfigurationForm: View {
             
             modelContext.insert(configuredProvider)
             try modelContext.save()
+            NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
             dismiss()
         } catch {
             self.errorMessage = error.localizedDescription

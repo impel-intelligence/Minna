@@ -12,20 +12,7 @@ import BackgroundAssets
 import Synchronization
 import ModelCDN
 import UniformTypeIdentifiers
-
-struct DownloadDidFinish: NotificationCenter.MainActorMessage {
-    public typealias Subject = ModelManager
-    
-    public static var name: Notification.Name {
-        .init("ModelManager.DownloadDidFinish")
-    }
-
-    public let identifier: String
-}
-
-extension NotificationCenter.MessageIdentifier where Self == NotificationCenter.BaseMessageIdentifier<DownloadDidFinish> {
-    static var downloadDidFinish: Self { .init() }
-}
+import NotificationCenter
 
 struct DownloadingFile: Identifiable, Equatable {
     var id: String { file.identifier }
@@ -198,7 +185,8 @@ extension ModelManager: BADownloadManagerDelegate {
         progress.kind = .file
         
         Task { @MainActor [weak self] in
-            Log.logger.info("\(download.identifier) (\(progress.fractionCompleted.formatted(.percent)))")
+            Log.logger.debug("\(download.identifier) (\(progress.fractionCompleted.formatted(.percent)))")
+            
             self?.stateLock.withLock {
                 guard let currentFileIndex = self?.inFlightDownloads.firstIndex(where: { $0.file.identifier == download.identifier }) else {
                     return
@@ -247,7 +235,7 @@ extension ModelManager: BADownloadManagerDelegate {
             try FileManager.default.removeItem(at: archiveURL)
             
             Task { @MainActor in
-                NotificationCenter.default.post(DownloadDidFinish(identifier: download.identifier))
+                NotificationCenter.default.post(DownloadDidFinish(identifier: download.identifier), subject: self)
 
                 self.stateLock.withLock {
                     inFlightDownloads.removeAll { $0.id == download.identifier }

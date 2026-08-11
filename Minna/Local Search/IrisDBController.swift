@@ -53,30 +53,9 @@ final class IrisDBController {
         let searchDirectory = Utilities.irisDBDirectory()
         irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder)
         
-        watchForDownloads()
+        // TODO: Watch for downloads so we can re-embed the database
     }
     
-    deinit {
-        if let downloadObservationToken {
-            NotificationCenter.default.removeObserver(downloadObservationToken)
-        }
-    }
-    
-    private func watchForDownloads() {
-        downloadObservationToken = NotificationCenter.default.addObserver(for: DownloadDidFinish.self) { message in
-            guard message.identifier == IrisDBController.searchEmbedderID else { return }
-
-            // TODO: Re-embed databsae
-//            Task {
-//                do {
-//                    try await self.reEmbedDatabase()
-//                } catch {
-//                    Log.logger.error("Failed to re-embed entire database after embedder download", error: error)
-//                }
-//            }
-        }
-    }
-        
     private static func getEmbedder() throws -> EmbeddingProvider {
         do {
             let bgeDirectory = ManifestSharedSettings.modelStorageURL.appendingPathComponent(searchEmbedderID, conformingTo: .directory)

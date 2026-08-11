@@ -24,9 +24,10 @@ final class Chatter {
     var chatMessage: String = ""
 
     var preferredModel: String
+    
     let chat: Chat
-    let instructions: any ModelInstruction
-    let availableTools: [AvailableTool]
+    @ObservationIgnored let instructions: any ModelInstruction
+    @ObservationIgnored let availableTools: [AvailableTool]
     
     var isGenerating: Bool = false
     
