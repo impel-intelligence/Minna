@@ -23,6 +23,7 @@ struct DownloadingModelView: View {
         return modelManager.inFlightDownloads.first(where: { $0.id == modelIdentifier })
     }
     
+    @State var viewInError: Bool = false
     @State var downloadError: Error?
 
     var body: some View {
@@ -38,13 +39,19 @@ struct DownloadingModelView: View {
                 } actions: {
                     failureErrors()
                 }
-            } else {
+            } else if viewInError {
                 ContentUnavailableView {
                     Label("Download Failed", systemSymbol: .exclamationmarkTriangle)
                 } description: {
                     Text("The on-device model could not be downloaded at this time.")
                 } actions: {
                     failureErrors()
+                }
+            } else {
+                ContentUnavailableView {
+                    ProgressView {
+                        Text("Waiting for download to begin...")
+                    }
                 }
             }
         }
@@ -53,22 +60,18 @@ struct DownloadingModelView: View {
         .task {
             let stream = NotificationCenter.default.messages(of: modelManager, for: DownloadDidFinish.self)
             
-            for await download in stream {
-                if download.identifier == modelIdentifier {
-                    onboardingRouter.inferenceFinished(modelManager: modelManager)
-                }
+            for await download in stream where download.identifier == modelIdentifier {
+                onboardingRouter.inferenceFinished(modelManager: modelManager)
             }
         }
         .task {
             let stream = NotificationCenter.default.messages(of: modelManager, for: DownloadDidFail.self)
             
-            for await failedDownload in stream {
-                if failedDownload.identifier == modelIdentifier {
-                    
-                }
+            for await failedDownload in stream where failedDownload.identifier == modelIdentifier {
+                viewInError = true
+                self.downloadError = failedDownload.error
             }
         }
-
         .onAppear {
             if modelManager.doesModelExistOnDisk(identifier: modelIdentifier) {
                 onboardingRouter.inferenceFinished(modelManager: modelManager)
@@ -117,8 +120,8 @@ struct DownloadingModelView: View {
                 .frame(width: 300)
 
             HStack {
-                NavigationLink("Set up off-device providers") {
-                    ProviderSetupView()
+                Button("Set up off-device providers") {
+                    onboardingRouter.recoverTopProviders()
                 }
                 .controlSize(.extraLarge)
 
