@@ -53,7 +53,7 @@ public struct Manifest: Codable {
         
         public var type: ModelType = .embedding
         
-        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String, type: ModelType = .embedding) {
+        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String, type: ModelType) {
             self.identifier = identifier
             self.fileSize = fileSize
             self.url = url

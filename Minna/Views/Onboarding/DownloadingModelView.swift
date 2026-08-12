@@ -22,47 +22,77 @@ struct DownloadingModelView: View {
     private var currentDownload: DownloadingFile? {
         return modelManager.inFlightDownloads.first(where: { $0.id == modelIdentifier })
     }
+    
+    @State var downloadError: Error?
 
     var body: some View {
         Group {
             if let download = currentDownload {
                 downloading(file: download)
+            } else if let error = downloadError {
+                ContentUnavailableView {
+                    Label("Download Failed", systemSymbol: .exclamationmarkTriangle)
+                } description: {
+                    // TODO: Generate error codes
+                    Text("The on-device model failed to download (\(error.localizedDescription))")
+                } actions: {
+                    failureErrors()
+                }
             } else {
                 ContentUnavailableView {
                     Label("Download Failed", systemSymbol: .exclamationmarkTriangle)
                 } description: {
                     Text("The on-device model could not be downloaded at this time.")
                 } actions: {
-                    if canSkipDownload {
-                        Button("Skip Downloading") {
-                            onboardingRouter.inferenceFinished(modelManager: modelManager)
-                        }
-                    } else {
-                        Button("Contact Support") {
-                            if let url = URL(string: "mailto:support@tryminna.com?subject=Failed%20to%20download%20on-device%20model") {
-                                openURL(url)
-                            }
-                        }
-                    }
-
-                    Button("Set up off-device providers") {
-                        onboardingRouter.recoverTopProviders()
-                    }
+                    failureErrors()
                 }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .multilineTextAlignment(.center)
-        .onChange(of: modelManager.inFlightDownloads) { oldValue, newValue in
-            let wasDownloading = oldValue.contains(where: { $0.id == modelIdentifier })
-            let isNowDownloading = newValue.contains(where: { $0.id == modelIdentifier })
-            if wasDownloading && !isNowDownloading {
-                onboardingRouter.inferenceFinished(modelManager: modelManager)
+        .task {
+            let stream = NotificationCenter.default.messages(of: modelManager, for: DownloadDidFinish.self)
+            
+            for await download in stream {
+                if download.identifier == modelIdentifier {
+                    onboardingRouter.inferenceFinished(modelManager: modelManager)
+                }
             }
         }
+        .task {
+            let stream = NotificationCenter.default.messages(of: modelManager, for: DownloadDidFail.self)
+            
+            for await failedDownload in stream {
+                if failedDownload.identifier == modelIdentifier {
+                    
+                }
+            }
+        }
+
         .onAppear {
             if modelManager.doesModelExistOnDisk(identifier: modelIdentifier) {
                 onboardingRouter.inferenceFinished(modelManager: modelManager)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func failureErrors() -> some View {
+        Group {
+            if canSkipDownload {
+                Button("Skip Downloading") {
+                    onboardingRouter.inferenceFinished(modelManager: modelManager)
+                }
+            } else {
+                Button("Contact Support") {
+                    if let url = URL(string: "mailto:support@tryminna.com?subject=Failed%20to%20download%20on-device%20model") {
+                        openURL(url)
+                    }
+                }
+            }
+
+            Button("Set up off-device providers") {
+                onboardingRouter.recoverTopProviders()
             }
         }
     }
@@ -105,7 +135,7 @@ struct DownloadingModelView: View {
                 HStack(alignment: .top) {
                     Image(systemSymbol: .exclamationmarkCircle)
                         .accessibilityLabel("Notice:")
-                    Text("You will not be able to chat wth your content until the download is complete.")
+                    Text("You will not be able to chat with your content until the download is complete.")
                 }
                 .frame(width: 300)
                 .foregroundStyle(.red)

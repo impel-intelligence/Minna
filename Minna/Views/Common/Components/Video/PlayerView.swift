@@ -16,25 +16,27 @@ final class PlayerView: NSView {
     private var loadObserver: NSKeyValueObservation?
     private var doneLoading: (() -> Void)?
     private var done: (() -> Void)?
+    private var failedToLoad: (() -> Void)?
     
     private var looping: Bool
     private var currentURL: URL?
     
-    init(url: URL, looping: Bool, doneLoading: (() -> Void)?, done: (() -> Void)?) {
+    init(url: URL, looping: Bool, doneLoading: (() -> Void)?, done: (() -> Void)?, failedToLoad: (() -> Void)?) {
         self.doneLoading = doneLoading
         self.done = done
+        self.failedToLoad = failedToLoad
         self.looping = looping
-        wantsLayer = true
         
         super.init(frame: .zero)
+        wantsLayer = true
         setupPlayer(url: url)
     }
 
     required init?(coder: NSCoder) {
         looping = false
-        wantsLayer = true
         
         super.init(coder: coder)
+        wantsLayer = true
     }
     
     public func reSetupPlayer(url: URL) {
@@ -58,6 +60,10 @@ final class PlayerView: NSView {
             if player.currentItem?.status == .readyToPlay {
                 Task { @MainActor in
                     self?.doneLoading?()
+                }
+            } else if player.currentItem?.status == .failed {
+                Task { @MainActor in
+                    self?.failedToLoad?()
                 }
             }
         })

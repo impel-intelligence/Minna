@@ -13,9 +13,10 @@ struct EndAnnouncingVideoPlayer: NSViewRepresentable {
     var url: URL
     let done: () -> Void
     let doneLoading: () -> Void
+    let failedToLoad: () -> Void
 
     func makeNSView(context: Context) -> PlayerView {
-        return PlayerView(url: url, looping: false, doneLoading: doneLoading, done: done)
+        return PlayerView(url: url, looping: false, doneLoading: doneLoading, done: done, failedToLoad: failedToLoad)
     }
     
     func updateNSView(_ nsView: PlayerView, context: Context) {

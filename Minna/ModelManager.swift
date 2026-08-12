@@ -92,7 +92,7 @@ final class ModelManager: NSObject, @unchecked Sendable {
                 return manifest
             }
             
-            // We always need the required files, so instruct them to download. We also only download embedding models since inference models are handled by the
+            // We always need the required files, so instruct them to download.
             for file in manifest.files.filter(\.required) {
                 // Set the standard inference model to the model that is required and an inference model.
                 if file.required && file.type == .inference {
@@ -154,6 +154,7 @@ final class ModelManager: NSObject, @unchecked Sendable {
                 }
                                                 
                 guard download.state != .failed else {
+                    NotificationCenter.default.post(DownloadDidFail(identifier: file.identifier, error: nil), subject: self)
                     Log.logger.warning("Download for session \(file.identifier) is in the failed state.")
                     return
                 }
@@ -168,7 +169,7 @@ final class ModelManager: NSObject, @unchecked Sendable {
 
                 try BADownloadManager.shared.startForegroundDownload(download)
             } catch {
-                
+                NotificationCenter.default.post(DownloadDidFail(identifier: file.identifier, error: error), subject: self)
                 Log.logger.warning("Failed to start download for session \(file.identifier)", error: error)
             }
         }
@@ -211,6 +212,8 @@ extension ModelManager: BADownloadManagerDelegate {
         
         Log.logger.error("Download failed \(download.identifier) \(error)", error: error)
         
+        NotificationCenter.default.post(DownloadDidFail(identifier: download.identifier, error: error), subject: self)
+
         Task { @MainActor in
             self.stateLock.withLock {
                 self.inFlightDownloads.removeAll(where: {$0.id == download.identifier})
@@ -237,14 +240,15 @@ extension ModelManager: BADownloadManagerDelegate {
             // Remove the archive now that we are done with it.
             try FileManager.default.removeItem(at: archiveURL)
             
-            Task { @MainActor in
-                NotificationCenter.default.post(DownloadDidFinish(identifier: download.identifier), subject: self)
+            NotificationCenter.default.post(DownloadDidFinish(identifier: download.identifier), subject: self)
 
+            Task { @MainActor in
                 self.stateLock.withLock {
                     inFlightDownloads.removeAll { $0.id == download.identifier }
                 }
             }
         } catch {
+            NotificationCenter.default.post(DownloadDidFail(identifier: download.identifier, error: error), subject: self)
             Log.logger.error("Failed to finish download for \(download.identifier), \(error)")
         }
     }
