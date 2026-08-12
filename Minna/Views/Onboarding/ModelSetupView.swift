@@ -29,12 +29,12 @@ struct ModelSetupView: View {
                     .frame(width: 350)
                 HStack {
                     Button("With my own AI Providers") {
-                        onboardingRouter.inferenceQuestionare(result: .providers, modelManager: modelManager)
+                        onboardingRouter.inferenceQuestionnaire(result: .providers, modelManager: modelManager)
                     }
                     .controlSize(.extraLarge)
                     
                     Button("Completely On Device") {
-                        onboardingRouter.inferenceQuestionare(result: .onDevice, modelManager: modelManager)
+                        onboardingRouter.inferenceQuestionnaire(result: .onDevice, modelManager: modelManager)
                     }
                     .controlSize(.extraLarge)
                     .buttonStyle(.borderedProminent)

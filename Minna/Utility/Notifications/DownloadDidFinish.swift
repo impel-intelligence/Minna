@@ -5,8 +5,8 @@
 //  Created by Taylor Lineman on 8/11/26.
 //
 
+import Foundation
 import NotificationCenter
-import ModelCDN
 
 struct DownloadDidFinish: NotificationCenter.AsyncMessage {
     public typealias Subject = ModelManager
