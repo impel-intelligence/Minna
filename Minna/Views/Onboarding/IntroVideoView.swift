@@ -22,12 +22,14 @@ struct IntroVideoView: View {
                     onboardingRouter.introFinished()
                 } doneLoading: {
                     showVideo = true
+                } failedToLoad: {
+                    onboardingRouter.introFinished()
                 }
                 .opacity(showVideo ? 1 : 0)
                 .animation(.default, value: showVideo)
             } else {
                 ContentUnavailableView("Could not load intro video", systemSymbol: .videoSlash)
-                    .onAppear {
+                    .task {
                         onboardingRouter.introFinished()
                     }
             }
