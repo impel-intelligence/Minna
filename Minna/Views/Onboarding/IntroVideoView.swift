@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SFSafeSymbols
 
 struct IntroVideoView: View {
     @Environment(OnboardingNavigationRouter.self) var onboardingRouter
@@ -25,7 +26,7 @@ struct IntroVideoView: View {
                 .opacity(showVideo ? 1 : 0)
                 .animation(.default, value: showVideo)
             } else {
-                EmptyView()
+                ContentUnavailableView("Could not load intro video", systemSymbol: .videoSlash)
                     .onAppear {
                         onboardingRouter.introFinished()
                     }

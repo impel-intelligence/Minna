@@ -59,12 +59,11 @@ final class OnboardingNavigationRouter {
     func inferenceQuestionare(result: OnboardingNavigationRouter.InferenceQuestionareAnswer, modelManager: ModelManager) {
         switch result {
         case .onDevice:
-            if let inferenceId = modelManager.standardInferenceModel {
-                if modelManager.doesModelExistOnDisk(identifier: inferenceId) {
-                    path.append(OnboardingStage.finished)
-                } else {
-                    path.append(OnboardingStage.inferenceModel)
-                }
+            if let inferenceId = modelManager.standardInferenceModel,
+               modelManager.doesModelExistOnDisk(identifier: inferenceId) {
+                path.append(OnboardingStage.finished)
+            } else {
+                path.append(OnboardingStage.inferenceModel)
             }
         case .providers:
             path.append(OnboardingStage.providers)
@@ -76,22 +75,20 @@ final class OnboardingNavigationRouter {
     }
     
     func inferenceFinished(modelManager: ModelManager) {
-        if let embeddingID = modelManager.standardEmbeddingModel {
-            if modelManager.doesModelExistOnDisk(identifier: embeddingID) {
-                path.append(OnboardingStage.finished)
-            } else {
-                path.append(OnboardingStage.embeddingModel)
-            }
+        if let embeddingID = modelManager.standardEmbeddingModel,
+           modelManager.doesModelExistOnDisk(identifier: embeddingID) {
+            path.append(OnboardingStage.finished)
+        } else {
+            path.append(OnboardingStage.embeddingModel)
         }
     }
     
     func providersFinished(modelManager: ModelManager) {
-        if let embeddingID = modelManager.standardEmbeddingModel {
-            if modelManager.doesModelExistOnDisk(identifier: embeddingID) {
-                path.append(OnboardingStage.finished)
-            } else {
-                path.append(OnboardingStage.embeddingModel)
-            }
+        if let embeddingID = modelManager.standardEmbeddingModel,
+           modelManager.doesModelExistOnDisk(identifier: embeddingID) {
+            path.append(OnboardingStage.finished)
+        } else {
+            path.append(OnboardingStage.embeddingModel)
         }
     }
 }
