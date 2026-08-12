@@ -24,6 +24,7 @@ final class PlayerView: NSView {
         self.doneLoading = doneLoading
         self.done = done
         self.looping = looping
+        wantsLayer = true
         
         super.init(frame: .zero)
         setupPlayer(url: url)
@@ -31,6 +32,8 @@ final class PlayerView: NSView {
 
     required init?(coder: NSCoder) {
         looping = false
+        wantsLayer = true
+        
         super.init(coder: coder)
     }
     
@@ -51,10 +54,10 @@ final class PlayerView: NSView {
         
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
         
-        loadObserver = player?.observe(\.currentItem?.status, changeHandler: { player, _ in
+        loadObserver = player?.observe(\.currentItem?.status, changeHandler: { [weak self] player, _ in
             if player.currentItem?.status == .readyToPlay {
                 Task { @MainActor in
-                    self.doneLoading?()
+                    self?.doneLoading?()
                 }
             }
         })
