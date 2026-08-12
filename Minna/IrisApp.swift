@@ -26,6 +26,7 @@ struct MinnaApp: App {
     @State var irisDBContext: IrisContext
     @State var frontendDatabase: FrontendDatabase
     @State var modelManager: ModelManager = ModelManager()
+    @State var sentryCrashID: SentryId = .empty
     
     @State var standardFileImporterPresented: Bool = false
     
@@ -46,13 +47,16 @@ struct MinnaApp: App {
         LoggingSystem.bootstrap(LoggingBackend.init)
         #endif
 
+        frontendDatabase = FrontendDatabase.shared
+        irisDBContext = IrisContext(modelContainer: FrontendDatabase.shared.modelContainer)
+
         let POSTHOG_PROJECT_TOKEN = "phc_nZHzNbtLBtLumJz9Yi6MvnzK2GDcMpt3MLCv6vDJxcSb"
         let POSTHOG_HOST = "https://us.i.posthog.com"
 
         let config = PostHogConfig(projectToken: POSTHOG_PROJECT_TOKEN, host: POSTHOG_HOST)
         PostHogSDK.shared.setup(config)
 
-        SentrySDK.start { options in
+        SentrySDK.start { [self] options in
             options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"
             options.sendDefaultPii = false
             options.enableUncaughtNSExceptionReporting = true
@@ -72,10 +76,15 @@ struct MinnaApp: App {
             options.environment = "app_store_release"
             #endif // DEBUG
             #endif // SPARKLE
+            
+            options.onLastRunStatusDetermined = { [self] status, crashEvent in
+                if status == .didCrash, let event = crashEvent {
+                    Log.logger.error("App crashed last run", metadata: ["sentry_id": "\(event.eventId.sentryIdString)"])
+                    
+                    self.sentryCrashID = event.eventId
+                }
+            }
         }
-        
-        frontendDatabase = FrontendDatabase.shared
-        irisDBContext = IrisContext(modelContainer: FrontendDatabase.shared.modelContainer)
     }
     
     var body: some Scene {
@@ -110,11 +119,17 @@ struct MinnaApp: App {
                         database: frontendDatabase
                     )
             }
-            #if SPARKLE
+            
             CommandGroup(after: .appInfo) {
+                #if SPARKLE
                 CheckForUpdatesView(updater: updaterController.updater)
+                #endif
+                Button {
+                    openWindow(id: "bugReport")
+                } label: {
+                    Label("Send Feedback", systemSymbol: .megaphone)
+                }
             }
-            #endif
             
             CommandGroup(after: .singleWindowList) {
                 Button("Dashboard") {
@@ -130,6 +145,15 @@ struct MinnaApp: App {
                     .database(frontendDatabase)
                     .irisContext(irisDBContext)
                     .environment(modelManager)
+            }
+        }
+        
+        WindowGroup(id: "bugReport") {
+            SentryReporter(eventId: sentryCrashID)
+        }
+        .onChange(of: sentryCrashID, initial: true) { _, _ in
+            if sentryCrashID != .empty {
+                openWindow(id: "bugReport")
             }
         }
         
