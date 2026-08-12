@@ -37,7 +37,7 @@ struct ProviderSetupView: View {
             Text("Add an AI Provider")
                 .font(.title)
                 .fontWeight(.semibold)
-            Text("You can set up as many AI providers as you want. You can also set up multiple instances of the same provider if you have multiple accounts.")
+            Text("You can set up as many AI providers as you want. In Minna settings you can set up multiple instances of the same provider.")
                 .frame(width: 300)
 
             HStack(spacing: 20) {

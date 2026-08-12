@@ -120,6 +120,7 @@ struct ProviderConfigurationForm: View {
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Delete", role: .destructive) {
                         modelContext.delete(config)
+                        modelContext.save()
                         NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
                         deletedProvider?(config)
                         dismiss()
