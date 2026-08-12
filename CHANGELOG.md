@@ -7,8 +7,11 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.13.0] - Onboarding & Improvements - 2026-08-12
+
 ### Added
 - Added an onboarding experience that will direct you through setting up Minna.
+- Automatically install necessary on-device models.
 
 ### Fixed
 - Fixed a bug where IrisSearch was not using the proper embed queries for BGE.
