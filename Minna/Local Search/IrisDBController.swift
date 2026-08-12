@@ -35,7 +35,6 @@ final class IrisDBController {
     
     @ObservationIgnored let irisDB: IrisDB
     @ObservationIgnored private var textEmbedder: EmbeddingProvider
-    @ObservationIgnored private var downloadObservationToken: NotificationCenter.ObservationToken?
     
     var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter

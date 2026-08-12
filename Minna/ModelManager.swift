@@ -92,19 +92,28 @@ final class ModelManager: NSObject, @unchecked Sendable {
                 return manifest
             }
             
+            var inferenceModel: String? = nil
+            var embeddingModel: String? = nil
+            
             // We always need the required files, so instruct them to download.
             for file in manifest.files.filter(\.required) {
                 // Set the standard inference model to the model that is required and an inference model.
                 if file.required && file.type == .inference {
-                    standardInferenceModel = file.identifier
+                    inferenceModel = file.identifier
                 } else if file.required && file.type == .embedding {
-                    standardEmbeddingModel = file.identifier
+                    embeddingModel = file.identifier
                 }
-                
+
                 // Only download files that are not on the disk already.
                 guard !doesModelExistOnDisk(identifier: file.identifier) else { continue }
                 
                 self.startDownload(of: file)
+            }
+            
+            // Set the @Observable state after the loop has completed.
+            Task { @MainActor in
+                self.standardInferenceModel = inferenceModel
+                self.standardEmbeddingModel = embeddingModel
             }
         } catch {
             Log.logger.error("Failed to load manifest, redownloading.", error: error)

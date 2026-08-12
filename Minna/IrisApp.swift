@@ -95,7 +95,7 @@ struct MinnaApp: App {
                     .database(frontendDatabase)
                     .irisContext(irisDBContext)
                     .environment(modelManager)
-                    .frame(width: 700, height: 450)
+                    .frame(width: 900, height: 500)
                     .windowResizeBehavior(.disabled)
             } else {
                 NavigationCore()
@@ -105,7 +105,7 @@ struct MinnaApp: App {
                     .environment(modelManager)
             }
         }
-        .windowResizability(.contentSize)
+        .defaultSize(width: 900, height: 500)
         .commands {
             SidebarCommands()
 

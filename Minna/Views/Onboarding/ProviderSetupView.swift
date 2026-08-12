@@ -63,17 +63,16 @@ struct ProviderSetupView: View {
                 hasConfiguredAProvider = true
             } deletedProvider: { deletedProvider in
                 createdProviders.removeValue(forKey: deletedProvider.providerID)
+                hasConfiguredAProvider = false
             }
         }
         .onChange(of: providers, initial: true) { _, newValue in
             // Check if we have configured one of the providers this view supports.
-            if newValue.contains(where: { provider in
+            hasConfiguredAProvider = newValue.contains(where: { provider in
                 return supportedProviders.contains(where: { supported in
                     return supported.id == provider.providerID
                 })
-            }) {
-                hasConfiguredAProvider = true
-            }
+            })
         }
     }
 
