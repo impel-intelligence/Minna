@@ -8,6 +8,7 @@
 import SwiftUI
 
 /*
+ Flowchart of view progression in the Onboarding Pages
    ┌───────────┐
    │Intro Video│
    └─────┬─────┘
@@ -26,7 +27,11 @@ import SwiftUI
         │      │
     ┌───▼──────▼────┐
     │Embedding Model│
-    └───────────────┘
+    └─────┬─────────┘
+          │
+      ┌───▼─────┐
+      │Finished │
+      └─────────┘
  */
 
 @Observable
