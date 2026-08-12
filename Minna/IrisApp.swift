@@ -18,15 +18,21 @@ import PostHog
 import Sparkle
 #endif
 
+@Observable
+class SentryBox {
+    var sentryCrashID: SentryId = .empty
+}
+
 @main
 struct MinnaApp: App {
     @Environment(\.openWindow) var openWindow
+    
+    let sentryErrorBox: SentryBox = SentryBox()
     
     // MARK: Databases
     @State var irisDBContext: IrisContext
     @State var frontendDatabase: FrontendDatabase
     @State var modelManager: ModelManager = ModelManager()
-    @State var sentryCrashID: SentryId = .empty
     
     @State var standardFileImporterPresented: Bool = false
     
@@ -80,8 +86,7 @@ struct MinnaApp: App {
             options.onLastRunStatusDetermined = { [self] status, crashEvent in
                 if status == .didCrash, let event = crashEvent {
                     Log.logger.error("App crashed last run", metadata: ["sentry_id": "\(event.eventId.sentryIdString)"])
-                    
-                    self.sentryCrashID = event.eventId
+                    sentryErrorBox.sentryCrashID = event.eventId
                 }
             }
         }
@@ -149,12 +154,12 @@ struct MinnaApp: App {
         }
         
         WindowGroup(id: "bugReport") {
-            SentryReporter(eventId: sentryCrashID)
+            SentryReporter(eventId: sentryErrorBox.sentryCrashID)
         }
-        .onChange(of: sentryCrashID, initial: true) { _, _ in
-            if sentryCrashID != .empty {
+        .onChange(of: sentryErrorBox.sentryCrashID, initial: true) { _, newValue in
+//            if newValue != .empty {
                 openWindow(id: "bugReport")
-            }
+//            }
         }
         
         ModernSettings {

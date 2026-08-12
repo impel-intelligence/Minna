@@ -41,8 +41,6 @@ struct SentryReporter: View {
     @State var error: ReporterError?
     @State var presentError: Bool = false
     
-    @State var sending: Bool = false
-
     var body: some View {
         Group {
             if eventId == .empty {
@@ -56,11 +54,7 @@ struct SentryReporter: View {
                 Button {
                     submitReport()
                 } label: {
-                    if sending {
-                        ProgressView()
-                    } else {
-                        Text("Submit Report")
-                    }
+                    Text("Submit Report")
                 }
                 .buttonStyle(.glassProminent)
                 .keyboardShortcut(KeyEquivalent.return, modifiers: .command)
@@ -125,10 +119,9 @@ struct SentryReporter: View {
     
     private func submitReport() {
         do {
-            sending = true
-            guard !description.isEmpty else { throw ReporterError.descriptionNotPopulated }
             guard !name.isEmpty else { throw ReporterError.nameNotPopulated }
             guard !email.isEmpty else { throw ReporterError.emailNotPopulated }
+            guard !description.isEmpty else { throw ReporterError.descriptionNotPopulated }
 
             let feedback = SentryFeedback(
                 message: description,
@@ -140,11 +133,8 @@ struct SentryReporter: View {
             )
 
             SentrySDK.capture(feedback: feedback)
-            SentrySDK.flush(timeout: 3)
-
             dismiss()
         } catch {
-            sending = false
             Log.logger.error("Failed to submit sentry report", error: error)
             if let error = error as? ReporterError {
                 self.error = error
