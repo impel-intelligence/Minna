@@ -126,6 +126,7 @@ final class ModelManager: NSObject, @unchecked Sendable {
             do {
                 try await refreshManifest(attempts: attempts + 1)
             } catch {
+                try await refreshManifest(attempts: attempts + 2)
                 Log.logger.error("Failed to manually refresh metadata", error: error)
             }
         }

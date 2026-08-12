@@ -119,10 +119,16 @@ struct ProviderConfigurationForm: View {
             if let config = wrapper.existingConfiguration {
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Delete", role: .destructive) {
-                        modelContext.delete(config)
-                        NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
-                        deletedProvider?(config)
-                        dismiss()
+                        do {
+                            modelContext.delete(config)
+                            try modelContext.save()
+                           
+                            NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
+                            deletedProvider?(config)
+                            dismiss()
+                        } catch {
+                            self.errorMessage = error.localizedDescription
+                        }
                     }
                 }
             }

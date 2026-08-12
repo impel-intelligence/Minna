@@ -41,16 +41,16 @@ struct IntroVideoView: View {
 
 #Preview {
     IntroVideoView()
-    .frame(width: 700, height: 450)
-    .toolbar(removing: .title)
-    .toolbarBackground(.hidden, for: .windowToolbar)
-    .toolbar {
-        ToolbarItem(placement: .principal) {
-            MinnaLogo()
+        .frame(width: 900, height: 500)
+        .toolbar(removing: .title)
+        .toolbarBackground(.hidden, for: .windowToolbar)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                MinnaLogo()
 
+            }
+            .sharedBackgroundVisibility(.hidden)
         }
-        .sharedBackgroundVisibility(.hidden)
-    }
-    .environment(ModelManager())
+        .environment(ModelManager())
 
 }

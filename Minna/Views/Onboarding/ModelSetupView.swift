@@ -47,7 +47,7 @@ struct ModelSetupView: View {
 
 #Preview {
     ModelSetupView()
-        .frame(width: 700, height: 450)
+        .frame(width: 900, height: 500)
         .toolbar(removing: .title)
         .toolbarBackground(.hidden, for: .windowToolbar)
         .toolbar {
