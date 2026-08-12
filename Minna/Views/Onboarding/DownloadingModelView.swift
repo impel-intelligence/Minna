@@ -19,8 +19,6 @@ struct DownloadingModelView: View {
     let canSkipDownload: Bool
     let modelIdentifier: String
     
-    @State private var isDownloadComplete: Bool = false
-
     private var currentDownload: DownloadingFile? {
         return modelManager.inFlightDownloads.first(where: { $0.id == modelIdentifier })
     }
