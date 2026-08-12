@@ -7,6 +7,12 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Added
+- Added an onboarding experience that will direct you through setting up Minna.
+
+### Fixed
+- Fixed a bug where IrisSearch was not using the proper embed queries for BGE.
+
 ## [0.12.0] - Support for MLX & many bug fixes - 2026-08-07
 
 ### Added

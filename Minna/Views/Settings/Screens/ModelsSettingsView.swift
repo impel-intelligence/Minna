@@ -30,25 +30,27 @@ struct ModelsSettingsView: View {
     
     var body: some View {
         Form {
-            Section("Local Models") {
-                NavigationLink("Install New Models") {
-                    InstallModelsView()
-                }
-            }
+//            Section("Local Models") {
+//                NavigationLink("Install New Models") {
+//                    InstallModelsView()
+//                }
+//            }
             
             Section("Configured Providers") {
                 ForEach(providers) { configuration in
                     if let classedProvider = ProviderFactory.makeType(id: configuration.providerID) {
-                        Button {
-                            if classedProvider.editable {
+                        if classedProvider.editable {
+                            Button {
                                 providerWrapper = ProviderWrapper(provider: classedProvider, existingConfiguration: configuration)
+                            } label: {
+                                labelFor(provider: classedProvider, configuration: configuration)
                             }
-                        } label: {
+                            .contentShape(.rect)
+                            .buttonStyle(NavigationLinkButtonStyle())
+                            .accessibilityLabel("Edit \(configuration.name)")
+                        } else {
                             labelFor(provider: classedProvider, configuration: configuration)
                         }
-                        .contentShape(.rect)
-                        .buttonStyle(NavigationLinkButtonStyle())
-                        .accessibilityLabel("Edit \(configuration.name)")
                     } else {
                         Text("Invalid Provider: \(configuration.providerID)")
                     }
@@ -65,7 +67,7 @@ struct ModelsSettingsView: View {
         .formStyle(.grouped)
         .navigationTitle("Models")
         .sheet(item: $providerWrapper) { wrapper in
-            ProviderConfigurationForm(wrapper: wrapper)
+            ProviderConfigurationForm(wrapper: wrapper, createdProvider: nil, deletedProvider: nil)
         }
     }
     

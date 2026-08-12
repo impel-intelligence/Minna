@@ -70,7 +70,7 @@ struct PreviewView: View {
                     Label {
                         Text("Ask Minna")
                     } icon: {
-                        Image(.impelLogo)
+                        Image(.owl)
                             .resizable()
                             .frame(width: 19, height: 19)
                     }

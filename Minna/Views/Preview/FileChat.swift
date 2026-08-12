@@ -18,6 +18,8 @@ struct FileChat: View {
     @Environment(\.irisContext) var irisContext
     @Environment(\.router) var navigationRouter
     @Environment(\.openWindow) var openWindow
+    
+    @Environment(ModelManager.self) var modelManager
 
     @State private var presentModelPicker: Bool = false
     
@@ -65,6 +67,25 @@ struct FileChat: View {
                 try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
             } catch {
                 Log.logger.error("Failed to gather providers", error: error)
+            }
+        }
+        .task {
+            let stream = NotificationCenter.default.messages(of: modelManager, for: DownloadDidFinish.self)
+            for await _ in stream {
+                do {
+                    try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+                } catch {
+                    Log.logger.error("Failed to reload providers", error: error)
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .configuredProvidersChanged)) { _ in
+            Task {
+                do {
+                    try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+                } catch {
+                    Log.logger.error("Failed to reload providers", error: error)
+                }
             }
         }
         .environment(\.openURL, OpenURLAction { url in

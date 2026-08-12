@@ -36,8 +36,13 @@ public enum Platform: String, Codable, Sendable {
     }
 }
 
+public enum ModelType: String, Codable, Sendable {
+    case embedding
+    case inference
+}
+
 public struct Manifest: Codable {
-    public struct File: Codable, Sendable, Hashable {
+    public struct File: Codable, Sendable, Hashable, Equatable {
         public let identifier: String
         public let name: String
         public let fileSize: Int
@@ -46,7 +51,9 @@ public struct Manifest: Codable {
         public let required: Bool
         public let hash: String
         
-        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String) {
+        public var type: ModelType
+        
+        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String, type: ModelType) {
             self.identifier = identifier
             self.fileSize = fileSize
             self.url = url
@@ -54,6 +61,21 @@ public struct Manifest: Codable {
             self.required = required
             self.hash = hash
             self.name = name
+            self.type = type
+        }
+        
+        public init(from decoder: any Decoder) throws {
+            let container: KeyedDecodingContainer<Manifest.File.CodingKeys> = try decoder.container(keyedBy: Manifest.File.CodingKeys.self)
+            self.identifier = try container.decode(String.self, forKey: Manifest.File.CodingKeys.identifier)
+            self.name = try container.decode(String.self, forKey: Manifest.File.CodingKeys.name)
+            self.fileSize = try container.decode(Int.self, forKey: Manifest.File.CodingKeys.fileSize)
+            self.url = try container.decode(URL.self, forKey: Manifest.File.CodingKeys.url)
+            self.platforms = try container.decode([Platform].self, forKey: Manifest.File.CodingKeys.platforms)
+            self.required = try container.decode(Bool.self, forKey: Manifest.File.CodingKeys.required)
+            self.hash = try container.decode(String.self, forKey: Manifest.File.CodingKeys.hash)
+            
+            // Default value for type.
+            self.type = (try? container.decode(ModelType.self, forKey: Manifest.File.CodingKeys.type)) ?? ModelType.embedding
         }
     }
     

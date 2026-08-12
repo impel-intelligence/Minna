@@ -7,6 +7,8 @@ import Subprocess
 import ModelCDN
 import CryptoKit
 
+extension ModelType: @retroactive ExpressibleByArgument { }
+
 struct ModelUploader: AsyncParsableCommand {
     static let configuration = CommandConfiguration(commandName: "upload", abstract: "Upload models to the ModelCDN.")
     
@@ -30,6 +32,9 @@ struct ModelUploader: AsyncParsableCommand {
     
     @Argument(help: "The CoreML model to upload to the Minna CDN.", completion: .file(extensions: coreMLExtensions))
     var modelPath: String
+    
+    @Option(help: "The type of model that is being uploaded")
+    var type: ModelType
     
     @Option(help: "Is this a required download for the app to function")
     var required: Bool
@@ -166,7 +171,8 @@ struct ModelUploader: AsyncParsableCommand {
             url: fileURL,
             platforms: [.macOS],
             required: required,
-            hash: hashString
+            hash: hashString,
+            type: type
         )
         
         manifest.files.append(file)

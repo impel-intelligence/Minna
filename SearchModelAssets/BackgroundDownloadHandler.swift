@@ -49,7 +49,7 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
                 Log.logger.info("Skipping \(asset.name) since it is not for this platform.")
                 continue
             }
-            
+
             // An asset is essential if this is an app `install` or an `update` & it has been marked required.
             // Other types of installs do not support essential downloads so we skip essentials for them.
             let isEssential = (request == .install || request == .update) ? asset.required : false

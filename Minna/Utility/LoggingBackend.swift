@@ -10,7 +10,12 @@ import os
 internal import SwiftSoup
 
 struct LoggingBackend: LogHandler {
+    #if DEBUG
     public var logLevel: Logging.Logger.Level = .debug
+    #else
+    public var logLevel: Logging.Logger.Level = .info
+    #endif
+    
     public var metadata: Logging.Logger.Metadata = [:]
 
     private var logger: os.Logger

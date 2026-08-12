@@ -1,0 +1,128 @@
+//
+//  ProviderSetupView.swift
+//  Minna
+//
+//  Created by Taylor Lineman on 8/11/26.
+//
+
+import SwiftUI
+import SwiftData
+import ModelManager
+import DatabaseSchema
+import SFSafeSymbols
+import ModelCDN
+
+struct ProviderSetupView: View {
+    private typealias Provider = (ModelProvider & AssetProvider)
+    
+    @Environment(\.modelContext) private var modelContext
+    @Environment(OnboardingNavigationRouter.self) var onboardingRouter
+    @Environment(ModelManager.self) var modelManager
+    
+    @State var providerWrapper: ProviderWrapper?
+    @Query var providers: [ConfiguredProvider]
+    @State var hasConfiguredAProvider: Bool = false
+    
+    @State var createdProviders: [String: ConfiguredProvider] = [:]
+    
+    private let supportedProviders: [Provider.Type] = [
+        AnthropicProvider.self,
+        OpenAIProvider.self,
+        OllamaProvider.self,
+        GeminiProvider.self
+    ]
+
+    var body: some View {
+        VStack(alignment: .center, spacing: 10) {
+            Text("Add an AI Provider")
+                .font(.title)
+                .fontWeight(.semibold)
+            Text("You can set up as many AI providers as you want. In Minna settings you can set up multiple instances of the same provider.")
+                .frame(width: 300)
+
+            HStack(spacing: 20) {
+                // Looping over indices here since type checking can't handle the odd Provider type.
+                ForEach(supportedProviders.enumerated(), id: \.offset) { (offset, index) in
+                    buttonFor(provider: index)
+                }
+            }
+            .padding(.vertical)
+            
+            Button("Next") {
+                onboardingRouter.providersFinished(modelManager: modelManager)
+            }
+            .controlSize(.extraLarge)
+            .buttonStyle(.borderedProminent)
+            .disabled(!hasConfiguredAProvider)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .multilineTextAlignment(.center)
+        .sheet(item: $providerWrapper) { wrapper in
+            ProviderConfigurationForm(wrapper: wrapper) { createdProvider in
+                createdProviders[createdProvider.providerID] = createdProvider
+                hasConfiguredAProvider = true
+            } deletedProvider: { deletedProvider in
+                createdProviders.removeValue(forKey: deletedProvider.providerID)
+                hasConfiguredAProvider = false
+            }
+        }
+        .onChange(of: providers, initial: true) { _, newValue in
+            // Check if we have configured one of the providers this view supports.
+            hasConfiguredAProvider = newValue.contains(where: { provider in
+                return supportedProviders.contains(where: { supported in
+                    return supported.id == provider.providerID
+                })
+            })
+        }
+    }
+
+    @ViewBuilder
+    private func buttonFor(provider: Provider.Type) -> some View {
+        Button {
+            providerWrapper = ProviderWrapper(provider: provider, existingConfiguration: createdProviders[provider.id])
+        } label: {
+            VStack {
+                Image(provider.image)
+                    .resizable()
+                    .frame(width: 45, height: 45)
+                    .padding(10)
+                    .background(provider.background)
+                    .clipShape(.rect(cornerRadius: 20))
+                    .shadow(radius: 4)
+                Text(provider.marketingName)
+            }
+            .overlay(alignment: .topTrailing) {
+                if providers.contains(where: { configuredProvider in
+                    configuredProvider.providerID == provider.id
+                }) {
+                    Image(systemSymbol: .checkmarkCircleFill)
+                        .resizable()
+                        .frame(width: 15, height: 15)
+                        .foregroundStyle(.green)
+                        .accessibilityLabel("Configured")
+                        .offset(x: 3, y: -3)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .contentShape(.rect)
+        .accessibilityLabel("Add \(provider.marketingName) as a model provider.")
+    }
+}
+
+#Preview {
+    NavigationStack {
+        ProviderSetupView()
+            .frame(width: 900, height: 500)
+            .toolbar(removing: .title)
+            .toolbarBackground(.hidden, for: .windowToolbar)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    MinnaLogo()
+
+                }
+                .sharedBackgroundVisibility(.hidden)
+            }
+            .environment(ModelManager())
+    }
+}

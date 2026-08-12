@@ -28,6 +28,8 @@ struct MinnaApp: App {
     @State var modelManager: ModelManager = ModelManager()
     
     @State var standardFileImporterPresented: Bool = false
+    
+    @AppStorage("onboarding") var isOnboarding: Bool = true
         
     #if SPARKLE
     private let updaterController: SPUStandardUpdaterController
@@ -78,12 +80,23 @@ struct MinnaApp: App {
     
     var body: some Scene {
         WindowGroup("Dashboard", id: "dashboard") {
-            NavigationCore()
-                .modelContainer(frontendDatabase.modelContainer)
-                .database(frontendDatabase)
-                .irisContext(irisDBContext)
-                .environment(modelManager)
+            if isOnboarding {
+                OnboardingView()
+                    .modelContainer(frontendDatabase.modelContainer)
+                    .database(frontendDatabase)
+                    .irisContext(irisDBContext)
+                    .environment(modelManager)
+                    .frame(width: 900, height: 500)
+                    .windowResizeBehavior(.disabled)
+            } else {
+                NavigationCore()
+                    .modelContainer(frontendDatabase.modelContainer)
+                    .database(frontendDatabase)
+                    .irisContext(irisDBContext)
+                    .environment(modelManager)
+            }
         }
+        .defaultSize(width: 900, height: 500)
         .commands {
             SidebarCommands()
 

@@ -16,6 +16,8 @@ struct ProviderConfigurationForm: View {
     @Environment(\.dismiss) var dismiss
 
     let wrapper: ProviderWrapper
+    let createdProvider: ((ConfiguredProvider) -> Void)?
+    let deletedProvider: ((ConfiguredProvider) -> Void)?
 
     /// The user's input, keyed by `ProviderField.key`. This dictionary is the
     /// single source of truth the form collects; on "Add" it is handed straight
@@ -60,13 +62,24 @@ struct ProviderConfigurationForm: View {
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    HStack(spacing: 2) {
-                        Text("Configuration stored in Keychain")
-                        Image(systemSymbol: .lockFill)
-                            .accessibilityHidden(true)
+                    
+                    HStack(alignment: .center) {
+                        if let assetProvider = wrapper.provider as? AssetProvider.Type, let apiKeySupportURL = assetProvider.apiKeySupport {
+                            Link(destination: apiKeySupportURL) {
+                                Label("How to get an API Key", systemSymbol: .infoCircle)
+                            }
+                            Text("•")
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack(spacing: 2) {
+                            Text("Configuration stored in Keychain")
+                            Image(systemSymbol: .lockFill)
+                                .accessibilityHidden(true)
+                        }
+                        .foregroundStyle(.secondary)
                     }
                     .font(.caption)
-                    .foregroundStyle(.secondary)
                 }
             }
 
@@ -106,8 +119,16 @@ struct ProviderConfigurationForm: View {
             if let config = wrapper.existingConfiguration {
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Delete", role: .destructive) {
-                        modelContext.delete(config)
-                        dismiss()
+                        do {
+                            modelContext.delete(config)
+                            try modelContext.save()
+                           
+                            NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
+                            deletedProvider?(config)
+                            dismiss()
+                        } catch {
+                            self.errorMessage = error.localizedDescription
+                        }
                     }
                 }
             }
@@ -181,6 +202,8 @@ struct ProviderConfigurationForm: View {
             
             modelContext.insert(configuredProvider)
             try modelContext.save()
+            NotificationCenter.default.post(name: .configuredProvidersChanged, object: self)
+            createdProvider?(configuredProvider)
             dismiss()
         } catch {
             self.errorMessage = error.localizedDescription
@@ -190,6 +213,6 @@ struct ProviderConfigurationForm: View {
 
 #Preview {
     NavigationStack {
-        ProviderConfigurationForm(wrapper: ProviderWrapper(provider: AnthropicProvider.self, existingConfiguration: nil))
+        ProviderConfigurationForm(wrapper: ProviderWrapper(provider: AnthropicProvider.self, existingConfiguration: nil), createdProvider: nil, deletedProvider: nil)
     }
 }

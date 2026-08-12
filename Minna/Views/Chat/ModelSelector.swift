@@ -3,6 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 7/1/26.
+//  Edited by Claude Sonnet 4.6 (Anthropic) on 2026-08-11
 //
 
 import SwiftUI
@@ -11,15 +12,17 @@ import ModernSettingsWindow
 import DatabaseSchema
 import ModelManager
 import SFSafeSymbols
+import Logging
 
 struct ModelSelector: View {
     @Environment(\.openModernSettings) var openSettings
+    @Environment(ModelManager.self) var modelManager
     
     @AppStorage(AppStorageKeys.preferredModel) var preferredModel: String = ""
 
     @Binding var providerDatabase: OrderedDictionary<ConfiguredProvider, [any Model]>
     @Binding var selectedModel: (any Model)?
-    let didSelect: ((any Model), ConfiguredProvider) -> ()
+    let didSelect: ((any Model), ConfiguredProvider) -> Void
 
     var body: some View {
         VStack {
@@ -97,6 +100,8 @@ struct ModelSelector: View {
         ]
     ]
     
-    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel) { _, _ in }
+    ModelSelector(providerDatabase: $providerDatabase, selectedModel: $selectedModel) {
+        _, _ in
+    }
 }
  

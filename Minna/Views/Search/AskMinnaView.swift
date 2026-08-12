@@ -28,6 +28,7 @@ struct AskMinnaView: View {
     @Environment(\.irisContext) var irisContext
     @Environment(\.router) var navigationRouter
     @Environment(\.openWindow) var openWindow
+    @Environment(ModelManager.self) var modelManager
     
     // TODO: Figure out when to load and unload on-device models to keep the ram usage down.
 //    @Environment(\.scenePhase) private var scenePhase
@@ -102,6 +103,25 @@ struct AskMinnaView: View {
                 try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
             } catch {
                 Log.logger.error("Failed to gather providers", error: error)
+            }
+        }
+        .task {
+            let stream = NotificationCenter.default.messages(of: modelManager, for: DownloadDidFinish.self)
+            for await _ in stream {
+                do {
+                    try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+                } catch {
+                    Log.logger.error("Failed to reload providers", error: error)
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .configuredProvidersChanged)) { _ in
+            Task {
+                do {
+                    try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+                } catch {
+                    Log.logger.error("Failed to reload providers", error: error)
+                }
             }
         }
         .toolbar {
@@ -181,7 +201,7 @@ struct AskMinnaView: View {
     @ViewBuilder
     private func startup() -> some View {
         VStack(spacing: 5) {
-            Image("impel_logo")
+            Image(.owl)
                 .resizable()
                 .frame(width: 45, height: 45)
                 .accessibilityLabel("Minna Logo")

@@ -35,7 +35,6 @@ final class IrisDBController {
     
     @ObservationIgnored let irisDB: IrisDB
     @ObservationIgnored private var textEmbedder: EmbeddingProvider
-    @ObservationIgnored private var downloadObservationToken:  NotificationCenter.ObservationToken?
     
     var indexingProgress: IndexingProgress = IndexingProgress()
     let fileIndexedWriter: FileIndexedWriter
@@ -53,24 +52,9 @@ final class IrisDBController {
         let searchDirectory = Utilities.irisDBDirectory()
         irisDB = try IrisDB(databaseLocation: searchDirectory, textEmbedder: textEmbedder)
         
-        watchForDownloads()
+        // TODO: Watch for downloads so we can re-embed the database
     }
     
-    deinit {
-        if let downloadObservationToken {
-            NotificationCenter.default.removeObserver(downloadObservationToken)
-        }
-    }
-    
-    private func watchForDownloads() {
-        downloadObservationToken = NotificationCenter.default.addObserver(for: DownloadDidFinish.self) { message in
-            guard message.identifier == IrisDBController.searchEmbedderID else { return }
-
-            // TODO: Swap embedders
-            
-        }
-    }
-        
     private static func getEmbedder() throws -> EmbeddingProvider {
         do {
             let bgeDirectory = ManifestSharedSettings.modelStorageURL.appendingPathComponent(searchEmbedderID, conformingTo: .directory)
