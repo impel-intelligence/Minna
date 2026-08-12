@@ -50,9 +50,10 @@ public struct Manifest: Codable {
         public let platforms: [Platform]
         public let required: Bool
         public let hash: String
-        public let type: ModelType
         
-        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String, type: ModelType) {
+        public var type: ModelType = .embedding
+        
+        public init(identifier: String, name: String, fileSize: Int, url: URL, platforms: [Platform], required: Bool, hash: String, type: ModelType = .embedding) {
             self.identifier = identifier
             self.fileSize = fileSize
             self.url = url
