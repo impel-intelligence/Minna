@@ -7,6 +7,8 @@ import Subprocess
 import ModelCDN
 import CryptoKit
 
+extension ModelType: @retroactive ExpressibleByArgument { }
+
 struct ModelUploader: AsyncParsableCommand {
     static let configuration = CommandConfiguration(commandName: "upload", abstract: "Upload models to the ModelCDN.")
     
