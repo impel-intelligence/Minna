@@ -41,7 +41,7 @@ final class OnboardingNavigationRouter {
         case finished
     }
     
-    enum InferenceQuestionareAnswer {
+    enum InferenceQuestionnaireAnswer {
         case onDevice
         case providers
     }
@@ -56,7 +56,7 @@ final class OnboardingNavigationRouter {
         path.append(OnboardingStage.modelQuestionnaire)
     }
     
-    func inferenceQuestionare(result: OnboardingNavigationRouter.InferenceQuestionareAnswer, modelManager: ModelManager) {
+    func inferenceQuestionnaire(result: OnboardingNavigationRouter.InferenceQuestionnaireAnswer, modelManager: ModelManager) {
         switch result {
         case .onDevice:
             if let inferenceId = modelManager.standardInferenceModel,
