@@ -716,7 +716,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Minna;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Impel Intelligence, Inc. Licensed under the Apache License, Version 2.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -779,7 +779,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Minna;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Impel Intelligence, Inc. Licensed under the Apache License, Version 2.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -983,7 +983,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Minna;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Impel Intelligence, Inc. Licensed under the Apache License, Version 2.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1146,7 +1146,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Minna;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Impel Intelligence, Inc. Licensed under the Apache License, Version 2.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1237,7 +1237,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SearchModelAssets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SearchModelAssets;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Impel Intelligence, Inc. Licensed under the Apache License, Version 2.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1278,7 +1278,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SearchModelAssets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SearchModelAssets;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Impel Intelligence, Inc. Licensed under the Apache License, Version 2.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1319,7 +1319,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SearchModelAssets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SearchModelAssets;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Impel Intelligence, Inc. Licensed under the Apache License, Version 2.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1360,7 +1360,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SearchModelAssets/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SearchModelAssets;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Impel Intelligence, Inc. Licensed under the Apache License, Version 2.0.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
