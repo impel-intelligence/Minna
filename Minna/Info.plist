@@ -36,6 +36,12 @@
 			</array>
 		</dict>
 	</array>
+	<key>POSTHOG_HOST</key>
+	<string>$(POSTHOG_HOST)</string>
+	<key>POSTHOG_PROJECT_TOKEN</key>
+	<string>$(POSTHOG_PROJECT_TOKEN)</string>
+	<key>SENTRY_DSN</key>
+	<string>$(SENTRY_DSN)</string>
 	<key>SUEnableInstallerLauncherService</key>
 	<true/>
 	<key>SUFeedURL</key>

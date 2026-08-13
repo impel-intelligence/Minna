@@ -1,0 +1,31 @@
+// Config.local.example.xcconfig
+// Minna
+//
+// Template for local, uncommitted build configuration.
+//
+//     cp Config.local.example.xcconfig Config.local.xcconfig
+//
+// Config.local.xcconfig is gitignored. Anything you set there overrides the
+// blank defaults in Config.xcconfig.
+//
+// You do NOT need this file to build Minna. Without it the app compiles, runs,
+// and reports no telemetry — which is the correct setup for contributors.
+//
+// Edited by Claude Opus 5 (Anthropic) on 2026-08-13
+
+// Your Apple Developer Team ID, e.g. ABCDE12345.
+DEVELOPMENT_TEAM =
+
+// Telemetry — leave blank unless you are building an official release.
+//
+// REMINDER: xcconfig treats "//" as a comment. Store these WITHOUT the
+// "https://" scheme; Minna re-adds it at runtime.
+
+// e.g. abc123def456@o1234567.ingest.us.sentry.io/7654321
+SENTRY_DSN =
+
+// e.g. phc_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+POSTHOG_PROJECT_TOKEN =
+
+// e.g. us.i.posthog.com
+POSTHOG_HOST =

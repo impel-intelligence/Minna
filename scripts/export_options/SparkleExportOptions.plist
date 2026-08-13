@@ -10,7 +10,8 @@
 	<string>automatic</string>
 	<key>stripSwiftSymbols</key>
 	<true/>
+  <!-- Populated at release time by scripts/release.sh from Config.local.xcconfig -->
   <key>teamID</key>
-  <string>VV548YNZL3</string>
+  <string></string>
 </dict>
 </plist>

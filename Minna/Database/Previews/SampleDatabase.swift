@@ -3,6 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 6/12/26.
+//  Edited by Claude Opus 5 (Anthropic) on 2026-08-13
 //
 
 import SwiftData
@@ -46,7 +47,7 @@ class SampleDatabase: Database {
             title: "Syllabus Discussion",
             shortDescription: "A discussion about course requirements and syllabus details.",
             color: .random,
-            url: URL(fileURLWithPath: "/Users/taylorlineman/Developer/impel/minna-router/Papers/Open Research Knowledge Graph.pdf") ,
+            url: URL(string: "https://example.com/papers/open-research-knowledge-graph.pdf")!,
             source: "pdf",
             type: .pdf
         ),

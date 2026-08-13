@@ -1,6 +1,7 @@
 #!/bin/sh
 # A script to run the whole release pipeline for self-distributed Minna :)
 # This script should be run on a development computer, it will not support CI/CD.
+# Edited by Claude Opus 5 (Anthropic) on 2026-08-13
 set -eu
 set -o pipefail
 
@@ -129,11 +130,37 @@ SPM_BUILD_DIRECTORY="$(PWD)/$TEMPORARY_DIRECTORY/spm"
 
 APP_STORE_BUILD_DIR="$(PWD)/$TEMPORARY_DIRECTORY/app-store-build"
 APP_STORE_ARCHIVE="$APP_STORE_BUILD_DIR/Minna.xcarchive"
-APP_STORE_EXPORT_OPTIONS=$(PWD)/scripts/export_options/AppStoreExportOptions.plist
 
 SPARKLE_BUILD_DIR="$(PWD)/$TEMPORARY_DIRECTORY/sparkle-build"
 SPARKLE_ARCHIVE="$SPARKLE_BUILD_DIR/Minna.xcarchive"
-SPARKLE_EXPORT_OPTIONS=$(PWD)/scripts/export_options/SparkleExportOptions.plist
+
+### Export Options ###
+# The committed export options plists leave teamID blank so that no Apple Team
+# ID lives in version control. Resolve it here from Config.local.xcconfig (or
+# the DEVELOPMENT_TEAM environment variable) and write it into throwaway copies.
+if [ -z "${DEVELOPMENT_TEAM:-}" ] && [ -f "$(PWD)/Config.local.xcconfig" ]; then
+    DEVELOPMENT_TEAM=$(grep -E '^[[:space:]]*DEVELOPMENT_TEAM[[:space:]]*=' "$(PWD)/Config.local.xcconfig" | head -1 | sed 's/.*=[[:space:]]*//' | tr -d '[:space:]')
+fi
+
+if [ -z "${DEVELOPMENT_TEAM:-}" ]; then
+    printf "🙅‍♀️ No signing team found.\n"
+    printf "👩‍💻 Set DEVELOPMENT_TEAM in Config.local.xcconfig, or export DEVELOPMENT_TEAM before running.\n"
+    exit 1
+fi
+
+EXPORT_OPTIONS_DIRECTORY="$(PWD)/$TEMPORARY_DIRECTORY/export_options"
+mkdir -p "$EXPORT_OPTIONS_DIRECTORY"
+
+APP_STORE_EXPORT_OPTIONS="$EXPORT_OPTIONS_DIRECTORY/AppStoreExportOptions.plist"
+SPARKLE_EXPORT_OPTIONS="$EXPORT_OPTIONS_DIRECTORY/SparkleExportOptions.plist"
+
+cp "$(PWD)/scripts/export_options/AppStoreExportOptions.plist" "$APP_STORE_EXPORT_OPTIONS"
+cp "$(PWD)/scripts/export_options/SparkleExportOptions.plist" "$SPARKLE_EXPORT_OPTIONS"
+
+plutil -replace teamID -string "$DEVELOPMENT_TEAM" "$APP_STORE_EXPORT_OPTIONS"
+plutil -replace teamID -string "$DEVELOPMENT_TEAM" "$SPARKLE_EXPORT_OPTIONS"
+
+printf "🔏 Signing with team %s\n" "$DEVELOPMENT_TEAM"
 
 # Archive the App Store configuration of Minna.
 ARCHIVE_APP_STORE_PROGRESS_MARKER="archive-app-store"

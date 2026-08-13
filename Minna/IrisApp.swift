@@ -3,6 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 6/11/26.
+//  Edited by Claude Opus 5 (Anthropic) on 2026-08-13
 //
 
 import SwiftUI
@@ -45,40 +46,45 @@ struct MinnaApp: App {
     init() {
         let sentryBox = SentryBox()
         
-        SentrySDK.start { options in
-            options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"
-            options.sendDefaultPii = false
-            options.enableUncaughtNSExceptionReporting = true
-                        
-            #if SPARKLE
-            options.dist = "sparkle"
-            #if DEBUG
-            options.environment = "sparkle_debug"
-            #else
-            options.environment = "sparkle_release"
-            #endif // DEBUG
-            #else
-            options.dist = "app_store"
-            #if DEBUG
-            options.environment = "app_store_debug"
-            #else
-            options.environment = "app_store_release"
-            #endif // DEBUG
-            #endif // SPARKLE
-            
-            options.onLastRunStatusDetermined = { status, crashEvent in
-                if status == .didCrash, let event = crashEvent {
-                    Log.logger.error("App crashed last run", metadata: ["sentry_id": "\(event.eventId.sentryIdString)"])
-                    sentryBox.sentryCrashID = event.eventId
+        // Crash reporting is opt-in via Config.xcconfig. Builds from a clean
+        // checkout have no DSN configured and report nothing.
+        if let sentryDSN = BuildConfiguration.sentryDSN {
+            SentrySDK.start { options in
+                options.dsn = sentryDSN
+                options.sendDefaultPii = false
+                options.enableUncaughtNSExceptionReporting = true
+
+                #if SPARKLE
+                options.dist = "sparkle"
+                #if DEBUG
+                options.environment = "sparkle_debug"
+                #else
+                options.environment = "sparkle_release"
+                #endif // DEBUG
+                #else
+                options.dist = "app_store"
+                #if DEBUG
+                options.environment = "app_store_debug"
+                #else
+                options.environment = "app_store_release"
+                #endif // DEBUG
+                #endif // SPARKLE
+
+                options.onLastRunStatusDetermined = { status, crashEvent in
+                    if status == .didCrash, let event = crashEvent {
+                        Log.logger.error("App crashed last run", metadata: ["sentry_id": "\(event.eventId.sentryIdString)"])
+                        sentryBox.sentryCrashID = event.eventId
+                    }
                 }
             }
         }
-        
-        let POSTHOG_PROJECT_TOKEN = "phc_nZHzNbtLBtLumJz9Yi6MvnzK2GDcMpt3MLCv6vDJxcSb"
-        let POSTHOG_HOST = "https://us.i.posthog.com"
 
-        let config = PostHogConfig(projectToken: POSTHOG_PROJECT_TOKEN, host: POSTHOG_HOST)
-        PostHogSDK.shared.setup(config)
+        // Product analytics are opt-in via Config.xcconfig on the same terms.
+        if let projectToken = BuildConfiguration.postHogProjectToken,
+           let host = BuildConfiguration.postHogHost {
+            let config = PostHogConfig(projectToken: projectToken, host: host)
+            PostHogSDK.shared.setup(config)
+        }
 
         #if SPARKLE
         // Don't start the sparkle updater under XCTest. Unit tests on CI will fail since sparkle opens a popup asking when to update which hangs the process.
