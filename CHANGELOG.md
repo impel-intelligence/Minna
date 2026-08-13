@@ -7,6 +7,11 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.13.1] - Database Hardening - 2026-08-13
+
+### Fixed
+- The app will no longer crash if you have a malformed databse.
+
 ## [0.13.0] - Onboarding & Improvements - 2026-08-12
 
 ### Added
