@@ -20,14 +20,15 @@ class FrontendDatabase: Database {
     private static let unfilledFolderKey: String = "unfilled_folder_key"
         
     // Swift Data Variables
-    let modelContainer: ModelContainer
+    var modelContainer: ModelContainer
     var context: ModelContext {
         modelContainer.mainContext
     }
     
     var unfilledFolderUUID: UUID
-
-    private let fileDescriptionWriter: FileDescriptionWriter
+    var initializationError: (any Error)?
+    
+    private var fileDescriptionWriter: FileDescriptionWriter
 
     private let indexingQueue: RateLimitedQueue = RateLimitedQueue()
 
@@ -42,6 +43,7 @@ class FrontendDatabase: Database {
 
         let modelConfiguration = ModelConfiguration(schema: Schema.minnaSchema)
         
+        // Edited by Claude Sonnet 4.6 (Anthropic) on 2026-08-13
         do {
             modelContainer = try ModelContainer(
                 for: Schema.minnaSchema,
@@ -52,8 +54,25 @@ class FrontendDatabase: Database {
             try populateStartupData()
             try? sendAnalytics()
         } catch {
+            // Persistent store failed — capture and fall back to an in-memory container.
             SentrySDK.capture(error: error)
-            fatalError("Could not create ModelContainer: \(error)")
+            initializationError = error
+
+            do {
+                let inMemoryConfig = ModelConfiguration(schema: Schema.minnaSchema, isStoredInMemoryOnly: true)
+                modelContainer = try ModelContainer(
+                    for: Schema.minnaSchema,
+                    migrationPlan: DatabaseMigrationPlan.self,
+                    configurations: inMemoryConfig
+                )
+                fileDescriptionWriter = FileDescriptionWriter(modelContainer: modelContainer)
+                try? populateStartupData()
+            } catch {
+                // In-memory container is a last resort with no migration plan or disk I/O,
+                // so failure here indicates a schema-level programmer error rather than a
+                // recoverable runtime condition.
+                fatalError("Failed to initialize in-memory fallback container: \(error)")
+            }
         }
     }
     

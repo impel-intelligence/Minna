@@ -10,6 +10,7 @@ import DatabaseSchema
 
 protocol Database {
     var unfilledFolderUUID: UUID { get }
+    var initializationError: (any Error)? { get }
     
     func unfilledFolder() -> Folder
     func queueDescriptionUpdate(for file: File)

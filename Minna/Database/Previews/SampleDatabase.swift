@@ -279,6 +279,7 @@ class SampleDatabase: Database {
             
     let modelContainer: ModelContainer
     var unfilledFolderUUID: UUID = UUID()
+    var initializationError: (any Error)?
 
     var context: ModelContext {
         modelContainer.mainContext

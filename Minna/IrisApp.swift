@@ -19,7 +19,7 @@ import Sparkle
 #endif
 
 @Observable
-class SentryBox {
+final class SentryBox {
     var sentryCrashID: SentryId = .empty
 }
 
@@ -27,7 +27,7 @@ class SentryBox {
 struct MinnaApp: App {
     @Environment(\.openWindow) var openWindow
     
-    let sentryErrorBox: SentryBox = SentryBox()
+    let sentryErrorBox: SentryBox
     
     // MARK: Databases
     @State var irisDBContext: IrisContext
@@ -43,26 +43,9 @@ struct MinnaApp: App {
     #endif
     
     init() {
-        #if SPARKLE
-        // Don't start the sparkle updater under XCTest. Unit tests on CI will fail since sparkle opens a popup asking when to update which hangs the process.
-        let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
-        updaterController = SPUStandardUpdaterController(startingUpdater: !isRunningTests, updaterDelegate: nil, userDriverDelegate: nil)
-        #endif
+        let sentryBox = SentryBox()
         
-        #if canImport(Darwin)
-        LoggingSystem.bootstrap(LoggingBackend.init)
-        #endif
-
-        frontendDatabase = FrontendDatabase.shared
-        irisDBContext = IrisContext(modelContainer: FrontendDatabase.shared.modelContainer)
-
-        let POSTHOG_PROJECT_TOKEN = "phc_nZHzNbtLBtLumJz9Yi6MvnzK2GDcMpt3MLCv6vDJxcSb"
-        let POSTHOG_HOST = "https://us.i.posthog.com"
-
-        let config = PostHogConfig(projectToken: POSTHOG_PROJECT_TOKEN, host: POSTHOG_HOST)
-        PostHogSDK.shared.setup(config)
-
-        SentrySDK.start { [self] options in
+        SentrySDK.start { options in
             options.dsn = "https://b74c5dc356db0cda226438d09eb33a87@o4511615856607232.ingest.us.sentry.io/4511615959105537"
             options.sendDefaultPii = false
             options.enableUncaughtNSExceptionReporting = true
@@ -83,13 +66,33 @@ struct MinnaApp: App {
             #endif // DEBUG
             #endif // SPARKLE
             
-            options.onLastRunStatusDetermined = { [self] status, crashEvent in
+            options.onLastRunStatusDetermined = { status, crashEvent in
                 if status == .didCrash, let event = crashEvent {
                     Log.logger.error("App crashed last run", metadata: ["sentry_id": "\(event.eventId.sentryIdString)"])
-                    sentryErrorBox.sentryCrashID = event.eventId
+                    sentryBox.sentryCrashID = event.eventId
                 }
             }
         }
+        
+        let POSTHOG_PROJECT_TOKEN = "phc_nZHzNbtLBtLumJz9Yi6MvnzK2GDcMpt3MLCv6vDJxcSb"
+        let POSTHOG_HOST = "https://us.i.posthog.com"
+
+        let config = PostHogConfig(projectToken: POSTHOG_PROJECT_TOKEN, host: POSTHOG_HOST)
+        PostHogSDK.shared.setup(config)
+
+        #if SPARKLE
+        // Don't start the sparkle updater under XCTest. Unit tests on CI will fail since sparkle opens a popup asking when to update which hangs the process.
+        let isRunningTests = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        updaterController = SPUStandardUpdaterController(startingUpdater: !isRunningTests, updaterDelegate: nil, userDriverDelegate: nil)
+        #endif
+        
+        #if canImport(Darwin)
+        LoggingSystem.bootstrap(LoggingBackend.init)
+        #endif
+
+        sentryErrorBox = sentryBox
+        frontendDatabase = FrontendDatabase.shared
+        irisDBContext = IrisContext(modelContainer: FrontendDatabase.shared.modelContainer)
     }
     
     var body: some Scene {
@@ -110,6 +113,7 @@ struct MinnaApp: App {
                     .environment(modelManager)
             }
         }
+        .defaultLaunchBehavior(.presented)
         .defaultSize(width: 900, height: 500)
         .commands {
             SidebarCommands()
@@ -156,10 +160,11 @@ struct MinnaApp: App {
         WindowGroup(id: "bugReport") {
             SentryReporter(eventId: sentryErrorBox.sentryCrashID)
         }
+        .defaultLaunchBehavior(.suppressed)
         .onChange(of: sentryErrorBox.sentryCrashID, initial: true) { _, newValue in
-//            if newValue != .empty {
+            if newValue != .empty {
                 openWindow(id: "bugReport")
-//            }
+            }
         }
         
         ModernSettings {

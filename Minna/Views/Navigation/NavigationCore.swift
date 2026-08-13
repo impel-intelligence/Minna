@@ -30,6 +30,7 @@ public struct NavigationCore: View {
     
     @State var presentAppleIntelligenceAlert: Bool = false
     @State var presentUnknownErrorAlert: Bool = false
+    @State var presentDatabaseInitializationError: Bool = false
     
     public var body: some View {
         NavigationSplitView {
@@ -107,6 +108,10 @@ public struct NavigationCore: View {
             } catch {
                 presentUnknownErrorAlert = true
             }
+            
+            if database.initializationError != nil {
+                presentDatabaseInitializationError = true
+            }
         }
         .sheet(item: $addFolderRequest) { request in
             AddFolderForm(parentFolder: request.parent)
@@ -140,13 +145,24 @@ public struct NavigationCore: View {
             }
         }
         .alert("Apple Intelligence is not Enabled", isPresented: $presentAppleIntelligenceAlert) {
-            
+            Link(destination: URL(string: "mailto:support@tryminna.com")!) {
+                Text("Email Support")
+            }
         } message: {
             // TODO: Add better setup instructions.
             Text("Please enable Apple Intelligence in your device's settings to use Minna. After enabling Apple Intelligence in settings you will need to restart the application.")
         }
         .alert("An unknown error occurred while creating the Search Database", isPresented: $presentUnknownErrorAlert) {
-            
+            Link(destination: URL(string: "mailto:support@tryminna.com")!) {
+                Text("Email Support")
+            }
+        }
+        .alert("Minna's database failed to initialize.", isPresented: $presentDatabaseInitializationError) {
+            Link(destination: URL(string: "mailto:support@tryminna.com")!) {
+                Text("Email Support")
+            }
+        } message: {
+            Text("Please contact support (support@tryminna.com). Error: \(database.initializationError?.localizedDescription ?? "unknown")")
         }
     }
 
