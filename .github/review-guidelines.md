@@ -41,7 +41,7 @@ Minna's central claim is that documents and chats stay local. Flag anything that
 
 ## Documentation currency
 
-Documentation that contradicts the code is worse than none, and this repo has already shipped a README claiming Anthropic was the only supported provider months after that stopped being true. Flag when:
+Flag when:
 
 - A user-visible feature changes and `README.md` still describes the old behavior.
 - An AI provider is added or removed and the provider lists in `README.md`, `SECURITY.md`, and `docs/ARCHITECTURE.md` are not updated.
