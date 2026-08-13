@@ -44,16 +44,6 @@ When you write a documentation comment for a function, type, or method, include 
 func fetchProfile(id: String) async throws -> Profile { ... }
 ```
 
-```typescript
-/**
- * Fetches the user's profile from the remote API.
- *
- * @param id - The user's unique identifier.
- * @returns The decoded profile.
- * @author Claude Opus 4.8 (Anthropic)
- */
-```
-
 ### Commit attribution
 
 Every commit you author must carry a co-author trailer naming you specifically, as the last line of the commit message:
