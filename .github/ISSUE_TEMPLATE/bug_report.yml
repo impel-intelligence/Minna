@@ -1,0 +1,91 @@
+# Edited by Claude Opus 5 (Anthropic) on 2026-08-13
+name: Bug report
+description: Something in Minna isn't working the way it should
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report this.
+
+        **If this is a security or privacy vulnerability, please stop and read
+        [SECURITY.md](https://github.com/impel-intelligence/Minna/blob/main/SECURITY.md)
+        instead — those should be reported privately, not in a public issue.**
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you get instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Add a folder containing ...
+        2. Open Ask Minna and ask ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: input
+    id: minna-version
+    attributes:
+      label: Minna version
+      description: Found under Minna → About.
+      placeholder: "0.13.1"
+    validations:
+      required: true
+
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      placeholder: "26.1"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install-source
+    attributes:
+      label: How did you install Minna?
+      options:
+        - Direct download / Sparkle
+        - Mac App Store
+        - Built from source
+    validations:
+      required: true
+
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Which AI provider were you using?
+      description: If the bug isn't provider-related, pick "Not applicable".
+      options:
+        - Not applicable
+        - Anthropic (Claude)
+        - OpenAI
+        - Google Gemini
+        - Ollama
+        - Apple Foundation Models (on-device)
+        - MLX (on-device)
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Minna logs to Console.app — filter by the Minna process. Paste anything
+        relevant here.
+
+        **Please review before pasting.** Logs may include file names or paths
+        from your indexed documents. Redact anything you would rather not
+        publish.
+      render: text
+    validations:
+      required: false

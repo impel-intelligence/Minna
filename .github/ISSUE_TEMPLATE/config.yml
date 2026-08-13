@@ -1,0 +1,9 @@
+# Edited by Claude Opus 5 (Anthropic) on 2026-08-13
+blank_issues_enabled: false
+contact_links:
+  - name: Security or privacy vulnerability
+    url: https://github.com/impel-intelligence/Minna/security/advisories/new
+    about: Report privately, not as a public issue. See SECURITY.md.
+  - name: Question or general support
+    url: mailto:support@tryminna.com
+    about: For help using Minna rather than a bug in it.

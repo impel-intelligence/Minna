@@ -21,6 +21,12 @@ When you edit or create a file, attribute the work to yourself.
   ```
   Include your specific model name (e.g. `Claude Opus 4.8`) and adapt the `Authored by:` line to the documentation convention of the language you're writing in.
 
+- **Commit attribution:** Every commit you author must carry a co-author trailer naming the specific model, as the last line of the commit message:
+  ```
+  Co-Authored-By: Claude Opus 4.8 (Anthropic) <noreply@anthropic.com>
+  ```
+  Substitute your own model name, exactly as in the rules above. This makes AI-authored work visible in `git log`, `git shortlog`, and the GitHub contributors view — the same tracking the file-level and doc-comment rules provide, extended to history.
+
 ### Guidelines
 - Keep attribution concise — a single line is enough.
 - Don't overwrite or remove attribution from other authors; add yours alongside.

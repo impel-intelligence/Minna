@@ -7,6 +7,12 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Added
+- Minna is now licensed under the Apache License 2.0.
+
+### Changed
+- Crash reporting and analytics are now configured at build time and are turned off entirely in builds made from source, so a build you compile yourself reports nothing anywhere.
+
 ## [0.13.1] - Database Hardening - 2026-08-13
 
 ### Fixed
