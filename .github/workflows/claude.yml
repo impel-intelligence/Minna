@@ -12,7 +12,7 @@ on:
 
 jobs:
   claude:
-    # Restricted to the repository owner. This job spends CLAUDE_CODE_OAUTH_TOKEN, so on a public repository an unrestricted trigger would let any GitHub user run it by leaving a comment. Add further logins here to widen access.
+    # Restricted to an explicit allowlist of logins, currently just @ActuallyTaylor. This is a hardcoded login check rather than a permission or role check, so it does not widen automatically when a collaborator is added — extend the condition below to grant access. This job spends CLAUDE_CODE_OAUTH_TOKEN, so on a public repository an unrestricted trigger would let any GitHub user run it by leaving a comment.
     if: |
       github.actor == 'ActuallyTaylor' && (
         (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
