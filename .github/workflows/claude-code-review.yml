@@ -12,11 +12,10 @@ on:
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+    # Restricted to an explicit allowlist of logins, currently just @ActuallyTaylor, since this job spends CLAUDE_CODE_OAUTH_TOKEN. This is a hardcoded login check rather than a permission or role check, so it does not widen automatically when a collaborator is added — extend the condition below to grant access.
+    #
+    # NOTE: this workflow uses `pull_request` rather than `pull_request_target`, which is the safe choice — a pull request from a fork runs without access to repository secrets. The consequence is that this job cannot review fork pull requests at all, and will simply not run on them. That is expected behaviour, not a misconfiguration. Switching to `pull_request_target` to "fix" it would expose secrets to untrusted code from forks.
+    if: github.actor == 'ActuallyTaylor'
 
     runs-on: ubuntu-latest
     permissions:
@@ -38,7 +37,13 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          # The slash command runs the standard review. The paragraph after it adds Minna's own criteria, which live in .github/review-guidelines.md so they are version controlled and reviewable rather than buried in this workflow. Extend that file, not this prompt.
+          prompt: |
+            /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
+
+            Additionally, read `.github/review-guidelines.md` and review this pull request against the project-specific criteria it defines. They cover licensing and the currency of NOTICE and TRADEMARK.md, secrets and build configuration, Minna's privacy guarantees, documentation drift, CHANGELOG entries, agent attribution, and release integrity.
+
+            Apply those criteria only where the diff actually warrants it — a small fix should not attract commentary on sections it does not touch. Where a guideline is violated, name the specific file that needs updating and why.
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 

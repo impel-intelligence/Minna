@@ -1,0 +1,37 @@
+# Edited by Claude Opus 5 (Anthropic) on 2026-08-13
+name: Feature request
+description: Suggest something Minna should be able to do
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: |
+        Describe the situation you're in, not the solution you have in mind. Understanding the underlying need usually leads to a better feature than implementing the first idea.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like Minna to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What have you tried instead?
+      description: Workarounds you're using today, or other tools that solve this well.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Would you be interested in implementing this?
+      description: Entirely optional — proposals are welcome without it.
+      options:
+        - label: I'd be willing to open a pull request for this
+          required: false

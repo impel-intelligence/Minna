@@ -1,0 +1,41 @@
+// Config.xcconfig
+// Minna
+//
+// Build configuration for local development, signing, and optional telemetry.
+//
+// Every value here is EMPTY by default and Minna builds and runs correctly with all of them blank. Telemetry simply stays off, and the app is signed to run locally. You do not need to configure anything to build from source.
+//
+// To set your own values, copy this file's local override:
+//
+//     cp Config.local.example.xcconfig Config.local.xcconfig
+//
+// and fill it in. Config.local.xcconfig is gitignored, so your credentials and team ID never enter version control. The optional #include? at the bottom of this file picks it up automatically if it exists, and is silently skipped if it does not.
+//
+// Edited by Claude Opus 5 (Anthropic) on 2026-08-13
+
+// MARK: - Code Signing
+//
+// Your Apple Developer Team ID. Leave blank to build with automatic local signing, which is enough to compile and run Minna on your own machine.
+DEVELOPMENT_TEAM =
+
+// MARK: - Telemetry
+//
+// Minna ships with crash reporting (Sentry) and privacy-focused product analytics (PostHog). Both are DISABLED when these values are blank, which is the default for all contributor builds — a source build reports nothing, anywhere, unless you deliberately opt in below.
+//
+// NOTE: xcconfig treats "//" as the start of a comment, so URLs here are stored WITHOUT their "https://" scheme. Minna re-adds the scheme at runtime. Do not paste a full URL into these values.
+
+// Sentry DSN with the leading "https://" removed.
+// Full DSN:  https://<key>@<org>.ingest.us.sentry.io/<project>
+// Store as:  <key>@<org>.ingest.us.sentry.io/<project>
+SENTRY_DSN =
+
+// PostHog project token (starts with "phc_").
+POSTHOG_PROJECT_TOKEN =
+
+// PostHog host with the leading "https://" removed, e.g. us.i.posthog.com
+POSTHOG_HOST =
+
+// MARK: - Local overrides
+//
+// Optional include — no error if the file is absent.
+#include? "Config.local.xcconfig"

@@ -1,19 +1,39 @@
+# Edited by Claude Opus 5 (Anthropic) on 2026-08-13
+
 .DS_Store
 
-# Ignore generated Xcode projects and workspaces
+# Local build configuration — credentials and team ID live here. See Config.local.example.xcconfig for the template.
+Config.local.xcconfig
+
+# Xcode user-specific state
 *.xcuserstate
 *.xcuserdatad
+**/xcuserdata/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
 
-# Ignore Tuist build artifacts and cached files
-/.build/
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/*/.build/
+Tools/*/.build/
+
+# Build output
 /Derived/
-/.claude
-.build
 /build
-/tmp
-docs/superpowers/
-/scripts/minna.tar.xz
-/scripts/minna.dmg
-/Minna.xcodeproj/xcuserdata/taylorlineman.xcuserdatad/xcschemes/xcschememanagement.plist
 out/
 tmp/
+/tmp
+
+# Release artifacts
+/scripts/minna.tar.xz
+/scripts/minna.dmg
+/scripts/tmp/
+
+# Agent tooling
+/.claude
+/.conductor
+docs/superpowers/

@@ -3,6 +3,9 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 6/24/26.
+//  Edited by Claude Opus 5 (Anthropic) on 2026-08-13
+//
+//  Attribution: the CheckForUpdatesViewModel / CheckForUpdatesView pair is adapted from the Sparkle project's SwiftUI sample code, licensed MIT. See Frameworks/Sparkle.framework/LICENSE for the full notice.
 //
 
 #if SPARKLE
