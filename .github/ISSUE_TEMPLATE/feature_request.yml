@@ -8,9 +8,7 @@ body:
     attributes:
       label: What problem are you trying to solve?
       description: |
-        Describe the situation you're in, not the solution you have in mind.
-        Understanding the underlying need usually leads to a better feature than
-        implementing the first idea.
+        Describe the situation you're in, not the solution you have in mind. Understanding the underlying need usually leads to a better feature than implementing the first idea.
     validations:
       required: true
 

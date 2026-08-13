@@ -9,25 +9,20 @@ Licensed under the Apache License, Version 2.0. See LICENSE for the full text.
 THIRD-PARTY COMPONENTS REDISTRIBUTED IN THIS REPOSITORY
 ================================================================================
 
-The following components are included in this source tree and are covered by
-their own licenses rather than the Apache License above.
+The following components are included in this source tree and are covered by their own licenses rather than the Apache License above.
 
 --------------------------------------------------------------------------------
 Sparkle
 --------------------------------------------------------------------------------
 Location:  Frameworks/Sparkle.framework/
 Version:   2.9.5
-License:   MIT, with additional external licenses for bundled components
-           (bsdiff/bspatch, sais-lite, and others)
+License:   MIT, with additional external licenses for bundled components (bsdiff/bspatch, sais-lite, and others)
 Full text: Frameworks/Sparkle.framework/LICENSE
 Homepage:  https://sparkle-project.org
 
-Sparkle is redistributed here as a prebuilt binary framework and is used only
-in the direct-download ("Sparkle") build configuration. It is excluded from
-Mac App Store builds.
+Sparkle is redistributed here as a prebuilt binary framework and is used only in the direct-download ("Sparkle") build configuration. It is excluded from Mac App Store builds.
 
-The CheckForUpdatesViewModel and CheckForUpdatesView types in Minna/Sparkle.swift
-are adapted from Sparkle's SwiftUI sample code and are likewise MIT licensed.
+The CheckForUpdatesViewModel and CheckForUpdatesView types in Minna/Sparkle.swift are adapted from Sparkle's SwiftUI sample code and are likewise MIT licensed.
 
 --------------------------------------------------------------------------------
 CatchException
@@ -37,9 +32,7 @@ License:   CC BY-SA 3.0
 Full text: https://creativecommons.org/licenses/by-sa/3.0/
 Source:    https://stackoverflow.com/a/36454808
 
-Adapted from a Stack Overflow answer. Contributions to Stack Overflow from that
-period are licensed CC BY-SA 3.0, so these two files carry their own attribution
-and are not covered by the Apache License above.
+Adapted from a Stack Overflow answer. Contributions to Stack Overflow from that period are licensed CC BY-SA 3.0, so these two files carry their own attribution and are not covered by the Apache License above.
 
 --------------------------------------------------------------------------------
 Custom symbol images
@@ -48,17 +41,11 @@ Location:  Minna/Resources/Assets.xcassets/*.symbolset/
 License:   Apple SF Symbols license agreement
 Homepage:  https://developer.apple.com/sf-symbols/
 
-Several custom symbol templates in this repository were exported from Apple's
-SF Symbols tooling. Use of SF Symbols and symbols derived from them is governed
-by Apple's SF Symbols license agreement, which permits use within applications
-but restricts redistribution and modification. Downstream users should review
-that agreement before reusing these assets outside an Apple platform app.
+Several custom symbol templates in this repository were exported from Apple's SF Symbols tooling. Use of SF Symbols and symbols derived from them is governed by Apple's SF Symbols license agreement, which permits use within applications but restricts redistribution and modification. Downstream users should review that agreement before reusing these assets outside an Apple platform app.
 
 
 ================================================================================
 DEPENDENCIES
 ================================================================================
 
-Minna depends on a number of Swift packages that are fetched at build time
-rather than vendored into this repository. Each carries its own license; see
-Package.resolved and the respective project for details.
+Minna depends on a number of Swift packages that are fetched at build time rather than vendored into this repository. Each carries its own license; see Package.resolved and the respective project for details.

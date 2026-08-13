@@ -31,3 +31,9 @@ When you edit or create a file, attribute the work to yourself.
 - Keep attribution concise — a single line is enough.
 - Don't overwrite or remove attribution from other authors; add yours alongside.
 - Only attribute files you actually changed in the current task.
+
+## Formatting
+
+**Never hard wrap text.** Write each paragraph, comment, or documentation line as a single continuous line and let the editor soft wrap it. This applies to everything you write: Markdown, code comments, doc comments, commit message bodies, YAML descriptions, and configuration file comments. Hard wrapping makes diffs noisy, because editing one word reflows and touches every following line in the paragraph.
+
+The one exception is text you are copying verbatim, where the wrapping is part of the original: license texts, third-party notices, and anything quoted from an external source. Reproduce those exactly as they are, wrapping included.

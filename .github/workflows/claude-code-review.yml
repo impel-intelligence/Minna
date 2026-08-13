@@ -12,15 +12,9 @@ on:
 
 jobs:
   claude-review:
-    # Restricted to the repository owner, since this job spends
-    # CLAUDE_CODE_OAUTH_TOKEN. Add further logins here to widen access.
+    # Restricted to the repository owner, since this job spends CLAUDE_CODE_OAUTH_TOKEN. Add further logins here to widen access.
     #
-    # NOTE: this workflow uses `pull_request` rather than `pull_request_target`,
-    # which is the safe choice — a pull request from a fork runs without access
-    # to repository secrets. The consequence is that this job cannot review fork
-    # pull requests at all, and will simply not run on them. That is expected
-    # behaviour, not a misconfiguration. Switching to `pull_request_target` to
-    # "fix" it would expose secrets to untrusted code from forks.
+    # NOTE: this workflow uses `pull_request` rather than `pull_request_target`, which is the safe choice — a pull request from a fork runs without access to repository secrets. The consequence is that this job cannot review fork pull requests at all, and will simply not run on them. That is expected behaviour, not a misconfiguration. Switching to `pull_request_target` to "fix" it would expose secrets to untrusted code from forks.
     if: github.actor == 'ActuallyTaylor'
 
     runs-on: ubuntu-latest

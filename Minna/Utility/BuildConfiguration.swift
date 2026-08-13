@@ -9,14 +9,9 @@ import Foundation
 
 /// Build-time configuration supplied by `Config.xcconfig`.
 ///
-/// Values are injected into the app's `Info.plist` at build time and read back
-/// here. Every value is optional, and a missing or blank value — the default
-/// for any build made from a clean checkout — leaves the corresponding feature
-/// switched off. A build from source therefore reports no telemetry anywhere
-/// unless a developer deliberately opts in via `Config.local.xcconfig`.
+/// Values are injected into the app's `Info.plist` at build time and read back here. Every value is optional, and a missing or blank value — the default for any build made from a clean checkout — leaves the corresponding feature switched off. A build from source therefore reports no telemetry anywhere unless a developer deliberately opts in via `Config.local.xcconfig`.
 ///
-/// - Note: `xcconfig` files treat `//` as the start of a comment, so URL-shaped
-///   values are stored without their scheme and reassembled here.
+/// - Note: `xcconfig` files treat `//` as the start of a comment, so URL-shaped values are stored without their scheme and reassembled here.
 /// - Authored by: Claude Opus 5 (Anthropic)
 enum BuildConfiguration {
     /// The Sentry DSN, or `nil` when crash reporting should stay disabled.
@@ -45,9 +40,7 @@ enum BuildConfiguration {
 
     /// Reads a string from `Info.plist`, treating unconfigured values as absent.
     ///
-    /// An xcconfig variable that was never assigned survives `Info.plist`
-    /// substitution as either an empty string or the literal `$(NAME)`
-    /// placeholder, so both forms are reported as "not configured".
+    /// An xcconfig variable that was never assigned survives `Info.plist` substitution as either an empty string or the literal `$(NAME)` placeholder, so both forms are reported as "not configured".
     ///
     /// - Parameter key: The `Info.plist` key to read.
     /// - Returns: The trimmed value, or `nil` when it is unset.

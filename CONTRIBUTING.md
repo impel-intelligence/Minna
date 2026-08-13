@@ -2,13 +2,9 @@
 
 <!-- Edited by Claude Opus 5 (Anthropic) on 2026-08-13 -->
 
-Thanks for your interest in Minna. This document covers how to build the
-project, what we expect in a pull request, and how contributions are licensed.
+Thanks for your interest in Minna. This document covers how to build the project, what we expect in a pull request, and how contributions are licensed.
 
-Minna is a commercial product published as open source so that anyone can audit
-how it handles your data. Contributions are welcome, and so is scrutiny — if you
-find something in the privacy or security behavior that looks wrong, that is a
-particularly valuable thing to report.
+Minna is a commercial product published as open source so that anyone can audit how it handles your data. Contributions are welcome, and so is scrutiny — if you find something in the privacy or security behavior that looks wrong, that is a particularly valuable thing to report.
 
 ## Getting set up
 
@@ -32,17 +28,13 @@ If you already cloned without `--recursive`:
 git submodule update --init --recursive
 ```
 
-Then build and run the `Minna` scheme. **No configuration is required.** Minna
-builds and runs out of the box.
+Then build and run the `Minna` scheme. **No configuration is required.** Minna builds and runs out of the box.
 
 ### Optional: local configuration
 
-`Config.xcconfig` holds build settings and ships with every value blank. Blank
-values are the normal, supported state for a build from source:
+`Config.xcconfig` holds build settings and ships with every value blank. Blank values are the normal, supported state for a build from source:
 
-- **Telemetry is off.** Crash reporting and product analytics are only
-  initialized when credentials are present, so your development builds report
-  nothing, anywhere.
+- **Telemetry is off.** Crash reporting and product analytics are only initialized when credentials are present, so your development builds report nothing, anywhere.
 - **Signing is local.** Xcode signs to run on your own machine.
 
 If you need to set a signing team or your own telemetry endpoints:
@@ -51,9 +43,7 @@ If you need to set a signing team or your own telemetry endpoints:
 cp Config.local.example.xcconfig Config.local.xcconfig
 ```
 
-Fill in what you need. `Config.local.xcconfig` is gitignored and is picked up
-automatically. Note that xcconfig treats `//` as a comment, so URL values are
-stored without their scheme — the file explains this where it matters.
+Fill in what you need. `Config.local.xcconfig` is gitignored and is picked up automatically. Note that xcconfig treats `//` as a comment, so URL values are stored without their scheme — the file explains this where it matters.
 
 ### Tests
 
@@ -62,45 +52,29 @@ swift test --package-path Packages/IrisSearch
 swift test --package-path Packages/MinnaChat
 ```
 
-Some tests in `IrisSearch` and `LookAtMe` depend on a document corpus that is
-not distributed with the repository, for size and licensing reasons. Those tests
-skip automatically when the corpus is absent. See the `Tests/Test Documents/`
-README in each package if you want to supply your own fixtures.
+Some tests in `IrisSearch` and `LookAtMe` depend on a document corpus that is not distributed with the repository, for size and licensing reasons. Those tests skip automatically when the corpus is absent. See the `Tests/Test Documents/` README in each package if you want to supply your own fixtures.
 
 ## Code style
 
-The project uses SwiftLint and SwiftFormat, configured in `.swiftlint.yml` and
-`.swiftformat`. Match the surrounding code; the linters cover the rest.
+The project uses SwiftLint and SwiftFormat, configured in `.swiftlint.yml` and `.swiftformat`. Match the surrounding code; the linters cover the rest.
 
 A few conventions worth knowing:
 
-- Use `SFSafeSymbols` (`systemSymbol:`) rather than stringly-typed
-  `Image(systemName:)`. There is a custom lint rule enforcing this.
-- Swift 6 language mode is on. Concurrency warnings are errors in practice —
-  please don't silence them with `@unchecked Sendable` without a comment
-  explaining why it is actually safe.
+- Use `SFSafeSymbols` (`systemSymbol:`) rather than stringly-typed `Image(systemName:)`. There is a custom lint rule enforcing this.
+- Swift 6 language mode is on. Concurrency warnings are errors in practice — please don't silence them with `@unchecked Sendable` without a comment explaining why it is actually safe.
+- Don't hard wrap prose. Write comments and documentation as continuous lines and let your editor soft wrap them, so that editing a sentence doesn't reflow and touch every line after it in the diff.
 
 ## Pull requests
 
-1. **Open an issue first for anything substantial.** Small fixes can go straight
-   to a PR, but for a feature or refactor it saves everyone time to agree on the
-   approach before you write it.
+1. **Open an issue first for anything substantial.** Small fixes can go straight to a PR, but for a feature or refactor it saves everyone time to agree on the approach before you write it.
 2. **Keep PRs focused.** One logical change per pull request.
-3. **Update `CHANGELOG.md`.** Every user-facing change needs an entry under the
-   `## [Unreleased]` heading, in the existing
-   [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format — `### Added`,
-   `### Fixed`, `### Changed`, and so on. Write it for a Minna user, not for a
-   developer reading the diff. Internal refactors with no user-visible effect
-   don't need an entry.
+3. **Update `CHANGELOG.md`.** Every user-facing change needs an entry under the `## [Unreleased]` heading, in the existing [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format — `### Added`, `### Fixed`, `### Changed`, and so on. Write it for a Minna user, not for a developer reading the diff. Internal refactors with no user-visible effect don't need an entry.
 4. **Sign off your commits** (see below).
 5. **Describe what you changed and why.** The PR template will prompt you.
 
 ### Developer Certificate of Origin
 
-Minna uses the [Developer Certificate of Origin](https://developercertificate.org)
-(DCO). There is no CLA to sign. You simply certify that you wrote the
-contribution, or otherwise have the right to submit it under the project's
-license, by adding a `Signed-off-by` line to your commits:
+Minna uses the [Developer Certificate of Origin](https://developercertificate.org) (DCO). There is no CLA to sign. You simply certify that you wrote the contribution, or otherwise have the right to submit it under the project's license, by adding a `Signed-off-by` line to your commits:
 
 ```sh
 git commit -s -m "Your commit message"
@@ -112,33 +86,22 @@ That appends:
 Signed-off-by: Your Name <your.email@example.com>
 ```
 
-Use your real name and an email you can be reached at. If you forget, amend with
-`git commit -s --amend` and force-push to your branch.
+Use your real name and an email you can be reached at. If you forget, amend with `git commit -s --amend` and force-push to your branch.
 
 ### Licensing of contributions
 
-Minna is licensed under the [Apache License, Version 2.0](LICENSE). By
-contributing, you agree that your contribution is licensed under the same terms.
-Apache-2.0 includes an express patent grant, which protects both you and other
-users of the project.
+Minna is licensed under the [Apache License, Version 2.0](LICENSE). By contributing, you agree that your contribution is licensed under the same terms. Apache-2.0 includes an express patent grant, which protects both you and other users of the project.
 
-Note that the Apache license covers the code only. The Minna name and marks are
-not licensed with it — see [TRADEMARK.md](TRADEMARK.md).
+Note that the Apache license covers the code only. The Minna name and marks are not licensed with it — see [TRADEMARK.md](TRADEMARK.md).
 
 ### AI-assisted contributions
 
-These are fine, and Minna's own history includes them. If you use an AI
-assistant, please say so in the pull request, and note that you remain
-responsible for the correctness and licensing of what you submit — review it as
-you would your own code. Contributions generated by Claude in this repository
-carry a `Co-Authored-By` trailer; see [CLAUDE.md](CLAUDE.md).
+These are fine, and Minna's own history includes them. If you use an AI assistant, please say so in the pull request, and note that you remain responsible for the correctness and licensing of what you submit — review it as you would your own code. Contributions generated by Claude in this repository carry a `Co-Authored-By` trailer; see [CLAUDE.md](CLAUDE.md).
 
 ## Reporting security issues
 
-**Please do not open a public issue for a security vulnerability.** See
-[SECURITY.md](SECURITY.md) for how to report privately.
+**Please do not open a public issue for a security vulnerability.** See [SECURITY.md](SECURITY.md) for how to report privately.
 
 ## Questions
 
-Open a [discussion or issue](https://github.com/impel-intelligence/Minna/issues),
-or email <support@tryminna.com>.
+Open a [discussion or issue](https://github.com/impel-intelligence/Minna/issues), or email <support@tryminna.com>.

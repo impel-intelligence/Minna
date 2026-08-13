@@ -3,8 +3,7 @@
 # Default owner for everything in the repository.
 * @ActuallyTaylor
 
-# Anything touching credentials, signing, licensing, or the release pipeline
-# should always get an explicit look, even once other reviewers are added above.
+# Anything touching credentials, signing, licensing, or the release pipeline should always get an explicit look, even once other reviewers are added above.
 /Config.xcconfig                    @ActuallyTaylor
 /Config.local.example.xcconfig      @ActuallyTaylor
 /LICENSE                            @ActuallyTaylor

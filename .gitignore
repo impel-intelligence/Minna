@@ -2,8 +2,7 @@
 
 .DS_Store
 
-# Local build configuration — credentials and team ID live here.
-# See Config.local.example.xcconfig for the template.
+# Local build configuration — credentials and team ID live here. See Config.local.example.xcconfig for the template.
 Config.local.xcconfig
 
 # Xcode user-specific state

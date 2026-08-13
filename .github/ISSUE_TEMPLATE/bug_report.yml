@@ -8,9 +8,7 @@ body:
       value: |
         Thanks for taking the time to report this.
 
-        **If this is a security or privacy vulnerability, please stop and read
-        [SECURITY.md](https://github.com/impel-intelligence/Minna/blob/main/SECURITY.md)
-        instead — those should be reported privately, not in a public issue.**
+        **If this is a security or privacy vulnerability, please stop and read [SECURITY.md](https://github.com/impel-intelligence/Minna/blob/main/SECURITY.md) instead — those should be reported privately, not in a public issue.**
 
   - type: textarea
     id: what-happened
@@ -80,12 +78,9 @@ body:
     attributes:
       label: Logs
       description: |
-        Minna logs to Console.app — filter by the Minna process. Paste anything
-        relevant here.
+        Minna logs to Console.app — filter by the Minna process. Paste anything relevant here.
 
-        **Please review before pasting.** Logs may include file names or paths
-        from your indexed documents. Redact anything you would rather not
-        publish.
+        **Please review before pasting.** Logs may include file names or paths from your indexed documents. Redact anything you would rather not publish.
       render: text
     validations:
       required: false

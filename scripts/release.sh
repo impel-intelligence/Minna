@@ -135,9 +135,7 @@ SPARKLE_BUILD_DIR="$(PWD)/$TEMPORARY_DIRECTORY/sparkle-build"
 SPARKLE_ARCHIVE="$SPARKLE_BUILD_DIR/Minna.xcarchive"
 
 ### Export Options ###
-# The committed export options plists leave teamID blank so that no Apple Team
-# ID lives in version control. Resolve it here from Config.local.xcconfig (or
-# the DEVELOPMENT_TEAM environment variable) and write it into throwaway copies.
+# The committed export options plists leave teamID blank so that no Apple Team ID lives in version control. Resolve it here from Config.local.xcconfig (or the DEVELOPMENT_TEAM environment variable) and write it into throwaway copies.
 if [ -z "${DEVELOPMENT_TEAM:-}" ] && [ -f "$(PWD)/Config.local.xcconfig" ]; then
     DEVELOPMENT_TEAM=$(grep -E '^[[:space:]]*DEVELOPMENT_TEAM[[:space:]]*=' "$(PWD)/Config.local.xcconfig" | head -1 | sed 's/.*=[[:space:]]*//' | tr -d '[:space:]')
 fi

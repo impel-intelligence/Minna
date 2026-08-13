@@ -46,8 +46,7 @@ struct MinnaApp: App {
     init() {
         let sentryBox = SentryBox()
         
-        // Crash reporting is opt-in via Config.xcconfig. Builds from a clean
-        // checkout have no DSN configured and report nothing.
+        // Crash reporting is opt-in via Config.xcconfig. Builds from a clean checkout have no DSN configured and report nothing.
         if let sentryDSN = BuildConfiguration.sentryDSN {
             SentrySDK.start { options in
                 options.dsn = sentryDSN
