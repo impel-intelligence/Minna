@@ -119,10 +119,10 @@ mkdir -p "$TEMPORARY_DIRECTORY"
 touch "$PROGRESS_FILE"
 
 ### Tag Creation ###
-TAG_EXIST=$(git tag -l "v$APP_VERSION")
+TAG_EXIST=$(git tag -l "$APP_VERSION")
 if [ -z "$TAG_EXIST" ]; then
-    printf "%s\n" "✅ Created Git Tag for v$APP_VERSION"
-    git tag -s "v$APP_VERSION" -m "$VERSION_NOTES"
+    printf "%s\n" "✅ Created Git Tag for $APP_VERSION"
+    git tag -s "$APP_VERSION" -m "$VERSION_NOTES"
 fi
 
 ### Build ###
@@ -316,8 +316,8 @@ fi
 GITHUB_RELEASE_PROGRESS_MARKER="github-release"
 if ! grep -qF "$GITHUB_RELEASE_PROGRESS_MARKER" $PROGRESS_FILE; then
     printf "⚙️ Creating a new release for v%s on GitHub.\n" "$APP_VERSION"
-    git push origin "v$APP_VERSION"
-    gh release create "v$APP_VERSION" "$SPARKLE_DMG_LOCATION" "$SPARKLE_TAR_LOCATION" --title "$APP_VERSION - $VERSION_TITLE" --notes "$VERSION_NOTES"
+    git push origin "$APP_VERSION"
+    gh release create "$APP_VERSION" "$SPARKLE_DMG_LOCATION" "$SPARKLE_TAR_LOCATION" --title "$APP_VERSION - $VERSION_TITLE" --notes "$VERSION_NOTES"
 
     # Save the github release progress
     echo "$GITHUB_RELEASE_PROGRESS_MARKER" >> "$PROGRESS_FILE"
@@ -389,10 +389,10 @@ if ! grep -qF "$UPDATER_PUSH_PROGRESS_MARKER" $PROGRESS_FILE; then
     # Change directory into the updater, commit, tag then push.
     cd $UPDATER_LOCATION
     git add .
-    git commit -a -m "v$APP_VERSION"
-    git tag  -s "v$APP_VERSION" -m "Version $APP_VERSION"
+    git commit -a -m "$APP_VERSION"
+    git tag  -s "$APP_VERSION" -m "Version $APP_VERSION"
     git push
-    git push origin "v$APP_VERSION"
+    git push origin "$APP_VERSION"
     cd $BASE
 
     # Save the build progress
