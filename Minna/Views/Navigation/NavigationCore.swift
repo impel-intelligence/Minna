@@ -32,6 +32,8 @@ public struct NavigationCore: View {
     @State var presentUnknownErrorAlert: Bool = false
     @State var presentDatabaseInitializationError: Bool = false
     
+    @State var isDroppingFile: Bool = false
+    
     public var body: some View {
         NavigationSplitView {
             List(selection: $navigationRouter.selectedTab) {
@@ -94,7 +96,7 @@ public struct NavigationCore: View {
             modelContext.undoManager = undoManager
             
             do {
-                try irisContext.database
+                _ = try irisContext.database
             } catch let error as IrisContextError {
                 switch error {
                 case .notConnected, .unknown:
@@ -164,6 +166,7 @@ public struct NavigationCore: View {
         } message: {
             Text("Please contact support (support@tryminna.com). Error: \(database.initializationError?.localizedDescription ?? "unknown")")
         }
+        .standardDropDestination(presented: $isDroppingFile, selectedFolder: navigationRouter.currentFolder, modelContext: modelContext, irisContext: irisContext, database: database)
     }
 
     func addFolder(in folder: Folder?) {
