@@ -8,6 +8,8 @@ The format has been adjusted to include a release Title. This has been inserted 
 ## [Unreleased]
 
 ### Added
+- Files can be drag and dropped into Minna.
+  - Not all files are supported because of issues in macOS drag and drop behaviors.
 - Minna is now licensed under the Apache License 2.0.
 
 ### Changed
