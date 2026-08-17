@@ -17,7 +17,8 @@ import FoundationModels
 class FrontendDatabase: Database {
     static let shared: FrontendDatabase = FrontendDatabase()
 
-    private static let unfilledFolderKey: String = "unfilled_folder_key"
+    // Yes there is a spelling mistake in this key, it is too late to change it.
+    private static let unfiledFolderKey: String = "unfilled_folder_key"
         
     // Swift Data Variables
     var modelContainer: ModelContainer
@@ -25,7 +26,7 @@ class FrontendDatabase: Database {
         modelContainer.mainContext
     }
     
-    var unfilledFolderUUID: UUID
+    var unfiledFolderUUID: UUID
     var initializationError: (any Error)?
     
     private var fileDescriptionWriter: FileDescriptionWriter
@@ -33,12 +34,12 @@ class FrontendDatabase: Database {
     private let indexingQueue: RateLimitedQueue = RateLimitedQueue()
 
     init() {
-        if let uuidString = UserDefaults.standard.object(forKey: FrontendDatabase.unfilledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
-            unfilledFolderUUID = uuid
+        if let uuidString = UserDefaults.standard.object(forKey: FrontendDatabase.unfiledFolderKey) as? String, let uuid = UUID(uuidString: uuidString) {
+            unfiledFolderUUID = uuid
         } else {
-            // TODO: Try and find an existing unfilled folder UUID in case the user defaults got wiped.
-            unfilledFolderUUID = UUID()
-            UserDefaults.standard.set(unfilledFolderUUID.uuidString, forKey: FrontendDatabase.unfilledFolderKey)
+            // TODO: Try and find an existing unfiled folder UUID in case the user defaults got wiped.
+            unfiledFolderUUID = UUID()
+            UserDefaults.standard.set(unfiledFolderUUID.uuidString, forKey: FrontendDatabase.unfiledFolderKey)
         }
 
         let modelConfiguration = ModelConfiguration(schema: Schema.minnaSchema)
@@ -83,25 +84,25 @@ class FrontendDatabase: Database {
     }
 
     private func populateStartupData() throws {
-        try populateUnfilledFolder()
+        try populateunfiledFolder()
         try populateAppleProvider()
         try populateMLXProvider()
         
         try context.save()
     }
     
-    private func populateUnfilledFolder() throws {
-        let uuid = unfilledFolderUUID
+    private func populateunfiledFolder() throws {
+        let uuid = unfiledFolderUUID
         var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == uuid })
         descriptor.fetchLimit = 1
 
         guard try context.fetch(descriptor).isEmpty else { return }
-        let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), protected: true)
-        context.insert(unfilledFolder)
+        let unfiledFolder = Folder(uuid: unfiledFolderUUID, name: "Unfiled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), protected: true)
+        context.insert(unfiledFolder)
     }
     
-    public func unfilledFolder() -> Folder {
-        let uuid = unfilledFolderUUID
+    public func unfiledFolder() -> Folder {
+        let uuid = unfiledFolderUUID
         var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == uuid })
         descriptor.fetchLimit = 1
         
@@ -109,9 +110,9 @@ class FrontendDatabase: Database {
             return folder
         }
         
-        let unfilledFolder = Folder(uuid: unfilledFolderUUID, name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), protected: true)
-        context.insert(unfilledFolder)
-        return unfilledFolder
+        let unfiledFolder = Folder(uuid: unfiledFolderUUID, name: "Unfiled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), protected: true)
+        context.insert(unfiledFolder)
+        return unfiledFolder
     }
     
     private func populateAppleProvider() throws {

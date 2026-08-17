@@ -93,16 +93,16 @@ extension View {
         if let selectedFolder {
           folder = selectedFolder
         } else {
-          // Capture the unfilled UUID so the predicate operates (it needs local state)
-          let unfilledUUID = database.unfilledFolderUUID
-          var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == unfilledUUID })
+          // Capture the unfiled UUID so the predicate operates (it needs local state)
+          let unfiledUUID = database.unfiledFolderUUID
+          var descriptor = FetchDescriptor<Folder>(predicate: #Predicate { $0.uuid == unfiledUUID })
           descriptor.fetchLimit = 1
           let folders = try modelContext.fetch(descriptor)
-          guard let unfilledFolder = folders.first else {
-              Log.logger.error("Failed to find the unfilled folder.")
+          guard let unfiledFolder = folders.first else {
+              Log.logger.error("Failed to find the unfiled folder.")
               return
           }
-          folder = unfilledFolder
+          folder = unfiledFolder
         }
 
         // Track URLs inserted so we do not insert any duplicates.
