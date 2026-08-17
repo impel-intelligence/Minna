@@ -28,7 +28,6 @@
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
 		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
 		DBA6E66130254545002A94F2 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = DBA6E66030254545002A94F2 /* PostHog */; };
-		DBC1AC60302F6F5E0001A9B4 /* Config.local.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = DBC1AC5F302F6F5E0001A9B4 /* Config.local.xcconfig */; };
 		DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */; };
 		DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */; };
 		DBFD0AA8300EA44F0060744B /* LookAtMe in Frameworks */ = {isa = PBXBuildFile; productRef = DBFD0AA7300EA44F0060744B /* LookAtMe */; };
@@ -94,7 +93,6 @@
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
 		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 		DBC0F1A02FF0000100000001 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		DBC1AC5F302F6F5E0001A9B4 /* Config.local.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.local.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -219,7 +217,6 @@
 			isa = PBXGroup;
 			children = (
 				DBC0F1A02FF0000100000001 /* Config.xcconfig */,
-				DBC1AC5F302F6F5E0001A9B4 /* Config.local.xcconfig */,
 				DB0CF7242FEDE88A0036306B /* ci_scripts */,
 				DB0CF4D22FEDCA6B0036306B /* Minna */,
 				DB0CF4E22FEDCA6D0036306B /* MinnaTests */,
@@ -459,7 +456,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DBC1AC60302F6F5E0001A9B4 /* Config.local.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
