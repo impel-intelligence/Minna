@@ -1,8 +1,8 @@
 # Agent instructions
 
-These instructions apply to **every AI coding agent** working in this repository — OpenAI Codex, Claude Code, Cursor, GitHub Copilot, Gemini, Jules, or anything else. Wherever the rules below say "you", they mean whichever agent is reading them.
+These instructions apply to **every AI coding agent** working in this repository - OpenAI Codex, Claude Code, Cursor, GitHub Copilot, Gemini, Jules, or anything else. Wherever the rules below say "you", they mean whichever agent is reading them.
 
-`AGENTS.md` is the canonical file. `CLAUDE.md` is a symlink to it, because Claude Code looks for that filename — so there is exactly one copy of these instructions and it cannot drift. Edit `AGENTS.md`; never replace the symlink with a real file.
+`AGENTS.md` is the canonical file. `CLAUDE.md` is a symlink to it, because Claude Code looks for that filename - so there is exactly one copy of these instructions and it cannot drift. Edit `AGENTS.md`; never replace the symlink with a real file.
 
 ## Attribution
 
@@ -15,7 +15,7 @@ Examples of well-formed identities:
 - `GPT-5 Codex (OpenAI)`
 - `Claude Opus 4.8 (Anthropic)`
 - `Gemini 2.5 Pro (Google)`
-- `Cursor Composer (Anthropic Claude Sonnet 4.6)` — name the harness and the underlying model when they differ and you know both
+- `Cursor Composer (Anthropic Claude Sonnet 4.6)` - name the harness and the underlying model when they differ and you know both
 
 ### File-level attribution
 
@@ -56,13 +56,13 @@ Co-Authored-By: GPT-5 Codex (OpenAI) <noreply@openai.com>
 Co-Authored-By: Claude Opus 4.8 (Anthropic) <noreply@anthropic.com>
 ```
 
-Use a `noreply` address for your vendor. If you don't know one, `agent@noreply.invalid` is fine — the name matters more than the address. This makes AI-authored work visible in `git log`, `git shortlog`, and the GitHub contributors view: the same tracking the file-level and doc-comment rules provide, extended to history.
+Use a `noreply` address for your vendor. If you don't know one, `agent@noreply.invalid` is fine - the name matters more than the address. This makes AI-authored work visible in `git log`, `git shortlog`, and the GitHub contributors view: the same tracking the file-level and doc-comment rules provide, extended to history.
 
 Note that contributions to this repository also require a DCO sign-off (`git commit -s`). The sign-off belongs to the **human** directing the work, who takes responsibility for the contribution; your co-author trailer is separate and additional. Never add a `Signed-off-by` line for yourself.
 
 ### Guidelines
 
-- Keep attribution concise — a single line is enough.
+- Keep attribution concise - a single line is enough.
 - Don't overwrite or remove attribution from another author, human or agent; add yours alongside.
 - Only attribute files you actually changed in the current task.
 - If a file already carries your attribution from a previous session, update the date rather than adding a second line.

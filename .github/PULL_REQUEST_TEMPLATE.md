@@ -6,7 +6,7 @@
 
 ## How was it tested?
 
-<!-- What did you actually run? Manual steps are fine — say what you did. -->
+<!-- What did you actually run? Manual steps are fine - say what you did. -->
 
 ## Checklist
 

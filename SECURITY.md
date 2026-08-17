@@ -10,14 +10,14 @@ Minna is published as open source specifically so that its privacy and security 
 
 Report privately through either channel:
 
-- [GitHub private security advisories](https://github.com/impel-intelligence/Minna/security/advisories/new) — preferred, since it keeps discussion and the eventual fix in one place.
+- [GitHub private security advisories](https://github.com/impel-intelligence/Minna/security/advisories/new) - preferred, since it keeps discussion and the eventual fix in one place.
 - Email <support@tryminna.com> with `SECURITY` in the subject line.
 
 Please include:
 
 - What the issue is and why you believe it is a security problem
 - Steps to reproduce, ideally with a minimal case
-- The Minna version (**Minna → About**) and your macOS version
+- The Minna version (**Minna -> About**) and your macOS version
 - Whether you intend to disclose publicly, and on what timeline
 
 ### What to expect
@@ -40,7 +40,7 @@ Minna is a local-first macOS application. The following are in scope:
 
 Out of scope:
 
-- Vulnerabilities in third-party AI providers (Anthropic, OpenAI, Google, Ollama) themselves — report those to the provider
+- Vulnerabilities in third-party AI providers (Anthropic, OpenAI, Google, Ollama) themselves - report those to the provider
 - Issues that require an already-compromised machine or physical access to an unlocked device
 - Findings from automated scanners without a demonstrated impact on Minna
 
@@ -52,7 +52,7 @@ Stated here so that reports can be measured against intended behavior. If you ob
 - **AI provider requests** go directly from your machine to whichever provider you configured, using your own API key. On-device models (MLX, Apple Foundation Models) make no network requests at all.
 - **Model downloads** come from `cdn.tryminna.com`.
 - **Update checks** (direct-download builds only) come from the Sparkle appcast.
-- **Crash reporting and analytics** are opt-in at build time and are disabled in builds from source. In official release builds they collect aggregate counts and a model name — no document contents, no chat contents, and no personally identifying information (`sendDefaultPii` is off). See `Minna/TelemetryWrapper.swift`, which is deliberately small enough to read in full.
+- **Crash reporting and analytics** are opt-in at build time and are disabled in builds from source. In official release builds they collect aggregate counts and a model name - no document contents, no chat contents, and no personally identifying information (`sendDefaultPii` is off). See `Minna/TelemetryWrapper.swift`, which is deliberately small enough to read in full.
 
 ## Supported versions
 
