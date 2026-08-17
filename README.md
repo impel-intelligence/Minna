@@ -1,6 +1,6 @@
 <p align="center">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo_long_dark">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo_long_dark.png">
   <source media="(prefers-color-scheme: light)" srcset="docs/assets/logo_long_light.png">
   <img alt="Minna" src="docs/assets/logo_long_light.png" width="500">
 </picture>
