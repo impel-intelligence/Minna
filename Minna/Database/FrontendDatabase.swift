@@ -43,6 +43,7 @@ class FrontendDatabase: Database {
 
         let modelConfiguration = ModelConfiguration(schema: Schema.minnaSchema)
         
+        
         // Edited by Claude Sonnet 4.6 (Anthropic) on 2026-08-13
         do {
             modelContainer = try ModelContainer(
@@ -50,6 +51,7 @@ class FrontendDatabase: Database {
                 migrationPlan: DatabaseMigrationPlan.self,
                 configurations: modelConfiguration
             )
+        
             fileDescriptionWriter = FileDescriptionWriter(modelContainer: modelContainer)
             try populateStartupData()
             try? sendAnalytics()

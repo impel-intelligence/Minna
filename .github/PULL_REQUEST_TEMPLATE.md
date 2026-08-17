@@ -1,12 +1,10 @@
-<!-- Edited by Claude Opus 5 (Anthropic) on 2026-08-13 -->
-
 ## What does this change?
 
 <!-- Describe the change and, more importantly, why it's needed. If it fixes an open issue, write "Fixes #123" so GitHub links them. -->
 
 ## How was it tested?
 
-<!-- What did you actually run? Manual steps are fine — say what you did. -->
+<!-- What did you actually run? Manual steps are fine - say what you did. -->
 
 ## Checklist
 

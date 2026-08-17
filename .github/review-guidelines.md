@@ -12,11 +12,11 @@ Report only what a change actually warrants. A one-line bug fix should not attra
 
 Minna is Apache-2.0 and commercially distributed, so licensing drift is a real cost rather than a formality. Flag a PR when:
 
-- **A new third-party component is vendored into the repository** — a binary framework, a bundled model, copied source, an icon set, a font — and `NOTICE` is not updated to record it. Vendored code carries its own license, and most licenses require the notice travel with the code.
+- **A new third-party component is vendored into the repository** - a binary framework, a bundled model, copied source, an icon set, a font - and `NOTICE` is not updated to record it. Vendored code carries its own license, and most licenses require the notice travel with the code.
 - **Code is copied from an external source** (Stack Overflow, a blog, another project) without an attribution comment naming the source and its license. Stack Overflow answers are CC BY-SA, which is not Apache-2.0. See `Minna/objc/CatchException.m` for the expected form.
 - **A new local Swift package is added** without an Apache-2.0 `LICENSE` file of its own.
 - **A dependency is added whose license is not Apache-2.0-compatible.** MIT, BSD, and Apache-2.0 are fine. GPL, LGPL, AGPL, and source-available licenses (BUSL, SSPL, PolyForm) are not, and need a decision before merge.
-- **New brand assets are added** — a logo, an app icon, a wordmark — and `TRADEMARK.md` still lists only the old ones. That file enumerates what a fork must replace, so it has to stay current or it stops being useful.
+- **New brand assets are added** - a logo, an app icon, a wordmark - and `TRADEMARK.md` still lists only the old ones. That file enumerates what a fork must replace, so it has to stay current or it stops being useful.
 - **The product or company name changes**, or a new name is introduced, without `TRADEMARK.md` and `NOTICE` following.
 - **`LICENSE` is edited.** It is verbatim canonical Apache-2.0 and should not be modified. The same goes for `Frameworks/Sparkle.framework/LICENSE` and `CODE_OF_CONDUCT.md`, which are verbatim third-party text.
 - **A copyright header is removed or reassigned.** Attribution gets added alongside, never replaced.
@@ -27,7 +27,7 @@ Minna is Apache-2.0 and commercially distributed, so licensing drift is a real c
 - `Config.xcconfig` must keep every value **blank**. It is committed, and a populated value there ships credentials to everyone. Real values go only in `Config.local.xcconfig`.
 - New telemetry or network calls must fail closed when unconfigured, matching `BuildConfiguration.swift`: absent configuration means the feature is off, not that it falls back to a default endpoint.
 - Any new network destination must be added to the list in `SECURITY.md`. That list is a promise to users about what leaves their machine, and an undocumented endpoint makes it false.
-- Watch for secrets passed as command-line arguments in scripts and workflows — they leak into process listings and logs. Use environment variables.
+- Watch for secrets passed as command-line arguments in scripts and workflows - they leak into process listings and logs. Use environment variables.
 - GitHub Actions workflows that consume secrets must stay gated to trusted actors, and must not switch from `pull_request` to `pull_request_target`, which would expose secrets to fork code.
 
 ## Privacy
@@ -53,7 +53,7 @@ Flag when:
 
 - Every user-facing change needs an entry under `## [Unreleased]` in `CHANGELOG.md`, in Keep a Changelog format.
 - Entries should be written for a Minna user, not a developer reading the diff. "Fixed a crash when opening a malformed database" is right; "Fixed nil unwrap in IrisDBController" is not.
-- Internal refactors with no user-visible effect don't need one — don't insist.
+- Internal refactors with no user-visible effect don't need one - don't insist.
 
 ## Agent attribution
 
@@ -67,7 +67,7 @@ Per `AGENTS.md`, AI-authored work identifies itself. Flag when:
 
 ## Formatting
 
-- Prose must not be hard wrapped — paragraphs, comments, doc comments, and commit bodies are single continuous lines. The exception is verbatim external text, where the original wrapping is preserved.
+- Prose must not be hard wrapped - paragraphs, comments, doc comments, and commit bodies are single continuous lines. The exception is verbatim external text, where the original wrapping is preserved.
 - Match the surrounding code's style. SwiftLint and SwiftFormat cover the rest.
 - Use `SFSafeSymbols` (`systemSymbol:`) rather than `Image(systemName:)`.
 
@@ -80,4 +80,4 @@ Per `AGENTS.md`, AI-authored work identifies itself. Flag when:
 
 ## Extending this file
 
-Add a section when a class of mistake becomes worth catching automatically. Keep each item concrete enough to check against a diff — "flag when X changes but Y doesn't" is actionable; "ensure good architecture" is not. Sections are independent, so new feature areas can be appended without disturbing what's here.
+Add a section when a class of mistake becomes worth catching automatically. Keep each item concrete enough to check against a diff - "flag when X changes but Y doesn't" is actionable; "ensure good architecture" is not. Sections are independent, so new feature areas can be appended without disturbing what's here.
