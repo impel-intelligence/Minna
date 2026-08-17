@@ -1,10 +1,10 @@
-# Minna
-
+<p align="center">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo_long_dark">
   <source media="(prefers-color-scheme: light)" srcset="docs/assets/logo_long_light.png">
   <img alt="Minna" src="docs/assets/logo_long_light.png">
 </picture>
+</p>
 
 Minna is a local-first search database and AI assistant for your documents. Files are indexed on **your** Mac, they are never uploaded. All AI content is backed by real sources directly from your database.
 
