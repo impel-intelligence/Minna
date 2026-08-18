@@ -688,7 +688,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.13.1;
+				CURRENT_PROJECT_VERSION = 0.14.0;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -720,7 +720,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.13.1;
+				MARKETING_VERSION = 0.14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -751,7 +751,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.13.1;
+				CURRENT_PROJECT_VERSION = 0.14.0;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -783,7 +783,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.13.1;
+				MARKETING_VERSION = 0.14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -955,7 +955,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.13.1;
+				CURRENT_PROJECT_VERSION = 0.14.0;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -987,7 +987,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.13.1;
+				MARKETING_VERSION = 0.14.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
@@ -1118,7 +1118,7 @@
 				CODE_SIGN_ENTITLEMENTS = Minna/Minna.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 0.13.1;
+				CURRENT_PROJECT_VERSION = 0.14.0;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -1150,7 +1150,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.13.1;
+				MARKETING_VERSION = 0.14.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Sparkle,
@@ -1219,7 +1219,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SearchModelAssets/SearchModelAssets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0.13.1;
+				CURRENT_PROJECT_VERSION = 0.14.0;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -1241,8 +1241,8 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 0.13.1;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna.SearchModelAssets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -1260,7 +1260,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SearchModelAssets/SearchModelAssets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0.13.1;
+				CURRENT_PROJECT_VERSION = 0.14.0;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -1282,8 +1282,8 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 0.13.1;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna.SearchModelAssets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -1301,7 +1301,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SearchModelAssets/SearchModelAssets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0.13.1;
+				CURRENT_PROJECT_VERSION = 0.14.0;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -1323,8 +1323,8 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 0.13.1;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna.SearchModelAssets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -1342,7 +1342,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SearchModelAssets/SearchModelAssets.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0.13.1;
+				CURRENT_PROJECT_VERSION = 0.14.0;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
@@ -1364,8 +1364,8 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 26.5;
-				MARKETING_VERSION = 0.13.1;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tryminna.minna.SearchModelAssets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;

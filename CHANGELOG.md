@@ -7,6 +7,8 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.14.0]
+
 ### Added
 - Files can be drag and dropped into Minna.
   - Not all files are supported because of issues in macOS drag and drop behaviors.
