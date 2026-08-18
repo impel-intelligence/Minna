@@ -28,7 +28,7 @@ class SampleDatabase: Database {
     static let shared = SampleDatabase()
             
     public var sampleFolders: [Folder] = [
-        Folder(name: "Unfilled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), files: [
+        Folder(name: "Unfiled", icon: FolderIcon(symbol: .symbol(SFSymbol.trayFull.rawValue), color: .champagne), files: [
             
         ], protected: true),
         Folder(name: "Coding", icon: FolderIcon(symbol: .symbol(SFSymbol.ellipsisCurlybraces.rawValue), color: .azure), children: [
@@ -279,7 +279,7 @@ class SampleDatabase: Database {
     ]
             
     let modelContainer: ModelContainer
-    var unfilledFolderUUID: UUID = UUID()
+    var unfiledFolderUUID: UUID = UUID()
     var initializationError: (any Error)?
 
     var context: ModelContext {
@@ -299,8 +299,8 @@ class SampleDatabase: Database {
     
     private func populateSampleData() throws {
         for folder in sampleFolders {
-            if folder.name == "Unfilled" {
-                unfilledFolderUUID = folder.uuid
+            if folder.name == "Unfiled" {
+                unfiledFolderUUID = folder.uuid
             }
             
             context.insert(folder)
@@ -317,7 +317,7 @@ class SampleDatabase: Database {
         context.insert(appleProvider)
     }
     
-    func unfilledFolder() -> Folder {
+    func unfiledFolder() -> Folder {
         return sampleFolders.first!
     }
     

@@ -36,13 +36,13 @@ struct SearchStartupView: View {
         }
         .onAppear {
             if draft == nil {
-                draft = Chat.make(in: database.unfilledFolder())
+                draft = Chat.make(in: database.unfiledFolder())
             }
         }
     }
 
     private func startNewChat() {
-        draft = Chat.make(in: database.unfilledFolder())
+        draft = Chat.make(in: database.unfiledFolder())
     }
 }
 

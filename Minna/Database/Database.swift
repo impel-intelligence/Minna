@@ -9,9 +9,9 @@ import Foundation
 import DatabaseSchema
 
 protocol Database {
-    var unfilledFolderUUID: UUID { get }
+    var unfiledFolderUUID: UUID { get }
     var initializationError: (any Error)? { get }
     
-    func unfilledFolder() -> Folder
+    func unfiledFolder() -> Folder
     func queueDescriptionUpdate(for file: File)
 }
