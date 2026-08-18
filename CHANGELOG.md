@@ -7,7 +7,7 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
-## [0.14.0]
+## [0.14.0] - Drag and Drop - 2026-08-18
 
 ### Added
 - Files can be drag and dropped into Minna.
