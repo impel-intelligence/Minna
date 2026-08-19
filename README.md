@@ -53,6 +53,12 @@ Minna is a local-first search database and AI assistant for your documents. File
 	- Assign file colors.
 - Sort folders by name & creation date.
 
+## Search Experience
+
+https://github.com/user-attachments/assets/d038c2bb-67a2-4760-bc72-8a670a0915a8
+
+
+
 # Privacy
 Minna takes privacy **very** seriously. We believe that your files are your own, and shouldn't be seen by anyone else. Any conversations with an AI go directly to the provide *you* chose, with *your* key.  On-device models (MLX & Apple Foundation Models) make no network calls at all. All LLM provider configurations are encrpyted in the macOS keychain. For more information see [SECURITY.md](SECURITY.md).
 
