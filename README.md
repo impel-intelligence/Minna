@@ -11,9 +11,15 @@ Minna is a local-first search database and AI assistant for your documents. File
 > Named after Minerva the Roman goddess of Wisdom.
 
 <p align="center">
-<img alt="GitHub Downloads (specific asset, latest release)" src="https://img.shields.io/github/downloads/Impel-Intelligence/Minna/latest/minna.dmg">
-<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Impel-Intelligence/Minna">
-<img alt="GitHub License" src="https://img.shields.io/github/license/Impel-Intelligence/Minna">
+	<a href="https://github.com/impel-intelligence/Minna/releases/latest/download/minna.dmg">
+		<img alt="GitHub Downloads (specific asset, latest release)" src="https://img.shields.io/github/downloads/Impel-Intelligence/Minna/latest/minna.dmg">
+	</a>
+	<a href="https://github.com/impel-intelligence/Minna/stargazers">
+		<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/Impel-Intelligence/Minna">		
+	</a>
+	<a href="https://github.com/impel-intelligence/Minna/blob/main/LICENSE">
+		<img alt="GitHub License" src="https://img.shields.io/github/license/Impel-Intelligence/Minna">
+	</a>
 </p>
 
 <p align="center">
