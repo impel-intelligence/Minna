@@ -10,7 +10,7 @@ import SwiftUI
 import MinnaChat
 
 struct TranscriptView: View {
-    @State var chatter: Chatter
+    let chatter: Chatter
     let limitSize: Bool
     let reader: GeometryProxy
     let randomQuip = Wordlists.generatingContentQuips.randomElement() ?? "Generating"

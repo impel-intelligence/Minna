@@ -56,6 +56,8 @@ public final class ChatInstance {
         }
         
         session.toolExecutionDelegate = toolObserver
+        
+        
         session.prewarm()
     }
     

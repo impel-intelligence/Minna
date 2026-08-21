@@ -25,55 +25,49 @@ struct FileChat: View {
     
     @State private var citationHandler: CitationHandler = CitationHandler()
     
-    @State var chatter: Chatter
+    @State var chatter: Chatter?
     let file: File
-    let didMakeNewChat: Bool
-
-    init(file: File) {
-        self.file = file
-        let instructions = AskFileInstructions(uuid: file.uuid, title: file.title)
-        let tools: [AvailableTool] = [
-            .getExcerptContext,
-            .searchInDocument
-        ]
-        
-        if let chat = file.chat {
-            self._chatter = State(initialValue: Chatter(chat: chat, instructions: instructions, availableTools: tools))
-            didMakeNewChat = false
-        } else {
-            let chat = Chat.make(on: file)
-            self._chatter = State(initialValue: Chatter(chat: chat, instructions: instructions, availableTools: tools))
-            didMakeNewChat = true
-        }
-    }
     
     var body: some View {
         GeometryReader { reader in
             ScrollView {
-                TranscriptView(chatter: chatter, limitSize: false, reader: reader)
+                if let chatter {
+                    TranscriptView(chatter: chatter, limitSize: false, reader: reader)
+                } else {
+                    ProgressView()
+                }
             }
         }
         .safeAreaInset(edge: .bottom) {
             chatBox
         }
         .environment(citationHandler)
-        .theme(chatter.chat.theme)
+        .theme(file.color)
         .task {
-            if didMakeNewChat {
-                modelContext.insert(chatter.chat)
+            let instructions = AskFileInstructions(uuid: file.uuid, title: file.title)
+            let tools: [AvailableTool] = [
+                .getExcerptContext,
+                .searchInDocument
+            ]
+            
+            if let chat = file.chat {
+                self.chatter = Chatter(chat: chat, instructions: instructions, availableTools: tools)
+            } else {
+                let chat = Chat.make(on: file)
+                self.chatter = Chatter(chat: chat, instructions: instructions, availableTools: tools)
             }
             
             do {
-                try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+                try await chatter?.gatherProviders(modelContext: modelContext, irisContext: irisContext)
             } catch {
-                Log.logger.error("Failed to gather providers", error: error)
+                Log.logger.error("Failed to reload providers", error: error)
             }
         }
         .task {
             let stream = NotificationCenter.default.messages(of: modelManager, for: DownloadDidFinish.self)
             for await _ in stream {
                 do {
-                    try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+                    try await chatter?.gatherProviders(modelContext: modelContext, irisContext: irisContext)
                 } catch {
                     Log.logger.error("Failed to reload providers", error: error)
                 }
@@ -82,7 +76,7 @@ struct FileChat: View {
         .onReceive(NotificationCenter.default.publisher(for: .configuredProvidersChanged)) { _ in
             Task {
                 do {
-                    try await chatter.gatherProviders(modelContext: modelContext, irisContext: irisContext)
+                    try await chatter?.gatherProviders(modelContext: modelContext, irisContext: irisContext)
                 } catch {
                     Log.logger.error("Failed to reload providers", error: error)
                 }
@@ -99,56 +93,76 @@ struct FileChat: View {
         })
         .onDisappear {
             // Once the view disappears from the hierarchy, stop the current chat then clear the MLX cache.
-            chatter.chatInstance?.cancel()
+            chatter?.chatInstance?.cancel()
             
             Task {
-                await chatter.chatInstance?.clearCache()
+                await chatter?.chatInstance?.clearCache()
             }
         }
     }
     
     var chatBox: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Button {
-                    presentModelPicker.toggle()
-                } label: {
-                    if let selectedModel = chatter.selectedModel {
-                        ModelName(model: selectedModel)
-                    } else {
-                        Text("No Model Selected")
-                    }
-                }
-                .popover(isPresented: $presentModelPicker) {
-                    ModelSelector(providerDatabase: $chatter.providerDatabase, selectedModel: $chatter.selectedModel) { model, provider in
-                        chatter.selectedModel = model
-                        chatter.selectedProvider = provider
-                        chatter.initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: provider, model: model)
-                    }
-                }
-                .buttonStyle(.glass)
-                Spacer()
-            }
-            
-            // TODO: Put back
-            IndexingSearchBar(placeHolder: "Ask anything about \(file.title)", searchQuery: $chatter.chatMessage, isGenerating: $chatter.isGenerating) {
-                Task {
-                    do {
-                        if let model = chatter.selectedModel {
-                            TelemetryWrapper.chat(model: model.id, location: .askDoc)
+            if let chatterBinding = Binding($chatter) {
+                HStack {
+                    Button {
+                        presentModelPicker.toggle()
+                    } label: {
+                        if let selectedModel = chatter?.selectedModel {
+                            ModelName(model: selectedModel)
                         } else {
-                            TelemetryWrapper.chat(model: "unknown", location: .askDoc)
+                            Text("No Model Selected")
                         }
-                        
-                        try await chatter.submit()
-                    } catch {
-                        Log.logger.error("Failed to send chat", error: error)
+                    }
+                    .popover(isPresented: $presentModelPicker) {
+                        ModelSelector(providerDatabase: chatterBinding.providerDatabase, selectedModel: chatterBinding.selectedModel) { model, provider in
+                            chatter?.selectedModel = model
+                            chatter?.selectedProvider = provider
+                            chatter?.initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: provider, model: model)
+                        }
+                    }
+                    .buttonStyle(.glass)
+                    Spacer()
+                    Button {
+                        guard let current = chatter else { return }
+                        let selectedModel = current.selectedModel
+                        let selectedProvider = current.selectedProvider
+                        let oldChat = current.chat
+
+                        let newChat = Chat.make(on: file)
+                        modelContext.insert(newChat)
+                        modelContext.delete(oldChat)
+
+                        chatter = Chatter(chat: newChat, instructions: current.instructions, availableTools: current.availableTools)
+                        chatter?.selectedModel = selectedModel
+                        chatter?.selectedProvider = selectedProvider
+                        if let selectedModel, let selectedProvider {
+                            chatter?.initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: selectedProvider, model: selectedModel)
+                        }
+                    } label: {
+                        Image(systemSymbol: .xmark)
                     }
                 }
-            } cancel: {
-                chatter.chatInstance?.cancel()
+
+                IndexingSearchBar(placeHolder: "Ask anything about \(file.title)", searchQuery: chatterBinding.chatMessage, isGenerating: chatterBinding.isGenerating) {
+                    Task {
+                        do {
+                            if let model = chatter?.selectedModel {
+                                TelemetryWrapper.chat(model: model.id, location: .askDoc)
+                            } else {
+                                TelemetryWrapper.chat(model: "unknown", location: .askDoc)
+                            }
+
+                            try await chatter?.submit()
+                        } catch {
+                            Log.logger.error("Failed to send chat", error: error)
+                        }
+                    }
+                } cancel: {
+                    chatter?.chatInstance?.cancel()
+                }
+                .padding(.bottom, 20)
             }
-            .padding(.bottom, 20)
         }
         .padding(.horizontal)
     }

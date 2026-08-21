@@ -42,7 +42,7 @@ public struct AskFileInstructions: ModelInstruction {
         ### Citations
         Every factual claim must be followed immediately by a citation tag in this exact format, with no variation:
         
-        <cite doc_id="\(uuid)" title="String" excerpt="Integer"/>
+        <cite doc_id="\(uuid)" title="\(title)" excerpt="Integer"/>
         
         Examples:
         "Usage of Rust over C has shown an increased concern about security <cite doc_id="\(uuid)" title="The adoption of Rust" excerpt="2"/>."
@@ -50,6 +50,7 @@ public struct AskFileInstructions: ModelInstruction {
         "Rust programs see much fewer use-after-free vulnerabilities than C code <cite doc_id="\(uuid)" title="The adoption of Rust" excerpt="4"/>."
 
         Rules:
+        - Always call a search tool first.
         - Place the tag at the end of the sentence.  
         - Never omit `doc_id` or `excerpt`, even if you have already cited both before.
         - Never include text in `excerpt`, only include the integer id for the excerpt.

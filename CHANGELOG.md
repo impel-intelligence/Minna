@@ -7,6 +7,12 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Added
+- You can now reset file chats.
+
+### Fixed
+- The file chat is more reliable and will now always search.
+
 ## [0.14.0] - Drag and Drop - 2026-08-18
 
 ### Added
