@@ -7,6 +7,8 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.14.1] - File Chat Fixes - 2026-08-21
+
 ### Added
 - You can now reset file chats.
 
