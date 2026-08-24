@@ -36,7 +36,7 @@ extension View {
     
     func standardDropDestination(presented: Binding<Bool>, selectedFolder: Folder?, modelContext: ModelContext, irisContext: IrisContext, database: Database) -> some View {
         self
-            .dropDestination(for: URL.self) { urls, session in
+            .dropDestination(for: URL.self) { urls, _ in
                 var scopedURLs: [URL] = []
                 
                 for url in urls {

@@ -19,7 +19,7 @@ final class NavigationRouter {
     var path: NavigationPath = NavigationPath()
     var selectedTab: NavigationDestination? = .search
     
-    var currentFolder: Folder? = nil
+    var currentFolder: Folder?
     
     func push(_ chat: Chat) {
         currentFolder = chat.file.folder

@@ -92,6 +92,13 @@ public struct NavigationCore: View {
             }
         }
         .router(navigationRouter)
+        .onChange(of: navigationRouter.selectedTab) { _, newValue in
+            if case .folder(let folder) = newValue {
+                navigationRouter.currentFolder = folder
+            } else {
+                navigationRouter.currentFolder = nil
+            }
+        }
         .onAppear {
             modelContext.undoManager = undoManager
             

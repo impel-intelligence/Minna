@@ -12,6 +12,7 @@ import DatabaseSchema
 
 struct FolderRow: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.router) private var router
 
     @State var folder: Folder
 
