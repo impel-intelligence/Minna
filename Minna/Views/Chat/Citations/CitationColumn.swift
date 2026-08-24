@@ -105,6 +105,8 @@ struct CitationColumnView: View {
                         }
                     })
                 }
+                
+                pieceResolutionTask = nil
             }
 
         }

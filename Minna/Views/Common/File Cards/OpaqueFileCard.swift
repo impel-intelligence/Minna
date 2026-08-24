@@ -12,6 +12,7 @@ import SentrySwift
 import SwiftData
 import DatabaseSchema
 import Logging
+import IrisSearch
 
 enum CardEditField: Hashable {
     case title
@@ -41,6 +42,8 @@ struct OpaqueFileCard: View {
     @State var editingTitle: Bool = false
     @State var editingDescription: Bool = false
     
+    @State var metadataChangeTask: Task<Void, Never>?
+
     var body: some View {
         Group {
             switch viewMode {
@@ -62,13 +65,43 @@ struct OpaqueFileCard: View {
         }
         .onChange(of: editingTitle) { _, newValue in
             isEditingText = newValue
+            file.title = file.title.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if !newValue {
+                launchMetadataTask()
+            }
         }
         .onChange(of: editingDescription) { _, newValue in
             isEditingText = newValue
+            file.shortDescription = file.shortDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if !newValue {
+                launchMetadataTask()
+            }
         }
         .simultaneousGesture(TapGesture(count: 2).onEnded {
             open(file)
         })
+    }
+    
+    private func launchMetadataTask() {
+        metadataChangeTask?.cancel()
+                    
+        metadataChangeTask = Task(priority: .high) {
+            // Debounce: wait 20ms before searching
+            try? await Task.sleep(for: Duration.milliseconds(50))
+            
+            // Check if cancelled during wait
+            guard !Task.isCancelled else { return }
+            
+            do {
+                try await irisContext.database.updateDocumentMetadata(uuid: file.uuid, title: file.title, description: file.shortDescription)
+            } catch {
+                Log.logger.error("Failed to set document metadata", error: error, metadata: ["uuid": "\(file.uuid)"])
+                SentrySDK.capture(error: error)
+            }
+        }
+
     }
     
     @ViewBuilder
