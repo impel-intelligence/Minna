@@ -7,9 +7,12 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.14.2] - File chat & Import fixex - 2026-08-24
+
 ### Fixed
 - Files that are dropped into Minna now take the folder they were dropped into.
 - Renamed files are no longer excluded from search.
+- Fixed a database bug that led to chats being orphaned from files.
 
 ## [0.14.1] - File Chat Fixes - 2026-08-21
 
