@@ -7,11 +7,11 @@
 
 import SwiftData
 
-public typealias FolderIcon = SchemaV2.FolderIcon
-public typealias Folder = SchemaV2.Folder
-public typealias File = SchemaV2.File
-public typealias ConfiguredProvider = SchemaV2.ConfiguredProvider
-public typealias Chat = SchemaV2.Chat
+public typealias FolderIcon         = SchemaV3.FolderIcon
+public typealias Folder             = SchemaV3.Folder
+public typealias File               = SchemaV3.File
+public typealias ConfiguredProvider = SchemaV3.ConfiguredProvider
+public typealias Chat               = SchemaV3.Chat
 
 public extension Schema {
     static let minnaSchema: Schema = Schema([
@@ -27,8 +27,8 @@ public extension Schema {
 }
 
 public enum DatabaseMigrationPlan: SchemaMigrationPlan {
-    public static let schemas: [any VersionedSchema.Type] = [SchemaV1.self, SchemaV2.self]
-    public static let stages: [MigrationStage] = [v1ToV2]
+    public static let schemas: [any VersionedSchema.Type] = [SchemaV1.self, SchemaV2.self, SchemaV3.self]
+    public static let stages: [MigrationStage] = [v1ToV2, v2ToV3]
     
     static let v1ToV2 = MigrationStage.custom(
         fromVersion: SchemaV1.self,
@@ -40,9 +40,11 @@ public enum DatabaseMigrationPlan: SchemaMigrationPlan {
                 provider.cachedModelIDs = []
             }
             try context.save()
-
         }
     )
+    
+    static let v2ToV3 = MigrationStage.lightweight(fromVersion: SchemaV2.self, toVersion: SchemaV3.self)
+
 }
 
 public enum SchemaV1: VersionedSchema {
@@ -72,5 +74,20 @@ public enum SchemaV2: VersionedSchema {
         // Chats
         SchemaV2.Chat.self,
         SchemaV2.ConfiguredProvider.self
+    ]
+}
+
+public enum SchemaV3: VersionedSchema {
+    public static let versionIdentifier: Schema.Version = Schema.Version(1, 2, 0)
+    
+    public static let models: [any PersistentModel.Type] = [
+        // Files
+        SchemaV3.File.self,
+        SchemaV3.Folder.self,
+        SchemaV3.FolderIcon.self,
+        
+        // Chats
+        SchemaV3.Chat.self,
+        SchemaV3.ConfiguredProvider.self
     ]
 }

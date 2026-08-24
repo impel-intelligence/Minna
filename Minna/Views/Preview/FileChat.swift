@@ -12,6 +12,7 @@ import DatabaseSchema
 import SFSafeSymbols
 import Logging
 import ModelManager
+import SentrySwift
 
 struct FileChat: View {
     @Environment(\.modelContext) var modelContext
@@ -124,23 +125,35 @@ struct FileChat: View {
                     .buttonStyle(.glass)
                     Spacer()
                     Button {
-                        guard let current = chatter else { return }
-                        let selectedModel = current.selectedModel
-                        let selectedProvider = current.selectedProvider
-                        let oldChat = current.chat
+                        do {
+                            guard let current = chatter else { return }
+                            let selectedModel = current.selectedModel
+                            let selectedProvider = current.selectedProvider
+                            let oldChat = current.chat
+                            file.chat = nil
+                            
+                            try modelContext.save()
 
-                        let newChat = Chat.make(on: file)
-                        modelContext.insert(newChat)
-                        modelContext.delete(oldChat)
+                            let newChat = Chat.make(on: file)
+                            modelContext.insert(newChat)
+                            modelContext.delete(oldChat)
+                            
+                            try modelContext.save()
 
-                        chatter = Chatter(chat: newChat, instructions: current.instructions, availableTools: current.availableTools)
-                        chatter?.selectedModel = selectedModel
-                        chatter?.selectedProvider = selectedProvider
-                        if let selectedModel, let selectedProvider {
-                            chatter?.initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: selectedProvider, model: selectedModel)
+                            chatter = Chatter(chat: newChat, instructions: current.instructions, availableTools: current.availableTools)
+                            chatter?.selectedModel = selectedModel
+                            chatter?.selectedProvider = selectedProvider
+                            
+                            if let selectedModel, let selectedProvider {
+                                chatter?.initializeChatInstance(modelContext: modelContext, irisContext: irisContext, provider: selectedProvider, model: selectedModel)
+                            }
+                        } catch {
+                            Log.logger.error("Failed to clear chat and create a new one", error: error)
+                            SentrySDK.capture(error: error)
                         }
                     } label: {
                         Image(systemSymbol: .xmark)
+                            .accessibilityLabel("Clear Chat")
                     }
                 }
 

@@ -7,6 +7,10 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Fixed
+- Files that are dropped into Minna now take the folder they were dropped into.
+- Renamed files are no longer excluded from search.
+
 ## [0.14.1] - File Chat Fixes - 2026-08-21
 
 ### Added
