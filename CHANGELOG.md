@@ -7,6 +7,9 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Fixed
+- Moved files are now properly trackeed.
+
 ## [0.14.2] - File chat & Import fixex - 2026-08-24
 
 ### Fixed

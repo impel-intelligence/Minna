@@ -17,6 +17,9 @@ public enum SecurityScopeError: Error {
 
 extension File {
     public static func generateBookmarkData(for url: URL) throws -> Data {
+        let accessing = url.startAccessingSecurityScopedResource()
+        defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+        
         return try url.bookmarkData(options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess], includingResourceValuesForKeys: [.contentTypeKey, .isDirectoryKey])
     }
     
@@ -30,15 +33,24 @@ extension File {
         guard let url = try? URL(resolvingBookmarkData: bookmark, options: [.withSecurityScope], relativeTo: nil, bookmarkDataIsStale: &isStale) else { throw SecurityScopeError.unableToCreateSecurityScope }
         
         if isStale {
-            // Update the model with the new bookmark data
-            self.bookmark = try File.generateBookmarkData(for: url)
-            
-            // Save the updated model in the frontend database.
-            guard let modelContext = self.modelContext else {
-                return url
+            do {
+                // Update the model with the new bookmark data
+                let bookmarkData = try File.generateBookmarkData(for: url)
+                self.bookmark = bookmarkData
+
+                let newURL = try URL(resolvingBookmarkData: bookmarkData, bookmarkDataIsStale: &isStale)
+                self.url = newURL
+                
+                // Save the updated model in the frontend database.
+                guard let modelContext = self.modelContext else {
+                    return newURL
+                }
+                
+                modelContext.insert(self)
+            } catch {
+                Log.logger.error("Failed to resolve stale bookmark", error: error, metadata: ["uuid": "\(self.uuid)"])
+                throw error
             }
-            
-            modelContext.insert(self)
         }
         
         return url
