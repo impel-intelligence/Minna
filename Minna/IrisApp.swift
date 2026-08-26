@@ -78,7 +78,6 @@ struct MinnaApp: App {
         }
         
         // Initialize the telemetry wrapper
-        _ = TelemetryWrapper.shared
         TelemetryWrapper.shared.didLaunch()
 
         #if SPARKLE
