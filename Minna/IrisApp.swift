@@ -78,7 +78,8 @@ struct MinnaApp: App {
         }
         
         // Initialize the telemetry wrapper
-        let _ = TelemetryWrapper.shared
+        _ = TelemetryWrapper.shared
+        TelemetryWrapper.shared.didLaunch()
 
         #if SPARKLE
         // Don't start the sparkle updater under XCTest. Unit tests on CI will fail since sparkle opens a popup asking when to update which hangs the process.
