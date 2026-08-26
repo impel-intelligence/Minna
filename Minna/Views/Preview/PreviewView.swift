@@ -39,7 +39,7 @@ struct PreviewView: View {
                 }
 
         }
-        .navigationTitle(file.title)
+        .navigationTitle(file.title, image: file.folder.icon.image(), color: file.color.text)
         .animation(.bouncy, value: sidebarOpen)
         .onAppear {
             do {

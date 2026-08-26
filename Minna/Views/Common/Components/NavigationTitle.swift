@@ -10,7 +10,7 @@ import SwiftUI
 
 extension View {
     @ViewBuilder
-    func navigationTitle<Content>(_ title: LocalizedStringKey, image: Content) -> some View where Content: View  {
+    func navigationTitle<Content>(_ title: LocalizedStringKey, image: Content, color: Color = .primary) -> some View where Content: View  {
         self
             .toolbar(removing: .title)
             .toolbar {
@@ -24,6 +24,10 @@ extension View {
                     .font(.title3)
                     .bold()
                     .padding(.leading, 10)
+                    .foregroundStyle(color)
+//                    .minimumScaleFactor(0.75)
+                    .lineLimit(1)
+                    
                 }
                 .sharedBackgroundVisibility(.hidden)
                 ToolbarSpacer(.flexible, placement: .navigation)
@@ -31,9 +35,9 @@ extension View {
     }
     
     @ViewBuilder
-    func navigationTitle<Content>(_ title: String, image: Content) -> some View where Content: View {
+    func navigationTitle<Content>(_ title: String, image: Content, color: Color = .primary) -> some View where Content: View {
         self
-            .navigationTitle(LocalizedStringKey(title), image: image)
+            .navigationTitle(LocalizedStringKey(title), image: image, color: color)
     }
 
 }

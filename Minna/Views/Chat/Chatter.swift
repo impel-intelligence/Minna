@@ -25,6 +25,8 @@ final class Chatter {
 
     var preferredModel: String
     
+    var sessionWarmed: Bool = false
+    
     let chat: Chat
     @ObservationIgnored let instructions: any ModelInstruction
     @ObservationIgnored let availableTools: [AvailableTool]
@@ -118,6 +120,15 @@ final class Chatter {
             chat.lastUsedModel = model.id
             
             chatInstance = try ChatInstance(irisDB: try irisContext.database, databaseContext: modelContext, model: model, configuration: provider, chat: chat, instructions: instructions, tools: availableTools)
+            
+            sessionWarmed = false
+            Task {
+                try await chatInstance?.prewarmModel()
+                
+                Task { @MainActor in
+                    sessionWarmed = true
+                }
+            }
         } catch {
             Log.logger.error("Failed to create chat instance.", error: error)
         }

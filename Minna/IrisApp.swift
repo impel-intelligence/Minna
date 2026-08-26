@@ -14,6 +14,7 @@ import ModernSettingsWindow
 import Logging
 import SFSafeSymbols
 import PostHog
+import MinnaChat
 
 #if SPARKLE
 import Sparkle
@@ -24,10 +25,52 @@ final class SentryBox {
     var sentryCrashID: SentryId = .empty
 }
 
+@Observable
+class AppDelegate: NSObject, NSApplicationDelegate {
+    var presentWaitToQuit: Bool = false
+    private var mlxWatcherTask: Task<Void, Never>?
+    
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        // If MLX has not been fully shutdown we need to wait for that or the app will crash instead of clean close.
+        if MLXWatcher.shared.needsToWait {
+            // If no existing watcher exists, create the task and await for the models to be vacated.
+            if mlxWatcherTask == nil {
+                presentWaitToQuit = true
+                
+                mlxWatcherTask = Task {
+                    await MLXWatcher.shared.waitForStopped()
+                    sender.reply(toApplicationShouldTerminate: true)
+                }
+                
+                return .terminateLater
+            } else {
+                // If a task already exists, this the second time the application is being asked to quit so we should force a quit.
+                mlxWatcherTask = nil
+                return .terminateNow
+            }
+        } else {
+            return .terminateNow
+        }
+    }
+    
+    private func showQuitAlert(_ sender: NSApplication) {
+        let alert = NSAlert()
+        alert.messageText = "Minna is waiting for on-device intelligence to stop."
+        alert.informativeText = "Minna will quit in a few seconds, you can quit now if you wish."
+        alert.addButton(withTitle: "Quit Now")
+        
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            sender.reply(toApplicationShouldTerminate: true)
+        }
+    }
+}
+
 @main
 struct MinnaApp: App {
     @Environment(\.openWindow) var openWindow
-    
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     let sentryErrorBox: SentryBox
     
     // MARK: Databases

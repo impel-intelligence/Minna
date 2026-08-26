@@ -12,6 +12,76 @@ import SwiftData
 import DatabaseSchema
 import ModelManager
 
+typealias GenerationTask = Task<Void, any Error>?
+
+actor Wait<T: Equatable> {
+    private var value: T
+    private let untilValue: T
+    
+    private var continuations: [CheckedContinuation<Void, Never>] = []
+    
+    init(_ value: T, until: T) {
+        self.value = value
+        self.untilValue = until
+    }
+    
+    func set(value newValue: T) {
+        self.value = newValue
+        
+        if self.value == untilValue {
+            for continuation in continuations {
+                continuation.resume()
+            }
+            continuations.removeAll()
+        }
+    }
+    
+    func wait() async {
+        if value == untilValue { return }
+        
+        await withCheckedContinuation { continuation in
+            continuations.append(continuation)
+        }
+    }
+}
+
+@MainActor
+public final class MLXWatcher {
+    public static let shared = MLXWatcher()
+    
+    var waiter = Wait(false, until: true)
+    
+    public var needsToWait: Bool { !liveModels.isEmpty }
+    
+    private var liveModels: [String: GenerationTask] = [:]
+    
+    private init() { }
+    
+    func submitRunningModel(id: String, task: GenerationTask) async {
+        liveModels[id] = task
+        await waiter.set(value: false)
+    }
+    
+    func stopModal(id: String) async {
+        liveModels.removeValue(forKey: id)
+        
+        if liveModels.isEmpty {
+            await waiter.set(value: true)
+        }
+    }
+    
+    func cancelModels() {
+        for value in liveModels.values {
+            value?.cancel()
+        }
+    }
+    
+    public func waitForStopped() async {
+        cancelModels()
+        await waiter.wait()
+    }
+}
+
 @Observable @MainActor
 public final class ChatInstance {
     enum ChatError: Error {
@@ -56,9 +126,27 @@ public final class ChatInstance {
         }
         
         session.toolExecutionDelegate = toolObserver
+    }
+    
+    public func prewarmModel() async throws {
+        let task = Task { @MainActor in
+            try await session.prewarm()
+            await MLXWatcher.shared.stopModal(id: "prewarm")
+        }
         
+        generationTask = task
+        defer { generationTask = nil }
+
+        await MLXWatcher.shared.submitRunningModel(id: "prewarm", task: generationTask)
         
-        session.prewarm()
+        do {
+            try await task.value
+            await MLXWatcher.shared.stopModal(id: "prewarm")
+        }  catch {
+            await MLXWatcher.shared.stopModal(id: "prewarm")
+            Log.logger.info("Failed to prewarm model", error: error)
+            throw error
+        }
     }
     
     public func sendMessage(_ message: String) async throws {
@@ -71,6 +159,7 @@ public final class ChatInstance {
         }
                 
         let generationOptions = provider.generationOptions(model: model)
+        let modelID = model.id
         
         let task = Task { @MainActor in
             waitingForResponse = true
@@ -84,8 +173,11 @@ public final class ChatInstance {
         generationTask = task
         defer { generationTask = nil }
 
+        await MLXWatcher.shared.submitRunningModel(id: modelID, task: generationTask)
+        
         do {
             try await task.value
+            await MLXWatcher.shared.stopModal(id: modelID)
         } catch where error is CancellationError || Task.isCancelled {
             /* keep partial */
         } catch let urlError as URLError where urlError.code == .cancelled {
@@ -96,12 +188,13 @@ public final class ChatInstance {
 //                session.transcript.dropLast(1)
 //            }
             
+            await MLXWatcher.shared.stopModal(id: modelID)
             throw error
         }
 
         chat.apply(session.transcript)
         try databaseContext.save()
-
+        await MLXWatcher.shared.stopModal(id: modelID)
     }
     
     public func cancel() {

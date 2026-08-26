@@ -9,6 +9,7 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ### Fixed
 - Moved files are now properly trackeed.
+- Preview title color 
 
 ## [0.14.2] - File chat & Import fixex - 2026-08-24
 

@@ -1,13 +1,13 @@
 {
-  "originHash" : "1d84db8793aeb2a1f256271089c7a2a869cb093234d0af61a18dfc6ac5ce8f8a",
+  "originHash" : "adc92b117abc2d960afac1aca0dc365295789298094c4e4feaa1a8349e5de1f6",
   "pins" : [
     {
       "identity" : "anylanguagemodel",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/AnyLanguageModel",
       "state" : {
-        "revision" : "3d99e555479a5707450f078a73269b4fbe84dc07",
-        "version" : "2.2.4"
+        "revision" : "a4181327c206b8631ea407ba1688db9f51d018e1",
+        "version" : "2.2.5"
       }
     },
     {
