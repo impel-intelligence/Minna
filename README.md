@@ -69,7 +69,7 @@ https://github.com/user-attachments/assets/d038c2bb-67a2-4760-bc72-8a670a0915a8
 Minna takes privacy **very** seriously. We believe that your files are your own, and shouldn't be seen by anyone else. Any conversations with an AI go directly to the provide *you* chose, with *your* key.  On-device models (MLX & Apple Foundation Models) make no network calls at all. All LLM provider configurations are encrpyted in the macOS keychain. For more information see [SECURITY.md](SECURITY.md).
 
 ## A note on Telemetry
-Minna uses [PostHog](https://posthog.com/) for app telemetry. The goal of this telemetry is to get a *broad* understanding of Minna's userbase, and is never used for tracking. Personally Identifiable Information is stripped before being sent to PostHog, and the remote configurations are set to drop IP addresses. We do not want your data, so we do not store it.
+Minna uses [TelemetryDeck](https://telemetrydeck.com/) for app telemetry. The goal of this telemetry is to get a *broad* understanding of Minna's userbase, and is never used for tracking. Personally Identifiable Information is not sent to TelemetryDeck, and the remote configurations are set to drop IP addresses. We do not want your data, so we do not store it.
 
 # Installation
 
