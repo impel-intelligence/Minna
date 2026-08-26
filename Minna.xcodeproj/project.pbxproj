@@ -93,7 +93,6 @@
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
 		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 		DBC0F1A02FF0000100000001 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		DBFCD235303F465100A99DC6 /* AudioEngine */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AudioEngine; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -259,7 +258,6 @@
 		DB9696A82FF4929600CB037A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				DBFCD235303F465100A99DC6 /* AudioEngine */,
 				DB4AB8863017A062007E4CF7 /* ModelCDN */,
 				DB4BC3B7300AA8CC009C20A3 /* IrisSearch */,
 				DB4BC3B6300AA8C3009C20A3 /* LookAtMe */,

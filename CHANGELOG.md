@@ -7,9 +7,11 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Changed
+- Moved to TelemetryDeck for private telemetry.
+
 ### Fixed
 - Moved files are now properly trackeed.
-- Moved to TelemetryDeck for private telemetry.
 
 ## [0.14.2] - File chat & Import fixex - 2026-08-24
 
