@@ -27,9 +27,9 @@
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
 		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
-		DBA6E66130254545002A94F2 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = DBA6E66030254545002A94F2 /* PostHog */; };
 		DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */; };
 		DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */; };
+		DBFCD2C2303F922000A99DC6 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = DBFCD2C1303F922000A99DC6 /* TelemetryDeck */; };
 		DBFD0AA8300EA44F0060744B /* LookAtMe in Frameworks */ = {isa = PBXBuildFile; productRef = DBFD0AA7300EA44F0060744B /* LookAtMe */; };
 /* End PBXBuildFile section */
 
@@ -93,6 +93,7 @@
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
 		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 		DBC0F1A02FF0000100000001 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		DBFCD235303F465100A99DC6 /* AudioEngine */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AudioEngine; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -168,7 +169,6 @@
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
 				DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */,
-				DBA6E66130254545002A94F2 /* PostHog in Frameworks */,
 				DBFD0AA8300EA44F0060744B /* LookAtMe in Frameworks */,
 				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
 				DB9695562FF440F200CB037A /* Textual in Frameworks */,
@@ -180,6 +180,7 @@
 				DB6E4A823013CB6F00487D86 /* AppleIntelligenceEmbedder in Frameworks */,
 				DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */,
 				DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */,
+				DBFCD2C2303F922000A99DC6 /* TelemetryDeck in Frameworks */,
 				DB2BB96130052C7D00900E62 /* Digester in Frameworks */,
 				DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */,
 				DB6E4FAB301415E300487D86 /* ModelCDN in Frameworks */,
@@ -258,6 +259,7 @@
 		DB9696A82FF4929600CB037A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				DBFCD235303F465100A99DC6 /* AudioEngine */,
 				DB4AB8863017A062007E4CF7 /* ModelCDN */,
 				DB4BC3B7300AA8CC009C20A3 /* IrisSearch */,
 				DB4BC3B6300AA8C3009C20A3 /* LookAtMe */,
@@ -312,8 +314,8 @@
 				DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */,
 				DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */,
 				DB6E4FAA301415E300487D86 /* ModelCDN */,
-				DBA6E66030254545002A94F2 /* PostHog */,
 				DB00BAE43026861500B94A32 /* Logging */,
+				DBFCD2C1303F922000A99DC6 /* TelemetryDeck */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -435,8 +437,8 @@
 				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
 				DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */,
-				DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */,
 				DB00BAE33026861500B94A32 /* XCRemoteSwiftPackageReference "swift-log" */,
+				DBFCD2C0303F922000A99DC6 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -1505,14 +1507,6 @@
 				minimumVersion = 0.5.0;
 			};
 		};
-		DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/PostHog/posthog-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.69.2;
-			};
-		};
 		DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift";
@@ -1527,6 +1521,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
+			};
+		};
+		DBFCD2C0303F922000A99DC6 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.14.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1617,11 +1619,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ModelManager;
 		};
-		DBA6E66030254545002A94F2 /* PostHog */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */;
-			productName = PostHog;
-		};
 		DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */;
@@ -1636,6 +1633,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
 			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		DBFCD2C1303F922000A99DC6 /* TelemetryDeck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DBFCD2C0303F922000A99DC6 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
 		};
 		DBFD0AA7300EA44F0060744B /* LookAtMe */ = {
 			isa = XCSwiftPackageProductDependency;

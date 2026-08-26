@@ -20,22 +20,9 @@ enum BuildConfiguration {
         value(for: "SENTRY_DSN").map { "https://\($0)" }
     }
 
-    /// The PostHog project token, or `nil` when analytics should stay disabled.
-    /// - Authored by: Claude Opus 5 (Anthropic)
-    static var postHogProjectToken: String? {
-        value(for: "POSTHOG_PROJECT_TOKEN")
-    }
-
-    /// The PostHog host, or `nil` when analytics should stay disabled.
-    /// - Authored by: Claude Opus 5 (Anthropic)
-    static var postHogHost: String? {
-        value(for: "POSTHOG_HOST").map { "https://\($0)" }
-    }
-
-    /// Whether product analytics are configured for this build.
-    /// - Authored by: Claude Opus 5 (Anthropic)
-    static var isAnalyticsEnabled: Bool {
-        postHogProjectToken != nil && postHogHost != nil
+    /// The TelemetryDeck unique app id, or `nil` when analytics should stay disabled.
+    static var telemetryDeckID: String? {
+        value(for: "TELEMETRY_DECK_ID")
     }
 
     /// Reads a string from `Info.plist`, treating unconfigured values as absent.
