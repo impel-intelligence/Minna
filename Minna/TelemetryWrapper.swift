@@ -11,7 +11,7 @@ import Logging
 fileprivate extension String {
     static let startup = "startup"
     static let chat = "chat"
-    static let open = "didLaunch"
+    static let didLaunch = "didLaunch"
 }
 
 final class TelemetryWrapper {
@@ -39,7 +39,7 @@ final class TelemetryWrapper {
     /// Used to track daily active users
     func didLaunch() {
         guard initialized else { Log.logger.warning("Telemetry not initialized!"); return }
-        TelemetryDeck.signal(.open)
+        TelemetryDeck.signal(.didLaunch)
     }
     
     func startup(fileCount: Int, askMinnaCount: Int) {
