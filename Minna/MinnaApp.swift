@@ -22,6 +22,7 @@ enum WindowID {
     static let dashboard = "dashboard"
     static let bugReport = "bugReport"
     static let preview = "preview"
+    static let recording = "recording"
 }
 
 @Observable
@@ -161,6 +162,10 @@ struct MinnaApp: App {
                     .irisContext(irisDBContext)
                     .environment(modelManager)
             }
+        }
+        
+        WindowGroup(id: WindowID.recording) {
+            RecordingWindow()
         }
         
         WindowGroup(id: WindowID.bugReport) {

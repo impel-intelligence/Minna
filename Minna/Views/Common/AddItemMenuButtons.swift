@@ -35,7 +35,7 @@ struct AddItemMenuButtons: View {
             }
             .keyboardShortcut("N", modifiers: [.shift, .command])
             Button {
-                openWindow(id: "recording")
+                openWindow(id: WindowID.recording)
             } label: {
                 Label("Start a recording", systemSymbol: .microbe)
             }

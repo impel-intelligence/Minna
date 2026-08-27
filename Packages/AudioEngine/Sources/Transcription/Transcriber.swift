@@ -35,6 +35,8 @@ actor Transcriber {
         }
 
         self.locale = locale
+        try await AssetInventory.reserve(locale: locale)
+        
         self.transcriber = SpeechTranscriber(
             locale: locale,
             transcriptionOptions: [],
@@ -50,14 +52,14 @@ actor Transcriber {
         (inputSequence, inputBuilder) = AsyncStream.makeStream(of: AnalyzerInput.self)
     }
     
-    func streamTranscript() async throws -> AsyncStream<TranscriptionResult> {
+    func streamTranscript() async throws -> AsyncStream<TranscriptionChunk> {
         try await analyzer.start(inputSequence: inputSequence)
 
-        return AsyncStream(TranscriptionResult.self, bufferingPolicy: .unbounded) { continuation in
+        return AsyncStream(TranscriptionChunk.self, bufferingPolicy: .unbounded) { continuation in
             speechRecognitionTask = Task {
                 do {
-                    for try await result in transcriber.results {
-                        let transcriptionResult = TranscriptionResult(text: result.text, range: result.range, isFinal: result.isFinal)
+                    for try await case let result in transcriber.results {
+                        let transcriptionResult = TranscriptionChunk(text: result.text, range: result.range, isFinal: result.isFinal)
                         continuation.yield(transcriptionResult)
                     }
                 } catch is CancellationError {
@@ -71,7 +73,7 @@ actor Transcriber {
         }
     }
     
-    func submitAudioToTranscriber(_ buffer: AVAudioPCMBuffer) async throws {
+    func submitAudioToTranscriber(_ buffer: UnsafeBufferBox) async throws {
         let converted = try BufferConverter.standardizeBuffer(buffer, to: analyzerFormat)
         let input = AnalyzerInput(buffer: converted)
         
@@ -79,11 +81,12 @@ actor Transcriber {
     }
     
     public func finishTranscribing() async throws {
+        await releaseLocales()
+
         inputBuilder.finish()
         try await analyzer.finalizeAndFinishThroughEndOfInput()
         speechRecognitionTask?.cancel()
         speechRecognitionTask = nil
-        await releaseLocales()
     }
 }
 

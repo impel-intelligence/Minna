@@ -145,7 +145,7 @@ struct FolderView: View {
                         if file.type == .askMinna, let chat = file.chat {
                             navigationRouter.push(chat)
                         } else {
-                            openWindow(id: PreviewWindow.windowID, value: OpenFileAction(id: file.id))
+                            openWindow(id: WindowID.preview, value: OpenFileAction(id: file.id))
                         }
                     }
                     return .handled

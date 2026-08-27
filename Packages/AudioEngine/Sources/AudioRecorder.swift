@@ -9,16 +9,14 @@ import Foundation
 import Speech
 import AVFoundation
 
-class EphemeralAudioRecorder {
+/// @unchecked Sendable is safe-ish here: audioEngine is the only piece of this that is not sendable. We only access Ephemeral Audio Recorder from the actor ``TranscriptionSession``.
+/// This was dreamed up by Claude but it seems to be fairly sound.
+final class EphemeralAudioRecorder: @unchecked Sendable {
     enum AudioRecorderError: Error {
         case noMicrophonePermissions
     }
     
     private let audioEngine: AVAudioEngine = AVAudioEngine()
-
-    private var outputContinuation: AsyncStream<UnsafeBufferBox>.Continuation? = nil
-
-    var playerNode: AVAudioPlayerNode?
     
     init() { }
     
@@ -42,28 +40,31 @@ class EphemeralAudioRecorder {
     }
 #endif
     
-    func streamAudio() throws -> AsyncStream<UnsafeBufferBox> {
-        try setupAudioEngine()
+    func streamAudio() async throws -> AsyncStream<UnsafeBufferBox> {
+        guard await isAuthorized() else {
+            throw AudioRecorderError.noMicrophonePermissions
+        }
         
-        audioEngine.inputNode.installTap(onBus: 0, bufferSize: 4096, format: audioEngine.inputNode.outputFormat(forBus: 0)) { buffer, time in
+        try setupAudioEngine()
+
+        let (stream, continuation) = AsyncStream.makeStream(of: UnsafeBufferBox.self, bufferingPolicy: .unbounded)
+
+        audioEngine.inputNode.installTap(onBus: 0, bufferSize: 4096, format: audioEngine.inputNode.outputFormat(forBus: 0)) { [continuation] buffer, time in
             guard let bufferCopy = buffer.deepCopy() else {
                 Log.logger.error("Failed to copy buffer")
                 return
             }
-            let box = UnsafeBufferBox(buffer: bufferCopy)
-            self.outputContinuation?.yield(box)
+
+            continuation.yield(UnsafeBufferBox(buffer: bufferCopy))
         }
-        
+
         audioEngine.prepare()
         try audioEngine.start()
-        
-        return AsyncStream(UnsafeBufferBox.self, bufferingPolicy: .unbounded) { continuation in
-            outputContinuation = continuation
-        }
+
+        return stream
     }
     
     private func setupAudioEngine() throws {
-        let inputSettings = audioEngine.inputNode.inputFormat(forBus: 0).settings
         audioEngine.inputNode.removeTap(onBus: 0)
     }
 }

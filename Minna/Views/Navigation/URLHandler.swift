@@ -60,7 +60,7 @@ struct URLHandler {
             PreviewWindowParameterStore.shared.setParameters(for: openAction, to: OpenFileParameters(excertps: excerpts))
         }
         
-        openWindow(id: PreviewWindow.windowID, value: openAction)
+        openWindow(id: WindowID.preview, value: openAction)
 
     }
 }

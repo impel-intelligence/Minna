@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BAEssentialMaxInstallSize</key>
-	<integer>70000000</integer>
+	<integer>2214311818</integer>
 	<key>BAHasManagedAssetPacks</key>
 	<false/>
 	<key>BAInitialDownloadRestrictions</key>
@@ -20,7 +20,7 @@
 	<key>BAManifestURL</key>
 	<string>https://cdn.tryminna.com/manifest.json</string>
 	<key>BAMaxInstallSize</key>
-	<integer>70000000</integer>
+	<integer>2214311818</integer>
 	<key>BAUsesAppleHosting</key>
 	<false/>
 	<key>CFBundleURLTypes</key>
