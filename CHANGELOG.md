@@ -7,6 +7,9 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Changed
+- Moved to TelemetryDeck for private telemetry.
+
 ### Fixed
 - Moved files are now properly trackeed.
 

@@ -21,8 +21,5 @@ DEVELOPMENT_TEAM =
 // e.g. abc123def456@o1234567.ingest.us.sentry.io/7654321
 SENTRY_DSN =
 
-// e.g. phc_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-POSTHOG_PROJECT_TOKEN =
-
-// e.g. us.i.posthog.com
-POSTHOG_HOST =
+// e.g. XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+TELEMETRY_DECK_ID =

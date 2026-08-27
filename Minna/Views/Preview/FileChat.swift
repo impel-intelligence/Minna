@@ -161,9 +161,9 @@ struct FileChat: View {
                     Task {
                         do {
                             if let model = chatter?.selectedModel {
-                                TelemetryWrapper.chat(model: model.id, location: .askDoc)
+                                TelemetryWrapper.shared.chat(model: model.id, location: .askDoc)
                             } else {
-                                TelemetryWrapper.chat(model: "unknown", location: .askDoc)
+                                TelemetryWrapper.shared.chat(model: "unknown", location: .askDoc)
                             }
 
                             try await chatter?.submit()

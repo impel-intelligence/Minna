@@ -13,7 +13,6 @@ import ModelManager
 import ModernSettingsWindow
 import Logging
 import SFSafeSymbols
-import PostHog
 
 #if SPARKLE
 import Sparkle
@@ -77,13 +76,9 @@ struct MinnaApp: App {
                 }
             }
         }
-
-        // Product analytics are opt-in via Config.xcconfig on the same terms.
-        if let projectToken = BuildConfiguration.postHogProjectToken,
-           let host = BuildConfiguration.postHogHost {
-            let config = PostHogConfig(projectToken: projectToken, host: host)
-            PostHogSDK.shared.setup(config)
-        }
+        
+        // Initialize the telemetry wrapper
+        TelemetryWrapper.shared.didLaunch()
 
         #if SPARKLE
         // Don't start the sparkle updater under XCTest. Unit tests on CI will fail since sparkle opens a popup asking when to update which hangs the process.

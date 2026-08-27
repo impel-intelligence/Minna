@@ -19,10 +19,12 @@ struct IntroVideoView: View {
         HStack {
             if let url {
                 EndAnnouncingVideoPlayer(url: url) {
+                    TelemetryWrapper.shared.onboardingStage(stage: .intro)
                     onboardingRouter.introFinished()
                 } doneLoading: {
                     showVideo = true
                 } failedToLoad: {
+                    TelemetryWrapper.shared.onboardingStage(stage: .intro)
                     onboardingRouter.introFinished()
                 }
                 .opacity(showVideo ? 1 : 0)
@@ -30,6 +32,7 @@ struct IntroVideoView: View {
             } else {
                 ContentUnavailableView("Could not load intro video", systemSymbol: .videoSlash)
                     .task {
+                        TelemetryWrapper.shared.onboardingStage(stage: .intro)
                         onboardingRouter.introFinished()
                     }
             }

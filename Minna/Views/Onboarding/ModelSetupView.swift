@@ -29,11 +29,13 @@ struct ModelSetupView: View {
                     .frame(width: 350)
                 HStack {
                     Button("With my own AI Providers") {
+                        TelemetryWrapper.shared.onboardingStage(stage: .modelQuestionnaire)
                         onboardingRouter.inferenceQuestionnaire(result: .providers, modelManager: modelManager)
                     }
                     .controlSize(.extraLarge)
                     
                     Button("Completely On Device") {
+                        TelemetryWrapper.shared.onboardingStage(stage: .modelQuestionnaire)
                         onboardingRouter.inferenceQuestionnaire(result: .onDevice, modelManager: modelManager)
                     }
                     .controlSize(.extraLarge)

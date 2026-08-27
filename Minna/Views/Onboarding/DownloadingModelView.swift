@@ -61,6 +61,7 @@ struct DownloadingModelView: View {
             let stream = NotificationCenter.default.messages(of: modelManager, for: DownloadDidFinish.self)
             
             for await download in stream where download.identifier == modelIdentifier {
+                TelemetryWrapper.shared.onboardingStage(stage: .inferenceDownload)
                 onboardingRouter.inferenceFinished(modelManager: modelManager)
             }
         }
@@ -74,6 +75,7 @@ struct DownloadingModelView: View {
         }
         .onAppear {
             if modelManager.doesModelExistOnDisk(identifier: modelIdentifier) {
+                TelemetryWrapper.shared.onboardingStage(stage: .inferenceDownload)
                 onboardingRouter.inferenceFinished(modelManager: modelManager)
             }
         }
@@ -84,6 +86,7 @@ struct DownloadingModelView: View {
         Group {
             if canSkipDownload {
                 Button("Skip Downloading") {
+                    TelemetryWrapper.shared.onboardingStage(stage: .inferenceDownloadSkipped)
                     onboardingRouter.inferenceFinished(modelManager: modelManager)
                 }
             } else {
@@ -127,6 +130,7 @@ struct DownloadingModelView: View {
 
                 if canSkipDownload {
                     Button("Next") {
+                        TelemetryWrapper.shared.onboardingStage(stage: .inferenceDownloadSkipped)
                         onboardingRouter.inferenceFinished(modelManager: modelManager)
                     }
                     .controlSize(.extraLarge)

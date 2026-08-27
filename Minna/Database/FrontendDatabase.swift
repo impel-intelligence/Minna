@@ -82,7 +82,7 @@ class FrontendDatabase: Database {
     private func sendAnalytics() throws {
         let fileCount = (try? context.fetchCount(FetchDescriptor<File>())) ?? 0
         let askMinnaCount = (try? context.fetchCount(FetchDescriptor<Chat>())) ?? 0
-        TelemetryWrapper.startup(fileCount: fileCount, askMinnaCount: askMinnaCount)
+        TelemetryWrapper.shared.startup(fileCount: fileCount, askMinnaCount: askMinnaCount)
     }
 
     private func populateStartupData() throws {

@@ -20,7 +20,7 @@ DEVELOPMENT_TEAM =
 
 // MARK: - Telemetry
 //
-// Minna ships with crash reporting (Sentry) and privacy-focused product analytics (PostHog). Both are DISABLED when these values are blank, which is the default for all contributor builds — a source build reports nothing, anywhere, unless you deliberately opt in below.
+// Minna ships with crash reporting (Sentry) and privacy-focused product analytics (TelemetryDeck). Both are DISABLED when these values are blank, which is the default for all contributor builds — a source build reports nothing, anywhere, unless you deliberately opt in below.
 //
 // NOTE: xcconfig treats "//" as the start of a comment, so URLs here are stored WITHOUT their "https://" scheme. Minna re-adds the scheme at runtime. Do not paste a full URL into these values.
 
@@ -29,11 +29,8 @@ DEVELOPMENT_TEAM =
 // Store as:  <key>@<org>.ingest.us.sentry.io/<project>
 SENTRY_DSN =
 
-// PostHog project token (starts with "phc_").
-POSTHOG_PROJECT_TOKEN =
-
-// PostHog host with the leading "https://" removed, e.g. us.i.posthog.com
-POSTHOG_HOST =
+// TelemetryDeck project token (starts with "XXXX-").
+TELEMETRY_DECK_ID =
 
 // MARK: - Local overrides
 //

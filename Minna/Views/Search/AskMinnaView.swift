@@ -252,9 +252,9 @@ struct AskMinnaView: View {
         Task {
             do {
                 if let model = chatter.selectedModel {
-                    TelemetryWrapper.chat(model: model.id, location: .askMinna)
+                    TelemetryWrapper.shared.chat(model: model.id, location: .askMinna)
                 } else {
-                    TelemetryWrapper.chat(model: "unknown", location: .askMinna)
+                    TelemetryWrapper.shared.chat(model: "unknown", location: .askMinna)
                 }
 
                 try await chatter.submit()

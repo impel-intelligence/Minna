@@ -49,6 +49,7 @@ struct ProviderSetupView: View {
             .padding(.vertical)
             
             Button("Next") {
+                TelemetryWrapper.shared.onboardingStage(stage: .providerSetup)
                 onboardingRouter.providersFinished(modelManager: modelManager)
             }
             .controlSize(.extraLarge)
