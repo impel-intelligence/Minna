@@ -90,6 +90,7 @@
 		DB4BC3B6300AA8C3009C20A3 /* LookAtMe */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = LookAtMe; sourceTree = "<group>"; };
 		DB4BC3B7300AA8CC009C20A3 /* IrisSearch */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = IrisSearch; sourceTree = "<group>"; };
 		DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = SearchModelAssets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB790B0230407B6F0057951E /* FileMonitor */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FileMonitor; path = Packages/FileMonitor; sourceTree = SOURCE_ROOT; };
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
 		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 		DBC0F1A02FF0000100000001 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
@@ -263,6 +264,7 @@
 				DB4BC3B6300AA8C3009C20A3 /* LookAtMe */,
 				DB9696A62FF4929600CB037A /* DatabaseSchema */,
 				DB9696A72FF4929600CB037A /* MinnaChat */,
+				DB790B0230407B6F0057951E /* FileMonitor */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
