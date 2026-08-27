@@ -11,8 +11,6 @@ import DatabaseSchema
 
 /// A small conversion layer between a URL and a File from the frontend database.
 struct PreviewWindow: View {
-    static let windowID = "file-details"
-    
     @Environment(\.dismissWindow) var dismissWindow
     
     var file: File?

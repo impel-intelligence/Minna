@@ -16,6 +16,7 @@ enum MinnaFileDialog {
 }
 
 struct AddItemMenuButtons: View {
+    @Environment(\.openWindow) private var openWindow
     @Environment(\.modelContext) private var modelContext
     @Binding var presentLocalFilePicker: Bool
 
@@ -34,7 +35,7 @@ struct AddItemMenuButtons: View {
             }
             .keyboardShortcut("N", modifiers: [.shift, .command])
             Button {
-                
+                openWindow(id: "recording")
             } label: {
                 Label("Start a recording", systemSymbol: .microbe)
             }

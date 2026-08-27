@@ -18,6 +18,12 @@ import SFSafeSymbols
 import Sparkle
 #endif
 
+enum WindowID {
+    static let dashboard = "dashboard"
+    static let bugReport = "bugReport"
+    static let preview = "preview"
+}
+
 @Observable
 final class SentryBox {
     var sentryCrashID: SentryId = .empty
@@ -96,7 +102,7 @@ struct MinnaApp: App {
     }
     
     var body: some Scene {
-        WindowGroup("Dashboard", id: "dashboard") {
+        WindowGroup(WindowID.dashboard, id: "dashboard") {
             if isOnboarding {
                 OnboardingView()
                     .modelContainer(frontendDatabase.modelContainer)
@@ -134,7 +140,7 @@ struct MinnaApp: App {
                 CheckForUpdatesView(updater: updaterController.updater)
                 #endif
                 Button {
-                    openWindow(id: "bugReport")
+                    openWindow(id: WindowID.bugReport)
                 } label: {
                     Label("Send Feedback", systemSymbol: .megaphone)
                 }
@@ -142,12 +148,12 @@ struct MinnaApp: App {
             
             CommandGroup(after: .singleWindowList) {
                 Button("Dashboard") {
-                    openWindow(id: "dashboard")
+                    openWindow(id: WindowID.dashboard)
                 }
             }
         }
 
-        WindowGroup(id: PreviewWindow.windowID, for: OpenFileAction.self) { $parameters in
+        WindowGroup(id: WindowID.preview, for: OpenFileAction.self) { $parameters in
             if let parameters = parameters {
                 PreviewWindow(parameters: parameters, context: frontendDatabase.modelContainer.mainContext)
                     .modelContainer(frontendDatabase.modelContainer)
@@ -157,13 +163,13 @@ struct MinnaApp: App {
             }
         }
         
-        WindowGroup(id: "bugReport") {
+        WindowGroup(id: WindowID.bugReport) {
             SentryReporter(eventId: sentryErrorBox.sentryCrashID)
         }
         .defaultLaunchBehavior(.suppressed)
         .onChange(of: sentryErrorBox.sentryCrashID, initial: true) { _, newValue in
             if newValue != .empty {
-                openWindow(id: "bugReport")
+                openWindow(id: WindowID.bugReport)
             }
         }
         

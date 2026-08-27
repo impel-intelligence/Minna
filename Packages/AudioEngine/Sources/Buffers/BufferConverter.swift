@@ -14,7 +14,7 @@ class BufferConverter {
         case conversionFailed(NSError?)
     }
     
-    static func convertBuffer(_ buffer: AVAudioPCMBuffer, to format: AVAudioFormat) throws -> AVAudioPCMBuffer {
+    static func standardizeBuffer(_ buffer: AVAudioPCMBuffer, to format: AVAudioFormat) throws -> AVAudioPCMBuffer {
         let inputFormat = buffer.format
         guard inputFormat != format else { return buffer }
             
