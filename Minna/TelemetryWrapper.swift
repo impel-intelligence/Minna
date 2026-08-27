@@ -12,12 +12,22 @@ fileprivate extension String {
     static let startup = "startup"
     static let chat = "chat"
     static let didLaunch = "didLaunch"
+    static let onboardingStage = "onboardingStage"
 }
 
 final class TelemetryWrapper {
     enum ChatLocation: String {
         case askMinna
         case askDoc
+    }
+    
+    enum OnboardingLocation: String {
+        case intro
+        case overview
+        case modelQuestionnaire
+        case inferenceDownload
+        case inferenceDownloadSkipped
+        case providerSetup
     }
     
     static let shared: TelemetryWrapper = TelemetryWrapper()
@@ -60,5 +70,13 @@ final class TelemetryWrapper {
         ]
         
         TelemetryDeck.signal(.chat, parameters: payload)
+    }
+    
+    func onboardingStage(stage: TelemetryWrapper.OnboardingLocation) {
+        guard initialized else { Log.logger.warning("Telemetry not initialized!"); return }
+
+        let payload = ["stage": stage.rawValue]
+        
+        TelemetryDeck.signal(.onboardingStage, parameters: payload)
     }
 }

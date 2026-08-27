@@ -33,6 +33,7 @@ struct FeatureOverview: View {
                     ForEach(FeatureOverview.pages) { page in
                         HStack {
                             OnboardingCard(page: page) {
+                                TelemetryWrapper.shared.onboardingStage(stage: .overview)
                                 onboardingRouter.overviewFinished()
                             } next: {
                                 withAnimation {
@@ -41,6 +42,7 @@ struct FeatureOverview: View {
                                         if nextIndex < FeatureOverview.pages.count {
                                             self.currentPage = FeatureOverview.pages[nextIndex]
                                         } else {
+                                            TelemetryWrapper.shared.onboardingStage(stage: .overview)
                                             onboardingRouter.overviewFinished()
                                         }
                                     }
