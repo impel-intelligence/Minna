@@ -18,6 +18,7 @@
 		DB2BB96130052C7D00900E62 /* Digester in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96030052C7D00900E62 /* Digester */; };
 		DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96230052C7D00900E62 /* IrisCommon */; };
 		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
+		DB3AE94C3042050D001E2FD2 /* InfiniteGrid in Frameworks */ = {isa = PBXBuildFile; productRef = DB3AE94B3042050D001E2FD2 /* InfiniteGrid */; };
 		DB6E4A823013CB6F00487D86 /* AppleIntelligenceEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */; };
 		DB6E4A843013CB6F00487D86 /* CoreMLEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */; };
 		DB6E4C8C3013E9F800487D86 /* SearchModelAssets.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -173,6 +174,7 @@
 				DBA6E66130254545002A94F2 /* PostHog in Frameworks */,
 				DBFD0AA8300EA44F0060744B /* LookAtMe in Frameworks */,
 				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
+				DB3AE94C3042050D001E2FD2 /* InfiniteGrid in Frameworks */,
 				DB9695562FF440F200CB037A /* Textual in Frameworks */,
 				DB00BAE53026861500B94A32 /* Logging in Frameworks */,
 				DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */,
@@ -319,6 +321,7 @@
 				DBA6E66030254545002A94F2 /* PostHog */,
 				DB00BAE43026861500B94A32 /* Logging */,
 				DBB7209B3040D32D00A1FAE1 /* AudioEngine */,
+				DB3AE94B3042050D001E2FD2 /* InfiniteGrid */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -442,6 +445,7 @@
 				DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */,
 				DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */,
 				DB00BAE33026861500B94A32 /* XCRemoteSwiftPackageReference "swift-log" */,
+				DB3AE94A3042050D001E2FD2 /* XCRemoteSwiftPackageReference "SwiftUI-Infinite-Grid" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -1510,6 +1514,14 @@
 				minimumVersion = 0.64.1;
 			};
 		};
+		DB3AE94A3042050D001E2FD2 /* XCRemoteSwiftPackageReference "SwiftUI-Infinite-Grid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/benjaminRoberts01375/SwiftUI-Infinite-Grid/";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 		DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gonzalezreal/textual";
@@ -1596,6 +1608,11 @@
 		DB2BB96430052C7D00900E62 /* IrisSearch */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = IrisSearch;
+		};
+		DB3AE94B3042050D001E2FD2 /* InfiniteGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB3AE94A3042050D001E2FD2 /* XCRemoteSwiftPackageReference "SwiftUI-Infinite-Grid" */;
+			productName = InfiniteGrid;
 		};
 		DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */ = {
 			isa = XCSwiftPackageProductDependency;
