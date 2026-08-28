@@ -18,6 +18,10 @@ extension CGPoint {
     static func / (lhs: Self, rhs: CGFloat) -> CGPoint {
         return CGPoint(x: lhs.x / rhs, y: lhs.y / rhs)
     }
+    
+    static func * (lhs: Self, rhs: CGFloat) -> CGPoint {
+        CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
+    }
 }
 
 extension CGSize {
@@ -29,6 +33,14 @@ extension CGSize {
         CGSize(width: lhs.width - rhs.width, height: lhs.height - rhs.height)
     }
     
+    static func * (lhs: Self, rhs: CGFloat) -> CGSize {
+        CGSize(width: lhs.width * rhs, height: lhs.height * rhs)
+    }
+    
+    static func / (lhs: Self, rhs: CGFloat) -> CGSize {
+        CGSize(width: lhs.width / rhs, height: lhs.height / rhs)
+    }
+
     func inverted() -> CGSize {
         CGSize(width: -width, height: -height)
     }
@@ -41,10 +53,12 @@ extension CGSize {
     }
 }
 
-struct NoteView: GridObject {
-    @State var pos: CGPoint = .zero
+struct NoteView: View {
+    @State var position: CGPoint = .zero
     @Binding var scale: CGFloat
     
+    @State var previousFrameTranslation: CGSize = .zero
+
     var body: some View {
         Text("Hello World")
             .background {
@@ -53,6 +67,18 @@ struct NoteView: GridObject {
                     .shadow(radius: 3)
             }
             .scaleEffect(CGSize(width: scale, height: scale))
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0, coordinateSpace: .global)
+                    .onChanged { value in
+                        let delta = value.translation - previousFrameTranslation
+                        position = position.translate(by: delta / scale)
+                        previousFrameTranslation = value.translation
+                    }
+                    .onEnded { _ in
+                        previousFrameTranslation = .zero
+                    }
+            )
+            .position(position * scale)
     }
 }
 
@@ -64,9 +90,9 @@ struct CanvasView: View {
     @State var interactionPoint: CGPoint = .zero
 
     var body: some View {
-        InfiniteGrid(gridShading: gridShading, lineThickness: 1, translation: $translation, scale: $scale, interactionPoint: $interactionPoint, views: [
+        InfiniteGrid(gridShading: gridShading, lineThickness: 1, translation: $translation, scale: $scale, interactionPoint: $interactionPoint) {
             NoteView(scale: $scale)
-        ])
+        }
     }
 }
 

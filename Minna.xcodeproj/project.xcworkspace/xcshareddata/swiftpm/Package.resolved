@@ -1,5 +1,4 @@
 {
-  "originHash" : "9d874c4de6a67158ac72f8c186dbef16a068f0e800b666f09afba51e58194f92",
   "pins" : [
     {
       "identity" : "anylanguagemodel",
@@ -290,15 +289,6 @@
       }
     },
     {
-      "identity" : "swiftui-infinite-grid",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/benjaminRoberts01375/SwiftUI-Infinite-Grid/",
-      "state" : {
-        "revision" : "63c4b896517d4946ea0b00ebe827f86be22bcffb",
-        "version" : "1.1.0"
-      }
-    },
-    {
       "identity" : "swiftui-math",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gonzalezreal/swiftui-math",
@@ -335,5 +325,5 @@
       }
     }
   ],
-  "version" : 3
+  "version" : 2
 }
