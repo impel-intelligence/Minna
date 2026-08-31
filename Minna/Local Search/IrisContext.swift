@@ -95,6 +95,10 @@ public struct IrisContext {
         // Re-index
         try controller.insert(file)
     }
+    
+    func runMaintenance() async throws {
+        try await controller.runMaintenance()
+    }
 }
 
 extension IrisContext {

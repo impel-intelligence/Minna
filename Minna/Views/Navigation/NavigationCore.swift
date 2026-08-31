@@ -126,6 +126,13 @@ public struct NavigationCore: View {
             AddFolderForm(parentFolder: request.parent)
         }
         .task {
+            // Attempt to run any needed maintenance on the iris database.
+            do {
+                try await irisContext.runMaintenance()
+            } catch {
+                Log.logger.error("Failed to run maintenance on IrisDB")
+            }
+
             // Start indexing all files that did not complete indexing.
             let descriptor = FetchDescriptor<File>(predicate: #Predicate<File> { file in
                 !file.searchIndexed || !file.descriptionGenerated

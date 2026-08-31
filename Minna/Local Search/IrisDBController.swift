@@ -55,6 +55,25 @@ final class IrisDBController {
         // TODO: Watch for downloads so we can re-embed the database
     }
     
+    func runMaintenance() async throws {
+        if await irisDB.requiresFaissMigration {
+            do {
+                var progress = Progress()
+                try await irisDB.migrateFromFaissIndex(progress: progress)
+            } catch {
+                Log.logger.error("Failed to migrate from faiss index", error: error)
+            }
+        }
+        
+        if await irisDB.requiresRepair {
+            do {
+                try await irisDB.repairDatabase()
+            } catch {
+                Log.logger.error("Failed to repair iris database", error: error)
+            }
+        }
+    }
+    
     private static func getEmbedder() throws -> EmbeddingProvider {
         do {
             let bgeDirectory = ManifestSharedSettings.modelStorageURL.appendingPathComponent(searchEmbedderID, conformingTo: .directory)
