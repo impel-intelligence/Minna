@@ -54,6 +54,9 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
             // Other types of installs do not support essential downloads so we skip essentials for them.
             let isEssential = (request == .install || request == .update) ? asset.required : false
             
+            // Don't download models that are already on disk
+            guard !doesModelExistOnDisk(identifier: asset.identifier) else { continue }
+            
             let download = BAURLDownload(
                 identifier: asset.identifier,
                 request: URLRequest(url: asset.url),
@@ -68,6 +71,11 @@ struct BackgroundDownloadHandler: BADownloaderExtension {
 
         // The downloads that are returned will be downloaded automatically by the system.
         return downloadsToSchedule
+    }
+
+    public func doesModelExistOnDisk(identifier: String) -> Bool {
+        let url = ManifestSharedSettings.modelStorageURL.appendingPathComponent(identifier, conformingTo: .directory)
+        return FileManager.default.fileExists(atPath: url.path(percentEncoded: false))
     }
 
     func backgroundDownload(_ failedDownload: BADownload, failedWithError error: Error) {

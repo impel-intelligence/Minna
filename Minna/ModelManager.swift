@@ -92,8 +92,8 @@ final class ModelManager: NSObject, @unchecked Sendable {
                 return manifest
             }
             
-            var inferenceModel: String? = nil
-            var embeddingModel: String? = nil
+            var inferenceModel: String?
+            var embeddingModel: String?
             
             // We always need the required files, so instruct them to download.
             for file in manifest.files.filter(\.required) {
