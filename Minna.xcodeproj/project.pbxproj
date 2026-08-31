@@ -28,7 +28,7 @@
 		DB9696AA2FF492BF00CB037A /* DatabaseSchema in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696A92FF492BF00CB037A /* DatabaseSchema */; };
 		DB9696AC2FF492BF00CB037A /* MinnaChat in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AB2FF492BF00CB037A /* MinnaChat */; };
 		DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB9696AD2FF492C000CB037A /* ModelManager */; };
-		DBA6E66130254545002A94F2 /* PostHog in Frameworks */ = {isa = PBXBuildFile; productRef = DBA6E66030254545002A94F2 /* PostHog */; };
+		DBA18E543045FD8800EE7DD7 /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = DBA18E533045FD8800EE7DD7 /* TelemetryDeck */; };
 		DBB7209C3040D32D00A1FAE1 /* AudioEngine in Frameworks */ = {isa = PBXBuildFile; productRef = DBB7209B3040D32D00A1FAE1 /* AudioEngine */; };
 		DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CF4F2FF5689400A2CA0A /* KeychainSwift */; };
 		DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */ = {isa = PBXBuildFile; productRef = DBD7CFBA2FF59FEC00A2CA0A /* ModernSettingsWindow */; };
@@ -171,8 +171,8 @@
 				DBD7CFBB2FF59FEC00A2CA0A /* ModernSettingsWindow in Frameworks */,
 				DB0CF59F2FEDCD1D0036306B /* SentrySPM in Frameworks */,
 				DB0CF5892FEDCB9E0036306B /* ViewStorageClient in Frameworks */,
+				DBA18E543045FD8800EE7DD7 /* TelemetryDeck in Frameworks */,
 				DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */,
-				DBA6E66130254545002A94F2 /* PostHog in Frameworks */,
 				DBFD0AA8300EA44F0060744B /* LookAtMe in Frameworks */,
 				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
 				DB3AEBB330424B23001E2FD2 /* InfiniteGrid in Frameworks */,
@@ -320,10 +320,10 @@
 				DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */,
 				DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */,
 				DB6E4FAA301415E300487D86 /* ModelCDN */,
-				DBA6E66030254545002A94F2 /* PostHog */,
 				DB00BAE43026861500B94A32 /* Logging */,
 				DBB7209B3040D32D00A1FAE1 /* AudioEngine */,
 				DB3AEBB230424B23001E2FD2 /* InfiniteGrid */,
+				DBA18E533045FD8800EE7DD7 /* TelemetryDeck */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -445,8 +445,8 @@
 				DB9695542FF440F200CB037A /* XCRemoteSwiftPackageReference "textual" */,
 				DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				DBD7CFB92FF59FEC00A2CA0A /* XCRemoteSwiftPackageReference "ModernSettings" */,
-				DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */,
 				DB00BAE33026861500B94A32 /* XCRemoteSwiftPackageReference "swift-log" */,
+				DBA18E523045FD8800EE7DD7 /* XCRemoteSwiftPackageReference "SwiftSDK" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DB0CF4D12FEDCA6B0036306B /* Products */;
@@ -1508,6 +1508,8 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 9.19.0;
 			};
+			traits = (
+			);
 		};
 		DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1525,12 +1527,12 @@
 				minimumVersion = 0.5.0;
 			};
 		};
-		DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */ = {
+		DBA18E523045FD8800EE7DD7 /* XCRemoteSwiftPackageReference "SwiftSDK" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/PostHog/posthog-ios.git";
+			repositoryURL = "https://github.com/TelemetryDeck/SwiftSDK";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.69.2;
+				minimumVersion = 2.14.2;
 			};
 		};
 		DBD7CF4E2FF5689400A2CA0A /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -1641,10 +1643,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ModelManager;
 		};
-		DBA6E66030254545002A94F2 /* PostHog */ = {
+		DBA18E533045FD8800EE7DD7 /* TelemetryDeck */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DBA6E65F30254545002A94F2 /* XCRemoteSwiftPackageReference "posthog-ios" */;
-			productName = PostHog;
+			package = DBA18E523045FD8800EE7DD7 /* XCRemoteSwiftPackageReference "SwiftSDK" */;
+			productName = TelemetryDeck;
 		};
 		DBB7209B3040D32D00A1FAE1 /* AudioEngine */ = {
 			isa = XCSwiftPackageProductDependency;
