@@ -1,0 +1,11 @@
+# Estimation for note taking feature
+## Features (8 days) (5.5 days left)
+- [x] Audio is recorded and transcribed (2 Days)
+- [ ] Transcribed notes are broken into topics & definitions (3.5 days)
+    - [x] Apple intelligence breaks content into definitions & subjects (1/2 day)
+    - [ ] Apple intelligence combines existing subjects & definitions (1 day)
+        - [ ] Search in an ephemeral IrisDB instance for existing subjects & definitions. (1/2 day)
+    - [ ] A dictionary system is created to store specific topics (1 Day)
+    - [ ] Notes are saved as a markdown file with subjects as headers (1/2 day)
+- [ ] Notes and subjects appear in the canvas view (1/2 day)
+- [ ] Canvas objects are attracted by a gravity simulation (take from wwdc22 project) (2 days)

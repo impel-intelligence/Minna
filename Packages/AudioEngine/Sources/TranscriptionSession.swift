@@ -5,8 +5,6 @@
 //  Created by Taylor Lineman on 8/27/26.
 //
 
-import SwiftUI
-
 public actor TranscriptionSession {
     private let transcriber: Transcriber
     private let recorder: EphemeralAudioRecorder
@@ -14,10 +12,10 @@ public actor TranscriptionSession {
     private var audioStreamTask: Task<Void, Never>?
     private var transcriptionStreamTask: Task<Void, Never>?
     
-    private let transcriptionString: TranscriptionString
+    private let outputs: [any TranscriptionOutput]
         
-    public init(transcriptionString: TranscriptionString) async throws {
-        self.transcriptionString = transcriptionString
+    public init(outputs: [any TranscriptionOutput]) async throws {
+        self.outputs = outputs
         self.transcriber = try await Transcriber(locale: .current)
         self.recorder = EphemeralAudioRecorder()
     }
@@ -38,10 +36,12 @@ public actor TranscriptionSession {
         
         transcriptionStreamTask = Task {
             for await transcription in transcriptionStream {
-                if transcription.isFinal {
-                    await transcriptionString.submitFinalized(string: transcription.text)
-                } else {
-                    await transcriptionString.submitVolatile(string: transcription.text)
+                for output in outputs {
+                    if transcription.isFinal {
+                        await output.submitFinalized(string: transcription.text)
+                    } else {
+                        await output.submitVolatile(string: transcription.text)
+                    }
                 }
             }
         }

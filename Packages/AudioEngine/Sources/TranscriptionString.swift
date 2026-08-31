@@ -8,6 +8,7 @@
 import Foundation
 import CoreMedia
 import AppKit
+import SwiftUI
 
 enum VolatileAttribute: CodableAttributedStringKey, MarkdownDecodableAttributedStringKey {
     typealias Value = Bool
@@ -28,7 +29,7 @@ extension AttributeDynamicLookup {
 }
 
 @MainActor @Observable
-public class TranscriptionString {
+public class TranscriptionString: TranscriptionOutput {
     public var displayString: AttributedString = AttributedString()
     public let volatileAttributes: AttributeContainer
     
@@ -36,7 +37,7 @@ public class TranscriptionString {
         self.volatileAttributes = volatileAttributes
     }
     
-    func submitVolatile(string: AttributedString) {
+    public func submitVolatile(string: AttributedString) {
         // Remove any existing volatile parts of the display string.
         removeVolatile()
         var mutableString = string
@@ -46,19 +47,23 @@ public class TranscriptionString {
         displayString += mutableString
     }
     
-    func submitFinalized(string: AttributedString) {
+    public func submitFinalized(string: AttributedString) {
         // Remove the volatile range that is tacked onto the end of the string
         removeVolatile()
         displayString += string
+        
+        for run in displayString.runs {
+            let confidence = run.transcriptionConfidence ?? 1
+            var container = AttributeContainer()
+            container[AttributeScopes.SwiftUIAttributes.ForegroundColorAttribute.self] = .black.opacity(confidence)
+
+            displayString[run.range].mergeAttributes(container)
+        }
     }
     
     func removeVolatile() {
         // Traverses backwards through the array to grab the most recent volatile run. There will only ever be 1 volatile range and it will be the most recent run.
         guard let volatileRun = displayString.runs.last(where: { $0.volatile ?? false }) else { return }
         displayString.removeSubrange(volatileRun.range)
-    }
-    
-    func appendTrailer() {
-        
     }
 }
