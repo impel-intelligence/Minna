@@ -40,8 +40,6 @@ final class NoteTaker: TranscriptionOutput {
     /// The maximum size of a chunk of notes to be submitted to the model. Found by counting the instructions (15c, and the NoteBlock 307c)
     let maxChunkSize: Int = 2000
     
-    let session: LanguageModelSession
-    
     var sections: [NoteBlock.Section] = []
     var definitions: [NoteBlock.Definition] = []
     
@@ -50,11 +48,7 @@ final class NoteTaker: TranscriptionOutput {
     var noteContinuation: AsyncStream<String>.Continuation?
     var consumeQueueTask: Task<Void, Never>?
     
-    init() {
-        let instructions = "Break this transcript into academic notes."
-
-        session = LanguageModelSession(instructions: instructions)
-    }
+    init() { }
     
     func startNoteTaking() {
         let (noteStream, noteContinuation) = AsyncStream.makeStream(of: String.self)
@@ -78,6 +72,8 @@ final class NoteTaker: TranscriptionOutput {
             return
         }
         
+        let instructions = "Break this transcript into academic notes."
+        let session: LanguageModelSession = LanguageModelSession(instructions: instructions)
         let response = try await session.respond(to: content, generating: NoteBlock.self)
         sections.append(contentsOf: response.content.sections)
         definitions.append(contentsOf: response.content.definitions)
@@ -168,6 +164,9 @@ struct RecordingWindow: View {
                     }
                 }
             }
+        }
+        .task {
+            noteTaker.startNoteTaking()
         }
     }
 }
