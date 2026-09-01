@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The format has been adjusted to include a release Title. This has been inserted between the [version] and date.
 
+## [Unreleased]
+
 ## [0.15.0] - New Index - 2026-09-01
 
 ### Changed
@@ -14,7 +16,7 @@ The format has been adjusted to include a release Title. This has been inserted 
 ### Fixed
 - Moved files are now properly trackeed.
 
-## [0.14.2] - File chat & Import fixex - 2026-08-24
+## [0.14.2] - File chat & Import fixes - 2026-08-24
 
 ### Fixed
 - Files that are dropped into Minna now take the folder they were dropped into.
