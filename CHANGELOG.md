@@ -5,10 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The format has been adjusted to include a release Title. This has been inserted between the [version] and date.
 
-## [Unreleased]
+## [0.15.0] - New Index - 2026-09-01
 
 ### Changed
 - Moved to TelemetryDeck for private telemetry.
+- Moved to a custom vector database instead of FAISS.
 
 ### Fixed
 - Moved files are now properly trackeed.
