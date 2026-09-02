@@ -34,6 +34,6 @@ struct NoteSectionView: View {
     }
 }
 
-#Preview {
-    NoteSectionView(section: .init(subject: "Course Overview and Expectations", content: "The course aims to provide a comprehensive understanding of computer science and programming, emphasizing the practical skills students will acquire. The instructor highlights the importance of personal growth and self-teaching beyond the course, encouraging students to take initiative and explore further learning opportunities. The course is designed to be challenging, with a focus on preparing students to teach themselves effectively."))
-}
+// #Preview {
+//     NoteSectionView(section: NoteBlock.Section(subject: "Course Overview and Expectations", content: "The course aims to provide a comprehensive understanding of computer science and programming, emphasizing the practical skills students will acquire. The instructor highlights the importance of personal growth and self-teaching beyond the course, encouraging students to take initiative and explore further learning opportunities. The course is designed to be challenging, with a focus on preparing students to teach themselves effectively."))
+// }
