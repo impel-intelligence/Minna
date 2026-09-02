@@ -12,13 +12,16 @@ import InfiniteGrid
 struct CanvasView<Content: View>: View {
     let gridShading: GraphicsContext.Shading = GraphicsContext.Shading.color(.primary.opacity(0.5))
 
-    @State var translation: CGPoint = .zero
-    @State var scale: CGFloat = 1
+    @Binding var scale: CGFloat
+    @Binding var translation: CGPoint
     @State var interactionPoint: CGPoint = .zero
     
     let content: Content
 
-    init(@ViewBuilder content: () -> Content) {
+    init(translation: Binding<CGPoint>, scale: Binding<CGFloat>, @ViewBuilder content: () -> Content) {
+        self._scale = scale
+        self._translation = translation
+
         self.content = content()
     }
 
@@ -30,7 +33,7 @@ struct CanvasView<Content: View>: View {
 }
 
 #Preview {
-    CanvasView {
+    CanvasView(translation: .constant(.zero), scale: .constant(1)) {
         Text("Hello")
     }
     .frame(width: 300, height: 300)

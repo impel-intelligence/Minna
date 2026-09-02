@@ -13,6 +13,7 @@ import SFSafeSymbols
 import Logging
 import ModelManager
 import SentrySwift
+import PromptManager
 
 struct FileChat: View {
     @Environment(\.modelContext) var modelContext

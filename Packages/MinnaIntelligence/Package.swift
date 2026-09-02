@@ -6,7 +6,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "MinnaChat",
+    name: "MinnaIntelligence",
     platforms: [
         .macOS(.v26)
     ],
@@ -19,6 +19,10 @@ let package = Package(
         .library(
             name: "ModelManager",
             targets: ["ModelManager"]
+        ),
+        .library(
+            name: "PromptManager",
+            targets: ["PromptManager"]
         )
     ],
     dependencies: [
@@ -38,6 +42,7 @@ let package = Package(
             dependencies: [
                 "DatabaseSchema",
                 "ModelManager",
+                "PromptManager",
                 .product(name: "AnyLanguageModel", package: "AnyLanguageModel"),
                 .product(name: "IrisSearch", package: "IrisSearch")
             ]
@@ -48,6 +53,12 @@ let package = Package(
                 "DatabaseSchema",
                 "ModelCDN",
                 .product(name: "AnyLanguageModel", package: "AnyLanguageModel")
+            ]
+        ),
+        .target(
+            name: "PromptManager",
+            dependencies: [
+                .product(name: "AnyLanguageModel", package: "AnyLanguageModel"),
             ]
         )
     ],

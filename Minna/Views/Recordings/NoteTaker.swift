@@ -8,8 +8,9 @@
 import SwiftUI
 import AudioEngine
 import Logging
-import AnyLanguageModel
+import FoundationModels
 import InfiniteGrid
+import PromptManager
 
 @Generable(description: "A section of notes based on a provided transcript.")
 struct NoteBlock {
@@ -158,28 +159,7 @@ final class NoteTaker: TranscriptionOutput {
             return
         }
 
-        let instructions = """
-        You are an expert academic editor and study assistant.
-
-        Find subjects and definitions that can be combined into a single topic or definition. 
-
-        Format:
-        - Notes should be formatted as markdown.
-        - Group the information logically under clear headings, using nested bullet points for details and examples.
-
-        Tools:
-        - Always request note or definition content before you make edits.
-        - Use deleteSection only when that subject's content has been merged into another section via replaceSection.
-        - Use renameSection when two subjects refer to the same topic under different names.
-        - Use replaceDefinition to add detail to a definition from a related section, not to duplicate it.
-
-        Edit Rules:
-        - Base the notes strictly on the provided text. Do not invent, guess, or add external facts or theories.
-        - Retain all specific examples, formulas, dates, and named concepts mentioned in the text.
-        - Remove filler words, verbal stumbles, and repetitive tangents.
-        - If a definition and section have the same content, condense to a definition.
-        - It is okay to have no edits. 
-        """
+        let instructions = Instructions(NoteCompactionInstructions().prompt)
         
         // Edited by Claude Sonnet 4.6 (Anthropic) on 2026-09-01
         // Snapshot before await — updateNotes can append during the model call
@@ -204,7 +184,7 @@ final class NoteTaker: TranscriptionOutput {
 
         Log.logger.info("Starting to edit...")
 
-        let session: LanguageModelSession = LanguageModelSession(model: model, tools: tools, instructions: instructions)
+        let session: LanguageModelSession = LanguageModelSession(tools: tools, instructions: instructions)
         let response = try await session.respond(
             to: input,
             generating: NoteEdits.self
@@ -252,6 +232,7 @@ final class NoteTaker: TranscriptionOutput {
                 do {
                     try await updateNotes(with: chunk)
                 } catch {
+                    // TODO: This drops notes if chunks are too big, can use the model token counter to split chunks
                     Log.logger.error("Failed to stream audio into transcriber", error: error)
                 }
             }
@@ -265,19 +246,8 @@ final class NoteTaker: TranscriptionOutput {
             return
         }
 
-        let instructions = """
-        You are an expert academic note-taker and study assistant.
-        
-        Convert the provided lecture text/transcript into clean, highly structured, and easy-to-review study notes.
-        
-        Rules:
-        - Base the notes strictly on the provided text. Do not invent, guess, or add external facts or theories.
-        - Retain all specific examples, formulas, dates, and named concepts mentioned in the text.
-        - Remove filler words, verbal stumbles, and repetitive tangents.
-        - Group the information logically under clear headings, using nested bullet points for details and examples.
-        - Do not create a definition that already has a section or vice versa.
-        """
-        let session: LanguageModelSession = LanguageModelSession(model: model, instructions: instructions)
+        let instructions = Instructions(NoteTakingInstructions().prompt)
+        let session: LanguageModelSession = LanguageModelSession(instructions: instructions)
         let response = try await session.respond(to: content, generating: NoteBlock.self)
         sections.append(contentsOf: response.content.sections)
         definitions.append(contentsOf: response.content.definitions)

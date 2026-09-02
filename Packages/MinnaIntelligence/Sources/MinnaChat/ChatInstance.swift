@@ -11,6 +11,7 @@ import IrisSearch
 import SwiftData
 import DatabaseSchema
 import ModelManager
+import PromptManager
 
 @Observable @MainActor
 public final class ChatInstance {
@@ -50,7 +51,7 @@ public final class ChatInstance {
         let tools: [any Tool] = tools.map({$0.getTool(irisDB: irisDB)})
         
         if chat.transcript.isEmpty {
-            self.session = LanguageModelSession(model: languageModel, tools: tools, instructions: instructions.getPrompt())
+            self.session = LanguageModelSession(model: languageModel, tools: tools, instructions: instructions.getInstructions())
         } else {
             self.session = LanguageModelSession(model: languageModel, tools: tools, transcript: chat.transcript)
         }

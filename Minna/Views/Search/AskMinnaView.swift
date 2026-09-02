@@ -16,6 +16,7 @@ import ModernSettingsWindow
 import OrderedCollections
 import AnyLanguageModel
 import Logging
+import PromptManager
 
 struct AskMinnaView: View {
     enum ViewMode {

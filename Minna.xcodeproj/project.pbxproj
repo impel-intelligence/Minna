@@ -19,6 +19,7 @@
 		DB2BB96330052C7D00900E62 /* IrisCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96230052C7D00900E62 /* IrisCommon */; };
 		DB2BB96530052C7D00900E62 /* IrisSearch in Frameworks */ = {isa = PBXBuildFile; productRef = DB2BB96430052C7D00900E62 /* IrisSearch */; };
 		DB3AEBB330424B23001E2FD2 /* InfiniteGrid in Frameworks */ = {isa = PBXBuildFile; productRef = DB3AEBB230424B23001E2FD2 /* InfiniteGrid */; };
+		DB4524EA3047BFF50052093A /* PromptManager in Frameworks */ = {isa = PBXBuildFile; productRef = DB4524E93047BFF50052093A /* PromptManager */; };
 		DB6E4A823013CB6F00487D86 /* AppleIntelligenceEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */; };
 		DB6E4A843013CB6F00487D86 /* CoreMLEmbedder in Frameworks */ = {isa = PBXBuildFile; productRef = DB6E4A833013CB6F00487D86 /* CoreMLEmbedder */; };
 		DB6E4C8C3013E9F800487D86 /* SearchModelAssets.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -89,13 +90,13 @@
 		DB0CF4E92FEDCA6D0036306B /* MinnaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinnaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB3AEA7E30420952001E2FD2 /* SwiftUI-Infinite-Grid */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "SwiftUI-Infinite-Grid"; path = "/Users/taylorlineman/Developer/git/SwiftUI-Infinite-Grid"; sourceTree = "<absolute>"; };
 		DB3F89CE30005AA4003FE515 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		DB4524E83047B9BB0052093A /* MinnaIntelligence */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaIntelligence; sourceTree = "<group>"; };
 		DB4AB8863017A062007E4CF7 /* ModelCDN */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = ModelCDN; sourceTree = "<group>"; };
 		DB4BC3B6300AA8C3009C20A3 /* LookAtMe */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = LookAtMe; sourceTree = "<group>"; };
 		DB4BC3B7300AA8CC009C20A3 /* IrisSearch */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = IrisSearch; sourceTree = "<group>"; };
 		DB6E4C843013E9F800487D86 /* SearchModelAssets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = SearchModelAssets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB790192303FA0FE0057951E /* AudioEngine */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = AudioEngine; sourceTree = "<group>"; };
 		DB9696A62FF4929600CB037A /* DatabaseSchema */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DatabaseSchema; sourceTree = "<group>"; };
-		DB9696A72FF4929600CB037A /* MinnaChat */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = MinnaChat; sourceTree = "<group>"; };
 		DBC0F1A02FF0000100000001 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -177,6 +178,7 @@
 				DBD7CF502FF5689400A2CA0A /* KeychainSwift in Frameworks */,
 				DB3AEBB330424B23001E2FD2 /* InfiniteGrid in Frameworks */,
 				DB9695562FF440F200CB037A /* Textual in Frameworks */,
+				DB4524EA3047BFF50052093A /* PromptManager in Frameworks */,
 				DB00BAE53026861500B94A32 /* Logging in Frameworks */,
 				DB9696AE2FF492C000CB037A /* ModelManager in Frameworks */,
 				DB0CF5872FEDCB9E0036306B /* ViewStorage in Frameworks */,
@@ -264,11 +266,11 @@
 		DB9696A82FF4929600CB037A /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				DB4524E83047B9BB0052093A /* MinnaIntelligence */,
 				DB4AB8863017A062007E4CF7 /* ModelCDN */,
 				DB4BC3B7300AA8CC009C20A3 /* IrisSearch */,
 				DB4BC3B6300AA8C3009C20A3 /* LookAtMe */,
 				DB9696A62FF4929600CB037A /* DatabaseSchema */,
-				DB9696A72FF4929600CB037A /* MinnaChat */,
 				DB790192303FA0FE0057951E /* AudioEngine */,
 				DB3AEA7E30420952001E2FD2 /* SwiftUI-Infinite-Grid */,
 			);
@@ -324,6 +326,7 @@
 				DBB7209B3040D32D00A1FAE1 /* AudioEngine */,
 				DB3AEBB230424B23001E2FD2 /* InfiniteGrid */,
 				DBA18E533045FD8800EE7DD7 /* TelemetryDeck */,
+				DB4524E93047BFF50052093A /* PromptManager */,
 			);
 			productName = Minna;
 			productReference = DB0CF4D02FEDCA6B0036306B /* Minna.app */;
@@ -1609,6 +1612,10 @@
 		DB3AEBB230424B23001E2FD2 /* InfiniteGrid */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = InfiniteGrid;
+		};
+		DB4524E93047BFF50052093A /* PromptManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PromptManager;
 		};
 		DB6E4A813013CB6F00487D86 /* AppleIntelligenceEmbedder */ = {
 			isa = XCSwiftPackageProductDependency;

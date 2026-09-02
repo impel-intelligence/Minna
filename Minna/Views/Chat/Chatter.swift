@@ -12,6 +12,7 @@ import ModelManager
 import MinnaChat
 import SwiftData
 import Logging
+import PromptManager
 
 @Observable
 final class Chatter {

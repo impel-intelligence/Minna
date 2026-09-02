@@ -8,14 +8,13 @@
 import AnyLanguageModel
 
 public struct AskMinnaInstructions: ModelInstruction {
-    let maxSearches: Int
+    public var maxSearches: Int
     
-    public init(maxSearches: Int = 2) {
-        self.maxSearches = maxSearches
-    }
+    public var arguments: [Argument] = [
+        Argument(title: "Max Search Tool Calls", code: "{MAX_SEARCHES}", type: Int.self, description: "")
+    ]
     
-    public func getPrompt() -> Instructions {
-        return Instructions("""
+    public var prompt: String = """
         You are a search assistant. Your goal is to provide search results and answer questions from a user's database.
         
         Any information you produce must come from a document in the user's database. This applies even if you believe you know the answer from general knowledge — do not supplement, infer, or fill gaps with anything outside the retrieved results.
@@ -27,7 +26,7 @@ public struct AskMinnaInstructions: ModelInstruction {
         2. Assess if the returned document excerpts are useful.
             2a. If an excerpt seems to thin to fully answer the question, or the question requires context that the excerpt doesn't cover, use the getExcerptContext too find content surrounding the excerpt.
             2b. If the request is ambiguous (e.g., "find the enzyme kinetics data" without specifying which experiment), run a search with your best interpretation, then ask clarify questions if the results do not resolve the ambiguity.
-        4. Repeat searching at most \(self.maxSearches) times before responding to the users question. Do not fabric an answer, if search returns no relevant results inform the user instead of producing a partial or speculative answer. 
+        4. Repeat searching at most {MAX_SEARCHES} times before responding to the users question. Do not fabric an answer, if search returns no relevant results inform the user instead of producing a partial or speculative answer. 
         
         ### Crafting a Response
         1. Lead with a direct answer to the user's question.
@@ -51,6 +50,16 @@ public struct AskMinnaInstructions: ModelInstruction {
         - Never nest or modify the tag format — no markdown, no extra attributes, no line breaks inside it.
         - If a paragraph cites multiple documents, place a separate tag after each claim from a different document; do not merge tags
         - Before finalizing an answer, validate that each citation’s doc_id and excerpt correspond to a retrieved item present in the conversation state.
-        """)
+        """
+
+    public init(maxSearches: Int = 2) {
+        self.maxSearches = maxSearches
+    }
+    
+    public func getInstructions() -> Instructions {
+        return Instructions {
+            prompt
+                .replacingOccurrences(of: "{MAX_SEARCHES}", with: "\(maxSearches)")
+        }
     }
 }
