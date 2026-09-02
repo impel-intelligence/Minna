@@ -7,6 +7,11 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.15.1] - Post Clone Fixes - 2026-09-02
+
+### Fixed
+- Fixed a bug where xcode cloud was not recieving sentry or telemetry info.
+
 ## [0.15.0] - New Index - 2026-09-01
 
 ### Changed
