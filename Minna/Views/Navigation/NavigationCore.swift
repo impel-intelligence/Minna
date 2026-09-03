@@ -23,6 +23,9 @@ public struct NavigationCore: View {
 
     @AppStorage("knowledgeExpanded") var knowledgeExpanded: Bool = true
     @AppStorage("connectionsExpanded") var connectionsExpanded: Bool = true
+    
+    @AppStorage("hasShownDiscord") var hasShownDiscordSheet: Bool = false
+    @State var presentingDiscordSheet: Bool = false
 
     @State var navigationRouter: NavigationRouter = NavigationRouter()
     
@@ -100,6 +103,11 @@ public struct NavigationCore: View {
             }
         }
         .onAppear {
+            if !hasShownDiscordSheet {
+                presentingDiscordSheet = true
+                hasShownDiscordSheet = true
+            }
+            
             modelContext.undoManager = undoManager
             
             do {
@@ -181,6 +189,17 @@ public struct NavigationCore: View {
             Text("Please contact support (support@tryminna.com). Error: \(database.initializationError?.localizedDescription ?? "unknown")")
         }
         .standardDropDestination(presented: $isDroppingFile, selectedFolder: navigationRouter.currentFolder, modelContext: modelContext, irisContext: irisContext, database: database)
+        .sheet(isPresented: $presentingDiscordSheet) {
+            AnnouncementView(announcement: Announcement(
+                title: "Join our Discord!",
+                caption: nil,
+                description: "Get app support, send feedback, and talk about features you would love! The Discord is a great place to get involved with Minna.",
+                image: ImageResource(name: "discord_announcement", bundle: .main),
+                urlLabel: "Join the discord",
+                urlSymbol: SFSymbol.arrowUpRight.rawValue,
+                url: URL(string: "https://discord.gg/fveUWjck3W")!
+            ))
+        }
     }
 
     func addFolder(in folder: Folder?) {
