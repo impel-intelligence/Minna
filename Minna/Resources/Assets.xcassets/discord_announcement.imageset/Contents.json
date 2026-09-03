@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "Discord Announcment.png",
+      "filename" : "Discord Announcement.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Discord Announcment@2x.png",
+      "filename" : "Discord Announcement@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Discord Announcment@3x.png",
+      "filename" : "Discord Announcement@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
