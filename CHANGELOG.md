@@ -7,6 +7,9 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Added
+- Added an announcement for the Minna Discord channel.
+
 ## [0.15.1] - Post Clone Fixes - 2026-09-02
 
 ### Fixed
