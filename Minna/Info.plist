@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>NSScreenCaptureUsageDescription</key>
+    <string>Minna needs access to screen recording to capture system audio for transcription.</string>
+    <key>NSAudioCaptureUsageDescription</key>
+    <string>Minna needs access to audio recording to capture your microphone for transcription..</string>
 	<key>BAEssentialMaxInstallSize</key>
 	<integer>2214311818</integer>
 	<key>BAHasManagedAssetPacks</key>
