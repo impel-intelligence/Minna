@@ -51,12 +51,12 @@ final class SCStreamHandler: NSObject, SCStreamDelegate, SCStreamOutput {
     }
 }
 
-final actor EphemeralSystemAudioRecorder {
+final actor EphemeralScreenCaptureKitAudioRecorder {
     enum SystemAudioRecorderError: Error {
         case noScreenRecordingPermissions
     }
 
-    static let SAMPLE_RATE: Float64 = 16000
+    static let SAMPLE_RATE: Float64 = 48000
 
     var stream: SCStream?
     var filter: SCContentFilter?
@@ -64,8 +64,13 @@ final actor EphemeralSystemAudioRecorder {
 
     var streamHandler: SCStreamHandler?
 
-    let recordingEngineQueue: DispatchQueue = .init(label: "recording_engine_queue", attributes: .concurrent)
+    let recordingEngineQueue: DispatchQueue = .init(label: "recording_engine_queue")
 
+    
+    func stop() async throws {
+        try await stream?.stopCapture()
+    }
+    
     func streamAudio() async throws -> AsyncThrowingStream<UnsafeSampleBox, any Error> {
         guard await isAuthorized() else {
             throw SystemAudioRecorderError.noScreenRecordingPermissions
@@ -87,7 +92,8 @@ final actor EphemeralSystemAudioRecorder {
 
         streamConfig = SCStreamConfiguration()
         streamConfig.capturesAudio = true
-        streamConfig.channelCount = 1
+        streamConfig.captureMicrophone = true
+        streamConfig.channelCount = 2
         streamConfig.sampleRate = Int(Self.SAMPLE_RATE)
 
         guard let display = availableContent.displays.first else { return }
@@ -103,7 +109,7 @@ final actor EphemeralSystemAudioRecorder {
 
 }
 
-extension EphemeralSystemAudioRecorder {
+extension EphemeralScreenCaptureKitAudioRecorder {
     func isAuthorized() async -> Bool {
         do {
             try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)

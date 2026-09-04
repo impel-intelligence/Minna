@@ -7,10 +7,10 @@
 
 public actor TranscriptionSession {
     private let transcriber: Transcriber
-    private let microphoneRecorder: EphemeralMicrophoneAudioRecorder
-    private let systemRecorder: EphemeralSystemAudioRecorder
+//    private let microphoneRecorder: EphemeralMicrophoneAudioRecorder
+    private let systemRecorder: EphemeralScreenCaptureKitAudioRecorder
     
-    private var microphoneStreamTask: Task<Void, Never>?
+//    private var microphoneStreamTask: Task<Void, Never>?
     private var systemStreamTask: Task<Void, Never>?
     private var transcriptionStreamTask: Task<Void, Never>?
     
@@ -19,12 +19,12 @@ public actor TranscriptionSession {
     public init(outputs: [any TranscriptionOutput]) async throws {
         self.outputs = outputs
         self.transcriber = try await Transcriber(locale: .current)
-        self.microphoneRecorder = EphemeralMicrophoneAudioRecorder()
-        self.systemRecorder = EphemeralSystemAudioRecorder()
+//        self.microphoneRecorder = EphemeralMicrophoneAudioRecorder()
+        self.systemRecorder = EphemeralScreenCaptureKitAudioRecorder()
     }
     
     public func start() async throws {
-        let microphoneStream = try await microphoneRecorder.streamAudio()
+//        let microphoneStream = try await microphoneRecorder.streamAudio()
         let systemStream = try await systemRecorder.streamAudio()
         let transcriptionStream = try await transcriber.streamTranscript()
         
@@ -38,15 +38,15 @@ public actor TranscriptionSession {
             }
         }
         
-        microphoneStreamTask = Task {
-            for await audio in microphoneStream {
-                do {
-                    try await transcriber.submitAudioToTranscriber(audio)
-                } catch {
-                    Log.logger.error("Failed to stream audio into transcriber", error: error)
-                }
-            }
-        }
+//        microphoneStreamTask = Task {
+//            for await audio in microphoneStream {
+//                do {
+//                    try await transcriber.submitAudioToTranscriber(audio)
+//                } catch {
+//                    Log.logger.error("Failed to stream audio into transcriber", error: error)
+//                }
+//            }
+//        }
         
         transcriptionStreamTask = Task {
             for await transcription in transcriptionStream {
@@ -63,10 +63,15 @@ public actor TranscriptionSession {
     
     public func stop() async throws {
         try await transcriber.finishTranscribing()
-        await microphoneRecorder.stop()
+        try await systemRecorder.stop()
+
+//        await microphoneRecorder.stop()
+//        
+//        microphoneStreamTask?.cancel()
+//        microphoneStreamTask = nil
         
-        microphoneStreamTask?.cancel()
-        microphoneStreamTask = nil
+        systemStreamTask?.cancel()
+        systemStreamTask = nil
         
         transcriptionStreamTask?.cancel()
         transcriptionStreamTask = nil

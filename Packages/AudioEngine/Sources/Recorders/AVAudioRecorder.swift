@@ -10,7 +10,7 @@ import Speech
 import AVFoundation
 
 /// @unchecked Sendable is safe-ish here: audioEngine is the only piece of this that is not sendable. We only access Ephemeral Audio Recorder from the actor ``TranscriptionSession``. - This was dreamed up by Claude but it seems to be fairly sound.
-final actor EphemeralMicrophoneAudioRecorder {
+final actor EphemeralAVAudioEngineRecorder {
     enum AudioRecorderError: Error {
         case noMicrophonePermissions
     }
@@ -68,7 +68,7 @@ final actor EphemeralMicrophoneAudioRecorder {
     }
 }
 
-extension EphemeralMicrophoneAudioRecorder {
+extension EphemeralAVAudioEngineRecorder {
     func isAuthorized() async -> Bool {
         if AVCaptureDevice.authorizationStatus(for: .audio) == .authorized {
             return true
