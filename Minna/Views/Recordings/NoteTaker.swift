@@ -129,13 +129,13 @@ final class NoteTaker: TranscriptionOutput {
 
     init() {
         combinationTimer = Timer.scheduledTimer(withTimeInterval: 15, repeats: true) { [self] _ in
-            Task { @MainActor in
-                do {
-                    try await self.combineNotes()
-                } catch {
-                    Log.logger.error("Failed to stream audio into transcriber", error: error)
-                }
-            }
+//            Task { @MainActor in
+//                do {
+//                    try await self.combineNotes()
+//                } catch {
+//                    Log.logger.error("Failed to stream audio into transcriber", error: error)
+//                }
+//            }
         }
     }
     
@@ -225,6 +225,7 @@ final class NoteTaker: TranscriptionOutput {
         consumeQueueTask = Task {
             for await chunk in noteStream {
                 do {
+                    print("Received chunk: \(chunk)")
                     try await updateNotes(with: chunk)
                 } catch {
                     // TODO: This drops notes if chunks are too big, can use the model token counter to split chunks
@@ -241,9 +242,11 @@ final class NoteTaker: TranscriptionOutput {
             return
         }
 
+        Log.logger.debug("Received: \(content)")
         let instructions = Instructions(NoteTakingInstructions().prompt)
         let session: LanguageModelSession = LanguageModelSession(instructions: instructions)
         let response = try await session.respond(to: content, generating: NoteBlock.self)
+        Log.logger.debug("Received response: \(response)")
         sections.append(contentsOf: response.content.sections)
 //        definitions.append(contentsOf: response.content.definitions)
     }

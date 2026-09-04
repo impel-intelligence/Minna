@@ -28,6 +28,9 @@ final class SCStreamHandler: NSObject, SCStreamDelegate, SCStreamOutput {
             case .audio:
                 let sample = try UnsafeSampleBox(buffer: sampleBuffer)
                 continuation.yield(sample)
+            case .microphone:
+                let sample = try UnsafeSampleBox(buffer: sampleBuffer)
+                continuation.yield(sample)
             default:
                 break
             }
@@ -65,10 +68,11 @@ final actor EphemeralScreenCaptureKitAudioRecorder {
     var streamHandler: SCStreamHandler?
 
     let recordingEngineQueue: DispatchQueue = .init(label: "recording_engine_queue")
-
     
     func stop() async throws {
-        try await stream?.stopCapture()
+        if let stream {
+            try await stream.stopCapture()
+        }
     }
     
     func streamAudio() async throws -> AsyncThrowingStream<UnsafeSampleBox, any Error> {
@@ -104,6 +108,8 @@ final actor EphemeralScreenCaptureKitAudioRecorder {
         stream = SCStream(filter: filter, configuration: streamConfig, delegate: streamHandler)
 
         try stream?.addStreamOutput(handler, type: .screen, sampleHandlerQueue: recordingEngineQueue)
+
+        try stream?.addStreamOutput(handler, type: .microphone, sampleHandlerQueue: recordingEngineQueue)
         try stream?.addStreamOutput(handler, type: .audio, sampleHandlerQueue: recordingEngineQueue)
     }
 
