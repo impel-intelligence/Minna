@@ -26,10 +26,6 @@ class BufferConverter {
         init(value: Bool) { self.value = value }
     }
     
-    /// Converts a ``CMSampleBuffer`` (e.g. from SCStream) into an ``AVAudioPCMBuffer`` in the target format.
-    /// Reads the source format directly from the buffer's ASBD — SCStream outputs Float32, not Int16.
-    ///
-    /// - Authored by: Claude Sonnet 4.6 (Anthropic)
     static func convertSample(_ sampleBox: UnsafeSampleBox, to format: AVAudioFormat) throws -> AVAudioPCMBuffer {
         guard let description = CMSampleBufferGetFormatDescription(sampleBox.buffer) else {
             throw ConversionError.failedToCreateDescriptor
