@@ -12,16 +12,59 @@ class BufferConverter {
         case failedToCreateConverter
         case failedToCreateConversionBuffer
         case conversionFailed(NSError?)
+
+        case couldNotCreateStreamDescription
+        case failedToCreateDescriptor
+        case couldNotGetSampleRate
+        case couldNotCreateBlockBuffer
+        case couldNotGetDataPointer
+        case failedToGetSourceFormat
     }
     
     private final class BoolBox: @unchecked Sendable {
         var value: Bool = false
         init(value: Bool) { self.value = value }
     }
+    
+    /// Converts a ``CMSampleBuffer`` (e.g. from SCStream) into an ``AVAudioPCMBuffer`` in the target format.
+    /// Reads the source format directly from the buffer's ASBD — SCStream outputs Float32, not Int16.
+    ///
+    /// - Authored by: Claude Sonnet 4.6 (Anthropic)
+    static func convertSample(_ sampleBox: UnsafeSampleBox, to format: AVAudioFormat) throws -> AVAudioPCMBuffer {
+        guard let description = CMSampleBufferGetFormatDescription(sampleBox.buffer) else {
+            throw ConversionError.failedToCreateDescriptor
+        }
+
+        guard var audioStreamDescription = description.audioStreamBasicDescription else {
+            throw ConversionError.couldNotCreateStreamDescription
+        }
+
+        guard let sourceFormat = AVAudioFormat(streamDescription: &audioStreamDescription) else {
+            throw ConversionError.failedToGetSourceFormat
+        }
+
+        let frameCount = AVAudioFrameCount(CMSampleBufferGetNumSamples(sampleBox.buffer))
+
+        guard let pcmBuffer = AVAudioPCMBuffer(pcmFormat: sourceFormat, frameCapacity: frameCount) else {
+            throw ConversionError.failedToCreateConversionBuffer
+        }
         
+        pcmBuffer.frameLength = frameCount
+        
+        try sampleBox.buffer.copyPCMData(fromRange: 0..<Int(frameCount), into: pcmBuffer.mutableAudioBufferList)
+
+        return try standardizeBuffer(pcmBuffer, to: format)
+    }
+
+
+    
     static func standardizeBuffer(_ bufferBox: UnsafeBufferBox, to format: AVAudioFormat) throws -> AVAudioPCMBuffer {
-        let inputFormat = bufferBox.buffer.format
-        guard inputFormat != format else { return bufferBox.buffer }
+        return try standardizeBuffer(bufferBox.buffer, to: format)
+    }
+
+    static func standardizeBuffer(_ buffer: AVAudioPCMBuffer, to format: AVAudioFormat) throws -> AVAudioPCMBuffer{
+        let inputFormat = buffer.format
+        guard inputFormat != format else { return buffer }
             
         guard let converter = AVAudioConverter(from: inputFormat, to: format) else {
             throw ConversionError.failedToCreateConverter
@@ -31,7 +74,7 @@ class BufferConverter {
         converter.primeMethod = .none
 
         let sampleRateRatio = converter.outputFormat.sampleRate / converter.inputFormat.sampleRate
-        let scaledInputFrameLength = Double(bufferBox.buffer.frameLength) * sampleRateRatio
+        let scaledInputFrameLength = Double(buffer.frameLength) * sampleRateRatio
         let frameCapacity = AVAudioFrameCount(scaledInputFrameLength.rounded(.up))
         
         guard let conversionBuffer = AVAudioPCMBuffer(pcmFormat: converter.outputFormat, frameCapacity: frameCapacity) else {
@@ -48,7 +91,7 @@ class BufferConverter {
             // This closure can be called multiple times, but it only offers a single buffer.
             defer { bufferProcessed.value = true }
             inputStatusPointer.pointee = bufferProcessed.value ? .noDataNow : .haveData
-            return bufferProcessed.value ? nil : bufferBox.buffer
+            return bufferProcessed.value ? nil : buffer
         }
         
         guard status != .error else {
@@ -56,5 +99,6 @@ class BufferConverter {
         }
         
         return conversionBuffer
+
     }
 }

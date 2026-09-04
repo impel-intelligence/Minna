@@ -45,11 +45,11 @@ struct RecordingWindow: View {
                         NoteSectionView(section: section)
                     }
                 }
-                ForEach(noteTaker.definitions, id: \.concept) { definition in
-                    DraggableView(scale: $scale) {
-                        NoteDefinitionView(defintion: definition)
-                    }
-                }
+//                ForEach(noteTaker.definitions, id: \.concept) { definition in
+//                    DraggableView(scale: $scale) {
+//                        NoteDefinitionView(defintion: definition)
+//                    }
+//                }
             }
             HStack {
                 Spacer()

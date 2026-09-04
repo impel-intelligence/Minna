@@ -20,8 +20,9 @@ public struct NoteTakingInstructions: ModelInstruction {
         - Retain all specific examples, formulas, dates, and named concepts mentioned in the text.
         - Remove filler words, verbal stumbles, and repetitive tangents.
         - Group the information logically under clear headings, using nested bullet points for details and examples.
-        - Do not create a definition that already has a section or vice versa.
         """
+    
+    //        - Do not create a definition that already has a section or vice versa.
 
 
     public init() { }

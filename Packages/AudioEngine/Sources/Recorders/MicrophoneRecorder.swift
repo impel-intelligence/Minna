@@ -9,29 +9,28 @@ import Foundation
 import Speech
 import AVFoundation
 
-/// @unchecked Sendable is safe-ish here: audioEngine is the only piece of this that is not sendable. We only access Ephemeral Audio Recorder from the actor ``TranscriptionSession``.
-/// This was dreamed up by Claude but it seems to be fairly sound.
-final class EphemeralAudioRecorder: @unchecked Sendable {
+/// @unchecked Sendable is safe-ish here: audioEngine is the only piece of this that is not sendable. We only access Ephemeral Audio Recorder from the actor ``TranscriptionSession``. - This was dreamed up by Claude but it seems to be fairly sound.
+final actor EphemeralMicrophoneAudioRecorder {
     enum AudioRecorderError: Error {
         case noMicrophonePermissions
     }
-    
+
     private let audioEngine: AVAudioEngine = AVAudioEngine()
-    
+
     init() { }
-    
+
     func stop() {
         audioEngine.stop()
     }
-    
+
     func pause() {
         audioEngine.pause()
     }
-    
+
     func resume() throws {
         try audioEngine.start()
     }
-    
+
 #if os(iOS)
     func setUpAudioSession() throws {
         let audioSession = AVAudioSession.sharedInstance()
@@ -39,12 +38,12 @@ final class EphemeralAudioRecorder: @unchecked Sendable {
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
     }
 #endif
-    
+
     func streamAudio() async throws -> AsyncStream<UnsafeBufferBox> {
         guard await isAuthorized() else {
             throw AudioRecorderError.noMicrophonePermissions
         }
-        
+
         try setupAudioEngine()
 
         let (stream, continuation) = AsyncStream.makeStream(of: UnsafeBufferBox.self, bufferingPolicy: .unbounded)
@@ -63,18 +62,18 @@ final class EphemeralAudioRecorder: @unchecked Sendable {
 
         return stream
     }
-    
+
     private func setupAudioEngine() throws {
         audioEngine.inputNode.removeTap(onBus: 0)
     }
 }
 
-extension EphemeralAudioRecorder {
+extension EphemeralMicrophoneAudioRecorder {
     func isAuthorized() async -> Bool {
         if AVCaptureDevice.authorizationStatus(for: .audio) == .authorized {
             return true
         }
-        
+
         return await AVCaptureDevice.requestAccess(for: .audio)
     }
 }

@@ -80,6 +80,13 @@ actor Transcriber {
         inputBuilder.yield(input)
     }
     
+    func submitAudioToTranscriber(_ sample: UnsafeSampleBox) async throws {
+        let converted = try BufferConverter.convertSample(sample, to: analyzerFormat)
+        let input = AnalyzerInput(buffer: converted)
+        
+        inputBuilder.yield(input)
+    }
+
     public func finishTranscribing() async throws {
         await releaseLocales()
 
