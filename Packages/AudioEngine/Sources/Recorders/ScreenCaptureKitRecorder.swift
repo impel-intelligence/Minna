@@ -3,6 +3,7 @@
 //  AudioEngine
 //
 //  Created by Taylor Lineman on 9/4/26.
+//  Edited by Claude Fable 5 (Anthropic) on 2026-09-04
 //
 
 import Foundation
@@ -25,11 +26,8 @@ final class SCStreamHandler: NSObject, SCStreamDelegate, SCStreamOutput {
         guard sampleBuffer.isValid else { return }
         do {
             switch type {
-            case .audio:
-                let sample = try UnsafeSampleBox(buffer: sampleBuffer)
-                continuation.yield(sample)
-            case .microphone:
-                let sample = try UnsafeSampleBox(buffer: sampleBuffer)
+            case .audio, .microphone:
+                let sample = try UnsafeSampleBox(buffer: sampleBuffer, type: type)
                 continuation.yield(sample)
             default:
                 break
@@ -60,15 +58,24 @@ final actor EphemeralScreenCaptureKitAudioRecorder {
     }
 
     static let SAMPLE_RATE: Float64 = 48000
+    
 
     var stream: SCStream?
     var filter: SCContentFilter?
-    var streamConfig = SCStreamConfiguration()
+    
+    var streamConfig: SCStreamConfiguration {
+        let streamConfig = SCStreamConfiguration()
+        streamConfig.capturesAudio = true
+        streamConfig.captureMicrophone = true
+        streamConfig.channelCount = 2
+        streamConfig.sampleRate = Int(Self.SAMPLE_RATE)
+        return streamConfig
+    }
 
     var streamHandler: SCStreamHandler?
 
     let recordingEngineQueue: DispatchQueue = .init(label: "recording_engine_queue")
-    
+
     func stop() async throws {
         if let stream {
             try await stream.stopCapture()
@@ -93,13 +100,6 @@ final actor EphemeralScreenCaptureKitAudioRecorder {
 
     private func setupInput(handler: SCStreamHandler) async throws {
         let availableContent = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-
-        streamConfig = SCStreamConfiguration()
-        streamConfig.capturesAudio = true
-        streamConfig.captureMicrophone = true
-        streamConfig.channelCount = 2
-        streamConfig.sampleRate = Int(Self.SAMPLE_RATE)
-
         guard let display = availableContent.displays.first else { return }
 
         let filter = SCContentFilter(display: display, excludingWindows: [])
@@ -107,12 +107,12 @@ final actor EphemeralScreenCaptureKitAudioRecorder {
 
         stream = SCStream(filter: filter, configuration: streamConfig, delegate: streamHandler)
 
+        // We need this to stop errors but we ignore its output. Hopefully future versions of StreamCaptureKit allow you to ditch it entirely.
         try stream?.addStreamOutput(handler, type: .screen, sampleHandlerQueue: recordingEngineQueue)
 
         try stream?.addStreamOutput(handler, type: .microphone, sampleHandlerQueue: recordingEngineQueue)
         try stream?.addStreamOutput(handler, type: .audio, sampleHandlerQueue: recordingEngineQueue)
     }
-
 }
 
 extension EphemeralScreenCaptureKitAudioRecorder {

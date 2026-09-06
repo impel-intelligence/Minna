@@ -15,13 +15,15 @@ let package = Package(
             targets: ["AudioEngine"]
         ),
     ],
-//    dependencies: [
-//        .package(url: "https://github.com/soniqo/speech-swift", from: "0.0.26")
-//    ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-log", from: "1.6.0"),
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
-        .target(name: "AudioEngine"),
+        .target(name: "AudioEngine", dependencies: [
+            .product(name: "Logging", package: "swift-log"),
+        ]),
     ],
     swiftLanguageModes: [.v6]
 )
