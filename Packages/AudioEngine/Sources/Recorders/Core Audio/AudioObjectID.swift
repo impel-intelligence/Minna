@@ -30,54 +30,65 @@ extension AudioObjectID {
 }
 
 extension AudioObjectID {
-    func readArray(selector: AudioObjectPropertySelector) -> [AudioObjectID] {
+    func readArray(selector: AudioObjectPropertySelector) throws -> [AudioObjectID] {
         var listAddress: AudioObjectPropertyAddress = CoreAudio.getPropertyAddress(selector: selector)
 
         var propertySize: UInt32 = 0
-        AudioObjectGetPropertyDataSize(self, &listAddress, 0, nil, &propertySize)
+        let dataSizeStatus = AudioObjectGetPropertyDataSize(self, &listAddress, 0, nil, &propertySize)
+        try dataSizeStatus.validateCoreAudioError()
+
         let processCount = Int(propertySize) / MemoryLayout<AudioObjectID>.stride
         var list: [AudioObjectID] = [AudioObjectID](repeating: 0, count: processCount)
-        AudioObjectGetPropertyData(self, &listAddress, 0, nil, &propertySize, &list)
-        
+        let getDataStatus = AudioObjectGetPropertyData(self, &listAddress, 0, nil, &propertySize, &list)
+        try getDataStatus.validateCoreAudioError()
+
         return list
     }
     
     /// Retrieve list of audio processes from the HAL system.
-    static func systemProcessList() -> [AudioObjectID] {
-        return AudioObjectID.system.readArray(selector: kAudioHardwarePropertyProcessObjectList)
+    static func systemProcessList() throws -> [AudioObjectID] {
+        return try AudioObjectID.system.readArray(selector: kAudioHardwarePropertyProcessObjectList)
     }
 
     /// Retrieve list of audio taps from the HAL system.
-    static func systemTapList() -> [AudioObjectID] {
-        return AudioObjectID.system.readArray(selector: kAudioHardwarePropertyTapList)
+    static func systemTapList() throws -> [AudioObjectID] {
+        return try AudioObjectID.system.readArray(selector: kAudioHardwarePropertyTapList)
     }
-    
-    
 }
 
 extension AudioObjectID {
-    func readString(property: AudioObjectPropertySelector) -> String {
+    func readString(property: AudioObjectPropertySelector) throws -> String {
         var propertyAddress = CoreAudio.getPropertyAddress(selector: property)
         var propertySize = UInt32(MemoryLayout<CFString>.stride)
         var cfString: CFString = "" as CFString
-        _ = withUnsafeMutablePointer(to: &cfString) { ptr in
+        
+        let status = withUnsafeMutablePointer(to: &cfString) { ptr in
             AudioObjectGetPropertyData(self, &propertyAddress, 0, nil, &propertySize, ptr)
         }
+        try status.validateCoreAudioError()
+
         return cfString as String
     }
     
-    func read<T: Initializable>(property: AudioObjectPropertySelector) -> T {
+    func read<T: Initializable>(property: AudioObjectPropertySelector) throws -> T {
         var propertyAddress = CoreAudio.getPropertyAddress(selector: property)
         var propertySize = UInt32(MemoryLayout<T>.stride)
         var item: T = T()
-        _ = withUnsafeMutablePointer(to: &item) { ptr in
+        
+        let status = withUnsafeMutablePointer(to: &item) { ptr in
             AudioObjectGetPropertyData(self, &propertyAddress, 0, nil, &propertySize, ptr)
         }
+        try status.validateCoreAudioError()
+
         return item as T
     }
 
     
-    var name: String { readString(property: kAudioObjectPropertyName) }
+    var name: String {
+        get throws {
+            try readString(property: kAudioObjectPropertyName)
+        }
+    }
     
     /// A tap structure that has getters for CoreAudio property addressees. Could also be a weak var with a Tap class if we need to track the property addresses or tokens.
     var tap: Tap { Tap(id: self) }
@@ -85,16 +96,26 @@ extension AudioObjectID {
     struct Tap {
         let id: AudioObjectID
         
-        var description: CATapDescription { id.read(property: kAudioTapPropertyDescription) }
+        var description: CATapDescription {
+            get throws {
+                try id.read(property: kAudioTapPropertyDescription)
+            }
+        }
         
-        var uid: String { id.readString(property: kAudioTapPropertyUID) }
+        var uid: String {
+            get throws {
+                try id.readString(property: kAudioTapPropertyUID)
+            }
+        }
         
         var format: (channelCount: UInt32, sampleRate: Int) {
-            let streamDescription: AudioStreamBasicDescription = id.read(property: kAudioTapPropertyFormat)
-            let channelCount = streamDescription.mChannelsPerFrame
-            let sampleRate = Int(streamDescription.mSampleRate)
-            
-            return (channelCount, sampleRate)
+            get throws {
+                let streamDescription: AudioStreamBasicDescription = try id.read(property: kAudioTapPropertyFormat)
+                let channelCount = streamDescription.mChannelsPerFrame
+                let sampleRate = Int(streamDescription.mSampleRate)
+                
+                return (channelCount, sampleRate)
+            }
         }
     }
     
@@ -104,9 +125,17 @@ extension AudioObjectID {
     struct Process {
         let id: AudioObjectID
 
-        var processBundleID: String { id.readString(property: kAudioProcessPropertyBundleID) }
+        var processBundleID: String {
+            get throws {
+                try id.readString(property: kAudioProcessPropertyBundleID)
+            }
+        }
         
-        var pid: Int32 { id.read(property: kAudioProcessPropertyPID) }
+        var pid: Int32 {
+            get throws {
+                try id.read(property: kAudioProcessPropertyPID)
+            }
+        }
     }
     
     var device: Device { Device(id: self) }
@@ -114,7 +143,11 @@ extension AudioObjectID {
     struct Device {
         let id: AudioObjectID
         
-        var uid: String { id.readString(property: kAudioDevicePropertyDeviceUID) }
+        var uid: String {
+            get throws {
+                try id.readString(property: kAudioDevicePropertyDeviceUID)
+            }
+        }
     }
 }
 

@@ -25,18 +25,21 @@ class AudioProcess: Identifiable, Equatable, Hashable {
     var isRunningAddress = CoreAudio.getPropertyAddress(selector: kAudioProcessPropertyIsRunning)
     var isRunningToken: AudioObjectPropertyListenerBlock?
     
-    init(id: AudioObjectID, queue: DispatchQueue = .main) {
+    init(id: AudioObjectID, queue: DispatchQueue = .main) throws {
         self.id = id
         self.dispatchQueue = queue
         
-        self.name = AudioProcess.processName(pid: id.process.pid)
-        self.updateIsRunning()
-        
-        registerListeners()
+        self.name = AudioProcess.processName(pid: try id.process.pid)
+        try self.updateIsRunning()
+        try registerListeners()
     }
     
     deinit {
-        unregisterListeners()
+        do {
+            try unregisterListeners()
+        } catch {
+            Log.logger.error("Failed to unregister process listeners", error: error)
+        }
     }
     
     static func == (lhs: AudioProcess, rhs: AudioProcess) -> Bool {
@@ -47,35 +50,45 @@ class AudioProcess: Identifiable, Equatable, Hashable {
         hasher.combine(ObjectIdentifier(self))
     }
     
-    func registerListeners() {
+    func registerListeners() throws {
         let isRunningChanged: AudioObjectPropertyListenerBlock = { [weak self] inNumberAddresses, inAddresses in
             for index in 0..<inNumberAddresses {
                 let address = inAddresses[Int(index)]
                 switch address.mSelector {
                 case kAudioProcessPropertyIsRunning:
-                    self?.updateIsRunning()
+                    do {
+                        try self?.updateIsRunning()
+                    } catch {
+                        Log.logger.error("Failed to update is running", error: error, metadata: ["processID": "\(self?.id ?? .unknown)"])
+                    }
                 default:
                     break
                 }
             }
         }
         
-        AudioObjectAddPropertyListenerBlock(id, &isRunningAddress, dispatchQueue, isRunningChanged)
+        let status = AudioObjectAddPropertyListenerBlock(id, &isRunningAddress, dispatchQueue, isRunningChanged)
         isRunningToken = isRunningChanged
+        
+        try status.validateCoreAudioError()
     }
     
-    func unregisterListeners() {
+    func unregisterListeners() throws {
         guard let token = isRunningToken else { return }
 
-        AudioObjectRemovePropertyListenerBlock(id, &isRunningAddress, dispatchQueue, token)
+        let status = AudioObjectRemovePropertyListenerBlock(id, &isRunningAddress, dispatchQueue, token)
         isRunningToken = nil
+        
+        try status.validateCoreAudioError()
     }
     
-    func updateIsRunning() {
+    func updateIsRunning() throws {
         // Get the `isRunning` property of the process object.
         var propertySize = UInt32(MemoryLayout<UInt32>.stride)
         var running: UInt32 = 0
-        AudioObjectGetPropertyData(self.id, &isRunningAddress, 0, nil, &propertySize, &running)
+        
+        let status = AudioObjectGetPropertyData(self.id, &isRunningAddress, 0, nil, &propertySize, &running)
+        try status.validateCoreAudioError()
         
         let oldState = self.isRunning
         self.isRunning = running != 0

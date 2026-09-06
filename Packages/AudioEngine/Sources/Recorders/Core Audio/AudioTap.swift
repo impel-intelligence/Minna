@@ -18,22 +18,32 @@ class AudioTap: Identifiable, Equatable, Hashable, ObservableObject {
 
     /// Initialize an `AudioTap` by storing the tap's unique identifier and description, and registering audio property listeners.
     /// - Tag: AudioTap
-    init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main) {
+    init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main) throws {
         self.id = id
         self.dispatchQueue = dispatchQueue
         
         // Get the description of the audio tap.
-        let description: CATapDescription = self.id.tap.description
+        let description: CATapDescription = try self.id.tap.description
         
         // Fill out the tap config from the description.
         self.config = TapConfig(description: description)
 
-        registerListeners()
+        try registerListeners()
     }
     
     deinit {
-        unregisterListeners()
-        AudioHardwareDestroyProcessTap(id)
+        do {
+            try unregisterListeners()
+        } catch {
+            Log.logger.error("Failed to unregister audio tap", error: error, metadata: ["tapID": "\(id)"])
+        }
+        
+        do {
+            let status = AudioHardwareDestroyProcessTap(id)
+            try status.validateCoreAudioError()
+        } catch {
+            Log.logger.error("Failed to destroy process tap", error: error, metadata: ["tapID": "\(id)"])
+        }
     }
     
     static func == (lhs: AudioTap, rhs: AudioTap) -> Bool {
@@ -44,49 +54,58 @@ class AudioTap: Identifiable, Equatable, Hashable, ObservableObject {
         hasher.combine(ObjectIdentifier(self))
     }
     
-    func registerListeners() {
+    func registerListeners() throws {
         let descriptionChanged: AudioObjectPropertyListenerBlock = { [weak self] _, _ in
-            // Get the description of the audio tap.
-            guard let description: CATapDescription = self?.id.tap.description else { return }
-            
-            // Fill out the tap config from the description.
-            self?.config = TapConfig(description: description)
+            do {
+                // Get the description of the audio tap.
+                guard let description: CATapDescription = try self?.id.tap.description else { return }
+                
+                // Fill out the tap config from the description.
+                self?.config = TapConfig(description: description)
+            } catch {
+                Log.logger.error("Failed to get audio description", error: error, metadata: ["tapID": "\(self?.id ?? .unknown)"])
+            }
         }
         
         AudioObjectAddPropertyListenerBlock(id, &descriptionAddress, dispatchQueue, descriptionChanged)
         descriptionChangedToken = descriptionChanged
     }
     
-    func unregisterListeners() {
+    func unregisterListeners() throws {
         guard let token = descriptionChangedToken else { return }
         
-        AudioObjectRemovePropertyListenerBlock(id, &descriptionAddress, dispatchQueue, token)
+        let status = AudioObjectRemovePropertyListenerBlock(id, &descriptionAddress, dispatchQueue, token)
         descriptionChangedToken = nil
+        
+        try status.validateCoreAudioError()
     }
         
-    func setTapDescription() {
+    func setTapDescription() throws {
         // Fill out a tap description with the saved tap configuration.
         var description = config.description
 
         // Set the modified description on the tap object.
-        withUnsafeMutablePointer(to: &description) { description in
+        let status = withUnsafeMutablePointer(to: &description) { description in
             var propertyAddress = CoreAudio.getPropertyAddress(selector: kAudioTapPropertyDescription)
             let propertySize = UInt32(MemoryLayout<CATapDescription>.stride)
-            AudioObjectSetPropertyData(self.id, &propertyAddress, 0, nil, propertySize, description)
+            return AudioObjectSetPropertyData(self.id, &propertyAddress, 0, nil, propertySize, description)
         }
+        
+        try status.validateCoreAudioError()
     }
 }
 
 extension AudioTap {
     /// Create a new process tap based on the provided tap description.
-    static func new(config: TapConfig) -> AudioTap {
+    static func new(config: TapConfig) throws -> AudioTap {
         // Create a tap description.
         let description = config.description
         
         // Ask the HAL to create a new tap and put the resulting `AudioObjectID` in `tapID`.
         var tapID = AudioObjectID.unknown
-        AudioHardwareCreateProcessTap(description, &tapID)
+        let status = AudioHardwareCreateProcessTap(description, &tapID)
+        try status.validateCoreAudioError()
         
-        return AudioTap(id: tapID)
+        return try AudioTap(id: tapID)
     }
 }

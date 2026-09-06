@@ -13,11 +13,11 @@ class AudioDevice: Identifiable, Equatable, Hashable, ObservableObject {
     let id: AudioObjectID
     let uid: String
     
-    init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main) {
+    init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main) throws {
         self.id = id
         
         // Get the UID of the device.
-        self.uid = id.device.uid
+        self.uid = try id.device.uid
         self.dispatchQueue = dispatchQueue
     }
     
