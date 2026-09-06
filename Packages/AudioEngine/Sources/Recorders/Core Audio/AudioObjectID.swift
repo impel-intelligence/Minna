@@ -21,7 +21,12 @@ extension AudioObjectID {
     static var systemID: Int32 { kAudioObjectSystemObject }
     
     /// The system audio object
-    static var system: AudioObjectID { AudioDeviceID(systemID) }
+    static var system: AudioObjectID { AudioObjectID(systemID) }
+    
+    /// The system audio object ID, `kAudioObjectSystemObject`
+    static var unknownID: UInt32 { kAudioObjectUnknown }
+
+    static var unknown: AudioObjectID { AudioObjectID(unknownID) }
 }
 
 extension AudioObjectID {
@@ -46,6 +51,8 @@ extension AudioObjectID {
     static func systemTapList() -> [AudioObjectID] {
         return AudioObjectID.system.readArray(selector: kAudioHardwarePropertyTapList)
     }
+    
+    
 }
 
 extension AudioObjectID {

@@ -8,7 +8,8 @@
 
 import CoreAudio
 
-class AudioTap: Identifiable, Hashable, ObservableObject {
+class AudioTap: Identifiable, Equatable, Hashable, ObservableObject {
+    let dispatchQueue: DispatchQueue
     let id: AudioObjectID
     public var config: TapConfig
         
@@ -17,8 +18,9 @@ class AudioTap: Identifiable, Hashable, ObservableObject {
 
     /// Initialize an `AudioTap` by storing the tap's unique identifier and description, and registering audio property listeners.
     /// - Tag: AudioTap
-    init(id: AudioObjectID) {
+    init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main) {
         self.id = id
+        self.dispatchQueue = dispatchQueue
         
         // Get the description of the audio tap.
         let description: CATapDescription = self.id.tap.description
@@ -31,6 +33,7 @@ class AudioTap: Identifiable, Hashable, ObservableObject {
     
     deinit {
         unregisterListeners()
+        AudioHardwareDestroyProcessTap(id)
     }
     
     static func == (lhs: AudioTap, rhs: AudioTap) -> Bool {
@@ -42,38 +45,28 @@ class AudioTap: Identifiable, Hashable, ObservableObject {
     }
     
     func registerListeners() {
-        let descriptionChanged: AudioObjectPropertyListenerBlock = { _, _ in
+        let descriptionChanged: AudioObjectPropertyListenerBlock = { [weak self] _, _ in
             // Get the description of the audio tap.
-            let description: CATapDescription = self.id.tap.description
+            guard let description: CATapDescription = self?.id.tap.description else { return }
             
             // Fill out the tap config from the description.
-            self.config = TapConfig(description: description)
+            self?.config = TapConfig(description: description)
         }
         
-        AudioObjectAddPropertyListenerBlock(id, &descriptionAddress, DispatchQueue.main, descriptionChanged)
+        AudioObjectAddPropertyListenerBlock(id, &descriptionAddress, dispatchQueue, descriptionChanged)
         descriptionChangedToken = descriptionChanged
     }
     
     func unregisterListeners() {
         guard let token = descriptionChangedToken else { return }
         
-        AudioObjectRemovePropertyListenerBlock(id, &descriptionAddress, DispatchQueue.main, token)
+        AudioObjectRemovePropertyListenerBlock(id, &descriptionAddress, dispatchQueue, token)
         descriptionChangedToken = nil
     }
         
     func setTapDescription() {
         // Fill out a tap description with the saved tap configuration.
-        var description = CATapDescription()
-        description.name = self.config.name
-        description.processes = Array(self.config.processes)
-        description.isPrivate = self.config.isPrivate
-        description.isProcessRestoreEnabled = self.config.isProcessRestoreEnabled
-        description.muteBehavior = CATapMuteBehavior(rawValue: self.config.mute.rawValue) ?? description.muteBehavior
-        description.isMixdown = self.config.mixdown == .mono || self.config.mixdown == .stereo
-        description.isMono = self.config.mixdown == .mono
-        description.isExclusive = self.config.exclusive
-        description.deviceUID = self.config.device
-        description.stream = self.config.streamIndex
+        var description = config.description
 
         // Set the modified description on the tap object.
         withUnsafeMutablePointer(to: &description) { description in
@@ -86,24 +79,12 @@ class AudioTap: Identifiable, Hashable, ObservableObject {
 
 extension AudioTap {
     /// Create a new process tap based on the provided tap description.
-    /// - Tag: CreateTap
     static func new(config: TapConfig) -> AudioTap {
         // Create a tap description.
-        let description = CATapDescription()
-        
-        // Fill out the description properties with the tap configuration from the UI.
-        description.name = config.name
-        description.processes = Array(config.processes)
-        description.isPrivate = config.isPrivate
-        description.muteBehavior = CATapMuteBehavior(rawValue: config.mute.rawValue) ?? description.muteBehavior
-        description.isMixdown = config.mixdown == .mono || config.mixdown == .stereo
-        description.isMono = config.mixdown == .mono
-        description.isExclusive = config.exclusive
-        description.deviceUID = config.device
-        description.stream = config.streamIndex
+        let description = config.description
         
         // Ask the HAL to create a new tap and put the resulting `AudioObjectID` in `tapID`.
-        var tapID = AudioObjectID(kAudioObjectUnknown)
+        var tapID = AudioObjectID.unknown
         AudioHardwareCreateProcessTap(description, &tapID)
         
         return AudioTap(id: tapID)

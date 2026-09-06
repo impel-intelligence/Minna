@@ -8,17 +8,17 @@
 import CoreAudio
 
 /// A class that models and uniquely identifies base audio device objects.
-class AudioDevice: Identifiable, Hashable, ObservableObject {
-    let queue: DispatchQueue
+class AudioDevice: Identifiable, Equatable, Hashable, ObservableObject {
+    let dispatchQueue: DispatchQueue
     let id: AudioObjectID
     let uid: String
     
-    init(id: AudioObjectID, queue: DispatchQueue = .main) {
+    init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main) {
         self.id = id
         
         // Get the UID of the device.
         self.uid = id.device.uid
-        self.queue = queue
+        self.dispatchQueue = dispatchQueue
     }
     
     static func == (lhs: AudioDevice, rhs: AudioDevice) -> Bool {

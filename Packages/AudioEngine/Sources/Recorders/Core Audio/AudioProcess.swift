@@ -13,7 +13,7 @@ protocol AudioProcessDelegate {
     func processStopped(id: AudioObjectID)
 }
 
-class AudioProcess: Identifiable, Hashable {
+class AudioProcess: Identifiable, Equatable, Hashable {
     let dispatchQueue: DispatchQueue
 
     let id: AudioObjectID
@@ -48,26 +48,26 @@ class AudioProcess: Identifiable, Hashable {
     }
     
     func registerListeners() {
-        let isRunningChanged: AudioObjectPropertyListenerBlock = { inNumberAddresses, inAddresses in
+        let isRunningChanged: AudioObjectPropertyListenerBlock = { [weak self] inNumberAddresses, inAddresses in
             for index in 0..<inNumberAddresses {
                 let address = inAddresses[Int(index)]
                 switch address.mSelector {
                 case kAudioProcessPropertyIsRunning:
-                    self.updateIsRunning()
+                    self?.updateIsRunning()
                 default:
                     break
                 }
             }
         }
         
-        AudioObjectAddPropertyListenerBlock(id, &isRunningAddress, DispatchQueue.main, isRunningChanged)
+        AudioObjectAddPropertyListenerBlock(id, &isRunningAddress, dispatchQueue, isRunningChanged)
         isRunningToken = isRunningChanged
     }
     
     func unregisterListeners() {
         guard let token = isRunningToken else { return }
 
-        AudioObjectRemovePropertyListenerBlock(id, &isRunningAddress, DispatchQueue.main, token)
+        AudioObjectRemovePropertyListenerBlock(id, &isRunningAddress, dispatchQueue, token)
         isRunningToken = nil
     }
     

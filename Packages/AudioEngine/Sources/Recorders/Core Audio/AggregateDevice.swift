@@ -24,11 +24,11 @@ class AggregateDevice: AudioDevice {
     var compositionAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyComposition)
     var propertiesChangedToken: AudioObjectPropertyListenerBlock?
     
-    override init(id: AudioObjectID, queue: DispatchQueue = .main)  {
+    override init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main)  {
         // Get the name of the aggregate device.
         self.name = id.name
 
-        super.init(id: id, queue: queue)
+        super.init(id: id, dispatchQueue: dispatchQueue)
         
         // Fill out the device and tap lists.
         self.updateDeviceList()
@@ -39,48 +39,52 @@ class AggregateDevice: AudioDevice {
     
     deinit {
         unregisterListeners()
+        AudioHardwareDestroyAggregateDevice(id)
     }
     
     func registerListeners() {
-        let propertiesChanged: AudioObjectPropertyListenerBlock = { inNumberAddresses, inAddresses in
+        let propertiesChanged: AudioObjectPropertyListenerBlock = { [weak self] inNumberAddresses, inAddresses in
             for index in 0..<inNumberAddresses {
                 let address = inAddresses[Int(index)]
                 switch address.mSelector {
                 case kAudioAggregateDevicePropertyFullSubDeviceList:
-                    self.updateDeviceList()
+                    self?.updateDeviceList()
                 case kAudioAggregateDevicePropertyTapList:
-                    self.updateTapList()
+                    self?.updateTapList()
                 case kAudioAggregateDevicePropertyComposition:
-                    self.updateConfig()
+                    self?.updateConfig()
                 default: break
                 }
             }
         }
         
-        AudioObjectAddPropertyListenerBlock(id, &deviceListAddress, queue, propertiesChanged)
-        AudioObjectAddPropertyListenerBlock(id, &tapListAddress, queue, propertiesChanged)
-        AudioObjectAddPropertyListenerBlock(id, &compositionAddress, queue, propertiesChanged)
+        AudioObjectAddPropertyListenerBlock(id, &deviceListAddress, dispatchQueue, propertiesChanged)
+        AudioObjectAddPropertyListenerBlock(id, &tapListAddress, dispatchQueue, propertiesChanged)
+        AudioObjectAddPropertyListenerBlock(id, &compositionAddress, dispatchQueue, propertiesChanged)
         propertiesChangedToken = propertiesChanged
     }
     
     func unregisterListeners() {
         guard let token = propertiesChangedToken else { return }
             
-        AudioObjectRemovePropertyListenerBlock(id, &deviceListAddress, queue, token)
-        AudioObjectRemovePropertyListenerBlock(id, &tapListAddress, queue, token)
-        AudioObjectRemovePropertyListenerBlock(id, &compositionAddress, queue, token)
+        AudioObjectRemovePropertyListenerBlock(id, &deviceListAddress, dispatchQueue, token)
+        AudioObjectRemovePropertyListenerBlock(id, &tapListAddress, dispatchQueue, token)
+        AudioObjectRemovePropertyListenerBlock(id, &compositionAddress, dispatchQueue, token)
         propertiesChangedToken = nil
     }
     
     func updateDeviceList() {
         // Get the device list of the aggregate device.
-        self.deviceList = Set<String>()
+        self.deviceList = []
+                
         var propertySize: UInt32 = 0
         AudioObjectGetPropertyDataSize(self.id, &deviceListAddress, 0, nil, &propertySize)
+        
         var list: CFArray? = nil
-        _ = withUnsafeMutablePointer(to: &list) { list in
-            AudioObjectGetPropertyData(self.id, &deviceListAddress, 0, nil, &propertySize, list)
+        _ = withUnsafeMutablePointer(to: &list) { [id] list in
+            AudioObjectGetPropertyData(id, &deviceListAddress, 0, nil, &propertySize, list)
         }
+        
         for uid in list as? [CFString] ?? [] {
             self.deviceList.insert(uid as String)
         }
@@ -92,8 +96,8 @@ class AggregateDevice: AudioDevice {
         var propertySize: UInt32 = 0
         AudioObjectGetPropertyDataSize(self.id, &tapListAddress, 0, nil, &propertySize)
         var list: CFArray? = nil
-        _ = withUnsafeMutablePointer(to: &list) { list in
-            AudioObjectGetPropertyData(self.id, &tapListAddress, 0, nil, &propertySize, list)
+        _ = withUnsafeMutablePointer(to: &list) { [id] list in
+            AudioObjectGetPropertyData(id, &tapListAddress, 0, nil, &propertySize, list)
         }
         for uid in list as? [CFString] ?? [] {
             self.tapList.insert(uid as String)
@@ -106,8 +110,9 @@ class AggregateDevice: AudioDevice {
         var propertyAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyComposition)
         AudioObjectGetPropertyDataSize(self.id, &propertyAddress, 0, nil, &propertySize)
         var composition: CFDictionary? = nil
-        _ = withUnsafeMutablePointer(to: &composition) { composition in
-            AudioObjectGetPropertyData(self.id, &propertyAddress, 0, nil, &propertySize, composition)
+        
+        _ = withUnsafeMutablePointer(to: &composition) { [id] composition in
+            AudioObjectGetPropertyData(id, &propertyAddress, 0, nil, &propertySize, composition)
         }
         
         if let compositionDict = composition as? [String: AnyObject] {
@@ -121,17 +126,19 @@ class AggregateDevice: AudioDevice {
         var propertySize: UInt32 = 0
         var propertyAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyComposition)
         AudioObjectGetPropertyDataSize(self.id, &propertyAddress, 0, nil, &propertySize)
+        
         var composition: CFDictionary? = nil
-        _ = withUnsafeMutablePointer(to: &composition) { composition in
-            AudioObjectGetPropertyData(self.id, &propertyAddress, 0, nil, &propertySize, composition)
+        _ = withUnsafeMutablePointer(to: &composition) { [id] composition in
+            AudioObjectGetPropertyData(id, &propertyAddress, 0, nil, &propertySize, composition)
         }
         
         if var compositionDict = composition as? [String: AnyObject] {
             compositionDict[kAudioAggregateDeviceIsPrivateKey] = priv as NSNumber
             // Set the composition back on the aggregate device.
             composition = compositionDict as CFDictionary
-            _ = withUnsafeMutablePointer(to: &composition) { composition in
-                AudioObjectSetPropertyData(self.id, &propertyAddress, 0, nil, propertySize, composition)
+            
+            _ = withUnsafeMutablePointer(to: &composition) {  [id] composition in
+                AudioObjectSetPropertyData(id, &propertyAddress, 0, nil, propertySize, composition)
             }
         }
     }
@@ -142,16 +149,17 @@ class AggregateDevice: AudioDevice {
         var propertyAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyComposition)
         AudioObjectGetPropertyDataSize(self.id, &propertyAddress, 0, nil, &propertySize)
         var composition: CFDictionary? = nil
-        _ = withUnsafeMutablePointer(to: &composition) { composition in
-            AudioObjectGetPropertyData(self.id, &propertyAddress, 0, nil, &propertySize, composition)
+        
+        _ = withUnsafeMutablePointer(to: &composition) { [id] composition in
+            AudioObjectGetPropertyData(id, &propertyAddress, 0, nil, &propertySize, composition)
         }
         
         if var compositionDict = composition as? [String: AnyObject] {
             compositionDict[kAudioAggregateDeviceTapAutoStartKey] = autostart as NSNumber
             // Set the composition back on the aggregate device.
             composition = compositionDict as CFDictionary
-            _ = withUnsafeMutablePointer(to: &composition) { composition in
-                AudioObjectSetPropertyData(self.id, &propertyAddress, 0, nil, propertySize, composition)
+            _ = withUnsafeMutablePointer(to: &composition) { [id] composition in
+                AudioObjectSetPropertyData(id, &propertyAddress, 0, nil, propertySize, composition)
             }
         }
     }
@@ -196,9 +204,10 @@ class AggregateDevice: AudioDevice {
         
         var propertySize: UInt32 = 0
         AudioObjectGetPropertyDataSize(self.id, &propertyAddress, 0, nil, &propertySize)
+        
         var list: CFArray? = nil
-        _ = withUnsafeMutablePointer(to: &list) { list in
-            AudioObjectGetPropertyData(self.id, &propertyAddress, 0, nil, &propertySize, list)
+        _ = withUnsafeMutablePointer(to: &list) { [id] list in
+            AudioObjectGetPropertyData(id, &propertyAddress, 0, nil, &propertySize, list)
         }
         
         if var listAsArray = list as? [CFString] {
@@ -217,8 +226,8 @@ class AggregateDevice: AudioDevice {
             
             // Set the list back on the aggregate device.
             list = listAsArray as CFArray
-            _ = withUnsafeMutablePointer(to: &list) { list in
-                AudioObjectSetPropertyData(self.id, &propertyAddress, 0, nil, propertySize, list)
+            _ = withUnsafeMutablePointer(to: &list) { [id] list in
+                AudioObjectSetPropertyData(id, &propertyAddress, 0, nil, propertySize, list)
             }
         }
     }
