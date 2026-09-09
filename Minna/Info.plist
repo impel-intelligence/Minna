@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>NSScreenCaptureUsageDescription</key>
-    <string>Minna needs access to screen recording to capture system audio for transcription.</string>
-    <key>NSAudioCaptureUsageDescription</key>
-    <string>Minna needs access to audio recording to capture your microphone for transcription..</string>
 	<key>BAEssentialMaxInstallSize</key>
 	<integer>2214311818</integer>
 	<key>BAHasManagedAssetPacks</key>
@@ -40,8 +36,10 @@
 			</array>
 		</dict>
 	</array>
-	<key>TELEMETRY_DECK_ID</key>
-	<string>$(TELEMETRY_DECK_ID)</string>
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>Minna needs access to audio recording to capture your microphone for transcription..</string>
+	<key>NSScreenCaptureUsageDescription</key>
+	<string>Minna needs access to screen recording to capture system audio for transcription.</string>
 	<key>SENTRY_DSN</key>
 	<string>$(SENTRY_DSN)</string>
 	<key>SUEnableInstallerLauncherService</key>
@@ -50,6 +48,8 @@
 	<string>https://impel-intelligence.github.io/minna-sparkle-updater/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>ySLQ5G0aOgmtZN2I2NnrPTwJZ36xgXcI3ZpY8W2wuBo=</string>
+	<key>TELEMETRY_DECK_ID</key>
+	<string>$(TELEMETRY_DECK_ID)</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

@@ -75,14 +75,15 @@ actor Transcriber {
     
     func submitAudioToTranscriber(_ buffer: UnsafeBufferBox) async throws {
         let converted = try BufferConverter.standardizeBuffer(buffer, to: analyzerFormat)
-        let input = AnalyzerInput(buffer: converted)
+        let cmTime = CMTime(value: buffer.time.sampleTime, timescale: CMTimeScale(buffer.time.sampleRate))
+        let input = AnalyzerInput(buffer: converted, bufferStartTime: cmTime)
         
         inputBuilder.yield(input)
     }
     
     func submitAudioToTranscriber(_ sample: UnsafeSampleBox) async throws {
         let converted = try BufferConverter.convertSample(sample, to: analyzerFormat)
-        let input = AnalyzerInput(buffer: converted)
+        let input = AnalyzerInput(buffer: converted, bufferStartTime: sample.buffer.presentationTimeStamp)
         
         inputBuilder.yield(input)
     }

@@ -10,7 +10,7 @@ import Speech
 import AVFoundation
 
 /// @unchecked Sendable is safe-ish here: audioEngine is the only piece of this that is not sendable. We only access Ephemeral Audio Recorder from the actor ``TranscriptionSession``. - This was dreamed up by Claude but it seems to be fairly sound.
-final actor EphemeralAVAudioEngineRecorder {
+final actor EphemeralAVAudioEngineMicrophoneRecorder {
     enum AudioRecorderError: Error {
         case noMicrophonePermissions
     }
@@ -18,7 +18,7 @@ final actor EphemeralAVAudioEngineRecorder {
     private let audioEngine: AVAudioEngine = AVAudioEngine()
 
     init() { }
-
+    
     func stop() {
         audioEngine.stop()
     }
@@ -34,7 +34,7 @@ final actor EphemeralAVAudioEngineRecorder {
 #if os(iOS)
     func setUpAudioSession() throws {
         let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.playAndRecord, mode: .spokenAudio)
+        try audioSession.setCategory(.voiceChat, mode: .spokenAudio)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
     }
 #endif
@@ -48,13 +48,15 @@ final actor EphemeralAVAudioEngineRecorder {
 
         let (stream, continuation) = AsyncStream.makeStream(of: UnsafeBufferBox.self, bufferingPolicy: .unbounded)
 
-        audioEngine.inputNode.installTap(onBus: 0, bufferSize: 4096, format: audioEngine.inputNode.outputFormat(forBus: 0)) { [continuation] buffer, time in
+        let hwFormat = audioEngine.inputNode.inputFormat(forBus: 0)
+
+        audioEngine.inputNode.installTap(onBus: 0, bufferSize: 4096, format: hwFormat) { [continuation] buffer, time in
             guard let bufferCopy = buffer.deepCopy() else {
                 Log.logger.error("Failed to copy buffer")
                 return
             }
 
-            continuation.yield(UnsafeBufferBox(buffer: bufferCopy))
+            continuation.yield(UnsafeBufferBox(buffer: bufferCopy, time: time))
         }
 
         audioEngine.prepare()
@@ -65,10 +67,18 @@ final actor EphemeralAVAudioEngineRecorder {
 
     private func setupAudioEngine() throws {
         audioEngine.inputNode.removeTap(onBus: 0)
+        
+        // Enable Apple's Acoustic Echo Cancellation on the microphone so we can ignore loopback from speakers playing into the mic.
+        // Drops the volume of speakers sadly, so this needs to be evaluated for usefulness.
+//        try audioEngine.inputNode.setVoiceProcessingEnabled(true)
+//        audioEngine.inputNode.voiceProcessingOtherAudioDuckingConfiguration = AVAudioVoiceProcessingOtherAudioDuckingConfiguration(
+//            enableAdvancedDucking: false,
+//            duckingLevel: .min
+//        )
     }
 }
 
-extension EphemeralAVAudioEngineRecorder {
+extension EphemeralAVAudioEngineMicrophoneRecorder {
     func isAuthorized() async -> Bool {
         if AVCaptureDevice.authorizationStatus(for: .audio) == .authorized {
             return true

@@ -9,24 +9,36 @@ import CoreAudio
 
 /// A class that models aggregate device objects, registers audio property listeners, and maintains lists of subdevices and subtaps.
 class AggregateDevice: AudioDevice {
+    static let defaultConfiguration: CompositionConfig = CompositionConfig(
+        name: "Default-tap",
+        uid: UUID().uuidString,
+        subDeviceUIDs: [],
+        tapUIDs: [],
+        autoStart: false,
+        isStacked: true
+    )
+    
     let name: String
     
     var deviceList: Set<String> = []
     var tapList: Set<String> = []
-    var isPrivate: Bool = false
-    var autoStart: Bool = false
-    /// Stop IO automatically if all tapped processes stop.
-    var autoStop: Bool = false
-    var isRecording: Bool = false
     
-    var deviceListAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyFullSubDeviceList)
-    var tapListAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyTapList)
-    var compositionAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyComposition)
+    var configuration: CompositionConfig
+    
+    var deviceListListener: PropertyListener?
+    var tapListListener: PropertyListener?
+    var compositionListener: PropertyListener?
+
     var propertiesChangedToken: AudioObjectPropertyListenerBlock?
     
-    override init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main) throws {
+    override convenience init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main) throws {
+        try self.init(id: id, dispatchQueue: dispatchQueue, configuration: AggregateDevice.defaultConfiguration)
+    }
+    
+    init(id: AudioObjectID, dispatchQueue: DispatchQueue = .main, configuration: CompositionConfig) throws {
         // Get the name of the aggregate device.
         self.name = try id.name
+        self.configuration = configuration
 
         try super.init(id: id, dispatchQueue: dispatchQueue)
         
@@ -69,44 +81,19 @@ class AggregateDevice: AudioDevice {
             }
         }
         
-        let addDeviceListenerStatus = AudioObjectAddPropertyListenerBlock(id, &deviceListAddress, dispatchQueue, propertiesChanged)
-        let addTapListenerStatus = AudioObjectAddPropertyListenerBlock(id, &tapListAddress, dispatchQueue, propertiesChanged)
-        let addCompositionListenerStatus = AudioObjectAddPropertyListenerBlock(id, &compositionAddress, dispatchQueue, propertiesChanged)
-        
+        deviceListListener = try PropertyListener(id: id, selector: kAudioAggregateDevicePropertyFullSubDeviceList, listener: propertiesChanged)
+        tapListListener = try PropertyListener(id: id, selector: kAudioAggregateDevicePropertyTapList, listener: propertiesChanged)
+        compositionListener = try PropertyListener(id: id, selector: kAudioAggregateDevicePropertyComposition, listener: propertiesChanged)
         
         propertiesChangedToken = propertiesChanged
-
-        do {
-            try addDeviceListenerStatus.validateCoreAudioError()
-            try addTapListenerStatus.validateCoreAudioError()
-            try addCompositionListenerStatus.validateCoreAudioError()
-        } catch {
-            unregisterListeners()
-        }
     }
     
     func unregisterListeners() {
-        guard let token = propertiesChangedToken else { return }
+        guard propertiesChangedToken != nil else { return }
             
-        let removeDeviceListenerStatus = AudioObjectRemovePropertyListenerBlock(id, &deviceListAddress, dispatchQueue, token)
-        let removeTapListenerStatus = AudioObjectRemovePropertyListenerBlock(id, &tapListAddress, dispatchQueue, token)
-        let removeCompositionListenerStatus = AudioObjectRemovePropertyListenerBlock(id, &compositionAddress, dispatchQueue, token)
-        
-        let removeDeviceListenerError = CoreAudioError(status: removeDeviceListenerStatus)
-        if removeDeviceListenerError == .noError {
-            Log.logger.info("Failed to remove device list listener", error: removeDeviceListenerError, metadata: ["deviceID": "\(id)"])
-        }
-        
-        let removeTapListenerError = CoreAudioError(status: removeTapListenerStatus)
-        if removeTapListenerError == .noError {
-            Log.logger.info("Failed to remove tap list listener", error: removeTapListenerError, metadata: ["deviceID": "\(id)"])
-        }
-
-        
-        let removeCompositionListenerError = CoreAudioError(status: removeCompositionListenerStatus)
-        if removeCompositionListenerError == .noError {
-            Log.logger.info("Failed to remove composition listener", error: removeCompositionListenerError, metadata: ["deviceID": "\(id)"])
-        }
+        deviceListListener = nil
+        tapListListener = nil
+        compositionListener = nil
         
         propertiesChangedToken = nil
     }
@@ -116,6 +103,8 @@ class AggregateDevice: AudioDevice {
         self.deviceList = []
                 
         var propertySize: UInt32 = 0
+        var deviceListAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyFullSubDeviceList)
+
         let propertySizeStatus = AudioObjectGetPropertyDataSize(self.id, &deviceListAddress, 0, nil, &propertySize)
         try propertySizeStatus.validateCoreAudioError()
         
@@ -133,6 +122,8 @@ class AggregateDevice: AudioDevice {
     func updateTapList() throws {
         // Get the tap list of the aggregate device.
         self.tapList = Set<String>()
+        var tapListAddress = CoreAudio.getPropertyAddress(selector: kAudioAggregateDevicePropertyTapList)
+        
         var propertySize: UInt32 = 0
         let propertySizeStatus = AudioObjectGetPropertyDataSize(self.id, &tapListAddress, 0, nil, &propertySize)
         try propertySizeStatus.validateCoreAudioError()
@@ -165,8 +156,9 @@ class AggregateDevice: AudioDevice {
         try dataStatus.validateCoreAudioError()
 
         if let compositionDict = composition as? [String: AnyObject] {
-            self.isPrivate = compositionDict[kAudioAggregateDeviceIsPrivateKey] as? Bool ?? self.isPrivate
-            self.autoStart = compositionDict[kAudioAggregateDeviceTapAutoStartKey] as? Bool ?? self.autoStart
+            self.configuration.isPrivate = compositionDict[kAudioAggregateDeviceIsPrivateKey] as? Bool ?? self.configuration.isPrivate
+            self.configuration.autoStart = compositionDict[kAudioAggregateDeviceTapAutoStartKey] as? Bool ?? self.configuration.autoStart
+            self.configuration.isStacked = compositionDict[kAudioAggregateDeviceIsStackedKey] as? Bool ?? self.configuration.isStacked
         }
     }
     
@@ -192,6 +184,7 @@ class AggregateDevice: AudioDevice {
             let compositionDataStatus = withUnsafeMutablePointer(to: &composition) {  [id] composition in
                 AudioObjectSetPropertyData(id, &propertyAddress, 0, nil, propertySize, composition)
             }
+            
             try compositionDataStatus.validateCoreAudioError()
         }
     }
@@ -291,5 +284,20 @@ class AggregateDevice: AudioDevice {
             }
             try setStatus.validateCoreAudioError()
         }
+    }
+}
+
+extension AggregateDevice {
+    /// Create a new process tap based on the provided tap description.
+    static func new(config: CompositionConfig, dispatchQueue: DispatchQueue = .main) throws -> AggregateDevice {
+        // Create a tap description.
+        let description = config.composition
+
+        // Ask the HAL to create a new tap and put the resulting `AudioObjectID` in `tapID`.
+        var aggregateID = AudioObjectID.unknown
+        let status = AudioHardwareCreateAggregateDevice(description, &aggregateID)
+        try status.validateCoreAudioError()
+        
+        return try AggregateDevice(id: aggregateID, dispatchQueue: dispatchQueue, configuration: config)
     }
 }

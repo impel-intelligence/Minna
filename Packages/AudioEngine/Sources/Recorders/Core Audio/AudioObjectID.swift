@@ -15,6 +15,7 @@ protocol Initializable {
 extension CATapDescription: Initializable { }
 extension AudioStreamBasicDescription: Initializable { }
 extension Int32: Initializable { }
+extension AudioObjectID: Initializable { }
 
 extension AudioObjectID {
     /// The system audio object ID, `kAudioObjectSystemObject`
@@ -27,6 +28,25 @@ extension AudioObjectID {
     static var unknownID: UInt32 { kAudioObjectUnknown }
 
     static var unknown: AudioObjectID { AudioObjectID(unknownID) }
+    
+    static var defaultOutputDevice: AudioObjectID {
+        get throws {
+            try AudioObjectID.system.read(property: kAudioHardwarePropertyDefaultOutputDevice)
+        }
+    }
+    
+    static var defaultInputDevice: AudioObjectID {
+        get throws {
+            try AudioObjectID.system.read(property: kAudioHardwarePropertyDefaultInputDevice)
+        }
+    }
+
+    
+    static var defaultSystemOutputDevice: AudioObjectID {
+        get throws {
+            try AudioObjectID.system.read(property: kAudioHardwarePropertyDefaultSystemOutputDevice)
+        }
+    }
 }
 
 extension AudioObjectID {
