@@ -41,7 +41,6 @@ extension AudioObjectID {
         }
     }
 
-    
     static var defaultSystemOutputDevice: AudioObjectID {
         get throws {
             try AudioObjectID.system.read(property: kAudioHardwarePropertyDefaultSystemOutputDevice)
@@ -74,6 +73,12 @@ extension AudioObjectID {
     static func systemTapList() throws -> [AudioObjectID] {
         return try AudioObjectID.system.readArray(selector: kAudioHardwarePropertyTapList)
     }
+    
+    /// Retrieve list of devices from the HAL system.
+    static func devicesList() throws -> [AudioObjectID] {
+        return try AudioObjectID.system.readArray(selector: kAudioHardwarePropertyDevices)
+    }
+
 }
 
 extension AudioObjectID {

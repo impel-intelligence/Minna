@@ -16,8 +16,11 @@ final actor EphemeralAVAudioEngineMicrophoneRecorder {
     }
 
     private let audioEngine: AVAudioEngine = AVAudioEngine()
+    private var device: AudioObjectID
 
-    init() { }
+    init(device: AudioObjectID) {
+        self.device = device
+    }
     
     func stop() {
         audioEngine.stop()
@@ -66,6 +69,19 @@ final actor EphemeralAVAudioEngineMicrophoneRecorder {
     }
 
     private func setupAudioEngine() throws {
+        if let audioUnit = audioEngine.inputNode.audioUnit {
+            let status = AudioUnitSetProperty(
+                audioUnit,
+                kAudioOutputUnitProperty_CurrentDevice,
+                kAudioUnitScope_Global,
+                0,
+                &device,
+                UInt32(MemoryLayout<AudioDeviceID>.size)
+            )
+            
+            try status.validateCoreAudioError()
+        }
+
         audioEngine.inputNode.removeTap(onBus: 0)
         
         // Enable Apple's Acoustic Echo Cancellation on the microphone so we can ignore loopback from speakers playing into the mic.
