@@ -10,7 +10,7 @@ import CoreGraphics
 import InfiniteGrid
 
 struct CanvasView<Content: View>: View {
-    let gridShading: GraphicsContext.Shading = GraphicsContext.Shading.color(.primary.opacity(0.5))
+    let gridShading: GraphicsContext.Shading = GraphicsContext.Shading.color(.primary.opacity(0.1))
 
     @Binding var scale: CGFloat
     @Binding var translation: CGPoint

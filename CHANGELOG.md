@@ -7,6 +7,9 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+### Added
+- Notes on the recording canvas now organize themselves: related notes drift together into colored clusters, unrelated notes spread apart, and the layout settles on its own. You can still drag any note, and a new sliders panel on the canvas lets you tune how strongly notes attract, repel, and connect.
+
 ### Changed
 - Moved to TelemetryDeck for private telemetry.
 

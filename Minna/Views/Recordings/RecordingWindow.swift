@@ -3,6 +3,7 @@
 //  Minna
 //
 //  Created by Taylor Lineman on 8/26/26.
+//  Edited by Claude Fable 5 (Anthropic) on 2026-09-08
 //
 
 import SwiftUI
@@ -21,6 +22,7 @@ extension View {
     }
 }
 
+// TODO: Tell the user if their volume = 0 we can not record system audio
 struct RecordingWindow: View {
     @State var transcriptionString: TranscriptionString = {
         var container = AttributeContainer()
@@ -36,26 +38,40 @@ struct RecordingWindow: View {
 
     @State var translation: CGPoint = .zero
     @State var scale: CGFloat = 1
-    
+
+    @State var graph = NoteGraphModel()
+    @State var showsSimulationControls: Bool = false
+
     var body: some View {
         ZStack(alignment: .topLeading) {
             CanvasView(translation: $translation, scale: $scale) {
-                ForEach(noteTaker.sections, id: \.subject) { section in
-                    DraggableView(scale: $scale) {
-                        NoteSectionView(section: section)
-                    }
-                }
-//                ForEach(noteTaker.definitions, id: \.concept) { definition in
-//                    DraggableView(scale: $scale) {
-//                        NoteDefinitionView(defintion: definition)
-//                    }
-//                }
+                NoteGraphView(model: graph, scale: $scale)
+            }
+            .onGeometryChange(for: CGSize.self) { proxy in
+                proxy.size
+            } action: { size in
+                // Aim center gravity at the world point currently in the middle of the window, so notes gather on screen rather than at the grid origin.
+                graph.simulation.center = (CGPoint(x: size.width / 2, y: size.height / 2) / scale) - translation
+            }
+            .onChange(of: noteTaker.sections) {
+                graph.sync(sections: noteTaker.sections)
             }
             HStack {
                 Spacer()
                 Text("X: \(translation.x), Y: \(translation.y)")
                     .glassEffect()
+                Button {
+                    showsSimulationControls.toggle()
+                } label: {
+                    Image(systemSymbol: .sliderHorizontal3)
+                        .accessibilityLabel("Simulation settings")
+                        .padding(6)
+                        .glassEffect(.regular.interactive())
+                        .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
             }
+            .padding(.trailing, 10)
             GlassEffectContainer {
                 VStack(spacing: 5) {
                     Button {
@@ -130,6 +146,15 @@ struct RecordingWindow: View {
             }
             .animation(.default, value: isTranscribing)
         }
+        .overlay(alignment: .topTrailing) {
+            if showsSimulationControls {
+                SimulationControlsView(model: graph)
+                    .padding(.top, 40)
+                    .padding(.trailing, 10)
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
+            }
+        }
+        .animation(.default, value: showsSimulationControls)
         .onDisappear {
             Task {
                 do {

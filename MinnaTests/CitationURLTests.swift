@@ -12,7 +12,7 @@ import Testing
 struct CitationURLTests {
     @MainActor
     @Test func citationProducesProperURL() throws {
-        let citation = Citation(id: UUID(), title: "HelloWorld")
+        let citation = Citation(id: UUID(), title: "HelloWorld", pieces: [])
         let url = try #require(citation.urlComponents.url, "A URL should be created from urlComponents.")
         
         #expect(url.absoluteString.starts(with: "minna://"), "URL does not contain the minna scheme.")
