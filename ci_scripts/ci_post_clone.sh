@@ -15,9 +15,10 @@ cp macros.json ~/Library/org.swift.swiftpm/security/
 cp plugins.json ~/Library/org.swift.swiftpm/security/
 
 
-# Write an XCConfig with variables from Xcode clouds' environment
-cp "../Config.local.example.xcconfig" "../Config.local.xcconfig"
-
-sed -i '' -E "s/^DEVELOPMENT_TEAM[[:space:]]*=.*/DEVELOPMENT_TEAM = ${DEVELOPMENT_TEAM:-}/" ../Config.local.xcconfig
-sed -i '' -E "s/^SENTRY_DSN[[:space:]]*=.*/SENTRY_DSN = ${SENTRY_DSN:-}/" ../Config.local.xcconfig
-sed -i '' -E "s/^TELEMETRY_DECK_ID[[:space:]]*=.*/TELEMETRY_DECK_ID = ${TELEMETRY_DECK_ID:-}/" ../Config.local.xcconfig
+# Write an XCConfig with variables from Xcode clouds' environment. We generate the file directly rather than sed-substituting into the example template: values like SENTRY_DSN contain slashes, which sed reads as its own delimiter (the DSN's trailing project ID then overflows the s///N occurrence flag on BSD sed).
+# Edited by Claude Fable 5 (Anthropic) on 2026-09-09
+cat > ../Config.local.xcconfig <<EOF
+DEVELOPMENT_TEAM = ${DEVELOPMENT_TEAM:-}
+SENTRY_DSN = ${SENTRY_DSN:-}
+TELEMETRY_DECK_ID = ${TELEMETRY_DECK_ID:-}
+EOF
