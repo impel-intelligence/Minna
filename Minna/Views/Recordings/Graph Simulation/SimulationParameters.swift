@@ -1,3 +1,11 @@
+//
+//  SimulationParameters.swift
+//  Minna
+//
+//  Created by Claude Fable 5 (Anthropic) on 9/8/26.
+//
+
+import SwiftUI
 
 /// Tunable constants for the note graph force simulation. Every value can be adjusted live from `SimulationControlsView`; the simulation reads them each frame.
 /// - Authored by: Claude Fable 5 (Anthropic)

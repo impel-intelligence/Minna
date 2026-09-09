@@ -51,7 +51,8 @@ struct NoteGraphSimulationTests {
         let finalDistance = simulation.nodes[ids[0]]!.position.distance(to: simulation.nodes[ids[1]]!.position)
 
         #expect(finalDistance < initialDistance, "Connected notes should move toward each other.")
-        let restLength = simulation.nodes[ids[0]]!.effectiveRadius + simulation.nodes[ids[1]]!.effectiveRadius + simulation.parameters.springRestGap
+        // Horizontally separated 200pt-wide cards have a spring rest length of 100 + 100 + springRestGap.
+        let restLength = 200 + simulation.parameters.springRestGap
         #expect(finalDistance < restLength * 2, "Connected notes should settle near the spring rest length, not remain far apart.")
     }
 
@@ -159,6 +160,28 @@ struct NoteGraphSimulationTests {
         #expect(clusterA != clusterB, "Separate components should have distinct cluster indices.")
     }
 
+    @Test func adjacentConnectedNotesSettleWithoutWandering() {
+        // Regression test: wide cards side by side used to demand overlap (circular radius model), so the collision resolver fired every frame and walked the pair across the canvas.
+        let (simulation, ids) = makeSimulation(positions: [CGPoint(x: 350, y: 400), CGPoint(x: 650, y: 400)])
+        simulation.nodes[ids[0]]!.size = CGSize(width: 300, height: 100)
+        simulation.nodes[ids[1]]!.size = CGSize(width: 300, height: 100)
+        simulation.setEdges([NoteGraphSimulation.Edge(a: ids[0], b: ids[1], weight: 1)])
+
+        let initialCentroid = CGPoint(x: 500, y: 400)
+        stepMany(simulation, 3600)
+
+        #expect(simulation.isSettled, "A touching pair should reach steady state instead of jittering forever.")
+
+        let nodeA = simulation.nodes[ids[0]]!
+        let nodeB = simulation.nodes[ids[1]]!
+        let centroid = CGPoint(x: (nodeA.position.x + nodeB.position.x) / 2, y: (nodeA.position.y + nodeB.position.y) / 2)
+        #expect(centroid.distance(to: initialCentroid) < 30, "The pair should stay where it was, not walk across the canvas.")
+
+        let rectA = CGRect(origin: CGPoint(x: nodeA.position.x - nodeA.size.width / 2, y: nodeA.position.y - nodeA.size.height / 2), size: nodeA.size)
+        let rectB = CGRect(origin: CGPoint(x: nodeB.position.x - nodeB.size.width / 2, y: nodeB.position.y - nodeB.size.height / 2), size: nodeB.size)
+        #expect(!rectA.intersects(rectB), "The settled pair should rest side by side without overlapping.")
+    }
+
     @Test func largeNotesPullSmallNotesMoreThanTheReverse() {
         let (simulation, ids) = makeSimulation(positions: [CGPoint(x: 100, y: 400), CGPoint(x: 900, y: 400)])
         simulation.nodes[ids[0]]!.size = CGSize(width: 400, height: 250)
@@ -262,11 +285,11 @@ struct NoteGraphModelTests {
         #expect(model.simulation.edges.count == 1, "A near-zero threshold should keep only the identical gibbon pair connected.")
     }
 
-    @Test func cosineDistanceBehaviors() {
-        #expect(abs(NoteGraphModel.cosineDistance([1, 0], [1, 0])) < 0.0001)
-        #expect(abs(NoteGraphModel.cosineDistance([1, 0], [0, 1]) - 1) < 0.0001)
-        #expect(abs(NoteGraphModel.cosineDistance([1, 0], [-1, 0]) - 2) < 0.0001)
-        #expect(NoteGraphModel.cosineDistance([1, 0], [0, 0]) == 2, "Degenerate vectors should never connect.")
-        #expect(NoteGraphModel.cosineDistance([1, 0], [1, 0, 1]) == 2, "Mismatched dimensions should never connect.")
+    @Test func cosineDistanceBehaviors() throws {
+        #expect(try abs(#require(NoteGraphModel.cosineDistance([1, 0], [1, 0]))) < 0.0001)
+        #expect(try abs(#require(NoteGraphModel.cosineDistance([1, 0], [0, 1])) - 1) < 0.0001)
+        #expect(try abs(#require(NoteGraphModel.cosineDistance([1, 0], [-1, 0])) - 2) < 0.0001)
+        #expect(NoteGraphModel.cosineDistance([1, 0], [0, 0]) == nil, "Degenerate vectors should never connect.")
+        #expect(NoteGraphModel.cosineDistance([1, 0], [1, 0, 1]) == nil, "Mismatched dimensions should never connect.")
     }
 }

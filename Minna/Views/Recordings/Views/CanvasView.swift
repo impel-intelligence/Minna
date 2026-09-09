@@ -26,7 +26,7 @@ struct CanvasView<Content: View>: View {
     }
 
     var body: some View {
-        InfiniteGrid(gridShading: gridShading, lineThickness: 1, translation: $translation, scale: $scale, interactionPoint: $interactionPoint) {
+        InfiniteGrid(gridShading: gridShading, lineThickness: 1, smallestAllowedLineGap: 100, largestAllowedLineGap: 1000, translation: $translation, scale: $scale, interactionPoint: $interactionPoint) {
             content
         }
     }

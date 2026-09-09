@@ -143,6 +143,8 @@ final class NoteGraphModel {
         guard similarity.isFinite else { return nil }
 
         // Clamp result to [-1, 1] to handle floating-point precision issues
-        return min(max(similarity, -1), 1)
+        let distance = 1 - min(max(similarity, -1), 1)
+
+        return distance
     }
 }
