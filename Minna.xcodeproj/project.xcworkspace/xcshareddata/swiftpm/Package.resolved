@@ -1,15 +1,6 @@
 {
-  "originHash" : "0e8a64f9eb2da00207fec8a675c2e5167794f5657d3745733b647bde79572b28",
+  "originHash" : "f31ffbb06f38cdb8162291261027ed0ae6b18b76ea534ca8ae5ee4ce31036b9d",
   "pins" : [
-    {
-      "identity" : "anylanguagemodel",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/impel-intelligence/AnyLanguageModel",
-      "state" : {
-        "revision" : "3d99e555479a5707450f078a73269b4fbe84dc07",
-        "version" : "2.2.4"
-      }
-    },
     {
       "identity" : "blurbkit",
       "kind" : "remoteSourceControl",
@@ -78,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/impel-intelligence/mlx-swift-lm",
       "state" : {
-        "revision" : "d07c1e30919314c908c1dd2d51e48f92d6768b9b",
-        "version" : "1.0.1"
+        "revision" : "3086ed4a04e0034181dffba66d3e78719885c723",
+        "version" : "1.0.3"
       }
     },
     {

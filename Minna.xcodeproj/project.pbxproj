@@ -1511,8 +1511,6 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 9.19.0;
 			};
-			traits = (
-			);
 		};
 		DB0CF5A12FEDD0970036306B /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
 			isa = XCRemoteSwiftPackageReference;

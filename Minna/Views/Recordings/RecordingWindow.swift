@@ -298,7 +298,7 @@ struct RecordingWindow: View {
         }
         
         if recordSystemAudio {
-            Log.logger.info("Attaching microphone system audio to transcriber")
+            Log.logger.info("Attaching system audio to transcriber")
             try await transcriptionSession?.attachSystemTranscriber()
             try await transcriptionSession?.startSystemTranscription()
         }

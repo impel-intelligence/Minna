@@ -19,7 +19,7 @@ struct PreviewView: View {
     
     let file: File
     @State var previewURL: URL?
-    @State private var failedToScopeErorr: Error?
+    @State private var failedToScopeError: Error?
     
     @Binding var highlightedExcerpts: [Int]
     @State private var sidebarOpen: Bool = false
@@ -45,7 +45,7 @@ struct PreviewView: View {
             do {
                 previewURL = try file.securityScopedURL()
             } catch {
-                failedToScopeErorr = error
+                failedToScopeError = error
                 Log.logger.error("Failed to create scoped url", error: error, metadata: ["file": "\(file.uuid)"])
             }
         }
@@ -84,8 +84,8 @@ struct PreviewView: View {
         Group {
             if let previewURL {
                 LookAtMe(url: previewURL, color: file.color.background)
-            } else if let failedToScopeErorr {
-                ContentUnavailableView("Failed to open file", systemSymbol: .pc, description: Text(failedToScopeErorr.localizedDescription))
+            } else if let failedToScopeError {
+                ContentUnavailableView("Failed to open file", systemSymbol: .pc, description: Text(failedToScopeError.localizedDescription))
             } else {
                 ContentUnavailableView("Unkown Error", systemSymbol: .pc)
             }

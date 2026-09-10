@@ -225,7 +225,6 @@ final class NoteTaker: TranscriptionOutput {
         consumeQueueTask = Task {
             for await chunk in noteStream {
                 do {
-                    print("Received chunk: \(chunk)")
                     try await updateNotes(with: chunk)
                 } catch {
                     // TODO: This drops notes if chunks are too big, can use the model token counter to split chunks
@@ -242,11 +241,11 @@ final class NoteTaker: TranscriptionOutput {
             return
         }
 
-        Log.logger.debug("Received: \(content)")
+        Log.logger.debug("Received")
         let instructions = Instructions(NoteTakingInstructions().prompt)
         let session: LanguageModelSession = LanguageModelSession(instructions: instructions)
         let response = try await session.respond(to: content, generating: NoteBlock.self)
-        Log.logger.debug("Received response: \(response)")
+        Log.logger.debug("Received response")
         sections.append(contentsOf: response.content.sections)
 //        definitions.append(contentsOf: response.content.definitions)
     }
