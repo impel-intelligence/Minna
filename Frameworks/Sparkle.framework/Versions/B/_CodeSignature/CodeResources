@@ -10,27 +10,19 @@
 		</data>
 		<key>Resources/Info.plist</key>
 		<data>
-		khgzg7EUjGFC86rJyoZP4fBw4TE=
+		EWLXrYgphNzA1R4C6EXAGY0/sFI=
 		</data>
 		<key>Resources/ReleaseNotesColorStyle.css</key>
 		<data>
 		NjIvb1z7eJuLCKf9HS15O5heg50=
 		</data>
-		<key>Resources/SUStatus.nib</key>
-		<data>
-		GTcyeZW17TcmJWdEEfhoJMkZPyc=
-		</data>
 		<key>Resources/SUUpdateAlert.nib</key>
 		<data>
 		6M789C1QB9aMJ8C+60BqTx4LYfo=
 		</data>
-		<key>Resources/SUUpdatePermissionPrompt.nib/keyedobjects-101300.nib</key>
+		<key>Resources/SUUpdatePermissionPrompt.nib</key>
 		<data>
-		2EEMgSXUAtJzDcm1Weat6WiBw0k=
-		</data>
-		<key>Resources/SUUpdatePermissionPrompt.nib/keyedobjects-110000.nib</key>
-		<data>
-		9gl0bDWTU2acybnF4GiqxaGMXjk=
+		G8eOjQUTFIOj7ExP2MX2PoUb1rE=
 		</data>
 		<key>Resources/ar.lproj/Sparkle.strings</key>
 		<dict>
@@ -234,7 +226,7 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			NEDnlPEQQ+nDbGRR+eWfCulsTxU=
+			VFiwxJJ6QfAWWM/3RZYFswhOjfc=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -354,10 +346,10 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			cTzmyZ/5UBhUqBGzDg82QNa3o5g=
+			6FFzuCIk1Z2ul/nzjs0EqYH1N4s=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"713ce6c99ff9501854a811b30e0f3640d6b7a398" or cdhash H"bc6ce2bf215c2583a2496b13d022f96bf0c31603"</string>
+			<string>cdhash H"e85173b82224d59dae97f9f38ecd04a981f5378b" or cdhash H"99aa038856ebee3fec3120fd96eb640111668815"</string>
 		</dict>
 		<key>Headers/SPUAppcastSigningValidationStatus.h</key>
 		<dict>
@@ -454,7 +446,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			leFSMeOWXUgPixT1yRHjkrcoSVSfMUdQyFESi/ZqwxQ=
+			Id8i1PDr1Oq6Uw939SCilFGgV7cAk+/sMQTOAlMCbPk=
 			</data>
 		</dict>
 		<key>Headers/SUErrors.h</key>
@@ -594,7 +586,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			Jm045bB12GQdLMxGE96BxTkE74yjwWxau2YQcrG5FL0=
+			X6AkqkFsE2FPtViNN4qmwWNxc32ZgMV/yz4y+CCPG4Y=
 			</data>
 		</dict>
 		<key>Resources/ReleaseNotesColorStyle.css</key>
@@ -604,13 +596,6 @@
 			dr1pmXWP2OUdF+a0gttDT5tHaMArA3r2vS46AAzoy8E=
 			</data>
 		</dict>
-		<key>Resources/SUStatus.nib</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			u6Fd03omr4dHYhS2iwbWRVEYzlB/13hj9JR9ZUpgRa8=
-			</data>
-		</dict>
 		<key>Resources/SUUpdateAlert.nib</key>
 		<dict>
 			<key>hash2</key>
@@ -618,18 +603,11 @@
 			OYejM9p8JyjvLLllbl7q8IMohIc8q/eDU/y5CZxdj74=
 			</data>
 		</dict>
-		<key>Resources/SUUpdatePermissionPrompt.nib/keyedobjects-101300.nib</key>
+		<key>Resources/SUUpdatePermissionPrompt.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			zmCXFxocKusTM2sy9StAUazjyXAHBrjv+VGTsqUig9Q=
-			</data>
-		</dict>
-		<key>Resources/SUUpdatePermissionPrompt.nib/keyedobjects-110000.nib</key>
-		<dict>
-			<key>hash2</key>
-			<data>
-			ZLdS8WMscZ0plHRscWctC2AwdsAmglbv+17c5rb8viM=
+			LmK51ac21TseryF0MsTQrQUhfol3h88b3xBx/yIwjUY=
 			</data>
 		</dict>
 		<key>Resources/ar.lproj/Sparkle.strings</key>
@@ -834,7 +812,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			/JWFMtJqjh50Yi0/VY/CahKADoxJ+2FK/Q4Yg6zORwA=
+			MbKPPltfn+PXq/cad5dR1R/2MvMZAVXvPNl9J5GkD7E=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -951,28 +929,28 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			MVKO20p/EwA8OlNRYiIaXan95YI=
+			xo3dqhPlGAAThm9r+a1qPpNScFk=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"31528edb4a7f13003c3a535162221a5da9fde582" or cdhash H"38f33327861713f1100e1a300223c9c35b990c8d"</string>
+			<string>cdhash H"c68dddaa13e5180013866f6bf9ad6a3e93527059" or cdhash H"3f9acf0ef6530208d17855bcf05ac4603e60da49"</string>
 		</dict>
 		<key>XPCServices/Downloader.xpc</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			SucFxoXFHadffYQErhaluyC+sbk=
+			qrWSG0cqzWKEPoKansgLHK6fMwY=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"4ae705c685c51da75f7d8404ae16a5bb20beb1b9" or cdhash H"9eee40abba802920e774cb68ba106d3258b98f0d"</string>
+			<string>cdhash H"aab5921b472acd62843e829a9ec80b1cae9f3306" or cdhash H"be980ee77dd5723f222634fae94bd78c59038e16"</string>
 		</dict>
 		<key>XPCServices/Installer.xpc</key>
 		<dict>
 			<key>cdhash</key>
 			<data>
-			xX946YsvZB8Ik6dOJDNaS7V114A=
+			dhNIXT9jRMHsWDJVk4tEjONnWzM=
 			</data>
 			<key>requirement</key>
-			<string>cdhash H"c57f78e98b2f641f0893a74e24335a4bb575d780" or cdhash H"b31e1722080ecf521b08d8ae21af0cb3dbf03ca3"</string>
+			<string>cdhash H"7613485d3f6344c1ec583255938b448ce3675b33" or cdhash H"20a3212aeca285eee374630291a725d129d5adc9"</string>
 		</dict>
 	</dict>
 	<key>rules</key>
