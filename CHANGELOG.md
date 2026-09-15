@@ -7,6 +7,8 @@ The format has been adjusted to include a release Title. This has been inserted 
 
 ## [Unreleased]
 
+## [0.15.2] - Discord Invite - 2026-09-14
+
 ### Added
 - Added an announcement for the Minna Discord channel.
 
