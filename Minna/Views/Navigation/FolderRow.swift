@@ -58,7 +58,7 @@ struct FolderRow: View {
         } icon: {
             folder.icon.image()
         }
-        .tag(NavigationDestination.folder(folder))
+        .tag(folder)
         .contextMenu {
             if !folder.protected {
                 Button {

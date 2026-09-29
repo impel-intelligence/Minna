@@ -12,6 +12,47 @@ import SentrySwift
 import DatabaseSchema
 import Logging
 
+struct FolderContent: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.irisContext) private var irisContext
+    @Environment(\.database) var database
+    @Environment(\.router) private var navigationRouter
+    @Environment(\.openWindow) private var openWindow
+
+    @Binding var selectedFile: File?
+    let folder: Folder
+
+    // WARN: Do not edit this query, its actual value is set in the initializer
+    @Query private var files: [File]
+    
+    // SwiftData does not support filtering by custom enums within a query. This in-memory filtering is required. Swift Data also does not support dynamic sorts... So we are doing that in memory as well.
+    var filteredFiles: [File] {
+        files//.filter { contentTypes.contains($0.type) }.sorted(by: sortMode.sortFunction(lhs:rhs:))
+    }
+    
+    init(selectedFile: Binding<File?>, folder: Folder) {
+        self._selectedFile = selectedFile
+        self.folder = folder
+        
+        let id = folder.persistentModelID
+
+        // This is funky! For some reason there is now way to filter a query when it enters into the view. You have to do this weird `_` syntax that SwiftUI hacks seem to love.
+        _files = Query(filter: #Predicate<File> { file in
+            return file.folder.persistentModelID == id
+        })
+    }
+
+    var body: some View {
+        List(selection: $selectedFile) {
+            ForEach(filteredFiles) { file in
+                Text(file.title)
+                    .tag(file)
+            }
+        }
+
+    }
+}
+
 public struct NavigationCore: View {
     @Environment(\.undoManager) private var undoManager
     @Environment(\.modelContext) private var modelContext
@@ -37,25 +78,29 @@ public struct NavigationCore: View {
     
     @State var isDroppingFile: Bool = false
     
+    @State var selectedFolder: Folder?
+    @State var selectedFile: File?
+    
     public var body: some View {
         NavigationSplitView {
-            List(selection: $navigationRouter.selectedTab) {
-                SearchStartupView.label
-                    .tag(NavigationDestination.search)
+            List(selection: $selectedFolder) {
+                ForEach(folders) { folder in
+                    FolderRow(folder: folder, addFolder: addFolder)
+                }
+//                SearchStartupView.label
+//                    .tag(NavigationDestination.search)
 
 //                RecentsView.label
 //                    .tag(NavigationDestination.recents)
 
-                Section("Knowledge Base", isExpanded: $knowledgeExpanded) {
-                    ForEach(folders) { folder in
-                        FolderRow(folder: folder, addFolder: addFolder)
-                    }
-                    .onMove { source, destination in
-                        FolderRow.reorder(folders, from: source, to: destination)
-                    }
-                }
-
-//                Section("Connections", isExpanded: $connectionsExpanded) {}
+//                Section("Knowledge Base", isExpanded: $knowledgeExpanded) {
+//                    ForEach(folders) { folder in
+////                        FolderRow(folder: folder, addFolder: addFolder)
+//                    }
+//                    .onMove { source, destination in
+//                        FolderRow.reorder(folders, from: source, to: destination)
+//                    }
+//                }
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
             .toolbar {
@@ -68,31 +113,46 @@ public struct NavigationCore: View {
                     .accessibilityIdentifier("navigation.addItem")
                 }
             }
-        } detail: {
-            NavigationStack(path: $navigationRouter.path) {
-                Group {
-                    switch navigationRouter.selectedTab {
-                    case .search, nil:
-                        SearchStartupView()
-//                    case .recents:
-//                        RecentsView()
-                    case .folder(let folder):
-                        FolderView(folder: folder)
-                            .id(folder.uuid)
-                    }
-                }
-                .environment(navigationRouter)
-                .navigationDestination(for: Folder.self) { folder in
-                    FolderView(folder: folder)
-                        .id(folder.uuid)
-                        .environment(navigationRouter)
-                }
-                .navigationDestination(for: Chat.self) { chat in
-                    AskMinnaView(chat: chat, viewMode: chat.transcript.isEmpty ? .startup : .chat)
-                        .id(chat.uuid)
-                        .environment(navigationRouter)
-                }
+        } content: {
+            if let selectedFolder {
+                FolderContent(selectedFile: $selectedFile, folder: selectedFolder)
+            } else {
+                Text("Select a folder")
             }
+        } detail: {
+            if let selectedFile {
+                if selectedFile.type == .askMinna, let chat = selectedFile.chat {
+                    AskMinnaView(chat: chat, viewMode: .chat)
+                } else {
+                    PreviewView(file: selectedFile, highlightedExcerpts: .constant([]))
+                }
+            } else {
+                Text("Select a file")
+            }
+//            NavigationStack(path: $navigationRouter.path) {
+//                Group {
+//                    switch navigationRouter.selectedTab {
+//                    case .search, nil:
+//                        SearchStartupView()
+////                    case .recents:
+////                        RecentsView()
+//                    case .folder(let folder):
+//                        FolderView(folder: folder)
+//                            .id(folder.uuid)
+//                    }
+//                }
+//                .environment(navigationRouter)
+//                .navigationDestination(for: Folder.self) { folder in
+//                    FolderView(folder: folder)
+//                        .id(folder.uuid)
+//                        .environment(navigationRouter)
+//                }
+//                .navigationDestination(for: Chat.self) { chat in
+//                    AskMinnaView(chat: chat, viewMode: chat.transcript.isEmpty ? .startup : .chat)
+//                        .id(chat.uuid)
+//                        .environment(navigationRouter)
+//                }
+//            }
         }
         .router(navigationRouter)
         .onChange(of: navigationRouter.selectedTab) { _, newValue in
