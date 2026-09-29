@@ -40,6 +40,7 @@ final class TelemetryWrapper {
             Log.logger.warning("Not initializing telemetry: Could not find App ID")
             return
         }
+        Log.logger.info("Telemetry initialized!")
         
         let config = TelemetryDeck.Config(appID: appID)
         TelemetryDeck.initialize(config: config)
